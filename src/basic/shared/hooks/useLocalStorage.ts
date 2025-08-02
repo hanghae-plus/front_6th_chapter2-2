@@ -90,7 +90,8 @@ export function useLocalStorageObject<ObjectType extends object>(
 
   const value = useMemo(() => {
     try {
-      return JSON.parse(jsonString ?? "null") as ObjectType | null;
+      const parsed = JSON.parse(jsonString ?? "null") as ObjectType | null;
+      return parsed ?? initialValue ?? null;
     } catch {
       return initialValue ?? null;
     }
