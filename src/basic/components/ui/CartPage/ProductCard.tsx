@@ -1,5 +1,5 @@
-import { ProductWithUI } from "../types";
-import { formatPriceAtCart, formatPercentage } from "../utils/formatters";
+import { ProductWithUI } from "../../../types";
+import { formatPriceAtCart, formatPercentage } from "../../../utils/formatters";
 
 interface ProductCardProps {
   product: ProductWithUI;
@@ -7,7 +7,11 @@ interface ProductCardProps {
   onAddToCart: (product: ProductWithUI) => void;
 }
 
-const ProductCard = ({ product, remainingStock, onAddToCart }: ProductCardProps) => {
+const ProductCard = ({
+  product,
+  remainingStock,
+  onAddToCart,
+}: ProductCardProps) => {
   return (
     <div
       key={product.id}
@@ -47,9 +51,7 @@ const ProductCard = ({ product, remainingStock, onAddToCart }: ProductCardProps)
 
       {/* 상품 정보 */}
       <div className="p-4">
-        <h3 className="font-medium text-gray-900 mb-1">
-          {product.name}
-        </h3>
+        <h3 className="font-medium text-gray-900 mb-1">{product.name}</h3>
         {product.description && (
           <p className="text-sm text-gray-500 mb-2 line-clamp-2">
             {product.description}
@@ -77,9 +79,7 @@ const ProductCard = ({ product, remainingStock, onAddToCart }: ProductCardProps)
             </p>
           )}
           {remainingStock > 5 && (
-            <p className="text-xs text-gray-500">
-              재고 {remainingStock}개
-            </p>
+            <p className="text-xs text-gray-500">재고 {remainingStock}개</p>
           )}
         </div>
 

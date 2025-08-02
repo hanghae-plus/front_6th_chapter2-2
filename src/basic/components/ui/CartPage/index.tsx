@@ -1,6 +1,6 @@
-import { CartItem, Coupon, ProductWithUI } from "../types";
-import ProductCard from "./ProductCard";
+import { CartItem, Coupon, ProductWithUI } from "../../../types";
 import Cart from "./Cart";
+import ProductCard from "./ProductCard";
 
 interface CartPageProps {
   // 상품 관련
@@ -47,9 +47,7 @@ const CartPage = ({
         {/* 상품 목록 */}
         <section>
           <div className="mb-6 flex justify-between items-center">
-            <h2 className="text-2xl font-semibold text-gray-800">
-              전체 상품
-            </h2>
+            <h2 className="text-2xl font-semibold text-gray-800">전체 상품</h2>
             <div className="text-sm text-gray-600">
               총 {products.length}개 상품
             </div>

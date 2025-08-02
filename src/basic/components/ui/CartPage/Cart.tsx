@@ -1,5 +1,8 @@
-import { CartItem, Coupon } from "../types";
-import { formatPriceAtAdmin, formatPercentage } from "../utils/formatters";
+import { CartItem, Coupon } from "../../../types";
+import {
+  formatPriceAtAdmin,
+  formatPercentage,
+} from "../../../utils/formatters";
 
 interface CartProps {
   cart: CartItem[];
@@ -61,9 +64,7 @@ const Cart = ({
                 d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
               />
             </svg>
-            <p className="text-gray-500 text-sm">
-              장바구니가 비어있습니다
-            </p>
+            <p className="text-gray-500 text-sm">장바구니가 비어있습니다</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -147,9 +148,7 @@ const Cart = ({
         <>
           <section className="bg-white rounded-lg border border-gray-200 p-4">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold text-gray-700">
-                쿠폰 할인
-              </h3>
+              <h3 className="text-sm font-semibold text-gray-700">쿠폰 할인</h3>
               <button className="text-xs text-blue-600 hover:underline">
                 쿠폰 등록
               </button>
@@ -159,9 +158,7 @@ const Cart = ({
                 className="w-full text-sm border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
                 value={selectedCoupon?.code || ""}
                 onChange={(e) => {
-                  const coupon = coupons.find(
-                    (c) => c.code === e.target.value
-                  );
+                  const coupon = coupons.find((c) => c.code === e.target.value);
                   onApplyCoupon(coupon || null);
                 }}
               >
@@ -192,7 +189,8 @@ const Cart = ({
                 <div className="flex justify-between text-red-500">
                   <span>할인 금액</span>
                   <span>
-                    -{formatPriceAtAdmin(
+                    -
+                    {formatPriceAtAdmin(
                       totals.totalBeforeDiscount - totals.totalAfterDiscount
                     )}
                   </span>

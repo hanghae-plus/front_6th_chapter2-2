@@ -11,9 +11,9 @@ import initialCoupons from "./data/inintialCoupons";
 import HeaderLayout from "./components/Header/HeaderLayout";
 import ShopHeaderContent from "./components/Header/ShopHeaderContent";
 import AdminHeaderContent from "./components/Header/AdminHeaderContent";
-import AdminPage from "./components/AdminPage";
-import CartPage from "./components/CartPage";
-import Message from "./components/Message";
+import AdminPage from "./components/ui/AdminPage";
+import CartPage from "./components/ui/CartPage";
+import Toast from "./components/ui/Toast";
 
 const App = () => {
   // ========== 📋 상태 관리 섹션 ==========
@@ -387,7 +387,7 @@ const App = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* 🔔 알림 메시지들 - 화면 우상단에 표시 */}
-      <Message
+      <Toast
         notifications={notifications}
         onRemoveNotification={removeNotification}
       />

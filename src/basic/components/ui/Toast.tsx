@@ -1,6 +1,6 @@
-import { Notification } from "../types";
+import { Notification } from "../../types";
 
-interface MessageProps {
+interface ToastProps {
   notifications: Notification[];
   onRemoveNotification: (id: string) => void;
 }
@@ -8,7 +8,7 @@ interface MessageProps {
 const NotificationContainer = ({
   notifications,
   onRemoveNotification,
-}: MessageProps) => {
+}: ToastProps) => {
   if (notifications.length === 0) {
     return null;
   }

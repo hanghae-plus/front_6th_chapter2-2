@@ -1,6 +1,10 @@
 import { useState } from "react";
-import { ProductWithUI, Coupon } from "../types";
-import { formatPriceAtCart, formatPriceAtAdmin, formatPercentage } from "../utils/formatters";
+import { ProductWithUI, Coupon } from "../../../types";
+import {
+  formatPriceAtCart,
+  formatPriceAtAdmin,
+  formatPercentage,
+} from "../../../utils/formatters";
 
 interface AdminPageProps {
   // 상품 관련
@@ -9,14 +13,17 @@ interface AdminPageProps {
   onUpdateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
   onDeleteProduct: (productId: string) => void;
   getRemainingStock: (product: ProductWithUI) => number;
-  
+
   // 쿠폰 관련
   coupons: Coupon[];
   onAddCoupon: (coupon: Coupon) => void;
   onDeleteCoupon: (couponCode: string) => void;
-  
+
   // 알림
-  addNotification: (message: string, type?: "error" | "success" | "warning") => void;
+  addNotification: (
+    message: string,
+    type?: "error" | "success" | "warning"
+  ) => void;
 }
 
 export function AdminPage({
@@ -30,11 +37,13 @@ export function AdminPage({
   onDeleteCoupon,
   addNotification,
 }: AdminPageProps) {
-  const [activeTab, setActiveTab] = useState<"products" | "coupons">("products");
+  const [activeTab, setActiveTab] = useState<"products" | "coupons">(
+    "products"
+  );
   const [showProductForm, setShowProductForm] = useState(false);
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
-  
+
   const [productForm, setProductForm] = useState({
     name: "",
     price: 0,
@@ -42,7 +51,7 @@ export function AdminPage({
     description: "",
     discounts: [] as Array<{ quantity: number; rate: number }>,
   });
-  
+
   const [couponForm, setCouponForm] = useState({
     name: "",
     code: "",
@@ -102,14 +111,10 @@ export function AdminPage({
   return (
     <div className="max-w-6xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">
-          관리자 대시보드
-        </h1>
-        <p className="text-gray-600 mt-1">
-          상품과 쿠폰을 관리할 수 있습니다
-        </p>
+        <h1 className="text-2xl font-bold text-gray-900">관리자 대시보드</h1>
+        <p className="text-gray-600 mt-1">상품과 쿠폰을 관리할 수 있습니다</p>
       </div>
-      
+
       <div className="border-b border-gray-200 mb-6">
         <nav className="-mb-px flex space-x-8">
           <button
@@ -187,7 +192,10 @@ export function AdminPage({
                       {product.name}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {formatPriceAtCart(product.price, getRemainingStock(product))}
+                      {formatPriceAtCart(
+                        product.price,
+                        getRemainingStock(product)
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <span
@@ -224,7 +232,7 @@ export function AdminPage({
               </tbody>
             </table>
           </div>
-          
+
           {showProductForm && (
             <div className="p-6 border-t border-gray-200 bg-gray-50">
               <form onSubmit={handleProductSubmit} className="space-y-4">
@@ -319,7 +327,10 @@ export function AdminPage({
                           addNotification("재고는 0보다 커야 합니다", "error");
                           setProductForm({ ...productForm, stock: 0 });
                         } else if (parseInt(value) > 9999) {
-                          addNotification("재고는 9999개를 초과할 수 없습니다", "error");
+                          addNotification(
+                            "재고는 9999개를 초과할 수 없습니다",
+                            "error"
+                          );
                           setProductForm({ ...productForm, stock: 9999 });
                         }
                       }}
@@ -344,7 +355,8 @@ export function AdminPage({
                           value={discount.quantity}
                           onChange={(e) => {
                             const newDiscounts = [...productForm.discounts];
-                            newDiscounts[index].quantity = parseInt(e.target.value) || 0;
+                            newDiscounts[index].quantity =
+                              parseInt(e.target.value) || 0;
                             setProductForm({
                               ...productForm,
                               discounts: newDiscounts,
@@ -360,7 +372,8 @@ export function AdminPage({
                           value={discount.rate * 100}
                           onChange={(e) => {
                             const newDiscounts = [...productForm.discounts];
-                            newDiscounts[index].rate = (parseInt(e.target.value) || 0) / 100;
+                            newDiscounts[index].rate =
+                              (parseInt(e.target.value) || 0) / 100;
                             setProductForm({
                               ...productForm,
                               discounts: newDiscounts,
@@ -385,8 +398,18 @@ export function AdminPage({
                           }}
                           className="text-red-600 hover:text-red-800"
                         >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M6 18L18 6M6 6l12 12"
+                            />
                           </svg>
                         </button>
                       </div>
@@ -462,7 +485,9 @@ export function AdminPage({
                         <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white text-indigo-700">
                           {coupon.discountType === "amount"
                             ? `${formatPriceAtAdmin(coupon.discountValue)} 할인`
-                            : `${formatPercentage(coupon.discountValue / 100)} 할인`}
+                            : `${formatPercentage(
+                                coupon.discountValue / 100
+                              )} 할인`}
                         </span>
                       </div>
                     </div>
@@ -470,8 +495,18 @@ export function AdminPage({
                       onClick={() => onDeleteCoupon(coupon.code)}
                       className="text-gray-400 hover:text-red-600 transition-colors"
                     >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
                       </svg>
                     </button>
                   </div>
@@ -483,8 +518,18 @@ export function AdminPage({
                   onClick={() => setShowCouponForm(!showCouponForm)}
                   className="text-gray-400 hover:text-gray-600 flex flex-col items-center"
                 >
-                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  <svg
+                    className="w-8 h-8"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 4v16m8-8H4"
+                    />
                   </svg>
                   <p className="mt-2 text-sm font-medium">새 쿠폰 추가</p>
                 </button>
@@ -494,7 +539,9 @@ export function AdminPage({
             {showCouponForm && (
               <div className="mt-6 p-4 bg-gray-50 rounded-lg">
                 <form onSubmit={handleCouponSubmit} className="space-y-4">
-                  <h3 className="text-md font-medium text-gray-900">새 쿠폰 생성</h3>
+                  <h3 className="text-md font-medium text-gray-900">
+                    새 쿠폰 생성
+                  </h3>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -541,7 +588,9 @@ export function AdminPage({
                         onChange={(e) =>
                           setCouponForm({
                             ...couponForm,
-                            discountType: e.target.value as "amount" | "percentage",
+                            discountType: e.target.value as
+                              | "amount"
+                              | "percentage",
                           })
                         }
                         className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
@@ -552,11 +601,17 @@ export function AdminPage({
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        {couponForm.discountType === "amount" ? "할인 금액" : "할인율(%)"}
+                        {couponForm.discountType === "amount"
+                          ? "할인 금액"
+                          : "할인율(%)"}
                       </label>
                       <input
                         type="text"
-                        value={couponForm.discountValue === 0 ? "" : couponForm.discountValue}
+                        value={
+                          couponForm.discountValue === 0
+                            ? ""
+                            : couponForm.discountValue
+                        }
                         onChange={(e) => {
                           const value = e.target.value;
                           if (value === "" || /^\d+$/.test(value)) {
@@ -570,7 +625,10 @@ export function AdminPage({
                           const value = parseInt(e.target.value) || 0;
                           if (couponForm.discountType === "percentage") {
                             if (value > 100) {
-                              addNotification("할인율은 100%를 초과할 수 없습니다", "error");
+                              addNotification(
+                                "할인율은 100%를 초과할 수 없습니다",
+                                "error"
+                              );
                               setCouponForm({
                                 ...couponForm,
                                 discountValue: 100,
@@ -583,7 +641,10 @@ export function AdminPage({
                             }
                           } else {
                             if (value > 100000) {
-                              addNotification("할인 금액은 100,000원을 초과할 수 없습니다", "error");
+                              addNotification(
+                                "할인 금액은 100,000원을 초과할 수 없습니다",
+                                "error"
+                              );
                               setCouponForm({
                                 ...couponForm,
                                 discountValue: 100000,
@@ -597,7 +658,9 @@ export function AdminPage({
                           }
                         }}
                         className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
-                        placeholder={couponForm.discountType === "amount" ? "5000" : "10"}
+                        placeholder={
+                          couponForm.discountType === "amount" ? "5000" : "10"
+                        }
                         required
                       />
                     </div>
