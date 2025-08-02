@@ -272,10 +272,10 @@ export const notificationTypeSchema = z.enum(['success', 'error', 'warning']);
 #### 📁 `src/basic/services/use-cart-service.ts` ✅ 완료
 
 ```typescript
-import { getRemainingStock } from '@/basic/models/cart';
-import { notificationTypeSchema } from '@/basic/models/notification';
-import { ProductView } from '@/basic/models/product';
-import { useCartStore } from '@/basic/store';
+import { getRemainingStock } from '@/models/cart';
+import { notificationTypeSchema } from '@/models/notification';
+import { ProductView } from '@/models/product';
+import { useCartStore } from '@/store';
 import { useCallback } from 'react';
 import { useNotificationService } from './use-notification-service';
 
@@ -388,8 +388,8 @@ export const useCartService = () => {
 #### 📁 `src/basic/services/use-product-service.ts` ✅ 완료
 
 ```typescript
-import { ProductView } from '@/basic/models/product';
-import { useProductStore } from '@/basic/store';
+import { ProductView } from '@/models/product';
+import { useProductStore } from '@/store';
 import { useCallback } from 'react';
 
 export const useProductService = () => {
@@ -443,14 +443,14 @@ export const useProductService = () => {
 #### 📁 `src/basic/services/use-coupon-service.ts` ✅ 완료
 
 ```typescript
-import { calculateItemDiscounts, calculateSubtotal } from '@/basic/models/cart';
+import { calculateItemDiscounts, calculateSubtotal } from '@/models/cart';
 import {
   calculateCouponDiscount,
   Coupon,
   isValidPercentageCoupon,
-} from '@/basic/models/coupon';
-import { notificationTypeSchema } from '@/basic/models/notification';
-import { useCartStore } from '@/basic/store';
+} from '@/models/coupon';
+import { notificationTypeSchema } from '@/models/notification';
+import { useCartStore } from '@/store';
 import { useCallback, useState } from 'react';
 import { useNotificationService } from './use-notification-service';
 
@@ -514,9 +514,9 @@ export const useCouponService = () => {
 #### 📁 `src/basic/services/use-order-service.ts` ✅ 완료
 
 ```typescript
-import { calculateItemDiscounts, calculateSubtotal } from '@/basic/models/cart';
-import { calculateCouponDiscount, Coupon } from '@/basic/models/coupon';
-import { useCartStore } from '@/basic/store';
+import { calculateItemDiscounts, calculateSubtotal } from '@/models/cart';
+import { calculateCouponDiscount, Coupon } from '@/models/coupon';
+import { useCartStore } from '@/store';
 import { useNotificationService } from './use-notification-service';
 import { useCallback } from 'react';
 
@@ -582,7 +582,7 @@ import {
   Notification,
   NotificationType,
   notificationTypeSchema,
-} from '@/basic/models/notification';
+} from '@/models/notification';
 import { useState } from 'react';
 
 export const useNotificationService = () => {
@@ -613,9 +613,9 @@ export const useNotificationService = () => {
 #### 📁 `src/basic/store/use-cart-store.ts` ✅ 완료
 
 ```typescript
-import { CartItem } from '@/basic/models/cart';
-import { useLocalStorage } from '@/basic/shared/hooks';
-import { createStorage } from '@/basic/utils';
+import { CartItem } from '@/models/cart';
+import { useLocalStorage } from '@/shared/hooks';
+import { createStorage } from '@/utils';
 
 const cartStorage = createStorage<CartItem[]>({ key: 'cart' });
 
@@ -668,9 +668,9 @@ export const useCartStore = () => {
 #### 📁 `src/basic/store/use-product-store.ts` ✅ 완료
 
 ```typescript
-import { ProductView } from '@/basic/models/product';
-import { useLocalStorage } from '@/basic/shared/hooks';
-import { createStorage } from '@/basic/utils';
+import { ProductView } from '@/models/product';
+import { useLocalStorage } from '@/shared/hooks';
+import { createStorage } from '@/utils';
 
 const productStorage = createStorage<ProductView[]>({
   key: 'products',
@@ -727,9 +727,9 @@ export const useProductStore = () => {
 #### 📁 `src/basic/store/use-coupon-store.ts` ✅ 완료
 
 ```typescript
-import { Coupon } from '@/basic/models/coupon';
-import { useLocalStorage } from '@/basic/shared/hooks';
-import { createStorage } from '@/basic/utils';
+import { Coupon } from '@/models/coupon';
+import { useLocalStorage } from '@/shared/hooks';
+import { createStorage } from '@/utils';
 
 const couponStorage = createStorage<Coupon[]>({
   key: 'coupons',
@@ -786,8 +786,8 @@ import {
   useNotificationService,
   useOrderService,
   useProductService,
-} from '@/basic/services';
-import { useCartStore, useCouponStore, useProductStore } from '@/basic/store';
+} from '@/services';
+import { useCartStore, useCouponStore, useProductStore } from '@/store';
 import { useCallback, useMemo } from 'react';
 
 export const useShoppingPageViewModel = () => {
@@ -876,16 +876,16 @@ import {
   calculateItemDiscounts,
   calculateSubtotal,
   getRemainingStock,
-} from '@/basic/models/cart';
+} from '@/models/cart';
 import {
   calculateCouponDiscount,
   Coupon,
   isValidPercentageCoupon,
-} from '@/basic/models/coupon';
-import { notificationTypeSchema } from '@/basic/models/notification';
-import { ProductView } from '@/basic/models/product';
-import { useNotificationService } from '@/basic/services/use-notification-service';
-import { useCartStore, useCouponStore, useProductStore } from '@/basic/store';
+} from '@/models/coupon';
+import { notificationTypeSchema } from '@/models/notification';
+import { ProductView } from '@/models/product';
+import { useNotificationService } from '@/services/use-notification-service';
+import { useCartStore, useCouponStore, useProductStore } from '@/store';
 import { useCallback, useState } from 'react';
 
 export const useAdminViewModel = () => {

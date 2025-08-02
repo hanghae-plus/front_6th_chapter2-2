@@ -1,0 +1,30 @@
+{
+  "name": "@clean-code/prettier",
+  "version": "1.0.0",
+  "description": "Prettier configurations for clean code projects",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./prettier.config.js",
+    "./js": "./js.config.js",
+    "./ts": "./ts.config.js",
+    "./react": "./react.config.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "prettier",
+    "config",
+    "clean-code"
+  ],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.13.1",
+  "dependencies": {
+    "prettier": "^3.6.2"
+  },
+  "peerDependencies": {
+    "prettier": "^3.0.0"
+  }
+}

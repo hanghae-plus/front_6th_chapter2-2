@@ -1,0 +1,48 @@
+{
+  "name": "@clean-code/basic",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.13.1",
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "react": "catalog:react",
+    "react-dom": "catalog:react",
+    "react-router-dom": "catalog:react",
+    "zod": "^4.0.14"
+  },
+  "devDependencies": {
+    "@clean-code/eslint": "workspace:*",
+    "@clean-code/prettier": "workspace:*",
+    "@testing-library/jest-dom": "catalog:test",
+    "@testing-library/react": "catalog:test",
+    "@testing-library/user-event": "catalog:test",
+    "@types/react": "catalog:react",
+    "@types/react-dom": "catalog:react",
+    "@typescript-eslint/eslint-plugin": "catalog:config",
+    "@typescript-eslint/parser": "catalog:config",
+    "@vitejs/plugin-react-swc": "catalog:vite",
+    "@vitest/ui": "catalog:test",
+    "eslint": "catalog:eslint",
+    "eslint-plugin-react-hooks": "catalog:eslint",
+    "eslint-plugin-react-refresh": "catalog:eslint",
+    "jsdom": "catalog:test",
+    "prettier": "catalog:config",
+    "typescript": "catalog:typescript",
+    "vite": "catalog:vite",
+    "vitest": "catalog:test"
+  }
+}
