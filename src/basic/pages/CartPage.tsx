@@ -12,6 +12,7 @@ import {
 } from "../features/product/libs";
 import { useCallback } from "react";
 import { CartItem } from "../features/cart/components/CartItem";
+import CartIcon from "../assets/icons/CartIcon.svg?react";
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -238,19 +239,7 @@ export function CartPage({
         <div className="sticky top-24 space-y-4">
           <section className="bg-white rounded-lg border border-gray-200 p-4">
             <h2 className="text-lg font-semibold mb-4 flex items-center">
-              <svg
-                className="w-5 h-5 mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                />
-              </svg>
+              <CartIcon className="w-5 h-5 mr-2" />
               장바구니
             </h2>
             {cart.length === 0 ? (
