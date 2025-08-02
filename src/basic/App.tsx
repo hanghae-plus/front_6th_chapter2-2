@@ -1,5 +1,10 @@
 import { useState, useCallback, useEffect } from "react";
-import { CartItem, Coupon, Product } from "../types";
+import { CartItem, Coupon, Product } from "./types";
+import {
+  formatPriceAtCart,
+  formatPriceAtAdmin,
+  formatPercentage,
+} from "./utils/formatters";
 
 // 기본 Product에 UI 관련 속성을 추가한 확장 타입
 interface ProductWithUI extends Product {
@@ -137,23 +142,6 @@ const App = () => {
     discountType: "amount" as "amount" | "percentage",
     discountValue: 0,
   });
-
-  // ========== 💰 가격 포맷팅 함수 ==========
-  // 가격을 표시용 문자열로 변환 (품절 처리 포함)
-  const formatPrice = (price: number, productId?: string): string => {
-    if (productId) {
-      const product = products.find((p) => p.id === productId);
-      if (product && getRemainingStock(product) <= 0) {
-        return "SOLD OUT";
-      }
-    }
-
-    if (isAdmin) {
-      return `${price.toLocaleString()}원`;
-    }
-
-    return `₩${price.toLocaleString()}`;
-  };
 
   // ========== 🎯 할인 계산 함수들 ==========
   // 장바구니 아이템에 적용 가능한 최대 할인율 계산
@@ -702,7 +690,10 @@ const App = () => {
                               {product.name}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {formatPrice(product.price, product.id)}
+                              {formatPriceAtCart(
+                                product.price,
+                                getRemainingStock(product)
+                              )}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               <span
@@ -1008,8 +999,12 @@ const App = () => {
                             <div className="mt-2">
                               <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white text-indigo-700">
                                 {coupon.discountType === "amount"
-                                  ? `${coupon.discountValue.toLocaleString()}원 할인`
-                                  : `${coupon.discountValue}% 할인`}
+                                  ? `${formatPriceAtAdmin(
+                                      coupon.discountValue
+                                    )} 할인`
+                                  : `${formatPercentage(
+                                      coupon.discountValue / 100
+                                    )} 할인`}
                               </span>
                             </div>
                           </div>
@@ -1266,10 +1261,11 @@ const App = () => {
                             {product.discounts.length > 0 && (
                               <span className="absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded">
                                 ~
-                                {Math.max(
-                                  ...product.discounts.map((d) => d.rate)
-                                ) * 100}
-                                %
+                                {formatPercentage(
+                                  Math.max(
+                                    ...product.discounts.map((d) => d.rate)
+                                  )
+                                )}
                               </span>
                             )}
                           </div>
@@ -1288,12 +1284,16 @@ const App = () => {
                             {/* 가격 정보 */}
                             <div className="mb-3">
                               <p className="text-lg font-bold text-gray-900">
-                                {formatPrice(product.price, product.id)}
+                                {formatPriceAtCart(
+                                  product.price,
+                                  getRemainingStock(product)
+                                )}
                               </p>
                               {product.discounts.length > 0 && (
                                 <p className="text-xs text-gray-500">
                                   {product.discounts[0].quantity}개 이상 구매시
-                                  할인 {product.discounts[0].rate * 100}%
+                                  할인{" "}
+                                  {formatPercentage(product.discounts[0].rate)}
                                 </p>
                               )}
                             </div>
@@ -1379,7 +1379,7 @@ const App = () => {
                           item.product.price * item.quantity;
                         const hasDiscount = itemTotal < originalPrice;
                         const discountRate = hasDiscount
-                          ? Math.round((1 - itemTotal / originalPrice) * 100)
+                          ? formatPercentage(1 - itemTotal / originalPrice)
                           : 0;
 
                         return (
@@ -1441,11 +1441,11 @@ const App = () => {
                               <div className="text-right">
                                 {hasDiscount && (
                                   <span className="text-xs text-red-500 font-medium block">
-                                    -{discountRate}%
+                                    -{discountRate}
                                   </span>
                                 )}
                                 <p className="text-sm font-medium text-gray-900">
-                                  {Math.round(itemTotal).toLocaleString()}원
+                                  {formatPriceAtAdmin(Math.round(itemTotal))}
                                 </p>
                               </div>
                             </div>
@@ -1484,8 +1484,10 @@ const App = () => {
                             <option key={coupon.code} value={coupon.code}>
                               {coupon.name} (
                               {coupon.discountType === "amount"
-                                ? `${coupon.discountValue.toLocaleString()}원`
-                                : `${coupon.discountValue}%`}
+                                ? `${formatPriceAtAdmin(coupon.discountValue)}`
+                                : `${formatPercentage(
+                                    coupon.discountValue / 100
+                                  )}`}
                               )
                             </option>
                           ))}
@@ -1499,7 +1501,7 @@ const App = () => {
                         <div className="flex justify-between">
                           <span className="text-gray-600">상품 금액</span>
                           <span className="font-medium">
-                            {totals.totalBeforeDiscount.toLocaleString()}원
+                            {formatPriceAtAdmin(totals.totalBeforeDiscount)}
                           </span>
                         </div>
                         {totals.totalBeforeDiscount -
@@ -1509,18 +1511,17 @@ const App = () => {
                             <span>할인 금액</span>
                             <span>
                               -
-                              {(
+                              {formatPriceAtAdmin(
                                 totals.totalBeforeDiscount -
-                                totals.totalAfterDiscount
-                              ).toLocaleString()}
-                              원
+                                  totals.totalAfterDiscount
+                              )}
                             </span>
                           </div>
                         )}
                         <div className="flex justify-between py-2 border-t border-gray-200">
                           <span className="font-semibold">결제 예정 금액</span>
                           <span className="font-bold text-lg text-gray-900">
-                            {totals.totalAfterDiscount.toLocaleString()}원
+                            {formatPriceAtAdmin(totals.totalAfterDiscount)}
                           </span>
                         </div>
                       </div>
@@ -1529,7 +1530,7 @@ const App = () => {
                         onClick={completeOrder}
                         className="w-full mt-4 py-3 bg-yellow-400 text-gray-900 rounded-md font-medium hover:bg-yellow-500 transition-colors"
                       >
-                        {totals.totalAfterDiscount.toLocaleString()}원 결제하기
+                        {formatPriceAtAdmin(totals.totalAfterDiscount)} 결제하기
                       </button>
 
                       <div className="mt-3 text-xs text-gray-500 text-center">
