@@ -1,11 +1,16 @@
 import { CartItem, Coupon } from "../types";
-import { Product } from "./entities/product/types";
+import { Product } from "./features/product/types";
 import Header from "./app/components/Header";
 import { useSearch } from "./shared/hooks/useSearch";
 import {
   calculateDiscountedPrice,
   calculateDiscountedAmount,
+  formatPrice,
 } from "./shared/libs/price";
+import {
+  getProductStockStatus,
+  getRemainingStock,
+} from "./features/product/libs";
 import { useState, useCallback, useEffect } from "react";
 
 interface ProductWithUI extends Product {
@@ -133,19 +138,12 @@ const App = () => {
     discountValue: 0,
   });
 
-  const formatPrice = (price: number, productId?: string): string => {
-    if (productId) {
-      const product = products.find((p) => p.id === productId);
-      if (product && getRemainingStock(product) <= 0) {
-        return "SOLD OUT";
-      }
-    }
+  const displayPrice = (product: Product) => {
+    const stockStatus = getProductStockStatus({ product, cartQuantity: 0 });
+    if (stockStatus) return stockStatus;
 
-    if (isAdmin) {
-      return `${price.toLocaleString()}원`;
-    }
-
-    return `₩${price.toLocaleString()}`;
+    const formattedPrice = formatPrice(product.price);
+    return isAdmin ? `${formattedPrice}원` : `${formattedPrice}₩`;
   };
 
   const getMaxApplicableDiscount = (item: CartItem): number => {
@@ -210,11 +208,10 @@ const App = () => {
     };
   };
 
-  const getRemainingStock = (product: Product): number => {
+  const getProductRemainingStock = (product: Product): number => {
     const cartItem = cart.find((item) => item.product.id === product.id);
-    const remaining = product.stock - (cartItem?.quantity || 0);
-
-    return remaining;
+    const cartQuantity = cartItem?.quantity || 0;
+    return getRemainingStock(product, cartQuantity);
   };
 
   const addNotification = useCallback(
@@ -254,7 +251,7 @@ const App = () => {
 
   const addToCart = useCallback(
     (product: ProductWithUI) => {
-      const remainingStock = getRemainingStock(product);
+      const remainingStock = getProductRemainingStock(product);
       if (remainingStock <= 0) {
         addNotification("재고가 부족합니다!", "error");
         return;
@@ -288,7 +285,7 @@ const App = () => {
 
       addNotification("장바구니에 담았습니다", "success");
     },
-    [cart, addNotification, getRemainingStock]
+    [cart, addNotification, getProductRemainingStock]
   );
 
   const removeFromCart = useCallback((productId: string) => {
@@ -321,7 +318,7 @@ const App = () => {
         )
       );
     },
-    [products, removeFromCart, addNotification, getRemainingStock]
+    [products, removeFromCart, addNotification, getProductRemainingStock]
   );
 
   const applyCoupon = useCallback(
@@ -607,7 +604,7 @@ const App = () => {
                               {product.name}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {formatPrice(product.price, product.id)}
+                              {displayPrice(product)}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               <span
@@ -1139,7 +1136,7 @@ const App = () => {
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {filteredProducts.map((product) => {
-                      const remainingStock = getRemainingStock(product);
+                      const remainingStock = getProductRemainingStock(product);
 
                       return (
                         <div
@@ -1193,7 +1190,7 @@ const App = () => {
                             {/* 가격 정보 */}
                             <div className="mb-3">
                               <p className="text-lg font-bold text-gray-900">
-                                {formatPrice(product.price, product.id)}
+                                {displayPrice(product)}
                               </p>
                               {product.discounts.length > 0 && (
                                 <p className="text-xs text-gray-500">
