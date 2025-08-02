@@ -11,6 +11,7 @@ import {
   getProductStockStatus,
   getRemainingStock,
 } from "./features/product/libs";
+import { useLocalStorageObject } from "./shared/hooks/useLocalStorage";
 import { useState, useCallback, useEffect } from "react";
 
 interface ProductWithUI extends Product {
@@ -76,41 +77,15 @@ const initialCoupons: Coupon[] = [
 
 const App = () => {
   const search = useSearch();
-  const [products, setProducts] = useState<ProductWithUI[]>(() => {
-    const saved = localStorage.getItem("products");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialProducts;
-      }
-    }
-    return initialProducts;
-  });
-
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem("cart");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return [];
-      }
-    }
-    return [];
-  });
-
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem("coupons");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialCoupons;
-      }
-    }
-    return initialCoupons;
-  });
+  const [products, setProducts] = useLocalStorageObject<ProductWithUI[]>(
+    "products",
+    initialProducts
+  );
+  const [cart, setCart] = useLocalStorageObject<CartItem[]>("cart", []);
+  const [coupons, setCoupons] = useLocalStorageObject<Coupon[]>(
+    "coupons",
+    initialCoupons
+  );
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -231,22 +206,6 @@ const App = () => {
   useEffect(() => {
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);
     setTotalItemCount(count);
-  }, [cart]);
-
-  useEffect(() => {
-    localStorage.setItem("products", JSON.stringify(products));
-  }, [products]);
-
-  useEffect(() => {
-    localStorage.setItem("coupons", JSON.stringify(coupons));
-  }, [coupons]);
-
-  useEffect(() => {
-    if (cart.length > 0) {
-      localStorage.setItem("cart", JSON.stringify(cart));
-    } else {
-      localStorage.removeItem("cart");
-    }
   }, [cart]);
 
   const addToCart = useCallback(
