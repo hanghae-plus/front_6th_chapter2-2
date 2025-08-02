@@ -11,7 +11,7 @@ import {
   getProductStockStatus,
   getRemainingStock,
 } from "./features/product/libs";
-import { ProductCard } from "./features/product/components/ProductCard";
+import { ProductList } from "./features/product/components/ProductList";
 import { useLocalStorageObject } from "./shared/hooks/useLocalStorage";
 import { useState, useCallback, useEffect } from "react";
 
@@ -1078,39 +1078,14 @@ const App = () => {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <div className="lg:col-span-3">
               {/* 상품 목록 */}
-              <section>
-                <div className="mb-6 flex justify-between items-center">
-                  <h2 className="text-2xl font-semibold text-gray-800">
-                    전체 상품
-                  </h2>
-                  <div className="text-sm text-gray-600">
-                    총 {products.length}개 상품
-                  </div>
-                </div>
-                {filteredProducts.length === 0 ? (
-                  <div className="text-center py-12">
-                    <p className="text-gray-500">
-                      "{search.debouncedValue}"에 대한 검색 결과가 없습니다.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {filteredProducts.map((product) => {
-                      const remainingStock = getProductRemainingStock(product);
-
-                      return (
-                        <ProductCard
-                          key={product.id}
-                          product={product}
-                          remainingStock={remainingStock}
-                          displayPrice={displayPrice}
-                          onAddToCart={addToCart}
-                        />
-                      );
-                    })}
-                  </div>
-                )}
-              </section>
+              <ProductList
+                products={products}
+                filteredProducts={filteredProducts}
+                searchValue={search.debouncedValue}
+                getProductRemainingStock={getProductRemainingStock}
+                displayPrice={displayPrice}
+                onAddToCart={addToCart}
+              />
             </div>
 
             <div className="lg:col-span-1">
