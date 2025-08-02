@@ -1,5 +1,11 @@
 import { useState, useCallback, useEffect } from "react";
-import { CartItem, Coupon, Product, ProductWithUI } from "./types";
+import {
+  CartItem,
+  Coupon,
+  Notification,
+  Product,
+  ProductWithUI,
+} from "./types";
 import initialProducts from "./data/initialProducts";
 import initialCoupons from "./data/inintialCoupons";
 import HeaderLayout from "./components/Header/HeaderLayout";
@@ -7,13 +13,7 @@ import ShopHeaderContent from "./components/Header/ShopHeaderContent";
 import AdminHeaderContent from "./components/Header/AdminHeaderContent";
 import AdminPage from "./components/AdminPage";
 import CartPage from "./components/CartPage";
-
-// 알림 메시지 타입
-interface Notification {
-  id: string;
-  message: string;
-  type: "error" | "success" | "warning";
-}
+import Message from "./components/Message";
 
 const App = () => {
   // ========== 📋 상태 관리 섹션 ==========
@@ -149,6 +149,11 @@ const App = () => {
     },
     []
   );
+
+  // 알림 메시지 제거
+  const removeNotification = useCallback((id: string) => {
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
+  }, []);
 
   // 장바구니 총 아이템 개수 (헤더 뱃지용)
   const [totalItemCount, setTotalItemCount] = useState(0);
@@ -382,46 +387,10 @@ const App = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* 🔔 알림 메시지들 - 화면 우상단에 표시 */}
-      {notifications.length > 0 && (
-        <div className="fixed top-20 right-4 z-50 space-y-2 max-w-sm">
-          {notifications.map((notif) => (
-            <div
-              key={notif.id}
-              className={`p-4 rounded-md shadow-md text-white flex justify-between items-center ${
-                notif.type === "error"
-                  ? "bg-red-600"
-                  : notif.type === "warning"
-                  ? "bg-yellow-600"
-                  : "bg-green-600"
-              }`}
-            >
-              <span className="mr-2">{notif.message}</span>
-              <button
-                onClick={() =>
-                  setNotifications((prev) =>
-                    prev.filter((n) => n.id !== notif.id)
-                  )
-                }
-                className="text-white hover:text-gray-200"
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
+      <Message
+        notifications={notifications}
+        onRemoveNotification={removeNotification}
+      />
       <HeaderLayout>
         {isAdmin ? (
           <AdminHeaderContent onToggleContent={() => setIsAdmin(!isAdmin)} />
