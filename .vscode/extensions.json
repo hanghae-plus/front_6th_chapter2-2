@@ -1,0 +1,31 @@
+{
+  "recommendations": [
+    // 필수 확장 프로그램
+    "esbenp.prettier-vscode",           // Prettier 코드 포맷터
+    "dbaeumer.vscode-eslint",           // ESLint 코드 품질
+    "ms-vscode.vscode-typescript-next", // TypeScript 지원
+    
+    // Git 관련
+    "eamodio.gitlens",                  // Git 히스토리 및 정보
+    "mhutchie.git-graph",               // Git 그래프 시각화
+    
+    // 개발 편의성
+    "christian-kohler.path-intellisense", // 경로 자동완성
+    "formulahendry.auto-rename-tag",      // HTML/JSX 태그 자동 이름 변경
+    "bradlc.vscode-tailwindcss",          // Tailwind CSS 지원
+    
+    // 테스트 관련
+    "ZixuanChen.vitest-explorer",         // Vitest 테스트 탐색기
+    
+    // 유틸리티
+    "ms-vscode.vscode-json",              // JSON 지원 강화
+    "redhat.vscode-yaml",                 // YAML 지원
+    "streetsidesoftware.code-spell-checker" // 영어 스펠링 체크
+  ],
+  "unwantedRecommendations": [
+    // 충돌할 수 있는 확장 프로그램들
+    "ms-vscode.vscode-typescript",       // 기본 TypeScript (next 버전 사용)
+    "hookyqr.beautify",                  // Prettier와 충돌
+    "esbenp.prettier-vscode-standard"    // 표준 설정과 충돌
+  ]
+} 
