@@ -1,17 +1,18 @@
-import { CartItem, Coupon, DiscountType } from "../types";
+import { Coupon, DiscountType } from "../types";
 import { Product } from "./entities/product/types";
 import Header from "./app/components/Header";
 import { useSearch } from "./shared/hooks/useSearch";
 import { AdminPage } from "./pages/AdminPage";
 import { CartPage } from "./pages/CartPage";
 import { useLocalStorageObject } from "./shared/hooks/useLocalStorage";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { Notification } from "./entities/notification/ui/Notification";
 import {
   NotificationVariant,
   type Notification as NotificationType,
 } from "./entities/notification/types";
 import { getRemainingStock } from "./features/check-stock/libs";
+import { useCartStorage } from "./entities/cart/hooks/useCartStorage";
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -74,7 +75,7 @@ const App = () => {
     "products",
     initialProducts
   );
-  const [cart, setCart] = useLocalStorageObject<CartItem[]>("cart", []);
+  const { cart, setCart, totalItemCount } = useCartStorage();
   const [coupons, setCoupons] = useLocalStorageObject<Coupon[]>(
     "coupons",
     initialCoupons
@@ -104,13 +105,6 @@ const App = () => {
     },
     []
   );
-
-  const [totalItemCount, setTotalItemCount] = useState(0);
-
-  useEffect(() => {
-    const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-    setTotalItemCount(count);
-  }, [cart]);
 
   const filteredProducts = search.debouncedValue
     ? products.filter(
