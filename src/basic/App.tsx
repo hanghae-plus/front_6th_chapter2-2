@@ -1,11 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import {
-  CartItem,
-  Coupon,
-  Notification,
-  Product,
-  ProductWithUI,
-} from "./types";
+import { CartItem, Coupon, Notification, ProductWithUI } from "./types";
 import { INITIAL_PRODUCTS, INITIAL_COUPONS } from "./constants";
 import HeaderLayout from "./components/Header/HeaderLayout";
 import ShopHeaderContent from "./components/Header/ShopHeaderContent";
@@ -17,12 +11,15 @@ import {
   NOTIFICATION_DURATION,
   SEARCH_DEBOUNCE_DELAY,
 } from "./constants/system";
+import { MIN_ORDER_AMOUNT_FOR_PERCENTAGE_COUPON } from "./constants/business";
 import {
-  BULK_PURCHASE_THRESHOLD,
-  BULK_PURCHASE_BONUS,
-  MAX_DISCOUNT_RATE,
-  MIN_ORDER_AMOUNT_FOR_PERCENTAGE_COUPON,
-} from "./constants/business";
+  addItemToCart,
+  removeItemFromCart,
+  updateCartItemQuantity,
+  calculateCartTotal,
+  getRemainingStock,
+  calculateItemTotal,
+} from "./models/cart";
 
 const App = () => {
   // ========== 📋 상태 관리 섹션 ==========
@@ -74,78 +71,6 @@ const App = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]); // 알림 메시지들
   const [searchTerm, setSearchTerm] = useState(""); // 검색어
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(""); // 디바운스된 검색어
-
-  // ========== 🎯 할인 계산 함수들 ==========
-  // 장바구니 아이템에 적용 가능한 최대 할인율 계산
-  const getMaxApplicableDiscount = (item: CartItem): number => {
-    const { discounts } = item.product;
-    const { quantity } = item;
-
-    const baseDiscount = discounts.reduce((maxDiscount, discount) => {
-      return quantity >= discount.quantity && discount.rate > maxDiscount
-        ? discount.rate
-        : maxDiscount;
-    }, 0);
-
-    const hasBulkPurchase = cart.some(
-      (cartItem) => cartItem.quantity >= BULK_PURCHASE_THRESHOLD
-    );
-    if (hasBulkPurchase) {
-      return Math.min(baseDiscount + BULK_PURCHASE_BONUS, MAX_DISCOUNT_RATE); // 대량 구매 시 추가 할인
-    }
-
-    return baseDiscount;
-  };
-
-  // 개별 아이템의 할인 적용 후 총 금액 계산
-  const calculateItemTotal = (item: CartItem): number => {
-    const { price } = item.product;
-    const { quantity } = item;
-    const discount = getMaxApplicableDiscount(item);
-
-    return Math.round(price * quantity * (1 - discount));
-  };
-
-  // 장바구니 전체 총액 계산 (할인 전/후 + 쿠폰 적용)
-  const calculateCartTotal = (): {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
-  } => {
-    let totalBeforeDiscount = 0;
-    let totalAfterDiscount = 0;
-
-    cart.forEach((item) => {
-      const itemPrice = item.product.price * item.quantity;
-      totalBeforeDiscount += itemPrice;
-      totalAfterDiscount += calculateItemTotal(item);
-    });
-
-    if (selectedCoupon) {
-      if (selectedCoupon.discountType === "amount") {
-        totalAfterDiscount = Math.max(
-          0,
-          totalAfterDiscount - selectedCoupon.discountValue
-        );
-      } else {
-        totalAfterDiscount = Math.round(
-          totalAfterDiscount * (1 - selectedCoupon.discountValue / 100)
-        );
-      }
-    }
-
-    return {
-      totalBeforeDiscount: Math.round(totalBeforeDiscount),
-      totalAfterDiscount: Math.round(totalAfterDiscount),
-    };
-  };
-
-  // 상품의 남은 재고 계산 (전체 재고 - 장바구니에 담긴 수량)
-  const getRemainingStock = (product: Product): number => {
-    const cartItem = cart.find((item) => item.product.id === product.id);
-    const remaining = product.stock - (cartItem?.quantity || 0);
-
-    return remaining;
-  };
 
   // ========== 🔔 알림 시스템 ==========
   // 알림 메시지 추가 (3초 후 자동 삭제)
@@ -207,48 +132,32 @@ const App = () => {
   // 장바구니에 상품 추가 (재고 확인 포함)
   const addToCart = useCallback(
     (product: ProductWithUI) => {
-      const remainingStock = getRemainingStock(product);
+      const remainingStock = getRemainingStock(product, cart);
       if (remainingStock <= 0) {
         addNotification("재고가 부족합니다!", "error");
         return;
       }
 
       setCart((prevCart) => {
-        const existingItem = prevCart.find(
-          (item) => item.product.id === product.id
-        );
+        const newCart = addItemToCart(prevCart, product);
+        const newItem = newCart.find((item) => item.product.id === product.id);
 
-        if (existingItem) {
-          const newQuantity = existingItem.quantity + 1;
-
-          if (newQuantity > product.stock) {
-            addNotification(
-              `재고는 ${product.stock}개까지만 있습니다.`,
-              "error"
-            );
-            return prevCart;
-          }
-
-          return prevCart.map((item) =>
-            item.product.id === product.id
-              ? { ...item, quantity: newQuantity }
-              : item
-          );
+        if (newItem && newItem.quantity > product.stock) {
+          addNotification(`재고는 ${product.stock}개까지만 있습니다.`, "error");
+          return prevCart;
         }
 
-        return [...prevCart, { product, quantity: 1 }];
+        return newCart;
       });
 
       addNotification("장바구니에 담았습니다", "success");
     },
-    [cart, addNotification, getRemainingStock]
+    [cart, addNotification]
   );
 
   // 장바구니에서 상품 제거
   const removeFromCart = useCallback((productId: string) => {
-    setCart((prevCart) =>
-      prevCart.filter((item) => item.product.id !== productId)
-    );
+    setCart((prevCart) => removeItemFromCart(prevCart, productId));
   }, []);
 
   // 장바구니 상품 수량 변경
@@ -269,14 +178,10 @@ const App = () => {
       }
 
       setCart((prevCart) =>
-        prevCart.map((item) =>
-          item.product.id === productId
-            ? { ...item, quantity: newQuantity }
-            : item
-        )
+        updateCartItemQuantity(prevCart, productId, newQuantity)
       );
     },
-    [products, removeFromCart, addNotification, getRemainingStock]
+    [products, removeFromCart, addNotification]
   );
 
   // 쿠폰 적용 (최소 금액 조건 확인)
@@ -287,7 +192,10 @@ const App = () => {
         return;
       }
 
-      const currentTotal = calculateCartTotal().totalAfterDiscount;
+      const currentTotal = calculateCartTotal(
+        cart,
+        selectedCoupon
+      ).totalAfterDiscount;
 
       if (
         currentTotal < MIN_ORDER_AMOUNT_FOR_PERCENTAGE_COUPON &&
@@ -303,7 +211,7 @@ const App = () => {
       setSelectedCoupon(coupon);
       addNotification("쿠폰이 적용되었습니다.", "success");
     },
-    [addNotification, calculateCartTotal]
+    [addNotification, cart, selectedCoupon]
   );
 
   // 주문 완료 처리
@@ -381,7 +289,7 @@ const App = () => {
 
   // ========== 💡 계산된 값들 ==========
   // 장바구니 총액 계산
-  const totals = calculateCartTotal();
+  const totals = calculateCartTotal(cart, selectedCoupon);
 
   // 검색어로 필터링된 상품 목록
   const filteredProducts = debouncedSearchTerm
@@ -424,6 +332,7 @@ const App = () => {
             onAddProduct={addProduct}
             onUpdateProduct={updateProduct}
             onDeleteProduct={deleteProduct}
+            cart={cart}
             getRemainingStock={getRemainingStock}
             coupons={coupons}
             onAddCoupon={addCoupon}

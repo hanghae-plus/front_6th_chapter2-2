@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ProductWithUI, Coupon } from "../../../types";
+import { ProductWithUI, Coupon, CartItem } from "../../../types";
 import {
   formatPriceAtCart,
   formatPriceAtAdmin,
@@ -17,7 +17,8 @@ interface AdminPageProps {
   onAddProduct: (product: Omit<ProductWithUI, "id">) => void;
   onUpdateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
   onDeleteProduct: (productId: string) => void;
-  getRemainingStock: (product: ProductWithUI) => number;
+  cart: CartItem[];
+  getRemainingStock: (product: ProductWithUI, cart: CartItem[]) => number;
 
   // 쿠폰 관련
   coupons: Coupon[];
@@ -36,6 +37,7 @@ export function AdminPage({
   onAddProduct,
   onUpdateProduct,
   onDeleteProduct,
+  cart,
   getRemainingStock,
   coupons,
   onAddCoupon,
@@ -199,7 +201,7 @@ export function AdminPage({
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {formatPriceAtCart(
                         product.price,
-                        getRemainingStock(product)
+                        getRemainingStock(product, cart)
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

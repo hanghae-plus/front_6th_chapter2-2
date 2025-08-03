@@ -16,7 +16,7 @@ interface CartProps {
   onUpdateQuantity: (productId: string, newQuantity: number) => void;
   onApplyCoupon: (coupon: Coupon | null) => void;
   onCompleteOrder: () => void;
-  calculateItemTotal: (item: CartItem) => number;
+  calculateItemTotal: (item: CartItem, cart: CartItem[]) => number;
 }
 
 const Cart = ({
@@ -69,7 +69,7 @@ const Cart = ({
         ) : (
           <div className="space-y-3">
             {cart.map((item) => {
-              const itemTotal = calculateItemTotal(item);
+              const itemTotal = calculateItemTotal(item, cart);
               const originalPrice = item.product.price * item.quantity;
               const hasDiscount = itemTotal < originalPrice;
               const discountRate = hasDiscount
