@@ -5,6 +5,7 @@ import { formatPrice } from "../shared/libs/price";
 import CloseIcon from "../assets/icons/CloseIcon.svg?react";
 import TrashIcon from "../assets/icons/TrashIcon.svg?react";
 import PlusIcon from "../assets/icons/PlusIcon.svg?react";
+import { getProductStockStatus } from "../features/product/libs";
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -29,7 +30,6 @@ export function AdminPage({
   coupons,
   setCoupons,
   addNotification,
-  getProductRemainingStock,
 }: AdminPageProps) {
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
@@ -54,10 +54,8 @@ export function AdminPage({
   });
 
   const displayPrice = (product: Product) => {
-    const stockStatus =
-      getProductRemainingStock(product) <= 0 ? "SOLD OUT" : "";
+    const stockStatus = getProductStockStatus({ product, cartQuantity: 0 });
     if (stockStatus) return stockStatus;
-
     const formattedPrice = formatPrice(product.price);
     return `${formattedPrice}원`;
   };
