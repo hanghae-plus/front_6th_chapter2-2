@@ -1,3 +1,4 @@
+// App.tsx
 import { useState, useCallback, useEffect } from 'react';
 import { CartItem, Coupon, Product } from '../types';
 
