@@ -55,7 +55,7 @@ export function ProductsTab({ addNotification }: ProductsTabProps) {
     setShowProductForm(true);
   };
 
-  const cancelForm = () => {
+  const resetForm = () => {
     setEditingProduct(null);
     setShowProductForm(false);
   };
@@ -100,7 +100,7 @@ export function ProductsTab({ addNotification }: ProductsTabProps) {
         <EditProductForm
           initialProduct={editingProduct}
           onSubmit={updateProduct}
-          onCancel={cancelForm}
+          onCancel={resetForm}
           addNotification={addNotification}
         />
       )}
@@ -108,7 +108,7 @@ export function ProductsTab({ addNotification }: ProductsTabProps) {
       {showProductForm && !editingProduct && (
         <AddProductForm
           onSubmit={addProduct}
-          onCancel={cancelForm}
+          onCancel={resetForm}
           addNotification={addNotification}
         />
       )}
