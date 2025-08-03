@@ -2,16 +2,12 @@ import { CartItem, Coupon } from "../types";
 import { Product } from "./features/product/types";
 import Header from "./app/components/Header";
 import { useSearch } from "./shared/hooks/useSearch";
-import { formatPrice } from "./shared/libs/price";
-import {
-  getProductStockStatus,
-  getRemainingStock,
-} from "./features/product/libs";
+import { getRemainingStock } from "./features/product/libs";
 import { AdminPage } from "./pages/AdminPage";
 import { CartPage } from "./pages/CartPage";
 import { useLocalStorageObject } from "./shared/hooks/useLocalStorage";
 import { useState, useCallback, useEffect } from "react";
-import CloseIcon from "./assets/icons/CloseIcon.svg?react";
+import { Notification } from "./features/notification/components/Notification";
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -130,34 +126,12 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {notifications.length > 0 && (
-        <div className="fixed top-20 right-4 z-50 space-y-2 max-w-sm">
-          {notifications.map((notif) => (
-            <div
-              key={notif.id}
-              className={`p-4 rounded-md shadow-md text-white flex justify-between items-center ${
-                notif.type === "error"
-                  ? "bg-red-600"
-                  : notif.type === "warning"
-                  ? "bg-yellow-600"
-                  : "bg-green-600"
-              }`}
-            >
-              <span className="mr-2">{notif.message}</span>
-              <button
-                onClick={() =>
-                  setNotifications((prev) =>
-                    prev.filter((n) => n.id !== notif.id)
-                  )
-                }
-                className="text-white hover:text-gray-200"
-              >
-                <CloseIcon className="w-4 h-4" />
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
+      <Notification
+        notifications={notifications}
+        onRemoveNotification={(id) =>
+          setNotifications((prev) => prev.filter((n) => n.id !== id))
+        }
+      />
       <Header
         isAdmin={isAdmin}
         onAdminToggle={() => setIsAdmin((prev) => !prev)}
