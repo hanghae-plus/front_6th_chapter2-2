@@ -16,6 +16,7 @@ export interface CartItem {
   quantity: number;
 }
 
+// TODO: 나중에 이 타입 다 entity로 가져가거나 해야함
 export interface Coupon {
   name: string;
   code: string;
