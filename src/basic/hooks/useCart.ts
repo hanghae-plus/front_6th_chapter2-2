@@ -6,6 +6,7 @@ import * as productModel from "../models/product";
 import * as couponModel from "../models/coupon";
 import { INITIAL_COUPONS } from "../constants";
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
+import { validateCartStock } from "../utils/validators";
 
 // 장바구니 + 쿠폰 통합 관리 훅
 export function useCart(
@@ -18,7 +19,10 @@ export function useCart(
   const [cart, setCart] = useLocalStorage<CartItem[]>("cart", []);
 
   // ========== 쿠폰 상태 ==========
-  const [coupons, setCoupons] = useLocalStorage<Coupon[]>("coupons", INITIAL_COUPONS);
+  const [coupons, setCoupons] = useLocalStorage<Coupon[]>(
+    "coupons",
+    INITIAL_COUPONS
+  );
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
@@ -38,26 +42,27 @@ export function useCart(
   // ========== 장바구니 비즈니스 로직 ==========
   const addToCart = useCallback(
     (product: Product) => {
-      // 1. 재고 확인
+      // 1. 남은 재고 확인
       const remainingStock = productModel.getRemainingStock(product, cart);
       if (remainingStock <= 0) {
         addNotification?.("재고가 부족합니다!", "error");
         return;
       }
 
-      // 2. 수량 초과 확인
+      // 2. 장바구니 수량 + 1로 재고 검증
       const existingItem = cart.find((item) => item.product.id === product.id);
       const newQuantity = (existingItem?.quantity || 0) + 1;
-
-      if (newQuantity > product.stock) {
-        addNotification?.(`재고는 ${product.stock}개까지만 있습니다.`, "error");
+      
+      const validation = validateCartStock(product, newQuantity);
+      if (!validation.isValid) {
+        addNotification?.(validation.errorMessage!, "error");
         return;
       }
 
-      // 3. 상태 변경
+      // 상태 변경
       setCart((prevCart) => cartModel.addItemToCart(prevCart, product));
 
-      // 4. 성공 알림
+      // 성공 알림
       addNotification?.("장바구니에 담았습니다", "success");
     },
     [cart, addNotification]
@@ -77,9 +82,10 @@ export function useCart(
       const product = products?.find((p) => p.id === productId);
       if (!product) return;
 
-      const maxStock = product.stock;
-      if (newQuantity > maxStock) {
-        addNotification?.(`재고는 ${maxStock}개까지만 있습니다.`, "error");
+      // 재고 검증
+      const validation = validateCartStock(product, newQuantity);
+      if (!validation.isValid) {
+        addNotification?.(validation.errorMessage!, "error");
         return;
       }
 
@@ -133,7 +139,7 @@ export function useCart(
 
       // models/index의 조합 함수 사용
       const result = composedModels.applyCouponToCart(cart, coupon);
-      
+
       if (!result.success) {
         addNotification?.(result.reason!, "error");
         return;
