@@ -1,5 +1,5 @@
 import CloseIcon from "../../../assets/icons/CloseIcon.svg?react";
-import { NotificationType, type Notification } from "../types";
+import { NotificationVariant, type Notification } from "../types";
 
 interface NotificationItemProps extends Notification {
   onRemove: (id: string) => void;
@@ -12,15 +12,15 @@ export interface NotificationConfig {
 }
 
 export const notificationConfigMap: Record<string, NotificationConfig> = {
-  [NotificationType.ERROR]: {
+  [NotificationVariant.ERROR]: {
     bgColor: "bg-red-600",
     textColor: "text-white",
   },
-  [NotificationType.WARNING]: {
+  [NotificationVariant.WARNING]: {
     bgColor: "bg-yellow-600",
     textColor: "text-white",
   },
-  [NotificationType.SUCCESS]: {
+  [NotificationVariant.SUCCESS]: {
     bgColor: "bg-green-600",
     textColor: "text-white",
   },
@@ -29,10 +29,10 @@ export const notificationConfigMap: Record<string, NotificationConfig> = {
 export function NotificationItem({
   id,
   message,
-  type,
+  variant,
   onRemove,
 }: NotificationItemProps) {
-  const config = notificationConfigMap[type];
+  const config = notificationConfigMap[variant];
 
   return (
     <div

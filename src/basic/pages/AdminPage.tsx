@@ -6,6 +6,7 @@ import CloseIcon from "../assets/icons/CloseIcon.svg?react";
 import TrashIcon from "../assets/icons/TrashIcon.svg?react";
 import PlusIcon from "../assets/icons/PlusIcon.svg?react";
 import { getProductStockStatus } from "../features/product/libs";
+import { NotificationVariant } from "../features/notification/types";
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -17,10 +18,7 @@ interface AdminPageProps {
   setProducts: (products: ProductWithUI[]) => void;
   coupons: Coupon[];
   setCoupons: (coupons: Coupon[]) => void;
-  addNotification: (
-    message: string,
-    type?: "error" | "success" | "warning"
-  ) => void;
+  addNotification: (message: string, type?: NotificationVariant) => void;
   getProductRemainingStock: (product: Product) => number;
 }
 
@@ -67,7 +65,7 @@ export function AdminPage({
         id: `p${Date.now()}`,
       };
       setProducts([...products, product]);
-      addNotification("상품이 추가되었습니다.", "success");
+      addNotification("상품이 추가되었습니다.", NotificationVariant.SUCCESS);
     },
     [products, setProducts, addNotification]
   );
@@ -79,7 +77,7 @@ export function AdminPage({
           product.id === productId ? { ...product, ...updates } : product
         )
       );
-      addNotification("상품이 수정되었습니다.", "success");
+      addNotification("상품이 수정되었습니다.", NotificationVariant.SUCCESS);
     },
     [products, setProducts, addNotification]
   );
@@ -87,7 +85,7 @@ export function AdminPage({
   const deleteProduct = useCallback(
     (productId: string) => {
       setProducts(products.filter((p) => p.id !== productId));
-      addNotification("상품이 삭제되었습니다.", "success");
+      addNotification("상품이 삭제되었습니다.", NotificationVariant.SUCCESS);
     },
     [products, setProducts, addNotification]
   );
@@ -96,11 +94,14 @@ export function AdminPage({
     (newCoupon: Coupon) => {
       const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
       if (existingCoupon) {
-        addNotification("이미 존재하는 쿠폰 코드입니다.", "error");
+        addNotification(
+          "이미 존재하는 쿠폰 코드입니다.",
+          NotificationVariant.ERROR
+        );
         return;
       }
       setCoupons([...coupons, newCoupon]);
-      addNotification("쿠폰이 추가되었습니다.", "success");
+      addNotification("쿠폰이 추가되었습니다.", NotificationVariant.SUCCESS);
     },
     [coupons, setCoupons, addNotification]
   );
@@ -108,7 +109,7 @@ export function AdminPage({
   const deleteCoupon = useCallback(
     (couponCode: string) => {
       setCoupons(coupons.filter((c) => c.code !== couponCode));
-      addNotification("쿠폰이 삭제되었습니다.", "success");
+      addNotification("쿠폰이 삭제되었습니다.", NotificationVariant.SUCCESS);
     },
     [coupons, setCoupons, addNotification]
   );
@@ -342,7 +343,10 @@ export function AdminPage({
                         if (value === "") {
                           setProductForm({ ...productForm, price: 0 });
                         } else if (parseInt(value) < 0) {
-                          addNotification("가격은 0보다 커야 합니다", "error");
+                          addNotification(
+                            "가격은 0보다 커야 합니다",
+                            NotificationVariant.ERROR
+                          );
                           setProductForm({ ...productForm, price: 0 });
                         }
                       }}
@@ -372,12 +376,15 @@ export function AdminPage({
                         if (value === "") {
                           setProductForm({ ...productForm, stock: 0 });
                         } else if (parseInt(value) < 0) {
-                          addNotification("재고는 0보다 커야 합니다", "error");
+                          addNotification(
+                            "재고는 0보다 커야 합니다",
+                            NotificationVariant.ERROR
+                          );
                           setProductForm({ ...productForm, stock: 0 });
                         } else if (parseInt(value) > 9999) {
                           addNotification(
                             "재고는 9999개를 초과할 수 없습니다",
-                            "error"
+                            NotificationVariant.ERROR
                           );
                           setProductForm({ ...productForm, stock: 9999 });
                         }
@@ -637,7 +644,7 @@ export function AdminPage({
                             if (value > 100) {
                               addNotification(
                                 "할인율은 100%를 초과할 수 없습니다",
-                                "error"
+                                NotificationVariant.ERROR
                               );
                               setCouponForm({
                                 ...couponForm,
@@ -653,7 +660,7 @@ export function AdminPage({
                             if (value > 100000) {
                               addNotification(
                                 "할인 금액은 100,000원을 초과할 수 없습니다",
-                                "error"
+                                NotificationVariant.ERROR
                               );
                               setCouponForm({
                                 ...couponForm,

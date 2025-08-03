@@ -13,6 +13,7 @@ import {
 import { useCallback } from "react";
 import { CartItem } from "../features/cart/components/CartItem";
 import CartBagIcon from "../assets/icons/CartBagIcon.svg?react";
+import { NotificationVariant } from "../features/notification/types";
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -28,10 +29,7 @@ interface CartPageProps {
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
   setSelectedCoupon: (coupon: Coupon | null) => void;
-  addNotification: (
-    message: string,
-    type?: "error" | "success" | "warning"
-  ) => void;
+  addNotification: (message: string, type?: NotificationVariant) => void;
 }
 
 export function CartPage({
@@ -125,7 +123,7 @@ export function CartPage({
     (product: ProductWithUI) => {
       const remainingStock = getProductRemainingStock(product);
       if (remainingStock <= 0) {
-        addNotification("재고가 부족합니다!", "error");
+        addNotification("재고가 부족합니다!", NotificationVariant.ERROR);
         return;
       }
 
@@ -137,7 +135,7 @@ export function CartPage({
               if (newQuantity > product.stock) {
                 addNotification(
                   `재고는 ${product.stock}개까지만 있습니다.`,
-                  "error"
+                  NotificationVariant.ERROR
                 );
                 return item;
               }
@@ -152,7 +150,7 @@ export function CartPage({
           )
       );
 
-      addNotification("장바구니에 담았습니다", "success");
+      addNotification("장바구니에 담았습니다", NotificationVariant.SUCCESS);
     },
     [cart, setCart, addNotification]
   );
@@ -176,7 +174,10 @@ export function CartPage({
 
       const maxStock = product.stock;
       if (newQuantity > maxStock) {
-        addNotification(`재고는 ${maxStock}개까지만 있습니다.`, "error");
+        addNotification(
+          `재고는 ${maxStock}개까지만 있습니다.`,
+          NotificationVariant.ERROR
+        );
         return;
       }
 
@@ -198,13 +199,13 @@ export function CartPage({
       if (currentTotal < 10000 && coupon.discountType === "percentage") {
         addNotification(
           "percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.",
-          "error"
+          NotificationVariant.ERROR
         );
         return;
       }
 
       setSelectedCoupon(coupon);
-      addNotification("쿠폰이 적용되었습니다.", "success");
+      addNotification("쿠폰이 적용되었습니다.", NotificationVariant.SUCCESS);
     },
     [addNotification, setSelectedCoupon]
   );
@@ -213,7 +214,7 @@ export function CartPage({
     const orderNumber = `ORD-${Date.now()}`;
     addNotification(
       `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
-      "success"
+      NotificationVariant.SUCCESS
     );
     setCart([]);
     setSelectedCoupon(null);

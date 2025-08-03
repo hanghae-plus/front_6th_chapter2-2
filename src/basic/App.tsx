@@ -8,16 +8,14 @@ import { CartPage } from "./pages/CartPage";
 import { useLocalStorageObject } from "./shared/hooks/useLocalStorage";
 import { useState, useCallback, useEffect } from "react";
 import { Notification } from "./features/notification/components/Notification";
+import {
+  NotificationVariant,
+  type Notification as NotificationType,
+} from "./features/notification/types";
 
 interface ProductWithUI extends Product {
   description?: string;
   isRecommended?: boolean;
-}
-
-interface Notification {
-  id: string;
-  message: string;
-  type: "error" | "success" | "warning";
 }
 
 // 초기 데이터
@@ -84,7 +82,7 @@ const App = () => {
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifications, setNotifications] = useState<NotificationType[]>([]);
 
   const getProductRemainingStock = (product: Product): number => {
     const cartItem = cart.find((item) => item.product.id === product.id);
@@ -93,9 +91,12 @@ const App = () => {
   };
 
   const addNotification = useCallback(
-    (message: string, type: "error" | "success" | "warning" = "success") => {
+    (
+      message: string,
+      variant: NotificationVariant = NotificationVariant.SUCCESS
+    ) => {
       const id = Date.now().toString();
-      setNotifications((prev) => [...prev, { id, message, type }]);
+      setNotifications((prev) => [...prev, { id, message, variant }]);
 
       setTimeout(() => {
         setNotifications((prev) => prev.filter((n) => n.id !== id));

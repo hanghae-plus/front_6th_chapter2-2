@@ -19,7 +19,7 @@ export function Notification({
           key={notification.id}
           id={notification.id}
           message={notification.message}
-          type={notification.type}
+          variant={notification.variant}
           onRemove={onRemoveNotification}
         />
       ))}

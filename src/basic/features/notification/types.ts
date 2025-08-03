@@ -1,10 +1,10 @@
 export interface Notification {
   id: string;
   message: string;
-  type: NotificationType;
+  variant: NotificationVariant;
 }
 
-export enum NotificationType {
+export enum NotificationVariant {
   ERROR = "error",
   SUCCESS = "success",
   WARNING = "warning",
