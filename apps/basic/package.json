@@ -23,6 +23,7 @@
     "react": "catalog:react",
     "react-dom": "catalog:react",
     "react-router-dom": "catalog:react",
+    "uuid": "^11.1.0",
     "zod": "^4.0.14"
   },
   "devDependencies": {

@@ -10,8 +10,9 @@ export type CartItem = z.infer<typeof cartItemSchema>;
 
 const getMaxApplicableDiscount = (
   item: CartItem,
-  cartItems: CartItem[]
+  cartItems: CartItem[] | null | undefined
 ): number => {
+  if (!cartItems || !Array.isArray(cartItems)) return 0;
   const baseDiscount = item.product.discounts.reduce(
     (maxDiscount, discount) => {
       return item.quantity >= discount.quantity && discount.rate > maxDiscount
@@ -31,8 +32,10 @@ const getMaxApplicableDiscount = (
 
 export const calculateItemTotal = (
   item: CartItem,
-  cartItems: CartItem[]
+  cartItems: CartItem[] | null | undefined
 ): number => {
+  if (!cartItems || !Array.isArray(cartItems))
+    return item.product.price * item.quantity;
   const { price } = item.product;
   const { quantity } = item;
   const discount = getMaxApplicableDiscount(item, cartItems);
@@ -42,22 +45,29 @@ export const calculateItemTotal = (
 
 export const getRemainingStock = (
   product: Product,
-  cartItems: CartItem[]
+  cartItems: CartItem[] | null | undefined
 ): number => {
+  if (!cartItems || !Array.isArray(cartItems)) return product.stock;
   const cartItem = cartItems.find(item => item.product.id === product.id);
   const remainingStock = product.stock - (cartItem?.quantity || 0);
 
   return remainingStock;
 };
 
-export const calculateSubtotal = (items: CartItem[]): number => {
+export const calculateSubtotal = (
+  items: CartItem[] | null | undefined
+): number => {
+  if (!items || !Array.isArray(items)) return 0;
   return items.reduce(
     (total, item) => total + item.product.price * item.quantity,
     0
   );
 };
 
-export const calculateItemDiscounts = (items: CartItem[]): number => {
+export const calculateItemDiscounts = (
+  items: CartItem[] | null | undefined
+): number => {
+  if (!items || !Array.isArray(items)) return 0;
   return items.reduce((total, item) => {
     const originalPrice = item.product.price * item.quantity;
     const discountedPrice = calculateItemTotal(item, items);

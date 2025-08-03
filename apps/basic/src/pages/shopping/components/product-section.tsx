@@ -4,7 +4,7 @@ import { ProductView } from '@/models/product';
 type Props = {
   products: ProductView[];
   filteredProducts: ProductView[];
-  debouncedSearchTerm: string;
+  searchTerm: string;
   formatPrice: (price: number, productId: string) => string;
   cart: CartItem[];
   addToCart: (product: ProductView) => void;
@@ -13,7 +13,7 @@ type Props = {
 export const ProductSection = ({
   products,
   filteredProducts,
-  debouncedSearchTerm,
+  searchTerm,
   formatPrice,
   cart,
   addToCart
@@ -27,12 +27,12 @@ export const ProductSection = ({
       {filteredProducts.length === 0 ? (
         <div className='text-center py-12'>
           <p className='text-gray-500'>
-            {`"${debouncedSearchTerm}"에 대한 검색 결과가 없습니다.`}
+            {`"${searchTerm}"에 대한 검색 결과가 없습니다.`}
           </p>
         </div>
       ) : (
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-          {products.map(product => {
+          {filteredProducts.map(product => {
             const remainingStock = getRemainingStock(product, cart);
 
             return (

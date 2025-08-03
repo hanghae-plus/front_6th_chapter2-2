@@ -5,21 +5,21 @@ import {
   useOrderService,
   useProductService
 } from '@/services';
-import { useCartStore, useCouponStore, useProductStore } from '@/store';
 import { useCallback, useMemo } from 'react';
 
 export const useShoppingPageViewModel = () => {
-  // Services
   const notificationService = useNotificationService();
-  const orderService = useOrderService();
-  const cartService = useCartService();
-  const productService = useProductService();
-  const couponService = useCouponService();
 
-  // Stores
-  const productStore = useProductStore();
-  const couponStore = useCouponStore();
-  const cartStore = useCartStore();
+  const productService = useProductService();
+  const couponService = useCouponService({
+    addNotification: notificationService.addNotification
+  });
+  const orderService = useOrderService({
+    addNotification: notificationService.addNotification
+  });
+  const cartService = useCartService({
+    addNotification: notificationService.addNotification
+  });
 
   // Computed values
   const cartTotals = useMemo(() => {
@@ -35,53 +35,56 @@ export const useShoppingPageViewModel = () => {
     if (result.resetCoupon) {
       couponService.resetSelectedCoupon();
     }
-  }, [orderService, couponService, cartService]);
+  }, [orderService.completeOrder, couponService, cartService]);
 
   const updateCartItemQuantity = useCallback(
     (productId: string, newQuantity: number) => {
-      cartService.updateQuantity(productId, newQuantity, productStore.products);
+      cartService.updateQuantity(
+        productId,
+        newQuantity,
+        productService.getProducts()
+      );
     },
-    [cartService, productStore.products]
+    [cartService.updateQuantity, productService.getProducts()]
   );
 
   const formatProductPrice = useCallback(
     (price: number, productId: string) => {
-      return productService.formatPrice(price, productId, cartStore.cart);
+      return productService.formatPrice(
+        price,
+        productId,
+        cartService.getCart()
+      );
     },
-    [productService, cartStore.cart]
+    [productService.formatPrice, cartService.getCart()]
   );
 
   const filterProductsBySearch = useCallback(
     (searchTerm: string) => {
-      return productService.filterProducts(productStore.products, searchTerm);
+      return productService.filterProducts(
+        productService.getProducts(),
+        searchTerm
+      );
     },
-    [productService, productStore.products]
+    [productService.filterProducts, productService.getProducts()]
   );
 
   return {
     // State
-    selectedCoupon: couponService.selectedCoupon,
-    notifications: notificationService.notifications,
     cartTotals,
+    cartItems: cartService.getCart(),
+    coupons: couponService.getCoupons(),
+    products: productService.getProducts(),
+    selectedCoupon: couponService.selectedCoupon,
 
     // Actions
     applyCoupon: couponService.applyCoupon,
     resetSelectedCoupon: couponService.resetSelectedCoupon,
-    removeNotification: notificationService.removeNotification,
-    addNotification: notificationService.addNotification,
     addToCart: cartService.addToCart,
     updateQuantity: updateCartItemQuantity,
-    completeOrder,
+    completeOrder: completeOrder,
     removeFromCart: cartService.removeFromCart,
     formatPrice: formatProductPrice,
-    filterProducts: filterProductsBySearch,
-
-    // Computed properties
-    calculateCartTotal: orderService.calculateCartTotal,
-
-    // Stores
-    productStore,
-    couponStore,
-    cartStore
+    filterProducts: filterProductsBySearch
   };
 };

@@ -1,10 +1,8 @@
 import { Coupon } from '@/models/coupon';
-import { useLocalStorage } from '@/shared/hooks';
-import { createStorage } from '@/utils';
+import { useLocalStorageObject } from '@/shared/hooks';
 
-const couponStorage = createStorage<Coupon[]>({
-  key: 'coupons',
-  value: [
+export const useCouponStore = () => {
+  const [coupons, setCoupons] = useLocalStorageObject<Coupon[]>('coupons', [
     {
       name: '5000원 할인',
       code: 'AMOUNT5000',
@@ -17,18 +15,14 @@ const couponStorage = createStorage<Coupon[]>({
       discountType: 'percentage',
       discountValue: 10
     }
-  ]
-});
-
-export const useCouponStore = () => {
-  const coupons = useLocalStorage(couponStorage) ?? [];
+  ]);
 
   const addCoupon = (coupon: Coupon) => {
-    couponStorage.set([...(couponStorage.get() ?? []), coupon]);
+    setCoupons(prev => [...(prev ?? []), coupon]);
   };
 
   const removeCouponByCode = (code: string) => {
-    couponStorage.set(couponStorage.get()?.filter(c => c.code !== code) ?? []);
+    setCoupons(prev => prev?.filter(c => c.code !== code) ?? []);
   };
 
   const hasCouponWithCode = (code: string) => {
