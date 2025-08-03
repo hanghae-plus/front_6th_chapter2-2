@@ -5,6 +5,11 @@ import {
   formatPriceAtAdmin,
   formatPercentage,
 } from "../../../utils/formatters";
+import {
+  MAX_STOCK_QUANTITY,
+  MAX_COUPON_AMOUNT,
+  MEDIUM_STOCK_THRESHOLD,
+} from "../../../constants/business";
 
 interface AdminPageProps {
   // 상품 관련
@@ -200,7 +205,7 @@ export function AdminPage({
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          product.stock > 10
+                          product.stock > MEDIUM_STOCK_THRESHOLD
                             ? "bg-green-100 text-green-800"
                             : product.stock > 0
                             ? "bg-yellow-100 text-yellow-800"
@@ -326,12 +331,15 @@ export function AdminPage({
                         } else if (parseInt(value) < 0) {
                           addNotification("재고는 0보다 커야 합니다", "error");
                           setProductForm({ ...productForm, stock: 0 });
-                        } else if (parseInt(value) > 9999) {
+                        } else if (parseInt(value) > MAX_STOCK_QUANTITY) {
                           addNotification(
-                            "재고는 9999개를 초과할 수 없습니다",
+                            `재고는 ${MAX_STOCK_QUANTITY}개를 초과할 수 없습니다`,
                             "error"
                           );
-                          setProductForm({ ...productForm, stock: 9999 });
+                          setProductForm({
+                            ...productForm,
+                            stock: MAX_STOCK_QUANTITY,
+                          });
                         }
                       }}
                       className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
@@ -381,7 +389,7 @@ export function AdminPage({
                           }}
                           className="w-16 px-2 py-1 border rounded"
                           min="0"
-                          max="100"
+                          max={100}
                           placeholder="%"
                         />
                         <span className="text-sm">% 할인</span>
@@ -626,7 +634,7 @@ export function AdminPage({
                           if (couponForm.discountType === "percentage") {
                             if (value > 100) {
                               addNotification(
-                                "할인율은 100%를 초과할 수 없습니다",
+                                `할인율은 ${100}%를 초과할 수 없습니다`,
                                 "error"
                               );
                               setCouponForm({
@@ -640,14 +648,14 @@ export function AdminPage({
                               });
                             }
                           } else {
-                            if (value > 100000) {
+                            if (value > MAX_COUPON_AMOUNT) {
                               addNotification(
-                                "할인 금액은 100,000원을 초과할 수 없습니다",
+                                `할인 금액은 ${MAX_COUPON_AMOUNT.toLocaleString()}원을 초과할 수 없습니다`,
                                 "error"
                               );
                               setCouponForm({
                                 ...couponForm,
-                                discountValue: 100000,
+                                discountValue: MAX_COUPON_AMOUNT,
                               });
                             } else if (value < 0) {
                               setCouponForm({

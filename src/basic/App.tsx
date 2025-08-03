@@ -6,14 +6,23 @@ import {
   Product,
   ProductWithUI,
 } from "./types";
-import initialProducts from "./data/initialProducts";
-import initialCoupons from "./data/inintialCoupons";
+import { INITIAL_PRODUCTS, INITIAL_COUPONS } from "./constants";
 import HeaderLayout from "./components/Header/HeaderLayout";
 import ShopHeaderContent from "./components/Header/ShopHeaderContent";
 import AdminHeaderContent from "./components/Header/AdminHeaderContent";
 import AdminPage from "./components/ui/AdminPage";
 import CartPage from "./components/ui/CartPage";
 import Toast from "./components/ui/Toast";
+import {
+  NOTIFICATION_DURATION,
+  SEARCH_DEBOUNCE_DELAY,
+} from "./constants/system";
+import {
+  BULK_PURCHASE_THRESHOLD,
+  BULK_PURCHASE_BONUS,
+  MAX_DISCOUNT_RATE,
+  MIN_ORDER_AMOUNT_FOR_PERCENTAGE_COUPON,
+} from "./constants/business";
 
 const App = () => {
   // ========== 📋 상태 관리 섹션 ==========
@@ -25,10 +34,10 @@ const App = () => {
       try {
         return JSON.parse(saved);
       } catch {
-        return initialProducts;
+        return INITIAL_PRODUCTS;
       }
     }
-    return initialProducts;
+    return INITIAL_PRODUCTS;
   });
 
   // 🛒 장바구니 상태 (localStorage에서 복원)
@@ -51,10 +60,10 @@ const App = () => {
       try {
         return JSON.parse(saved);
       } catch {
-        return initialCoupons;
+        return INITIAL_COUPONS;
       }
     }
-    return initialCoupons;
+    return INITIAL_COUPONS;
   });
 
   // 🎯 장바구니 관련 상태
@@ -78,9 +87,11 @@ const App = () => {
         : maxDiscount;
     }, 0);
 
-    const hasBulkPurchase = cart.some((cartItem) => cartItem.quantity >= 10);
+    const hasBulkPurchase = cart.some(
+      (cartItem) => cartItem.quantity >= BULK_PURCHASE_THRESHOLD
+    );
     if (hasBulkPurchase) {
-      return Math.min(baseDiscount + 0.05, 0.5); // 대량 구매 시 추가 5% 할인
+      return Math.min(baseDiscount + BULK_PURCHASE_BONUS, MAX_DISCOUNT_RATE); // 대량 구매 시 추가 할인
     }
 
     return baseDiscount;
@@ -145,7 +156,7 @@ const App = () => {
 
       setTimeout(() => {
         setNotifications((prev) => prev.filter((n) => n.id !== id));
-      }, 3000);
+      }, NOTIFICATION_DURATION);
     },
     []
   );
@@ -184,11 +195,11 @@ const App = () => {
     }
   }, [cart]);
 
-  // 검색어 디바운싱 (500ms 지연)
+  // 검색어 디바운싱
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
-    }, 500);
+    }, SEARCH_DEBOUNCE_DELAY);
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
@@ -278,9 +289,12 @@ const App = () => {
 
       const currentTotal = calculateCartTotal().totalAfterDiscount;
 
-      if (currentTotal < 10000 && coupon.discountType === "percentage") {
+      if (
+        currentTotal < MIN_ORDER_AMOUNT_FOR_PERCENTAGE_COUPON &&
+        coupon.discountType === "percentage"
+      ) {
         addNotification(
-          "percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.",
+          `percentage 쿠폰은 ${MIN_ORDER_AMOUNT_FOR_PERCENTAGE_COUPON.toLocaleString()}원 이상 구매 시 사용 가능합니다.`,
           "error"
         );
         return;

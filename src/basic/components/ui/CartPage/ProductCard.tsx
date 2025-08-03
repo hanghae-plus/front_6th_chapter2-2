@@ -1,5 +1,6 @@
 import { ProductWithUI } from "../../../types";
 import { formatPriceAtCart, formatPercentage } from "../../../utils/formatters";
+import { LOW_STOCK_THRESHOLD } from "../../../constants/business";
 
 interface ProductCardProps {
   product: ProductWithUI;
@@ -73,12 +74,12 @@ const ProductCard = ({
 
         {/* 재고 상태 */}
         <div className="mb-3">
-          {remainingStock <= 5 && remainingStock > 0 && (
+          {remainingStock <= LOW_STOCK_THRESHOLD && remainingStock > 0 && (
             <p className="text-xs text-red-600 font-medium">
               품절임박! {remainingStock}개 남음
             </p>
           )}
-          {remainingStock > 5 && (
+          {remainingStock > LOW_STOCK_THRESHOLD && (
             <p className="text-xs text-gray-500">재고 {remainingStock}개</p>
           )}
         </div>
