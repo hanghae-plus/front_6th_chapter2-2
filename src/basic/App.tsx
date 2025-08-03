@@ -1,8 +1,8 @@
 import { useState, useCallback, useEffect } from "react";
-import { Notification, ProductWithUI } from "./types";
+import { Notification } from "./types";
 import { useCart } from "./hooks/useCart";
 import { useCoupons } from "./hooks/useCoupons";
-import { INITIAL_PRODUCTS } from "./constants";
+import { useProducts } from "./hooks/useProducts";
 import HeaderLayout from "./components/Header/HeaderLayout";
 import ShopHeaderContent from "./components/Header/ShopHeaderContent";
 import AdminHeaderContent from "./components/Header/AdminHeaderContent";
@@ -47,21 +47,12 @@ const App = () => {
   const { coupons, selectedCoupon, addCoupon, removeCoupon, applyCoupon } =
     useCoupons(getTotals, addNotification);
 
+  // 📦 상품 관리 (useProducts 훅 사용)
+  const { products, addProduct, updateProduct, deleteProduct, getFilteredProducts } =
+    useProducts(addNotification);
+
   // 장바구니 총합 계산 (선택된 쿠폰 포함)
   const totals = getTotals(selectedCoupon);
-
-  // 📦 상품 상태 (localStorage에서 복원)
-  const [products, setProducts] = useState<ProductWithUI[]>(() => {
-    const saved = localStorage.getItem("products");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return INITIAL_PRODUCTS;
-      }
-    }
-    return INITIAL_PRODUCTS;
-  });
 
   // 🎛️ UI 상태들
   const [isAdmin, setIsAdmin] = useState(false); // 관리자 모드 여부
@@ -84,10 +75,6 @@ const App = () => {
     setTotalItemCount(count);
   }, [cart]);
 
-  // 상품 변경시 localStorage 저장
-  useEffect(() => {
-    localStorage.setItem("products", JSON.stringify(products));
-  }, [products]);
 
   // 검색어 디바운싱
   useEffect(() => {
@@ -97,55 +84,8 @@ const App = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  // ========== 🔧 관리자 기능들 ==========
-  // 새 상품 추가
-  const addProduct = useCallback(
-    (newProduct: Omit<ProductWithUI, "id">) => {
-      const product: ProductWithUI = {
-        ...newProduct,
-        id: `p${Date.now()}`,
-      };
-      setProducts((prev) => [...prev, product]);
-      addNotification("상품이 추가되었습니다.", "success");
-    },
-    [addNotification]
-  );
-
-  // 상품 정보 수정
-  const updateProduct = useCallback(
-    (productId: string, updates: Partial<ProductWithUI>) => {
-      setProducts((prev) =>
-        prev.map((product) =>
-          product.id === productId ? { ...product, ...updates } : product
-        )
-      );
-      addNotification("상품이 수정되었습니다.", "success");
-    },
-    [addNotification]
-  );
-
-  // 상품 삭제
-  const deleteProduct = useCallback(
-    (productId: string) => {
-      setProducts((prev) => prev.filter((p) => p.id !== productId));
-      addNotification("상품이 삭제되었습니다.", "success");
-    },
-    [addNotification]
-  );
-
   // 검색어로 필터링된 상품 목록
-  const filteredProducts = debouncedSearchTerm
-    ? products.filter(
-        (product) =>
-          product.name
-            .toLowerCase()
-            .includes(debouncedSearchTerm.toLowerCase()) ||
-          (product.description &&
-            product.description
-              .toLowerCase()
-              .includes(debouncedSearchTerm.toLowerCase()))
-      )
-    : products;
+  const filteredProducts = getFilteredProducts(debouncedSearchTerm);
 
   // ========== 🎨 렌더링 섹션 ==========
   return (

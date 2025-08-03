@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { CartItem, Product } from "../types";
 import * as cartModel from "../models/cart";
 import * as discountModel from "../models/discount";
+import * as productModel from "../models/product";
 
 // 최종: 모든 장바구니 비즈니스 로직을 포함한 완전한 훅
 export function useCart(
@@ -35,7 +36,7 @@ export function useCart(
   }, [cart]);
 
   const getRemainingStock = useMemo(() => {
-    return (product: Product) => cartModel.getRemainingStock(product, cart);
+    return (product: Product) => productModel.getRemainingStock(product, cart);
   }, [cart]);
 
   const calculateItemTotal = useMemo(() => {
@@ -46,7 +47,7 @@ export function useCart(
   const addToCart = useCallback(
     (product: Product) => {
       // 1. 재고 확인
-      const remainingStock = cartModel.getRemainingStock(product, cart);
+      const remainingStock = productModel.getRemainingStock(product, cart);
       if (remainingStock <= 0) {
         addNotification?.("재고가 부족합니다!", "error");
         return;
