@@ -2,13 +2,9 @@
 
 import { CartItem, Coupon } from "../types";
 import * as discount from "./discount";
-import * as coupon from "./coupon";
 
 // 개별 아이템의 할인 적용 후 총액 계산 (discount + product 조합)
-export function calculateItemTotal(
-  item: CartItem,
-  cart: CartItem[]
-): number {
+export function calculateItemTotal(item: CartItem, cart: CartItem[]): number {
   const { price } = item.product;
   const { quantity } = item;
   const discountRate = discount.getMaxApplicableDiscount(item, cart);
@@ -53,30 +49,3 @@ export function calculateCartTotal(
   };
 }
 
-// 장바구니에 쿠폰 적용 (cart + coupon 조합)
-export function applyCouponToCart(
-  cartItems: CartItem[],
-  couponToApply: Coupon
-): {
-  success: boolean;
-  reason?: string;
-  selectedCoupon?: Coupon;
-} {
-  // 현재 장바구니 총액 계산 (쿠폰 없이)
-  const cartTotal = calculateCartTotal(cartItems, null);
-  
-  // 쿠폰 사용 가능 여부 검증
-  const validation = coupon.validateCouponUsage(couponToApply, cartTotal.totalAfterDiscount);
-  
-  if (!validation.canUse) {
-    return { 
-      success: false, 
-      reason: validation.reason 
-    };
-  }
-  
-  return { 
-    success: true, 
-    selectedCoupon: couponToApply 
-  };
-}

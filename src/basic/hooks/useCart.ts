@@ -6,7 +6,7 @@ import * as productModel from "../models/product";
 import * as couponModel from "../models/coupon";
 import { INITIAL_COUPONS } from "../constants";
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
-import { validateCartStock } from "../utils/validators";
+import { validateCartStock, validateCouponAvailable, validateCouponCode } from "../utils/validators";
 
 // 장바구니 + 쿠폰 통합 관리 훅
 export function useCart(
@@ -42,18 +42,11 @@ export function useCart(
   // ========== 장바구니 비즈니스 로직 ==========
   const addToCart = useCallback(
     (product: Product) => {
-      // 1. 남은 재고 확인
-      const remainingStock = productModel.getRemainingStock(product, cart);
-      if (remainingStock <= 0) {
-        addNotification?.("재고가 부족합니다!", "error");
-        return;
-      }
-
-      // 2. 장바구니 수량 + 1로 재고 검증
+      // 장바구니 수량 + 1로 재고 검증
       const existingItem = cart.find((item) => item.product.id === product.id);
       const newQuantity = (existingItem?.quantity || 0) + 1;
       
-      const validation = validateCartStock(product, newQuantity);
+      const validation = validateCartStock(product, newQuantity, cart);
       if (!validation.isValid) {
         addNotification?.(validation.errorMessage!, "error");
         return;
@@ -83,7 +76,7 @@ export function useCart(
       if (!product) return;
 
       // 재고 검증
-      const validation = validateCartStock(product, newQuantity);
+      const validation = validateCartStock(product, newQuantity, cart);
       if (!validation.isValid) {
         addNotification?.(validation.errorMessage!, "error");
         return;
@@ -109,8 +102,9 @@ export function useCart(
   // ========== 쿠폰 비즈니스 로직 ==========
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {
-      if (couponModel.checkDuplicateCoupon(coupons, newCoupon.code)) {
-        addNotification?.("이미 존재하는 쿠폰 코드입니다.", "error");
+      const validation = validateCouponCode(coupons, newCoupon.code);
+      if (!validation.isValid) {
+        addNotification?.(validation.errorMessage!, "error");
         return;
       }
       setCoupons((prev) => couponModel.addCouponToList(prev, newCoupon));
@@ -137,15 +131,16 @@ export function useCart(
         return;
       }
 
-      // models/index의 조합 함수 사용
-      const result = composedModels.applyCouponToCart(cart, coupon);
-
-      if (!result.success) {
-        addNotification?.(result.reason!, "error");
+      // 쿠폰 검증
+      const cartTotal = composedModels.calculateCartTotal(cart, null);
+      const validation = validateCouponAvailable(coupon, cartTotal.totalAfterDiscount);
+      
+      if (!validation.isValid) {
+        addNotification?.(validation.errorMessage!, "error");
         return;
       }
 
-      setSelectedCoupon(result.selectedCoupon!);
+      setSelectedCoupon(coupon);
       addNotification?.("쿠폰이 적용되었습니다.", "success");
     },
     [cart, addNotification]
