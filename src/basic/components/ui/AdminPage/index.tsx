@@ -10,6 +10,12 @@ import {
   MAX_COUPON_AMOUNT,
   MEDIUM_STOCK_THRESHOLD,
 } from "../../../constants/business";
+import {
+  validateAdminPrice,
+  validateAdminStock,
+  validateDiscountRate,
+  validateDiscountAmount,
+} from "../../../utils/validators";
 
 interface AdminPageProps {
   // 상품 관련
@@ -298,9 +304,13 @@ export function AdminPage({
                         const value = e.target.value;
                         if (value === "") {
                           setProductForm({ ...productForm, price: 0 });
-                        } else if (parseInt(value) < 0) {
-                          addNotification("가격은 0보다 커야 합니다", "error");
-                          setProductForm({ ...productForm, price: 0 });
+                        } else {
+                          const price = parseInt(value);
+                          const validation = validateAdminPrice(price);
+                          if (validation.errorMessage) {
+                            addNotification(validation.errorMessage, "error");
+                            setProductForm({ ...productForm, price: 0 });
+                          }
                         }
                       }}
                       className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
@@ -328,18 +338,20 @@ export function AdminPage({
                         const value = e.target.value;
                         if (value === "") {
                           setProductForm({ ...productForm, stock: 0 });
-                        } else if (parseInt(value) < 0) {
-                          addNotification("재고는 0보다 커야 합니다", "error");
-                          setProductForm({ ...productForm, stock: 0 });
-                        } else if (parseInt(value) > MAX_STOCK_QUANTITY) {
-                          addNotification(
-                            `재고는 ${MAX_STOCK_QUANTITY}개를 초과할 수 없습니다`,
-                            "error"
-                          );
-                          setProductForm({
-                            ...productForm,
-                            stock: MAX_STOCK_QUANTITY,
-                          });
+                        } else {
+                          const stock = parseInt(value);
+                          const validation = validateAdminStock(stock);
+                          if (validation.errorMessage) {
+                            addNotification(validation.errorMessage, "error");
+                            if (stock < 0) {
+                              setProductForm({ ...productForm, stock: 0 });
+                            } else {
+                              setProductForm({
+                                ...productForm,
+                                stock: MAX_STOCK_QUANTITY,
+                              });
+                            }
+                          }
                         }
                       }}
                       className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
@@ -632,11 +644,9 @@ export function AdminPage({
                         onBlur={(e) => {
                           const value = parseInt(e.target.value) || 0;
                           if (couponForm.discountType === "percentage") {
-                            if (value > 100) {
-                              addNotification(
-                                `할인율은 ${100}%를 초과할 수 없습니다`,
-                                "error"
-                              );
+                            const validation = validateDiscountRate(value);
+                            if (validation.errorMessage) {
+                              addNotification(validation.errorMessage, "error");
                               setCouponForm({
                                 ...couponForm,
                                 discountValue: 100,
@@ -648,11 +658,9 @@ export function AdminPage({
                               });
                             }
                           } else {
-                            if (value > MAX_COUPON_AMOUNT) {
-                              addNotification(
-                                `할인 금액은 ${MAX_COUPON_AMOUNT.toLocaleString()}원을 초과할 수 없습니다`,
-                                "error"
-                              );
+                            const validation = validateDiscountAmount(value);
+                            if (validation.errorMessage) {
+                              addNotification(validation.errorMessage, "error");
                               setCouponForm({
                                 ...couponForm,
                                 discountValue: MAX_COUPON_AMOUNT,

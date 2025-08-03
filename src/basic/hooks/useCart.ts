@@ -47,8 +47,8 @@ export function useCart(
       const newQuantity = (existingItem?.quantity || 0) + 1;
       
       const validation = validateCartStock(product, newQuantity, cart);
-      if (!validation.isValid) {
-        addNotification?.(validation.errorMessage!, "error");
+      if (validation.errorMessage) {
+        addNotification?.(validation.errorMessage, "error");
         return;
       }
 
@@ -77,8 +77,8 @@ export function useCart(
 
       // 재고 검증
       const validation = validateCartStock(product, newQuantity, cart);
-      if (!validation.isValid) {
-        addNotification?.(validation.errorMessage!, "error");
+      if (validation.errorMessage) {
+        addNotification?.(validation.errorMessage, "error");
         return;
       }
 
@@ -103,8 +103,8 @@ export function useCart(
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {
       const validation = validateCouponCode(coupons, newCoupon.code);
-      if (!validation.isValid) {
-        addNotification?.(validation.errorMessage!, "error");
+      if (validation.errorMessage) {
+        addNotification?.(validation.errorMessage, "error");
         return;
       }
       setCoupons((prev) => couponModel.addCouponToList(prev, newCoupon));
@@ -135,8 +135,8 @@ export function useCart(
       const cartTotal = composedModels.calculateCartTotal(cart, null);
       const validation = validateCouponAvailable(coupon, cartTotal.totalAfterDiscount);
       
-      if (!validation.isValid) {
-        addNotification?.(validation.errorMessage!, "error");
+      if (validation.errorMessage) {
+        addNotification?.(validation.errorMessage, "error");
         return;
       }
 
