@@ -1,9 +1,8 @@
 import { useState, useCallback, useEffect } from "react";
-import { Coupon, Notification, ProductWithUI } from "./types";
+import { Notification, ProductWithUI } from "./types";
 import { useCart } from "./hooks/useCart";
 import { useCoupons } from "./hooks/useCoupons";
 import { INITIAL_PRODUCTS } from "./constants";
-import * as couponModel from "./models/coupon";
 import HeaderLayout from "./components/Header/HeaderLayout";
 import ShopHeaderContent from "./components/Header/ShopHeaderContent";
 import AdminHeaderContent from "./components/Header/AdminHeaderContent";
@@ -32,19 +31,24 @@ const App = () => {
     []
   );
 
-  // 🛒 장바구니 관리 (useCart 훅 사용 - 최종: 완전한 비즈니스 로직 포함)
+  // 🛒 장바구니 관리 (useCart 훅 사용)
   const {
     cart,
-    selectedCoupon,
-    totals,
+    getTotals,
     getRemainingStock,
     calculateItemTotal,
     addToCart,
     removeFromCart,
     updateQuantity,
-    applyCoupon,
     completeOrder,
   } = useCart(addNotification);
+
+  // 🎫 쿠폰 관리 (useCoupons 훅 사용)
+  const { coupons, selectedCoupon, addCoupon, removeCoupon, applyCoupon } =
+    useCoupons(getTotals, addNotification);
+
+  // 장바구니 총합 계산 (선택된 쿠폰 포함)
+  const totals = getTotals(selectedCoupon);
 
   // 📦 상품 상태 (localStorage에서 복원)
   const [products, setProducts] = useState<ProductWithUI[]>(() => {
@@ -58,9 +62,6 @@ const App = () => {
     }
     return INITIAL_PRODUCTS;
   });
-
-  // 🎫 쿠폰 관리 (useCoupons 훅 사용)
-  const { coupons, setCoupons } = useCoupons();
 
   // 🎛️ UI 상태들
   const [isAdmin, setIsAdmin] = useState(false); // 관리자 모드 여부
@@ -87,7 +88,6 @@ const App = () => {
   useEffect(() => {
     localStorage.setItem("products", JSON.stringify(products));
   }, [products]);
-
 
   // 검색어 디바운싱
   useEffect(() => {
@@ -131,31 +131,6 @@ const App = () => {
       addNotification("상품이 삭제되었습니다.", "success");
     },
     [addNotification]
-  );
-
-  // 새 쿠폰 추가 (models 사용)
-  const addCoupon = useCallback(
-    (newCoupon: Coupon) => {
-      if (couponModel.checkDuplicateCoupon(coupons, newCoupon.code)) {
-        addNotification("이미 존재하는 쿠폰 코드입니다.", "error");
-        return;
-      }
-      setCoupons((prev) => couponModel.addCouponToList(prev, newCoupon));
-      addNotification("쿠폰이 추가되었습니다.", "success");
-    },
-    [coupons, addNotification]
-  );
-
-  // 쿠폰 삭제 (models 사용)
-  const deleteCoupon = useCallback(
-    (couponCode: string) => {
-      setCoupons((prev) => couponModel.removeCouponFromList(prev, couponCode));
-      if (selectedCoupon?.code === couponCode) {
-        applyCoupon(null);
-      }
-      addNotification("쿠폰이 삭제되었습니다.", "success");
-    },
-    [selectedCoupon, addNotification, applyCoupon]
   );
 
   // 검색어로 필터링된 상품 목록
@@ -202,7 +177,7 @@ const App = () => {
             getRemainingStock={getRemainingStock}
             coupons={coupons}
             onAddCoupon={addCoupon}
-            onDeleteCoupon={deleteCoupon}
+            onDeleteCoupon={removeCoupon}
             addNotification={addNotification}
           />
         ) : (

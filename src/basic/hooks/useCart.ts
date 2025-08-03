@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { CartItem, Coupon, Product } from "../types";
+import { CartItem, Product } from "../types";
 import * as cartModel from "../models/cart";
-import { validateCouponUsage } from "../models/coupon";
 
 // 최종: 모든 장바구니 비즈니스 로직을 포함한 완전한 훅
 export function useCart(
@@ -23,18 +22,16 @@ export function useCart(
     return [];
   });
 
-  // 선택된 쿠폰 상태
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
   // localStorage 동기화
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
-  // 2단계: 계산 함수들 (models 활용, useMemo로 최적화)
-  const totals = useMemo(() => {
-    return cartModel.calculateCartTotal(cart, selectedCoupon);
-  }, [cart, selectedCoupon]);
+  // 계산 함수들 (models 활용, useMemo로 최적화)
+  const getTotals = useMemo(() => {
+    return (selectedCoupon?: any) => cartModel.calculateCartTotal(cart, selectedCoupon);
+  }, [cart]);
 
   const getRemainingStock = useMemo(() => {
     return (product: Product) => cartModel.getRemainingStock(product, cart);
@@ -99,29 +96,6 @@ export function useCart(
     [removeFromCart, addNotification]
   );
 
-  const applyCoupon = useCallback(
-    (coupon: Coupon | null) => {
-      if (!coupon) {
-        setSelectedCoupon(null);
-        return;
-      }
-
-      const currentTotal = cartModel.calculateCartTotal(
-        cart,
-        selectedCoupon
-      ).totalAfterDiscount;
-
-      const validation = validateCouponUsage(coupon, currentTotal);
-      if (!validation.canUse) {
-        addNotification?.(validation.reason!, "error");
-        return;
-      }
-
-      setSelectedCoupon(coupon);
-      addNotification?.("쿠폰이 적용되었습니다.", "success");
-    },
-    [cart, selectedCoupon, addNotification]
-  );
 
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
@@ -130,24 +104,21 @@ export function useCart(
       "success"
     );
     setCart([]);
-    setSelectedCoupon(null);
   }, [addNotification]);
 
   return {
     // 상태
     cart,
-    selectedCoupon,
 
     // 계산된 값들
-    totals,
+    getTotals,
     getRemainingStock,
     calculateItemTotal,
 
-    // 완전한 비즈니스 로직을 포함한 함수들
+    // 장바구니 비즈니스 로직
     addToCart,
     removeFromCart,
     updateQuantity,
-    applyCoupon,
     completeOrder,
   };
 }
