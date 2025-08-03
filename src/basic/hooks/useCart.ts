@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { CartItem, Product } from "../types";
 import * as cartModel from "../models/cart";
+import * as discountModel from "../models/discount";
 
 // 최종: 모든 장바구니 비즈니스 로직을 포함한 완전한 훅
 export function useCart(
@@ -38,7 +39,7 @@ export function useCart(
   }, [cart]);
 
   const calculateItemTotal = useMemo(() => {
-    return (item: CartItem) => cartModel.calculateItemTotal(item, cart);
+    return (item: CartItem) => discountModel.calculateItemTotal(item, cart);
   }, [cart]);
 
   // 최종: 모든 비즈니스 로직을 포함한 완전한 함수들

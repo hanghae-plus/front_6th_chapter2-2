@@ -1,45 +1,6 @@
 import { CartItem, Product, Coupon } from "../types";
-import {
-  BULK_PURCHASE_THRESHOLD,
-  BULK_PURCHASE_BONUS,
-  MAX_DISCOUNT_RATE,
-} from "../constants/business";
+import * as discount from "./discount";
 
-// 개별 아이템에 적용 가능한 최대 할인율 계산
-export const getMaxApplicableDiscount = (
-  item: CartItem,
-  cart: CartItem[]
-): number => {
-  const { discounts } = item.product;
-  const { quantity } = item;
-
-  const baseDiscount = discounts.reduce((maxDiscount, discount) => {
-    return quantity >= discount.quantity && discount.rate > maxDiscount
-      ? discount.rate
-      : maxDiscount;
-  }, 0);
-
-  const hasBulkPurchase = cart.some(
-    (cartItem) => cartItem.quantity >= BULK_PURCHASE_THRESHOLD
-  );
-  if (hasBulkPurchase) {
-    return Math.min(baseDiscount + BULK_PURCHASE_BONUS, MAX_DISCOUNT_RATE);
-  }
-
-  return baseDiscount;
-};
-
-// 개별 아이템의 할인 적용 후 총액 계산
-export const calculateItemTotal = (
-  item: CartItem,
-  cart: CartItem[]
-): number => {
-  const { price } = item.product;
-  const { quantity } = item;
-  const discount = getMaxApplicableDiscount(item, cart);
-
-  return Math.round(price * quantity * (1 - discount));
-};
 
 // 장바구니 전체 총액 계산 (할인 전/후 + 쿠폰 적용)
 export const calculateCartTotal = (
@@ -55,7 +16,7 @@ export const calculateCartTotal = (
   cart.forEach((item) => {
     const itemPrice = item.product.price * item.quantity;
     totalBeforeDiscount += itemPrice;
-    totalAfterDiscount += calculateItemTotal(item, cart);
+    totalAfterDiscount += discount.calculateItemTotal(item, cart);
   });
 
   if (selectedCoupon) {
