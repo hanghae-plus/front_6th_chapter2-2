@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback } from "react";
 import { ProductWithUI } from "../types";
 import { INITIAL_PRODUCTS } from "../constants";
+import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 
 export function useProducts(
   addNotification?: (
@@ -8,23 +9,10 @@ export function useProducts(
     type?: "error" | "success" | "warning"
   ) => void
 ) {
-  // 상품 상태 (localStorage에서 복원)
-  const [products, setProducts] = useState<ProductWithUI[]>(() => {
-    const saved = localStorage.getItem("products");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return INITIAL_PRODUCTS;
-      }
-    }
-    return INITIAL_PRODUCTS;
-  });
-
-  // localStorage 동기화
-  useEffect(() => {
-    localStorage.setItem("products", JSON.stringify(products));
-  }, [products]);
+  const [products, setProducts] = useLocalStorage<ProductWithUI[]>(
+    "products",
+    INITIAL_PRODUCTS
+  );
 
   // 새 상품 추가
   const addProduct = useCallback(

@@ -1,10 +1,11 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { CartItem, Product, Coupon } from "../types";
 import * as composedModels from "../models";
 import * as cartModel from "../models/cart";
 import * as productModel from "../models/product";
 import * as couponModel from "../models/coupon";
 import { INITIAL_COUPONS } from "../constants";
+import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 
 // 장바구니 + 쿠폰 통합 관리 훅
 export function useCart(
@@ -14,41 +15,12 @@ export function useCart(
   ) => void
 ) {
   // ========== 장바구니 상태 ==========
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem("cart");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return [];
-      }
-    }
-    return [];
-  });
+  const [cart, setCart] = useLocalStorage<CartItem[]>("cart", []);
 
   // ========== 쿠폰 상태 ==========
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem("coupons");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return INITIAL_COUPONS;
-      }
-    }
-    return INITIAL_COUPONS;
-  });
+  const [coupons, setCoupons] = useLocalStorage<Coupon[]>("coupons", INITIAL_COUPONS);
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
-
-  // ========== localStorage 동기화 ==========
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }, [cart]);
-
-  useEffect(() => {
-    localStorage.setItem("coupons", JSON.stringify(coupons));
-  }, [coupons]);
 
   // ========== 계산된 값들 (useMemo로 최적화) ==========
   const totals = useMemo(() => {
