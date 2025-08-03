@@ -1,7 +1,7 @@
-import { Coupon } from "../../../../types";
-import { NotificationVariant } from "../../../entities/notification/types";
+import { Coupon, DiscountType } from "../../../../types";
 import { useCouponForm } from "../../../entities/coupon/hooks/useCouponForm";
 import { CouponFormFields } from "../../../entities/coupon/ui/CouponFormFields";
+import { NotificationVariant } from "../../../entities/notification/types";
 
 interface AddCouponFormProps {
   onSubmit: (coupon: Omit<Coupon, "id">) => void;
@@ -16,8 +16,14 @@ export function AddCouponForm({
 }: AddCouponFormProps) {
   const form = useCouponForm({
     onSubmit,
-    addNotification,
   });
+
+  const handleDiscountValueBlur = (value: string) => {
+    const error = form.handleDiscountValueBlur(value);
+    if (error) {
+      addNotification(error, NotificationVariant.ERROR);
+    }
+  };
 
   return (
     <div className="mt-6 p-4 bg-gray-50 rounded-lg">
@@ -27,7 +33,7 @@ export function AddCouponForm({
         <CouponFormFields
           values={form.values}
           onChange={form.handleFieldChange}
-          onDiscountValueBlur={form.handleDiscountValueBlur}
+          onDiscountValueBlur={handleDiscountValueBlur}
         />
 
         <div className="flex justify-end gap-3">
