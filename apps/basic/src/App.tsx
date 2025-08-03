@@ -89,9 +89,7 @@ export const App = () => {
       {currentPage === pageEnum.enum.SHOPPING_PAGE && (
         <ShoppingPage searchTerm={debouncedSearchTerm} />
       )}
-      {currentPage === pageEnum.enum.ADMIN_PAGE && (
-        <AdminPage searchTerm={debouncedSearchTerm} />
-      )}
+      {currentPage === pageEnum.enum.ADMIN_PAGE && <AdminPage />}
     </div>
   );
 };
