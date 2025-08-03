@@ -2,7 +2,6 @@ import { CartItem, Coupon } from "../types";
 import { Product } from "./entities/product/types";
 import Header from "./app/components/Header";
 import { useSearch } from "./shared/hooks/useSearch";
-import { getRemainingStock } from "./entities/product/libs";
 import { AdminPage } from "./pages/AdminPage";
 import { CartPage } from "./pages/CartPage";
 import { useLocalStorageObject } from "./shared/hooks/useLocalStorage";
@@ -12,6 +11,7 @@ import {
   NotificationVariant,
   type Notification as NotificationType,
 } from "./entities/notification/types";
+import { getRemainingStock } from "./features/check-stock/libs";
 
 interface ProductWithUI extends Product {
   description?: string;

@@ -6,14 +6,15 @@ import {
   calculateDiscountedAmount,
   formatPrice,
 } from "../shared/libs/price";
+
+import { useCallback } from "react";
+import { CartItem } from "../entities/cart/ui/CartItem";
+import CartBagIcon from "../assets/icons/CartBagIcon.svg?react";
+import { NotificationVariant } from "../entities/notification/types";
 import {
   getProductStockStatus,
   getRemainingStock,
-} from "../entities/product/libs";
-import { useCallback } from "react";
-import { CartItem } from "../features/cart/components/CartItem";
-import CartBagIcon from "../assets/icons/CartBagIcon.svg?react";
-import { NotificationVariant } from "../entities/notification/types";
+} from "../features/check-stock/libs";
 
 interface ProductWithUI extends Product {
   description?: string;

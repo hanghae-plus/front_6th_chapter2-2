@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { Product } from "../../../entities/product/types";
 import { formatPrice } from "../../../shared/libs/price";
 import CloseIcon from "../../../assets/icons/CloseIcon.svg?react";
-import { getProductStockStatus } from "../../../entities/product/libs";
+import { getProductStockStatus } from "../../../features/check-stock/libs";
 import { NotificationVariant } from "../../../entities/notification/types";
 
 interface ProductWithUI extends Product {
