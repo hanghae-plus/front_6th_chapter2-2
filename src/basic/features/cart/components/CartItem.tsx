@@ -1,4 +1,5 @@
 import { CartItem as CartItemType } from "../../../../types";
+import CloseIcon from "../../../assets/icons/CloseIcon.svg?react";
 
 interface CartItemProps {
   item: CartItemType;
@@ -30,19 +31,7 @@ export const CartItem = ({
           onClick={() => removeFromCart(item.product.id)}
           className="text-gray-400 hover:text-red-500 ml-2"
         >
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          <CloseIcon className="w-4 h-4" />
         </button>
       </div>
       <div className="flex items-center justify-between">
