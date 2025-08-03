@@ -13,7 +13,7 @@ import {
 import { useCallback } from "react";
 import { CartItem } from "../features/cart/components/CartItem";
 import CartBagIcon from "../assets/icons/CartBagIcon.svg?react";
-import { NotificationVariant } from "../features/notification/types";
+import { NotificationVariant } from "../entities/notification/types";
 
 interface ProductWithUI extends Product {
   description?: string;

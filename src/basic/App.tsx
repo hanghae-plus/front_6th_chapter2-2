@@ -7,11 +7,11 @@ import { AdminPage } from "./pages/AdminPage";
 import { CartPage } from "./pages/CartPage";
 import { useLocalStorageObject } from "./shared/hooks/useLocalStorage";
 import { useState, useCallback, useEffect } from "react";
-import { Notification } from "./features/notification/components/Notification";
+import { Notification } from "./entities/notification/ui/Notification";
 import {
   NotificationVariant,
   type Notification as NotificationType,
-} from "./features/notification/types";
+} from "./entities/notification/types";
 
 interface ProductWithUI extends Product {
   description?: string;
