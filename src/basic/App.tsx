@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { Notification } from "./types";
 import { useCart } from "./hooks/useCart";
-import { useCoupons } from "./hooks/useCoupons";
 import { useProducts } from "./hooks/useProducts";
 import HeaderLayout from "./components/Header/HeaderLayout";
 import ShopHeaderContent from "./components/Header/ShopHeaderContent";
@@ -31,28 +30,26 @@ const App = () => {
     []
   );
 
-  // 🛒 장바구니 관리 (useCart 훅 사용)
+  // 🛒 장바구니 + 쿠폰 통합 관리 (useCart 훅 사용)
   const {
     cart,
-    getTotals,
+    totals,
     getRemainingStock,
     calculateItemTotal,
     addToCart,
     removeFromCart,
     updateQuantity,
     completeOrder,
+    coupons,
+    selectedCoupon,
+    addCoupon,
+    removeCoupon,
+    applyCoupon,
   } = useCart(addNotification);
-
-  // 🎫 쿠폰 관리 (useCoupons 훅 사용)
-  const { coupons, selectedCoupon, addCoupon, removeCoupon, applyCoupon } =
-    useCoupons(getTotals, addNotification);
 
   // 📦 상품 관리 (useProducts 훅 사용)
   const { products, addProduct, updateProduct, deleteProduct, getFilteredProducts } =
     useProducts(addNotification);
-
-  // 장바구니 총합 계산 (선택된 쿠폰 포함)
-  const totals = getTotals(selectedCoupon);
 
   // 🎛️ UI 상태들
   const [isAdmin, setIsAdmin] = useState(false); // 관리자 모드 여부

@@ -1,17 +1,19 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { CartItem, Product } from "../types";
+import { CartItem, Product, Coupon } from "../types";
 import * as composedModels from "../models";
 import * as cartModel from "../models/cart";
 import * as productModel from "../models/product";
+import * as couponModel from "../models/coupon";
+import { INITIAL_COUPONS } from "../constants";
 
-// 최종: 모든 장바구니 비즈니스 로직을 포함한 완전한 훅
+// 장바구니 + 쿠폰 통합 관리 훅
 export function useCart(
   addNotification?: (
     message: string,
     type?: "error" | "success" | "warning"
   ) => void
 ) {
-  // 장바구니 상태 (localStorage에서 복원)
+  // ========== 장바구니 상태 ==========
   const [cart, setCart] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem("cart");
     if (saved) {
@@ -24,16 +26,34 @@ export function useCart(
     return [];
   });
 
-  // localStorage 동기화
+  // ========== 쿠폰 상태 ==========
+  const [coupons, setCoupons] = useState<Coupon[]>(() => {
+    const saved = localStorage.getItem("coupons");
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return INITIAL_COUPONS;
+      }
+    }
+    return INITIAL_COUPONS;
+  });
+
+  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+
+  // ========== localStorage 동기화 ==========
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
-  // 계산 함수들 (적절한 모델에서 가져와서 useMemo로 최적화)
-  const getTotals = useMemo(() => {
-    return (selectedCoupon?: any) =>
-      composedModels.calculateCartTotal(cart, selectedCoupon);
-  }, [cart]);
+  useEffect(() => {
+    localStorage.setItem("coupons", JSON.stringify(coupons));
+  }, [coupons]);
+
+  // ========== 계산된 값들 (useMemo로 최적화) ==========
+  const totals = useMemo(() => {
+    return composedModels.calculateCartTotal(cart, selectedCoupon);
+  }, [cart, selectedCoupon]);
 
   const getRemainingStock = useMemo(() => {
     return (product: Product) => productModel.getRemainingStock(product, cart);
@@ -43,7 +63,7 @@ export function useCart(
     return (item: CartItem) => composedModels.calculateItemTotal(item, cart);
   }, [cart]);
 
-  // 최종: 모든 비즈니스 로직을 포함한 완전한 함수들
+  // ========== 장바구니 비즈니스 로직 ==========
   const addToCart = useCallback(
     (product: Product) => {
       // 1. 재고 확인
@@ -105,21 +125,70 @@ export function useCart(
       "success"
     );
     setCart([]);
+    setSelectedCoupon(null);
   }, [addNotification]);
 
-  return {
-    // 상태
-    cart,
+  // ========== 쿠폰 비즈니스 로직 ==========
+  const addCoupon = useCallback(
+    (newCoupon: Coupon) => {
+      if (couponModel.checkDuplicateCoupon(coupons, newCoupon.code)) {
+        addNotification?.("이미 존재하는 쿠폰 코드입니다.", "error");
+        return;
+      }
+      setCoupons((prev) => couponModel.addCouponToList(prev, newCoupon));
+      addNotification?.("쿠폰이 추가되었습니다.", "success");
+    },
+    [coupons, addNotification]
+  );
 
-    // 계산된 값들
-    getTotals,
+  const removeCoupon = useCallback(
+    (couponCode: string) => {
+      setCoupons((prev) => couponModel.removeCouponFromList(prev, couponCode));
+      if (selectedCoupon?.code === couponCode) {
+        setSelectedCoupon(null);
+      }
+      addNotification?.("쿠폰이 삭제되었습니다.", "success");
+    },
+    [selectedCoupon, addNotification]
+  );
+
+  const applyCoupon = useCallback(
+    (coupon: Coupon | null) => {
+      if (!coupon) {
+        setSelectedCoupon(null);
+        return;
+      }
+
+      // models/index의 조합 함수 사용
+      const result = composedModels.applyCouponToCart(cart, coupon);
+      
+      if (!result.success) {
+        addNotification?.(result.reason!, "error");
+        return;
+      }
+
+      setSelectedCoupon(result.selectedCoupon!);
+      addNotification?.("쿠폰이 적용되었습니다.", "success");
+    },
+    [cart, addNotification]
+  );
+
+  return {
+    // ========== 장바구니 상태 및 기능 ==========
+    cart,
+    totals,
     getRemainingStock,
     calculateItemTotal,
-
-    // 장바구니 비즈니스 로직
     addToCart,
     removeFromCart,
     updateQuantity,
     completeOrder,
+
+    // ========== 쿠폰 상태 및 기능 ==========
+    coupons,
+    selectedCoupon,
+    addCoupon,
+    removeCoupon,
+    applyCoupon,
   };
 }
