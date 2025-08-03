@@ -3,7 +3,7 @@ import {
   useCouponService,
   useNotificationService,
   useOrderService,
-  useProductService,
+  useProductService
 } from '@/services';
 import { useCartStore, useCouponStore, useProductStore } from '@/store';
 import { useCallback, useMemo } from 'react';
@@ -82,6 +82,6 @@ export const useShoppingPageViewModel = () => {
     // Stores
     productStore,
     couponStore,
-    cartStore,
+    cartStore
   };
 };

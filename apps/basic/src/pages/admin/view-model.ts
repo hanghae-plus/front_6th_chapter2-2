@@ -1,12 +1,12 @@
 import {
   calculateItemDiscounts,
   calculateSubtotal,
-  getRemainingStock,
+  getRemainingStock
 } from '@/models/cart';
 import {
   calculateCouponDiscount,
   Coupon,
-  isValidPercentageCoupon,
+  isValidPercentageCoupon
 } from '@/models/coupon';
 import { notificationTypeSchema } from '@/models/notification';
 import { ProductView } from '@/models/product';
@@ -48,7 +48,7 @@ export const useAdminViewModel = () => {
 
     return {
       totalBeforeDiscount: Math.round(subtotal),
-      totalAfterDiscount: Math.round(finalTotal),
+      totalAfterDiscount: Math.round(finalTotal)
     };
   };
 
@@ -216,6 +216,6 @@ export const useAdminViewModel = () => {
     // stores
     productStore,
     couponStore,
-    cartStore,
+    cartStore
   };
 };

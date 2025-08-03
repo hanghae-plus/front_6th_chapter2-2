@@ -7,16 +7,16 @@ export default mergeConfig(
   defineConfig({
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, './src'),
-      },
+        '@': path.resolve(__dirname, './src')
+      }
     },
-    plugins: [react()],
+    plugins: [react()]
   }),
   defineTestConfig({
     test: {
       globals: true,
       environment: 'jsdom',
-      setupFiles: './src/setupTests.ts',
-    },
+      setupFiles: './src/setupTests.ts'
+    }
   })
 );

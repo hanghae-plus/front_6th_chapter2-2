@@ -23,7 +23,7 @@ const ShoppingPage = () => {
     addToCart,
     removeFromCart,
     formatPrice,
-    filterProducts,
+    filterProducts
   } = useShoppingPageViewModel();
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -39,7 +39,7 @@ const ShoppingPage = () => {
   const filteredProducts = filterProducts(debouncedSearchTerm);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className='min-h-screen bg-gray-50'>
       <Notifications
         notifications={notifications}
         removeNotification={removeNotification}
@@ -48,9 +48,9 @@ const ShoppingPage = () => {
         searchTerm={debouncedSearchTerm}
         handleSearchTem={value => setSearchTerm(value)}
       />
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          <div className="lg:col-span-3">
+      <main className='max-w-7xl mx-auto px-4 py-8'>
+        <div className='grid grid-cols-1 lg:grid-cols-4 gap-6'>
+          <div className='lg:col-span-3'>
             <ProductSection
               products={productStore.products}
               filteredProducts={filteredProducts}
@@ -61,8 +61,8 @@ const ShoppingPage = () => {
             />
           </div>
 
-          <div className="lg:col-span-1">
-            <div className="sticky top-24 space-y-4">
+          <div className='lg:col-span-1'>
+            <div className='sticky top-24 space-y-4'>
               <CartSection
                 cart={cartStore.cart}
                 updateQuantity={updateQuantity}

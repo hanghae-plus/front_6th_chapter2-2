@@ -12,10 +12,10 @@ const productStorage = createStorage<ProductView[]>({
       stock: 20,
       discounts: [
         { quantity: 10, rate: 0.1 },
-        { quantity: 20, rate: 0.2 },
+        { quantity: 20, rate: 0.2 }
       ],
       description: '최고급 품질의 프리미엄 상품입니다.',
-      isRecommended: false,
+      isRecommended: false
     },
     {
       id: 'p2',
@@ -24,7 +24,7 @@ const productStorage = createStorage<ProductView[]>({
       stock: 20,
       discounts: [{ quantity: 10, rate: 0.15 }],
       description: '다양한 기능을 갖춘 실용적인 상품입니다.',
-      isRecommended: true,
+      isRecommended: true
     },
     {
       id: 'p3',
@@ -33,12 +33,12 @@ const productStorage = createStorage<ProductView[]>({
       stock: 20,
       discounts: [
         { quantity: 10, rate: 0.2 },
-        { quantity: 30, rate: 0.25 },
+        { quantity: 30, rate: 0.25 }
       ],
       description: '대용량과 고성능을 자랑하는 상품입니다.',
-      isRecommended: false,
-    },
-  ],
+      isRecommended: false
+    }
+  ]
 });
 
 export const useProductStore = () => {
@@ -69,6 +69,6 @@ export const useProductStore = () => {
     addProduct,
     updateProduct,
     findProductById,
-    removeProductById,
+    removeProductById
   };
 };

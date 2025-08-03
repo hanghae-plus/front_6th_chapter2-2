@@ -18,7 +18,7 @@ class StorageInnerDocumentEvent extends CustomEvent<StorageEventDetail> {
 
   constructor(key: string, oldValue: string | null, newValue: string | null) {
     super(StorageInnerDocumentEvent.eventName, {
-      detail: { key, oldValue, newValue },
+      detail: { key, oldValue, newValue }
     });
   }
 }

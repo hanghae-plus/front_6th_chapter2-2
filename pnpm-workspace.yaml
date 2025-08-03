@@ -30,7 +30,7 @@ catalogs:
     'prettier': '^3.6.2'
 
   typescript:
-    'typescript': '^5.9.2'
+    'typescript': '5.8.3'
 
   eslint:
     'eslint': '^9.32.0'

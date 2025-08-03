@@ -5,10 +5,10 @@ import {
   render,
   screen,
   waitFor,
-  within,
+  within
 } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-
 
 describe('쇼핑몰 앱 통합 테스트 - 쇼핑 페이지', () => {
   beforeEach(() => {
@@ -25,7 +25,11 @@ describe('쇼핑몰 앱 통합 테스트 - 쇼핑 페이지', () => {
 
   describe('고객 쇼핑 플로우', () => {
     test('상품을 검색하고 장바구니에 추가할 수 있다', async () => {
-      render(<ShoppingPage />);
+      render(
+        <MemoryRouter>
+          <ShoppingPage />
+        </MemoryRouter>
+      );
 
       // 검색창에 "프리미엄" 입력
       const searchInput = screen.getByPlaceholderText('상품 검색...');
@@ -56,7 +60,11 @@ describe('쇼핑몰 앱 통합 테스트 - 쇼핑 페이지', () => {
     });
 
     test('장바구니에서 수량을 조절하고 할인을 확인할 수 있다', () => {
-      render(<ShoppingPage />);
+      render(
+        <MemoryRouter>
+          <ShoppingPage />
+        </MemoryRouter>
+      );
 
       // 상품1을 장바구니에 추가
       const product1 = screen.getAllByText('장바구니 담기')[0];
@@ -75,7 +83,11 @@ describe('쇼핑몰 앱 통합 테스트 - 쇼핑 페이지', () => {
     });
 
     test('쿠폰을 선택하고 적용할 수 있다', () => {
-      render(<ShoppingPage />);
+      render(
+        <MemoryRouter>
+          <ShoppingPage />
+        </MemoryRouter>
+      );
 
       // 상품 추가
       const addButton = screen.getAllByText('장바구니 담기')[0];
@@ -94,7 +106,11 @@ describe('쇼핑몰 앱 통합 테스트 - 쇼핑 페이지', () => {
     });
 
     test('품절 임박 상품에 경고가 표시된다', async () => {
-      render(<ShoppingPage />);
+      render(
+        <MemoryRouter>
+          <ShoppingPage />
+        </MemoryRouter>
+      );
 
       // 관리자 모드로 전환
       fireEvent.click(screen.getByText('관리자 페이지로'));
@@ -124,7 +140,11 @@ describe('쇼핑몰 앱 통합 테스트 - 쇼핑 페이지', () => {
     });
 
     test('주문을 완료할 수 있다', () => {
-      render(<ShoppingPage />);
+      render(
+        <MemoryRouter>
+          <ShoppingPage />
+        </MemoryRouter>
+      );
 
       // 상품 추가
       fireEvent.click(screen.getAllByText('장바구니 담기')[0]);
@@ -141,7 +161,11 @@ describe('쇼핑몰 앱 통합 테스트 - 쇼핑 페이지', () => {
     });
 
     test('장바구니에서 상품을 삭제할 수 있다', () => {
-      render(<ShoppingPage />);
+      render(
+        <MemoryRouter>
+          <ShoppingPage />
+        </MemoryRouter>
+      );
 
       // 상품 2개 추가
       fireEvent.click(screen.getAllByText('장바구니 담기')[0]);
@@ -164,7 +188,11 @@ describe('쇼핑몰 앱 통합 테스트 - 쇼핑 페이지', () => {
     });
 
     test('재고를 초과하여 구매할 수 없다', async () => {
-      render(<ShoppingPage />);
+      render(
+        <MemoryRouter>
+          <ShoppingPage />
+        </MemoryRouter>
+      );
 
       // 상품1 장바구니에 추가
       fireEvent.click(screen.getAllByText('장바구니 담기')[0]);
@@ -193,7 +221,11 @@ describe('쇼핑몰 앱 통합 테스트 - 쇼핑 페이지', () => {
     });
 
     test('장바구니에서 수량을 감소시킬 수 있다', () => {
-      render(<ShoppingPage />);
+      render(
+        <MemoryRouter>
+          <ShoppingPage />
+        </MemoryRouter>
+      );
 
       // 상품 추가
       fireEvent.click(screen.getAllByText('장바구니 담기')[0]);
@@ -228,7 +260,11 @@ describe('쇼핑몰 앱 통합 테스트 - 쇼핑 페이지', () => {
     });
 
     test('20개 이상 구매 시 최대 할인이 적용된다', async () => {
-      render(<ShoppingPage />);
+      render(
+        <MemoryRouter>
+          <ShoppingPage />
+        </MemoryRouter>
+      );
 
       // 관리자 모드로 전환하여 상품1의 재고를 늘림
       fireEvent.click(screen.getByText('관리자 페이지로'));
@@ -258,14 +294,18 @@ describe('쇼핑몰 앱 통합 테스트 - 쇼핑 페이지', () => {
       await waitFor(() => {
         const discount25 = screen.queryByText('-25%');
         const discount30 = screen.queryByText('-30%');
-        expect(discount25 || discount30).toBeTruthy();
+        expect(discount25 ?? discount30).toBeTruthy();
       });
     });
   });
 
   describe('관리자 기능', () => {
     beforeEach(() => {
-      render(<ShoppingPage />);
+      render(
+        <MemoryRouter>
+          <ShoppingPage />
+        </MemoryRouter>
+      );
       // 관리자 모드로 전환
       fireEvent.click(screen.getByText('관리자 페이지로'));
     });
@@ -309,10 +349,10 @@ describe('쇼핑몰 앱 통합 테스트 - 쇼핑 페이지', () => {
 
       // 쿠폰 정보 입력
       fireEvent.change(screen.getByPlaceholderText('신규 가입 쿠폰'), {
-        target: { value: '테스트 쿠폰' },
+        target: { value: '테스트 쿠폰' }
       });
       fireEvent.change(screen.getByPlaceholderText('WELCOME2024'), {
-        target: { value: 'TEST2024' },
+        target: { value: 'TEST2024' }
       });
 
       const discountInput = screen.getByPlaceholderText('5000');
@@ -327,7 +367,7 @@ describe('쇼핑몰 앱 통합 테스트 - 쇼핑 페이지', () => {
       expect(screen.getByText('7,000원 할인')).toBeInTheDocument();
     });
 
-    test('상품의 가격 입력 시 숫자만 허용된다', async () => {
+    test('상품의 가격 입력 시 숫자만 허용된다', () => {
       // 상품 수정
       fireEvent.click(screen.getAllByText('수정')[0]);
 
@@ -428,7 +468,11 @@ describe('쇼핑몰 앱 통합 테스트 - 쇼핑 페이지', () => {
 
   describe('로컬스토리지 동기화', () => {
     test('상품, 장바구니, 쿠폰이 localStorage에 저장된다', () => {
-      render(<ShoppingPage />);
+      render(
+        <MemoryRouter>
+          <ShoppingPage />
+        </MemoryRouter>
+      );
 
       // 상품을 장바구니에 추가
       fireEvent.click(screen.getAllByText('장바구니 담기')[0]);
@@ -471,7 +515,11 @@ describe('쇼핑몰 앱 통합 테스트 - 쇼핑 페이지', () => {
       unmount();
 
       // 다시 mount
-      render(<ShoppingPage />);
+      render(
+        <MemoryRouter>
+          <ShoppingPage />
+        </MemoryRouter>
+      );
 
       // 장바구니 아이템이 유지되는지 확인
       const cartSection = screen.getByText('장바구니').closest('section');
@@ -482,7 +530,11 @@ describe('쇼핑몰 앱 통합 테스트 - 쇼핑 페이지', () => {
 
   describe('UI 상태 관리', () => {
     test('할인이 있을 때 할인율이 표시된다', async () => {
-      render(<ShoppingPage />);
+      render(
+        <MemoryRouter>
+          <ShoppingPage />
+        </MemoryRouter>
+      );
 
       // 상품을 10개 담아서 할인 발생
       const addButton = screen.getAllByText('장바구니 담기')[0];
@@ -497,7 +549,11 @@ describe('쇼핑몰 앱 통합 테스트 - 쇼핑 페이지', () => {
     });
 
     test('장바구니 아이템 개수가 헤더에 표시된다', () => {
-      render(<ShoppingPage />);
+      render(
+        <MemoryRouter>
+          <ShoppingPage />
+        </MemoryRouter>
+      );
 
       // 상품 추가
       fireEvent.click(screen.getAllByText('장바구니 담기')[0]);
@@ -510,7 +566,11 @@ describe('쇼핑몰 앱 통합 테스트 - 쇼핑 페이지', () => {
     });
 
     test('검색을 초기화할 수 있다', async () => {
-      render(<ShoppingPage />);
+      render(
+        <MemoryRouter>
+          <ShoppingPage />
+        </MemoryRouter>
+      );
 
       // 검색어 입력
       const searchInput = screen.getByPlaceholderText('상품 검색...');
@@ -545,7 +605,11 @@ describe('쇼핑몰 앱 통합 테스트 - 쇼핑 페이지', () => {
     });
 
     test('알림 메시지가 자동으로 사라진다', async () => {
-      render(<ShoppingPage />);
+      render(
+        <MemoryRouter>
+          <ShoppingPage />
+        </MemoryRouter>
+      );
 
       // 상품 추가하여 알림 발생
       fireEvent.click(screen.getAllByText('장바구니 담기')[0]);

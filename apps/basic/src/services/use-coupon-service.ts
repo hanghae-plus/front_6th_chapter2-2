@@ -2,7 +2,7 @@ import { calculateItemDiscounts, calculateSubtotal } from '@/models/cart';
 import {
   calculateCouponDiscount,
   Coupon,
-  isValidPercentageCoupon,
+  isValidPercentageCoupon
 } from '@/models/coupon';
 import { notificationTypeSchema } from '@/models/notification';
 import { useCartStore } from '@/store';
@@ -61,6 +61,6 @@ export const useCouponService = () => {
     selectedCoupon,
     applyCoupon: applyCouponToCart,
     resetSelectedCoupon: clearSelectedCoupon,
-    calculateTotalWithCouponDiscount,
+    calculateTotalWithCouponDiscount
   };
 };

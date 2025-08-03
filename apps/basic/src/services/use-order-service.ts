@@ -35,7 +35,7 @@ export const useOrderService = () => {
 
       return {
         totalBeforeDiscount: Math.round(subtotal),
-        totalAfterDiscount: Math.round(finalTotal),
+        totalAfterDiscount: Math.round(finalTotal)
       };
     },
     [cartStore.cart]
@@ -54,6 +54,6 @@ export const useOrderService = () => {
 
   return {
     calculateCartTotal,
-    completeOrder,
+    completeOrder
   };
 };

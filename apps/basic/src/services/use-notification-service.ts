@@ -1,7 +1,7 @@
 import {
   Notification,
   NotificationType,
-  notificationTypeSchema,
+  notificationTypeSchema
 } from '@/models/notification';
 import { useState } from 'react';
 
@@ -14,7 +14,7 @@ export const useNotificationService = () => {
   ) => {
     setNotifications(prev => [
       ...prev,
-      { id: Date.now().toString(), message, type },
+      { id: Date.now().toString(), message, type }
     ]);
   };
 

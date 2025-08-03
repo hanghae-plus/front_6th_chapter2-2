@@ -6,12 +6,12 @@ export const productSchema = z.object({
   name: z.string(),
   price: z.number(),
   stock: z.number(),
-  discounts: z.array(discountSchema),
+  discounts: z.array(discountSchema)
 });
 
 export const productViewSchema = productSchema.extend({
   description: z.string().optional(),
-  isRecommended: z.boolean().optional(),
+  isRecommended: z.boolean().optional()
 });
 
 export type Product = z.infer<typeof productSchema>;

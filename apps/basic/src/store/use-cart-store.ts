@@ -45,6 +45,6 @@ export const useCartStore = () => {
     findCartItemByProductId,
 
     // Computed properties
-    totalItemCount,
+    totalItemCount
   };
 };

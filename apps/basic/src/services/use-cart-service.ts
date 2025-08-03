@@ -106,6 +106,6 @@ export const useCartService = () => {
     addToCart,
     removeFromCart,
     updateQuantity,
-    resetCart,
+    resetCart
   };
 };

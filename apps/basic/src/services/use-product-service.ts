@@ -45,6 +45,6 @@ export const useProductService = () => {
     formatPrice,
     filterProducts,
     products: productStore.products,
-    findProductById: productStore.findProductById,
+    findProductById: productStore.findProductById
   };
 };

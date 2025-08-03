@@ -3,7 +3,7 @@ import { Product, productSchema } from './product';
 
 export const cartItemSchema = z.object({
   product: productSchema,
-  quantity: z.number(),
+  quantity: z.number()
 });
 
 export type CartItem = z.infer<typeof cartItemSchema>;
