@@ -1,10 +1,5 @@
-import { Product } from "../types";
+import { ProductWithUI } from "../types";
 import { useLocalStorageObject } from "../../../shared/hooks/useLocalStorage";
-
-interface ProductWithUI extends Product {
-  description?: string;
-  isRecommended?: boolean;
-}
 
 const initialProducts: ProductWithUI[] = [
   {

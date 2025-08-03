@@ -1,11 +1,6 @@
-import { Product } from "../types";
+import { ProductWithUI } from "../types";
 import { validateProduct } from "../libs/validator";
 import { useForm } from "../../../shared/hooks/useForm";
-
-interface ProductWithUI extends Product {
-  description?: string;
-  isRecommended?: boolean;
-}
 
 interface UseProductFormProps<T = Omit<ProductWithUI, "id">> {
   initialProduct?: Partial<ProductWithUI>;

@@ -1,10 +1,5 @@
-import { Product } from "../../../entities/product/types";
+import { ProductWithUI } from "../../../entities/product/types";
 import { useSearch } from "../../../shared/hooks/useSearch";
-
-interface ProductWithUI extends Product {
-  description?: string;
-  isRecommended?: boolean;
-}
 
 export function useProductSearch(products: ProductWithUI[]) {
   const search = useSearch();

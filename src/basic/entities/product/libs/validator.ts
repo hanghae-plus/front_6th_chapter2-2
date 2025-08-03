@@ -1,9 +1,4 @@
-import { Product } from "../types";
-
-interface ProductWithUI extends Product {
-  description?: string;
-  isRecommended?: boolean;
-}
+import { ProductWithUI } from "../types";
 
 export function validateProduct(product: Partial<ProductWithUI>): {
   isValid: boolean;

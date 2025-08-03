@@ -1,16 +1,11 @@
 import { useState, useCallback } from "react";
-import { Product } from "../../../entities/product/types";
+import { Product, ProductWithUI } from "../../../entities/product/types";
 import { NotificationVariant } from "../../../entities/notification/types";
 import { ProductTable } from "../../../features/view-product-list/ui/ProductTable";
 import { formatPrice } from "../../../shared/libs/price";
 import { getProductStockStatus } from "../../../features/check-stock/libs";
 import { AddProductForm } from "../../../features/add-product/ui/AddProductForm";
 import { EditProductForm } from "../../../features/edit-product/ui/EditProductForm";
-
-interface ProductWithUI extends Product {
-  description?: string;
-  isRecommended?: boolean;
-}
 
 interface ProductWithDisplayInfo extends ProductWithUI {
   displayedPrice: string;

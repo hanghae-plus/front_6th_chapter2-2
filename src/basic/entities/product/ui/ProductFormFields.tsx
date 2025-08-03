@@ -1,11 +1,6 @@
-import { Product } from "../types";
+import { ProductWithUI } from "../types";
 import CloseIcon from "../../../assets/icons/CloseIcon.svg?react";
 import { NotificationVariant } from "../../notification/types";
-
-interface ProductWithUI extends Product {
-  description?: string;
-  isRecommended?: boolean;
-}
 
 interface ProductFormFieldsProps {
   product: Partial<ProductWithUI>;

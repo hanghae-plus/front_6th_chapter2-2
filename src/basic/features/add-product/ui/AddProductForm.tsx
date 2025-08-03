@@ -1,12 +1,7 @@
-import { Product } from "../../../entities/product/types";
+import { ProductWithUI } from "../../../entities/product/types";
 import { ProductFormFields } from "../../../entities/product/ui/ProductFormFields";
 import { NotificationVariant } from "../../../entities/notification/types";
 import { useProductForm } from "../../../entities/product/hooks/useProductForm";
-
-interface ProductWithUI extends Product {
-  description?: string;
-  isRecommended?: boolean;
-}
 
 interface AddProductFormProps {
   onSubmit: (product: Omit<ProductWithUI, "id">) => void;

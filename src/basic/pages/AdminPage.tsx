@@ -1,14 +1,9 @@
 import { useState } from "react";
 import { Coupon } from "../../types";
-import { Product } from "../entities/product/types";
+import { Product, ProductWithUI } from "../entities/product/types";
 import { NotificationVariant } from "../entities/notification/types";
 import { ProductsTab } from "../widgets/admin/ui/ProductsTab";
 import { CouponsTab } from "../widgets/admin/ui/CouponsTab";
-
-interface ProductWithUI extends Product {
-  description?: string;
-  isRecommended?: boolean;
-}
 
 interface AdminPageProps {
   products: ProductWithUI[];

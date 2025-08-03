@@ -1,5 +1,5 @@
 import { Coupon, type CartItem as CartItemType } from "../../types";
-import { Product } from "../entities/product/types";
+import { Product, ProductWithUI } from "../entities/product/types";
 import { ProductList } from "../entities/product/ui/ProductList";
 import {
   calculateDiscountedPrice,
@@ -15,11 +15,6 @@ import {
   getProductStockStatus,
   getRemainingStock,
 } from "../features/check-stock/libs";
-
-interface ProductWithUI extends Product {
-  description?: string;
-  isRecommended?: boolean;
-}
 
 interface CartPageProps {
   products: ProductWithUI[];
