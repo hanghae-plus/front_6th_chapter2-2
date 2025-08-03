@@ -1,10 +1,5 @@
 import { NotificationItem } from "./NotificationItem";
-
-interface Notification {
-  id: string;
-  message: string;
-  type: "error" | "success" | "warning";
-}
+import { type Notification } from "../types";
 
 interface NotificationProps {
   notifications: Notification[];
@@ -22,7 +17,9 @@ export function Notification({
       {notifications.map((notification) => (
         <NotificationItem
           key={notification.id}
-          notification={notification}
+          id={notification.id}
+          message={notification.message}
+          type={notification.type}
           onRemove={onRemoveNotification}
         />
       ))}

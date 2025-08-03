@@ -1,33 +1,46 @@
 import CloseIcon from "../../../assets/icons/CloseIcon.svg?react";
+import { NotificationType, type Notification } from "../types";
 
-interface NotificationItem {
-  id: string;
-  message: string;
-  type: "error" | "success" | "warning";
-}
-
-interface NotificationItemProps {
-  notification: NotificationItem;
+interface NotificationItemProps extends Notification {
   onRemove: (id: string) => void;
 }
 
+export interface NotificationConfig {
+  bgColor: string;
+  textColor: string;
+  icon?: React.ComponentType<{ className?: string }>;
+}
+
+export const notificationConfigMap: Record<string, NotificationConfig> = {
+  [NotificationType.ERROR]: {
+    bgColor: "bg-red-600",
+    textColor: "text-white",
+  },
+  [NotificationType.WARNING]: {
+    bgColor: "bg-yellow-600",
+    textColor: "text-white",
+  },
+  [NotificationType.SUCCESS]: {
+    bgColor: "bg-green-600",
+    textColor: "text-white",
+  },
+};
+
 export function NotificationItem({
-  notification,
+  id,
+  message,
+  type,
   onRemove,
 }: NotificationItemProps) {
+  const config = notificationConfigMap[type];
+
   return (
     <div
-      className={`p-4 rounded-md shadow-md text-white flex justify-between items-center ${
-        notification.type === "error"
-          ? "bg-red-600"
-          : notification.type === "warning"
-          ? "bg-yellow-600"
-          : "bg-green-600"
-      }`}
+      className={`p-4 rounded-md shadow-md ${config.bgColor} ${config.textColor} flex justify-between items-center`}
     >
-      <span className="mr-2">{notification.message}</span>
+      <span className="mr-2">{message}</span>
       <button
-        onClick={() => onRemove(notification.id)}
+        onClick={() => onRemove(id)}
         className="text-white hover:text-gray-200"
       >
         <CloseIcon className="w-4 h-4" />
