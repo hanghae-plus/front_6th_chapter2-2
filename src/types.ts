@@ -19,6 +19,11 @@ export interface CartItem {
 export interface Coupon {
   name: string;
   code: string;
-  discountType: "amount" | "percentage";
+  discountType: DiscountType;
   discountValue: number;
+}
+
+export enum DiscountType {
+  AMOUNT = "amount",
+  PERCENTAGE = "percentage",
 }
