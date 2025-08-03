@@ -1,7 +1,7 @@
 import { Coupon } from "../types";
 import { Product } from "./entities/product/types";
 import Header from "./app/components/Header";
-import { useSearch } from "./shared/hooks/useSearch";
+
 import { AdminPage } from "./pages/AdminPage";
 import { CartPage } from "./pages/CartPage";
 import { useState, useCallback } from "react";
@@ -14,12 +14,14 @@ import { useCartStorage } from "./entities/cart/hooks/useCartStorage";
 import { useProductStorage } from "./entities/product/hooks/useProductStorage";
 import { useCouponStorage } from "./entities/coupon/hooks/useCouponStorage";
 import { getRemainingStock } from "./features/check-stock/libs";
+import { useProductSearch } from "./features/search-product/hooks/useProductSearch";
 
 const App = () => {
-  const search = useSearch();
   const { products, setProducts } = useProductStorage();
   const { cart, setCart, totalItemCount } = useCartStorage();
   const { coupons, setCoupons } = useCouponStorage();
+  const { filteredProducts, searchValue, searchTerm, onSearchChange } =
+    useProductSearch(products);
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -46,19 +48,6 @@ const App = () => {
     []
   );
 
-  const filteredProducts = search.debouncedValue
-    ? products.filter(
-        (product) =>
-          product.name
-            .toLowerCase()
-            .includes(search.debouncedValue.toLowerCase()) ||
-          (product.description &&
-            product.description
-              .toLowerCase()
-              .includes(search.debouncedValue.toLowerCase()))
-      )
-    : products;
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Notification
@@ -71,8 +60,8 @@ const App = () => {
         isAdmin={isAdmin}
         onAdminToggle={() => setIsAdmin((prev) => !prev)}
         cartItemCount={totalItemCount}
-        searchTerm={search.debouncedValue}
-        onSearchChange={search.change}
+        searchValue={searchValue}
+        onSearchChange={onSearchChange}
       />
       <main className="max-w-7xl mx-auto px-4 py-8">
         {isAdmin ? (
@@ -88,7 +77,7 @@ const App = () => {
           <CartPage
             products={products}
             filteredProducts={filteredProducts}
-            searchValue={search.debouncedValue}
+            searchValue={searchTerm}
             cart={cart}
             setCart={setCart}
             coupons={coupons}

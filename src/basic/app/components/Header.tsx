@@ -1,17 +1,18 @@
 import CartIcon from "../../assets/icons/CartIcon.svg?react";
+import { SearchBar } from "../../shared/ui/SearchBar";
 
 interface HeaderProps {
   isAdmin: boolean;
   cartItemCount: number;
-  searchTerm: string;
-  onSearchChange: (term: string) => void;
+  searchValue: string;
+  onSearchChange: (value: string) => void;
   onAdminToggle: () => void;
 }
 
 export default function Header({
   isAdmin,
   cartItemCount,
-  searchTerm,
+  searchValue,
   onSearchChange,
   onAdminToggle,
 }: HeaderProps) {
@@ -23,12 +24,11 @@ export default function Header({
             <h1 className="text-xl font-semibold text-gray-800">SHOP</h1>
             {!isAdmin && (
               <div className="ml-8 flex-1 max-w-md">
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => onSearchChange(e.target.value)}
+                <SearchBar
                   placeholder="상품 검색..."
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                  className="w-full"
+                  value={searchValue}
+                  onChange={onSearchChange}
                 />
               </div>
             )}

@@ -1,0 +1,31 @@
+import { Product } from "../../../entities/product/types";
+import { useSearch } from "../../../shared/hooks/useSearch";
+
+interface ProductWithUI extends Product {
+  description?: string;
+  isRecommended?: boolean;
+}
+
+export function useProductSearch(products: ProductWithUI[]) {
+  const search = useSearch();
+
+  const filteredProducts = search.debouncedValue
+    ? products.filter(
+        (product) =>
+          product.name
+            .toLowerCase()
+            .includes(search.debouncedValue.toLowerCase()) ||
+          (product.description &&
+            product.description
+              .toLowerCase()
+              .includes(search.debouncedValue.toLowerCase()))
+      )
+    : products;
+
+  return {
+    filteredProducts,
+    searchValue: search.value,
+    searchTerm: search.debouncedValue,
+    onSearchChange: search.change,
+  };
+}
