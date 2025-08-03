@@ -1,10 +1,9 @@
-import { Coupon, DiscountType } from "../types";
+import { Coupon } from "../types";
 import { Product } from "./entities/product/types";
 import Header from "./app/components/Header";
 import { useSearch } from "./shared/hooks/useSearch";
 import { AdminPage } from "./pages/AdminPage";
 import { CartPage } from "./pages/CartPage";
-import { useLocalStorageObject } from "./shared/hooks/useLocalStorage";
 import { useState, useCallback } from "react";
 import { Notification } from "./entities/notification/ui/Notification";
 import {
@@ -13,31 +12,14 @@ import {
 } from "./entities/notification/types";
 import { useCartStorage } from "./entities/cart/hooks/useCartStorage";
 import { useProductStorage } from "./entities/product/hooks/useProductStorage";
+import { useCouponStorage } from "./entities/coupon/hooks/useCouponStorage";
 import { getRemainingStock } from "./features/check-stock/libs";
-
-const initialCoupons: Coupon[] = [
-  {
-    name: "5000원 할인",
-    code: "AMOUNT5000",
-    discountType: DiscountType.AMOUNT,
-    discountValue: 5000,
-  },
-  {
-    name: "10% 할인",
-    code: "PERCENT10",
-    discountType: DiscountType.PERCENTAGE,
-    discountValue: 10,
-  },
-];
 
 const App = () => {
   const search = useSearch();
   const { products, setProducts } = useProductStorage();
   const { cart, setCart, totalItemCount } = useCartStorage();
-  const [coupons, setCoupons] = useLocalStorageObject<Coupon[]>(
-    "coupons",
-    initialCoupons
-  );
+  const { coupons, setCoupons } = useCouponStorage();
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
