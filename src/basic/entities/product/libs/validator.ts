@@ -1,7 +1,7 @@
 import { ProductWithUI } from "../types";
 
 export function validateProduct(product: Partial<ProductWithUI>): {
-  isValid: boolean;
+  valid: boolean;
   errors: Record<string, string>;
 } {
   const errors: Record<string, string> = {};
@@ -19,7 +19,7 @@ export function validateProduct(product: Partial<ProductWithUI>): {
   }
 
   return {
-    isValid: Object.keys(errors).length === 0,
+    valid: Object.keys(errors).length === 0,
     errors,
   };
 }

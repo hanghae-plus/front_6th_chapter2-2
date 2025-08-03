@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 interface ValidationResult {
-  isValid: boolean;
+  valid: boolean;
   errors: Record<string, string>;
 }
 
@@ -39,7 +39,7 @@ export function useForm<T extends Record<string, any>>({
       const validation = validate(values);
       setErrors(validation.errors);
 
-      if (validation.isValid) {
+      if (validation.valid) {
         onSubmit(values);
       }
     } else {
