@@ -41,8 +41,30 @@ export function useProductStorage() {
     initialProducts
   );
 
+  const addProduct = (newProduct: Omit<ProductWithUI, "id">) => {
+    const product: ProductWithUI = {
+      ...newProduct,
+      id: `p${Date.now()}`,
+    };
+    setProducts([...products, product]);
+  };
+
+  const updateProduct = (updatedProduct: ProductWithUI) => {
+    setProducts(
+      products.map((product) =>
+        product.id === updatedProduct.id ? updatedProduct : product
+      )
+    );
+  };
+
+  const deleteProduct = (productId: string) => {
+    setProducts(products.filter((p) => p.id !== productId));
+  };
+
   return {
     products,
-    setProducts,
+    addProduct,
+    updateProduct,
+    deleteProduct,
   };
 }

@@ -1,13 +1,11 @@
 import { useState } from "react";
 import { Coupon } from "../../types";
-import { Product, ProductWithUI } from "../entities/product/types";
+import { Product } from "../entities/product/types";
 import { NotificationVariant } from "../entities/notification/types";
 import { ProductsTab } from "../widgets/admin/ui/ProductsTab";
 import { CouponsTab } from "../widgets/admin/ui/CouponsTab";
 
 interface AdminPageProps {
-  products: ProductWithUI[];
-  setProducts: (products: ProductWithUI[]) => void;
   coupons: Coupon[];
   setCoupons: (coupons: Coupon[]) => void;
   addNotification: (message: string, type?: NotificationVariant) => void;
@@ -15,8 +13,6 @@ interface AdminPageProps {
 }
 
 export function AdminPage({
-  products,
-  setProducts,
   coupons,
   setCoupons,
   addNotification,
@@ -57,11 +53,7 @@ export function AdminPage({
       </div>
 
       {activeTab === "products" ? (
-        <ProductsTab
-          products={products}
-          setProducts={setProducts}
-          addNotification={addNotification}
-        />
+        <ProductsTab addNotification={addNotification} />
       ) : (
         <CouponsTab
           coupons={coupons}

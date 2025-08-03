@@ -6,22 +6,18 @@ import { formatPrice } from "../../../shared/libs/price";
 import { getProductStockStatus } from "../../../features/check-stock/libs";
 import { AddProductForm } from "../../../features/add-product/ui/AddProductForm";
 import { EditProductForm } from "../../../features/edit-product/ui/EditProductForm";
+import { useProductStorage } from "../../../entities/product/hooks/useProductStorage";
 
 interface ProductWithDisplayInfo extends ProductWithUI {
   displayedPrice: string;
 }
 
 interface ProductsTabProps {
-  products: ProductWithUI[];
-  setProducts: (products: ProductWithUI[]) => void;
   addNotification: (message: string, variant?: NotificationVariant) => void;
 }
 
-export function ProductsTab({
-  products,
-  setProducts,
-  addNotification,
-}: ProductsTabProps) {
+export function ProductsTab({ addNotification }: ProductsTabProps) {
+  const productStorage = useProductStorage();
   const [showProductForm, setShowProductForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<ProductWithUI | null>(
     null
@@ -29,37 +25,29 @@ export function ProductsTab({
 
   const addProduct = useCallback(
     (newProduct: Omit<ProductWithUI, "id">) => {
-      const product: ProductWithUI = {
-        ...newProduct,
-        id: `p${Date.now()}`,
-      };
-      setProducts([...products, product]);
+      productStorage.addProduct(newProduct);
       addNotification("상품이 추가되었습니다.", NotificationVariant.SUCCESS);
       setShowProductForm(false);
     },
-    [products, setProducts, addNotification]
+    [productStorage.addProduct, addNotification]
   );
 
   const updateProduct = useCallback(
     (updatedProduct: ProductWithUI) => {
-      setProducts(
-        products.map((product) =>
-          product.id === updatedProduct.id ? updatedProduct : product
-        )
-      );
+      productStorage.updateProduct(updatedProduct);
       addNotification("상품이 수정되었습니다.", NotificationVariant.SUCCESS);
       setEditingProduct(null);
       setShowProductForm(false);
     },
-    [products, setProducts, addNotification]
+    [productStorage.updateProduct, addNotification]
   );
 
   const deleteProduct = useCallback(
     (productId: string) => {
-      setProducts(products.filter((p) => p.id !== productId));
+      productStorage.deleteProduct(productId);
       addNotification("상품이 삭제되었습니다.", NotificationVariant.SUCCESS);
     },
-    [products, setProducts, addNotification]
+    [productStorage.deleteProduct, addNotification]
   );
 
   const editProduct = (product: ProductWithUI) => {
@@ -79,12 +67,11 @@ export function ProductsTab({
     return `${formattedPrice}원`;
   };
 
-  const productsWithDisplayInfo: ProductWithDisplayInfo[] = products.map(
-    (product) => ({
+  const productsWithDisplayInfo: ProductWithDisplayInfo[] =
+    productStorage.products.map((product) => ({
       ...product,
       displayedPrice: displayPrice(product),
-    })
-  );
+    }));
 
   return (
     <section className="bg-white rounded-lg border border-gray-200">

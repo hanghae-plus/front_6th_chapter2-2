@@ -17,7 +17,7 @@ import { getRemainingStock } from "./features/check-stock/libs";
 import { useProductSearch } from "./features/search-product/hooks/useProductSearch";
 
 const App = () => {
-  const { products, setProducts } = useProductStorage();
+  const { products } = useProductStorage();
   const { cart, setCart, totalItemCount } = useCartStorage();
   const { coupons, setCoupons } = useCouponStorage();
   const { filteredProducts, searchValue, searchTerm, onSearchChange } =
@@ -66,8 +66,6 @@ const App = () => {
       <main className="max-w-7xl mx-auto px-4 py-8">
         {isAdmin ? (
           <AdminPage
-            products={products}
-            setProducts={setProducts}
             coupons={coupons}
             setCoupons={setCoupons}
             addNotification={addNotification}
