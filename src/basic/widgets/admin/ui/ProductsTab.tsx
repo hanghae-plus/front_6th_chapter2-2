@@ -62,7 +62,7 @@ export function ProductsTab({
     [products, setProducts, addNotification]
   );
 
-  const startEditProduct = (product: ProductWithUI) => {
+  const editProduct = (product: ProductWithUI) => {
     setEditingProduct(product);
     setShowProductForm(true);
   };
@@ -105,8 +105,8 @@ export function ProductsTab({
 
       <ProductTable
         products={productsWithDisplayInfo}
-        onEditButtonClick={startEditProduct}
-        onDeleteButtonClick={deleteProduct}
+        onEdit={editProduct}
+        onDelete={deleteProduct}
       />
 
       {showProductForm && editingProduct && (

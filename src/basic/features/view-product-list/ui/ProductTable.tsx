@@ -8,14 +8,14 @@ interface ProductWithDisplayInfo extends Product {
 
 interface ProductTableProps {
   products: ProductWithDisplayInfo[];
-  onEditButtonClick: (product: ProductWithDisplayInfo) => void;
-  onDeleteButtonClick: (productId: string) => void;
+  onEdit: (product: ProductWithDisplayInfo) => void;
+  onDelete: (productId: string) => void;
 }
 
 export function ProductTable({
   products,
-  onEditButtonClick,
-  onDeleteButtonClick,
+  onEdit,
+  onDelete,
 }: ProductTableProps) {
   return (
     <div className="overflow-x-auto">
@@ -66,13 +66,13 @@ export function ProductTable({
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                 <button
-                  onClick={() => onEditButtonClick(product)}
+                  onClick={() => onEdit(product)}
                   className="text-indigo-600 hover:text-indigo-900 mr-3"
                 >
                   수정
                 </button>
                 <button
-                  onClick={() => onDeleteButtonClick(product.id)}
+                  onClick={() => onDelete(product.id)}
                   className="text-red-600 hover:text-red-900"
                 >
                   삭제
