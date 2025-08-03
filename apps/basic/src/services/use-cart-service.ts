@@ -1,12 +1,17 @@
 import { getRemainingStock } from '@/models/cart';
-import { notificationTypeSchema } from '@/models/notification';
+import {
+  NotificationType,
+  notificationTypeSchema
+} from '@/models/notification';
 import { ProductView } from '@/models/product';
 import { useCartStore } from '@/store';
 import { useCallback } from 'react';
-import { useNotificationService } from './use-notification-service';
 
-export const useCartService = () => {
-  const { addNotification } = useNotificationService();
+type Props = {
+  addNotification: (message: string, type?: NotificationType) => void;
+};
+
+export const useCartService = ({ addNotification }: Props) => {
   const cartStore = useCartStore();
 
   const validateCartItemQuantity = (product: ProductView) => {
@@ -102,7 +107,13 @@ export const useCartService = () => {
     cartStore.clearCart();
   }, []);
 
+  const getCart = useCallback(() => {
+    return cartStore.cart;
+  }, [cartStore.cart]);
+
   return {
+    getCart,
+
     addToCart,
     removeFromCart,
     updateQuantity,

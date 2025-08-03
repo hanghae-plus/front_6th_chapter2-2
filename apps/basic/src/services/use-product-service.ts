@@ -1,6 +1,7 @@
 import { ProductView } from '@/models/product';
 import { useProductStore } from '@/store';
 import { useCallback } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 export const useProductService = () => {
   const productStore = useProductStore();
@@ -18,7 +19,7 @@ export const useProductService = () => {
         return 'SOLD OUT';
       }
 
-      return `₩${price.toLocaleString()}`;
+      return `${price.toLocaleString()}원`;
     },
     [productStore]
   );
@@ -41,10 +42,34 @@ export const useProductService = () => {
     []
   );
 
+  const addProduct = useCallback(
+    (product: Omit<ProductView, 'id'>) => {
+      productStore.addProduct({ ...product, id: uuidv4() });
+    },
+    [productStore]
+  );
+
+  const updateProduct = useCallback(
+    (productId: string, updates: Partial<ProductView>) => {
+      productStore.updateProduct(productId, updates);
+    },
+    [productStore]
+  );
+
+  const getProducts = useCallback(() => {
+    return productStore.products;
+  }, [productStore.products]);
+
   return {
+    // state
+    getProducts: getProducts,
+    findProductById: productStore.findProductById,
+
+    // actions
     formatPrice,
     filterProducts,
-    products: productStore.products,
-    findProductById: productStore.findProductById
+    updateProduct,
+    addProduct,
+    removeProductById: productStore.removeProductById
   };
 };
