@@ -9,7 +9,7 @@ interface ProductWithUI extends Product {
 
 interface ProductFormFieldsProps {
   product: Partial<ProductWithUI>;
-  onChange: (field: string, value: any) => void;
+  onChange: (field: keyof ProductWithUI, value: any) => void;
   errors?: Record<string, string>;
   addNotification: (message: string, variant?: NotificationVariant) => void;
 }
