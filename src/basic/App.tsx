@@ -11,6 +11,7 @@ import { AdminPage } from "./pages/AdminPage";
 import { CartPage } from "./pages/CartPage";
 import { useLocalStorageObject } from "./shared/hooks/useLocalStorage";
 import { useState, useCallback, useEffect } from "react";
+import CloseIcon from "./assets/icons/CloseIcon.svg?react";
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -89,15 +90,6 @@ const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
-  // AdminPage에서만 사용되는 함수들
-  const displayPrice = (product: Product) => {
-    const stockStatus = getProductStockStatus({ product, cartQuantity: 0 });
-    if (stockStatus) return stockStatus;
-
-    const formattedPrice = formatPrice(product.price);
-    return `${formattedPrice}원`; // 관리자 모드에서는 원 사용
-  };
-
   const getProductRemainingStock = (product: Product): number => {
     const cartItem = cart.find((item) => item.product.id === product.id);
     const cartQuantity = cartItem?.quantity || 0;
@@ -160,19 +152,7 @@ const App = () => {
                 }
                 className="text-white hover:text-gray-200"
               >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
+                <CloseIcon className="w-4 h-4" />
               </button>
             </div>
           ))}
