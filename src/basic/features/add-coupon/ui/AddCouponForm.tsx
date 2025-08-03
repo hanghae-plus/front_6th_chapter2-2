@@ -1,4 +1,4 @@
-import { Coupon, DiscountType } from "../../../../types";
+import { Coupon } from "../../../../types";
 import { useCouponForm } from "../../../entities/coupon/hooks/useCouponForm";
 import { CouponFormFields } from "../../../entities/coupon/ui/CouponFormFields";
 import { NotificationVariant } from "../../../entities/notification/types";
