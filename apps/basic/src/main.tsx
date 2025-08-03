@@ -1,26 +1,16 @@
-import AdminPage from '@/pages/admin/page';
-import ShoppingPage from '@/pages/shopping/page';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-
-const router = createBrowserRouter([
-  {
-    path: '/',
-    Component: ShoppingPage
-  },
-  {
-    path: '/admin',
-    Component: AdminPage
-  }
-]);
+import { App } from './App';
+import { NotificationProvider } from './services/use-notification-service';
 
 const root = document.getElementById('root');
 
 if (root) {
   ReactDOM.createRoot(root).render(
     <React.StrictMode>
-      <RouterProvider router={router} />
+      <NotificationProvider>
+        <App />
+      </NotificationProvider>
     </React.StrictMode>
   );
 }

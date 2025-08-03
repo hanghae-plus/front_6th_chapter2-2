@@ -1,33 +1,20 @@
 import { CartItem } from '@/models/cart';
-import { useLocalStorage } from '@/shared/hooks';
-import { createStorage } from '@/utils';
-
-const cartStorage = createStorage<CartItem[]>({ key: 'cart' });
+import { useLocalStorageObject } from '@/shared/hooks';
 
 export const useCartStore = () => {
-  const cart = useLocalStorage(cartStorage) ?? [];
+  const [cart, setCart] = useLocalStorageObject<CartItem[]>('cart', []);
   const totalItemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   const addCartItems = (cartItems: CartItem[]) => {
-    cartStorage.set([...(cartStorage.get() ?? []), ...cartItems]);
+    setCart(prev => [...(prev ?? []), ...cartItems]);
   };
 
   const removeCartItemByProductId = (productId: string) => {
-    cartStorage.set(
-      cartStorage.get()?.filter(item => item.product.id !== productId) ?? []
-    );
-  };
-
-  const setCart = (cart: CartItem[] | ((prev: CartItem[]) => CartItem[])) => {
-    if (typeof cart === 'function') {
-      cartStorage.set(cart(cartStorage.get() ?? []));
-    } else {
-      cartStorage.set(cart);
-    }
+    setCart(prev => prev?.filter(item => item.product.id !== productId) ?? []);
   };
 
   const clearCart = () => {
-    cartStorage.set([]);
+    setCart([]);
   };
 
   const findCartItemByProductId = (productId: string) => {

@@ -6,11 +6,11 @@
   "scripts": {
     "dev:basic": "pnpm --filter @clean-code/basic dev",
     "dev:advanced": "pnpm --filter @clean-code/advanced dev",
-    "dev:original": "pnpm --filter @clean-code/original dev",
+    "dev:origin": "pnpm --filter @clean-code/origin dev",
     "dev:hint": "pnpm --filter @clean-code/hint dev",
     "test:basic": "pnpm --filter @clean-code/basic test",
     "test:advanced": "pnpm --filter @clean-code/advanced test",
-    "test:original": "pnpm --filter @clean-code/original test",
+    "test:origin": "pnpm --filter @clean-code/origin test",
     "test:hint": "pnpm --filter @clean-code/hint test",
     "lint:basic": "pnpm --filter @clean-code/basic lint",
     "lint:advanced": "pnpm --filter @clean-code/advanced lint",

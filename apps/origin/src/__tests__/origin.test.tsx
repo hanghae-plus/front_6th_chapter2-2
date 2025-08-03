@@ -1,14 +1,14 @@
 // @ts-nocheck
 import {
+  fireEvent,
   render,
   screen,
-  fireEvent,
-  within,
   waitFor,
+  within
 } from '@testing-library/react';
 import { vi } from 'vitest';
 import App from '../App';
-import '../../setupTests';
+import '../setupTests';
 
 describe('쇼핑몰 앱 통합 테스트', () => {
   beforeEach(() => {
@@ -309,10 +309,10 @@ describe('쇼핑몰 앱 통합 테스트', () => {
 
       // 쿠폰 정보 입력
       fireEvent.change(screen.getByPlaceholderText('신규 가입 쿠폰'), {
-        target: { value: '테스트 쿠폰' },
+        target: { value: '테스트 쿠폰' }
       });
       fireEvent.change(screen.getByPlaceholderText('WELCOME2024'), {
-        target: { value: 'TEST2024' },
+        target: { value: 'TEST2024' }
       });
 
       const discountInput = screen.getByPlaceholderText('5000');
