@@ -1,12 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Coupon } from "../types";
 import { INITIAL_COUPONS } from "../constants";
-import {
-  validateCouponUsage,
-  checkDuplicateCoupon,
-  addCouponToList,
-  removeCouponFromList,
-} from "../models/coupon";
+import * as couponModel from "../models/coupon";
 
 // 최종: 모든 쿠폰 관련 로직을 포함한 완전한 훅
 export function useCoupons(
@@ -41,7 +36,7 @@ export function useCoupons(
   const getAvailableCoupons = useCallback(
     (cartTotal: number) => {
       return coupons.filter((coupon) => {
-        const validation = validateCouponUsage(coupon, cartTotal);
+        const validation = couponModel.validateCouponUsage(coupon, cartTotal);
         return validation.canUse;
       });
     },
@@ -51,11 +46,11 @@ export function useCoupons(
   // 3단계: 상태 변경 함수들
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {
-      if (checkDuplicateCoupon(coupons, newCoupon.code)) {
+      if (couponModel.checkDuplicateCoupon(coupons, newCoupon.code)) {
         addNotification?.("이미 존재하는 쿠폰 코드입니다.", "error");
         return;
       }
-      setCoupons((prev) => addCouponToList(prev, newCoupon));
+      setCoupons((prev) => couponModel.addCouponToList(prev, newCoupon));
       addNotification?.("쿠폰이 추가되었습니다.", "success");
     },
     [coupons, addNotification]
@@ -63,7 +58,7 @@ export function useCoupons(
 
   const removeCoupon = useCallback(
     (couponCode: string) => {
-      setCoupons((prev) => removeCouponFromList(prev, couponCode));
+      setCoupons((prev) => couponModel.removeCouponFromList(prev, couponCode));
       if (selectedCoupon?.code === couponCode) {
         setSelectedCoupon(null);
       }
@@ -81,7 +76,7 @@ export function useCoupons(
 
       // 현재 장바구니 총액 계산 (쿠폰 없이)
       const currentTotal = getTotals(null).totalAfterDiscount;
-      const validation = validateCouponUsage(coupon, currentTotal);
+      const validation = couponModel.validateCouponUsage(coupon, currentTotal);
       if (!validation.canUse) {
         addNotification?.(validation.reason!, "error");
         return;

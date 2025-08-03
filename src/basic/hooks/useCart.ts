@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { CartItem, Product } from "../types";
+import * as composedModels from "../models";
 import * as cartModel from "../models/cart";
-import * as discountModel from "../models/discount";
 import * as productModel from "../models/product";
 
 // 최종: 모든 장바구니 비즈니스 로직을 포함한 완전한 훅
@@ -24,15 +24,15 @@ export function useCart(
     return [];
   });
 
-
   // localStorage 동기화
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
-  // 계산 함수들 (models 활용, useMemo로 최적화)
+  // 계산 함수들 (적절한 모델에서 가져와서 useMemo로 최적화)
   const getTotals = useMemo(() => {
-    return (selectedCoupon?: any) => cartModel.calculateCartTotal(cart, selectedCoupon);
+    return (selectedCoupon?: any) =>
+      composedModels.calculateCartTotal(cart, selectedCoupon);
   }, [cart]);
 
   const getRemainingStock = useMemo(() => {
@@ -40,7 +40,7 @@ export function useCart(
   }, [cart]);
 
   const calculateItemTotal = useMemo(() => {
-    return (item: CartItem) => discountModel.calculateItemTotal(item, cart);
+    return (item: CartItem) => composedModels.calculateItemTotal(item, cart);
   }, [cart]);
 
   // 최종: 모든 비즈니스 로직을 포함한 완전한 함수들
@@ -97,7 +97,6 @@ export function useCart(
     },
     [removeFromCart, addNotification]
   );
-
 
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;

@@ -5,6 +5,7 @@ import {
   MAX_DISCOUNT_RATE,
 } from "../constants/business";
 
+// 개별 아이템에 적용 가능한 최대 할인율 계산
 export function getMaxApplicableDiscount(
   item: CartItem,
   cart: CartItem[]
@@ -26,12 +27,4 @@ export function getMaxApplicableDiscount(
   }
 
   return baseDiscount;
-}
-
-export function calculateItemTotal(item: CartItem, cart: CartItem[]): number {
-  const { price } = item.product;
-  const { quantity } = item;
-  const discount = getMaxApplicableDiscount(item, cart);
-
-  return Math.round(price * quantity * (1 - discount));
 }
