@@ -1,8 +1,8 @@
 import { CartItem, Coupon } from "../types";
-import { Product } from "./features/product/types";
+import { Product } from "./entities/product/types";
 import Header from "./app/components/Header";
 import { useSearch } from "./shared/hooks/useSearch";
-import { getRemainingStock } from "./features/product/libs";
+import { getRemainingStock } from "./entities/product/libs";
 import { AdminPage } from "./pages/AdminPage";
 import { CartPage } from "./pages/CartPage";
 import { useLocalStorageObject } from "./shared/hooks/useLocalStorage";

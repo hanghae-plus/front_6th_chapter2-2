@@ -1,6 +1,6 @@
 import { Coupon, type CartItem as CartItemType } from "../../types";
-import { Product } from "../features/product/types";
-import { ProductList } from "../features/product/components/ProductList";
+import { Product } from "../entities/product/types";
+import { ProductList } from "../entities/product/ui/ProductList";
 import {
   calculateDiscountedPrice,
   calculateDiscountedAmount,
@@ -9,7 +9,7 @@ import {
 import {
   getProductStockStatus,
   getRemainingStock,
-} from "../features/product/libs";
+} from "../entities/product/libs";
 import { useCallback } from "react";
 import { CartItem } from "../features/cart/components/CartItem";
 import CartBagIcon from "../assets/icons/CartBagIcon.svg?react";
