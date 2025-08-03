@@ -1,7 +1,9 @@
 import { useState, useCallback, useEffect } from "react";
 import { Coupon, Notification, ProductWithUI } from "./types";
 import { useCart } from "./hooks/useCart";
-import { INITIAL_PRODUCTS, INITIAL_COUPONS } from "./constants";
+import { useCoupons } from "./hooks/useCoupons";
+import { INITIAL_PRODUCTS } from "./constants";
+import * as couponModel from "./models/coupon";
 import HeaderLayout from "./components/Header/HeaderLayout";
 import ShopHeaderContent from "./components/Header/ShopHeaderContent";
 import AdminHeaderContent from "./components/Header/AdminHeaderContent";
@@ -145,24 +147,23 @@ const App = () => {
     [addNotification]
   );
 
-  // 새 쿠폰 추가 (중복 코드 확인)
+  // 새 쿠폰 추가 (models 사용)
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {
-      const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
-      if (existingCoupon) {
+      if (couponModel.checkDuplicateCoupon(coupons, newCoupon.code)) {
         addNotification("이미 존재하는 쿠폰 코드입니다.", "error");
         return;
       }
-      setCoupons((prev) => [...prev, newCoupon]);
+      setCoupons((prev) => couponModel.addCouponToList(prev, newCoupon));
       addNotification("쿠폰이 추가되었습니다.", "success");
     },
     [coupons, addNotification]
   );
 
-  // 쿠폰 삭제 (사용중인 쿠폰도 해제)
+  // 쿠폰 삭제 (models 사용)
   const deleteCoupon = useCallback(
     (couponCode: string) => {
-      setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
+      setCoupons((prev) => couponModel.removeCouponFromList(prev, couponCode));
       if (selectedCoupon?.code === couponCode) {
         applyCoupon(null);
       }

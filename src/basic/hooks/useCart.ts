@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { CartItem, Coupon, Product } from "../types";
 import * as cartModel from "../models/cart";
+import { validateCouponUsage } from "../models/coupon";
 
 // 최종: 모든 장바구니 비즈니스 로직을 포함한 완전한 훅
 export function useCart(
@@ -109,16 +110,10 @@ export function useCart(
         cart,
         selectedCoupon
       ).totalAfterDiscount;
-      const MIN_ORDER_AMOUNT_FOR_PERCENTAGE_COUPON = 10000;
 
-      if (
-        currentTotal < MIN_ORDER_AMOUNT_FOR_PERCENTAGE_COUPON &&
-        coupon.discountType === "percentage"
-      ) {
-        addNotification?.(
-          `percentage 쿠폰은 ${MIN_ORDER_AMOUNT_FOR_PERCENTAGE_COUPON.toLocaleString()}원 이상 구매 시 사용 가능합니다.`,
-          "error"
-        );
+      const validation = validateCouponUsage(coupon, currentTotal);
+      if (!validation.canUse) {
+        addNotification?.(validation.reason!, "error");
         return;
       }
 
