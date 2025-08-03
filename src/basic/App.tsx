@@ -59,18 +59,8 @@ const App = () => {
     return INITIAL_PRODUCTS;
   });
 
-  // 🎫 쿠폰 상태 (localStorage에서 복원)
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem("coupons");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return INITIAL_COUPONS;
-      }
-    }
-    return INITIAL_COUPONS;
-  });
+  // 🎫 쿠폰 관리 (useCoupons 훅 사용)
+  const { coupons, setCoupons } = useCoupons();
 
   // 🎛️ UI 상태들
   const [isAdmin, setIsAdmin] = useState(false); // 관리자 모드 여부
@@ -98,10 +88,6 @@ const App = () => {
     localStorage.setItem("products", JSON.stringify(products));
   }, [products]);
 
-  // 쿠폰 변경시 localStorage 저장
-  useEffect(() => {
-    localStorage.setItem("coupons", JSON.stringify(coupons));
-  }, [coupons]);
 
   // 검색어 디바운싱
   useEffect(() => {
