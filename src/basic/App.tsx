@@ -65,7 +65,7 @@ const initialCoupons: Coupon[] = [
 ];
 
 const App = () => {
-
+  // 로컬 스토리지로 초기 상태 가져오기
   const [products, setProducts] = useState<ProductWithUI[]>(() => {
     const saved = localStorage.getItem('products');
     if (saved) {
@@ -102,17 +102,27 @@ const App = () => {
     return initialCoupons;
   });
 
+  // 쿠폰 할인 - 현재 선택된 쿠폰
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+  // 관리자 페이지 여부
   const [isAdmin, setIsAdmin] = useState(false);
+  // 토스트 모달 알람 배열
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [showCouponForm, setShowCouponForm] = useState(false);
+  // 관리자 페이지 - 활성화된 탭 (상품/쿠폰 관리)
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
+  // 상품 추가 (수정) 폼 표시
   const [showProductForm, setShowProductForm] = useState(false);
+  // 쿠폰 추가 (수정) 폼 표시
+  const [showCouponForm, setShowCouponForm] = useState(false);
+  // 검색창 내 검색어
   const [searchTerm, setSearchTerm] = useState('');
+  // 상품 검색어 - 자동으로 검색 반영되며 상품 페이지에 보여지는 값
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
   // Admin
+  // 작성 중인 상품의 상태 - new(추가)이거나 상품의 id(수정)
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
+  // 현재 작성 중인 상품 정보
   const [productForm, setProductForm] = useState({
     name: '',
     price: 0,
@@ -121,6 +131,7 @@ const App = () => {
     discounts: [] as Array<{ quantity: number; rate: number }>
   });
 
+  // 현재 작성 중인 쿠폰 정보
   const [couponForm, setCouponForm] = useState({
     name: '',
     code: '',
@@ -128,15 +139,17 @@ const App = () => {
     discountValue: 0
   });
 
-
+  // 가격 표시 함수
   const formatPrice = (price: number, productId?: string): string => {
     if (productId) {
       const product = products.find(p => p.id === productId);
       if (product && getRemainingStock(product) <= 0) {
+        // 재고가 없으면 SOLD OUT 표시
         return 'SOLD OUT';
       }
     }
 
+    // 관리자 페이지에선 원, 상품 페이지에선 ₩로 가격 표시
     if (isAdmin) {
       return `${price.toLocaleString()}원`;
     }
@@ -144,24 +157,28 @@ const App = () => {
     return `₩${price.toLocaleString()}`;
   };
 
+  // 최대 할인율 계산
   const getMaxApplicableDiscount = (item: CartItem): number => {
     const { discounts } = item.product;
     const { quantity } = item;
     
+    // 기본 할인율 계산
     const baseDiscount = discounts.reduce((maxDiscount, discount) => {
       return quantity >= discount.quantity && discount.rate > maxDiscount 
         ? discount.rate 
         : maxDiscount;
     }, 0);
     
+    // 10개 이상 구매하는 상품이 있는지 확인 (대량 구매)
     const hasBulkPurchase = cart.some(cartItem => cartItem.quantity >= 10);
     if (hasBulkPurchase) {
-      return Math.min(baseDiscount + 0.05, 0.5); // 대량 구매 시 추가 5% 할인
+      return Math.min(baseDiscount + 0.05, 0.5); // 대량 구매 시 추가 5% 할인 (최대 할인율 - 50%)
     }
     
     return baseDiscount;
   };
 
+  // 최종 할인율이 반영된 상품 가격
   const calculateItemTotal = (item: CartItem): number => {
     const { price } = item.product;
     const { quantity } = item;
@@ -170,6 +187,7 @@ const App = () => {
     return Math.round(price * quantity * (1 - discount));
   };
 
+  // 할인 전, 할인 후 가격 반환
   const calculateCartTotal = (): {
     totalBeforeDiscount: number;
     totalAfterDiscount: number;
@@ -179,10 +197,11 @@ const App = () => {
 
     cart.forEach(item => {
       const itemPrice = item.product.price * item.quantity;
-      totalBeforeDiscount += itemPrice;
-      totalAfterDiscount += calculateItemTotal(item);
+      totalBeforeDiscount += itemPrice; // 아이템의 기본 가격
+      totalAfterDiscount += calculateItemTotal(item); // 최종 할인된 아이템 가격
     });
 
+    // 선택된 쿠폰이 있으면 쿠폰 적용
     if (selectedCoupon) {
       if (selectedCoupon.discountType === 'amount') {
         totalAfterDiscount = Math.max(0, totalAfterDiscount - selectedCoupon.discountValue);
@@ -197,7 +216,9 @@ const App = () => {
     };
   };
 
+  // 재고 확인 함수
   const getRemainingStock = (product: Product): number => {
+    // 상품 재고 수 - 카트에 담긴 상품 수
     const cartItem = cart.find(item => item.product.id === product.id);
     const remaining = product.stock - (cartItem?.quantity || 0);
     
@@ -205,22 +226,25 @@ const App = () => {
   };
 
   const addNotification = useCallback((message: string, type: 'error' | 'success' | 'warning' = 'success') => {
+    // 알림 구분을 위한 고유 식별자
     const id = Date.now().toString();
     setNotifications(prev => [...prev, { id, message, type }]);
     
+    // 3초 후 해당 알림 제거
     setTimeout(() => {
       setNotifications(prev => prev.filter(n => n.id !== id));
     }, 3000);
   }, []);
 
+  // 장바구니 내 전체 상품 수
   const [totalItemCount, setTotalItemCount] = useState(0);
-  
 
   useEffect(() => {
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);
     setTotalItemCount(count);
   }, [cart]);
 
+  // 상품과 쿠폰 상태를 로컬 스토리지와 동기화
   useEffect(() => {
     localStorage.setItem('products', JSON.stringify(products));
   }, [products]);
@@ -229,6 +253,7 @@ const App = () => {
     localStorage.setItem('coupons', JSON.stringify(coupons));
   }, [coupons]);
 
+  // 장바구니가 비면 로컬 스토리지 키 자체를 삭제
   useEffect(() => {
     if (cart.length > 0) {
       localStorage.setItem('cart', JSON.stringify(cart));
@@ -237,6 +262,7 @@ const App = () => {
     }
   }, [cart]);
 
+  // 검색창 내 검색어가 바뀔 때 5초마다 바로 검색 반영
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
@@ -244,6 +270,7 @@ const App = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
+  // 장바구니 담기 버튼 처리
   const addToCart = useCallback((product: ProductWithUI) => {
     const remainingStock = getRemainingStock(product);
     if (remainingStock <= 0) {
@@ -252,6 +279,7 @@ const App = () => {
     }
 
     setCart(prevCart => {
+      // 이미 장바구니에 존재하는 상품 처리
       const existingItem = prevCart.find(item => item.product.id === product.id);
       
       if (existingItem) {
@@ -269,16 +297,19 @@ const App = () => {
         );
       }
       
+      // 장바구니에 없는 상품이면 추가
       return [...prevCart, { product, quantity: 1 }];
     });
     
     addNotification('장바구니에 담았습니다', 'success');
   }, [cart, addNotification, getRemainingStock]);
 
+  // 장바구니에서 상품 제거
   const removeFromCart = useCallback((productId: string) => {
     setCart(prevCart => prevCart.filter(item => item.product.id !== productId));
   }, []);
 
+  // 장바구니의 상품 수 업데이트 (-1, +1 처리)
   const updateQuantity = useCallback((productId: string, newQuantity: number) => {
     if (newQuantity <= 0) {
       removeFromCart(productId);
@@ -303,18 +334,23 @@ const App = () => {
     );
   }, [products, removeFromCart, addNotification, getRemainingStock]);
 
+  // 쿠폰 적용 함수
   const applyCoupon = useCallback((coupon: Coupon) => {
+    // 할인 적용 전 총 가격
     const currentTotal = calculateCartTotal().totalAfterDiscount;
     
+    // 총 가격 10000원 이하일 경우 처리
     if (currentTotal < 10000 && coupon.discountType === 'percentage') {
       addNotification('percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.', 'error');
       return;
     }
 
+    // 쿠폰 적용 후 알림 처리
     setSelectedCoupon(coupon);
     addNotification('쿠폰이 적용되었습니다.', 'success');
   }, [addNotification, calculateCartTotal]);
 
+  // 주문 완료 처리 함수
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
     addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
@@ -322,15 +358,17 @@ const App = () => {
     setSelectedCoupon(null);
   }, [addNotification]);
 
+  // 상품 추가
   const addProduct = useCallback((newProduct: Omit<ProductWithUI, 'id'>) => {
     const product: ProductWithUI = {
       ...newProduct,
-      id: `p${Date.now()}`
+      id: `p${Date.now()}` // 상품 고유 아이디
     };
     setProducts(prev => [...prev, product]);
     addNotification('상품이 추가되었습니다.', 'success');
   }, [addNotification]);
 
+  // 상품 수정
   const updateProduct = useCallback((productId: string, updates: Partial<ProductWithUI>) => {
     setProducts(prev =>
       prev.map(product =>
@@ -342,12 +380,15 @@ const App = () => {
     addNotification('상품이 수정되었습니다.', 'success');
   }, [addNotification]);
 
+  // 상품 삭제
   const deleteProduct = useCallback((productId: string) => {
     setProducts(prev => prev.filter(p => p.id !== productId));
     addNotification('상품이 삭제되었습니다.', 'success');
   }, [addNotification]);
 
+  // 쿠폰 추가
   const addCoupon = useCallback((newCoupon: Coupon) => {
+    // 이미 존재하는 쿠폰인지 코드로 확인
     const existingCoupon = coupons.find(c => c.code === newCoupon.code);
     if (existingCoupon) {
       addNotification('이미 존재하는 쿠폰 코드입니다.', 'error');
@@ -357,6 +398,7 @@ const App = () => {
     addNotification('쿠폰이 추가되었습니다.', 'success');
   }, [coupons, addNotification]);
 
+  // 쿠폰 삭제
   const deleteCoupon = useCallback((couponCode: string) => {
     setCoupons(prev => prev.filter(c => c.code !== couponCode));
     if (selectedCoupon?.code === couponCode) {
@@ -365,36 +407,48 @@ const App = () => {
     addNotification('쿠폰이 삭제되었습니다.', 'success');
   }, [selectedCoupon, addNotification]);
 
+  // 상품 추가 (수정) 처리 submit 함수
   const handleProductSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (editingProduct && editingProduct !== 'new') {
+      // 상품 수정 처리
       updateProduct(editingProduct, productForm);
       setEditingProduct(null);
     } else {
+      // 상품 추가 처리
       addProduct({
         ...productForm,
         discounts: productForm.discounts
       });
     }
+    // 작성하던 상품 폼 값 지움
     setProductForm({ name: '', price: 0, stock: 0, description: '', discounts: [] });
+    // 수정 완료 처리
     setEditingProduct(null);
+    // 상품 작성 폼 숨기기
     setShowProductForm(false);
   };
 
+  // 쿠폰 추가 처리 submit 함수
   const handleCouponSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     addCoupon(couponForm);
+    // 작성하던 쿠폰 폼 값 지움
     setCouponForm({
       name: '',
       code: '',
       discountType: 'amount',
       discountValue: 0
     });
+    // 쿠폰 작성 폼 숨기기
     setShowCouponForm(false);
   };
 
+  // 상품 수정을 위한 함수
   const startEditProduct = (product: ProductWithUI) => {
+    // 수정하려는 상품의 아이디 처리
     setEditingProduct(product.id);
+    // 상품 폼에 수정하려는 상품 값 채움
     setProductForm({
       name: product.name,
       price: product.price,
@@ -402,11 +456,14 @@ const App = () => {
       description: product.description || '',
       discounts: product.discounts || []
     });
+    // 상품 작성 폼 표시
     setShowProductForm(true);
   };
 
+  // 할인 전 가격, 할인 후 가격
   const totals = calculateCartTotal();
 
+  // 검색어 반영된 상품 목록
   const filteredProducts = debouncedSearchTerm
     ? products.filter(product => 
         product.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
@@ -416,6 +473,7 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* 알림 표시 컨테이너 */}
       {notifications.length > 0 && (
         <div className="fixed top-20 right-4 z-50 space-y-2 max-w-sm">
           {notifications.map(notif => (
@@ -432,6 +490,7 @@ const App = () => {
                 onClick={() => setNotifications(prev => prev.filter(n => n.id !== notif.id))}
                 className="text-white hover:text-gray-200"
               >
+                {/* 토스트 모달 x 아이콘 */}
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -440,6 +499,8 @@ const App = () => {
           ))}
         </div>
       )}
+
+      {/* 헤더 */}
       <header className="bg-white shadow-sm sticky top-0 z-40 border-b">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-between items-center h-16">
@@ -471,6 +532,7 @@ const App = () => {
               </button>
               {!isAdmin && (
                 <div className="relative">
+                  {/* 카트 아이콘 */}
                   <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
@@ -488,6 +550,7 @@ const App = () => {
 
       <main className="max-w-7xl mx-auto px-4 py-8">
         {isAdmin ? (
+          // 관리자 페이지
           <div className="max-w-6xl mx-auto">
             <div className="mb-8">
               <h1 className="text-2xl font-bold text-gray-900">관리자 대시보드</h1>
@@ -701,6 +764,7 @@ const App = () => {
                               }}
                               className="text-red-600 hover:text-red-800"
                             >
+                              {/* 상품 추가 - x 아이콘 */}
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                               </svg>
@@ -770,6 +834,7 @@ const App = () => {
                           onClick={() => deleteCoupon(coupon.code)}
                           className="text-gray-400 hover:text-red-600 transition-colors"
                         >
+                          {/* 쿠폰 - 휴지통 아이콘 */}
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                           </svg>
@@ -783,6 +848,7 @@ const App = () => {
                       onClick={() => setShowCouponForm(!showCouponForm)}
                       className="text-gray-400 hover:text-gray-600 flex flex-col items-center"
                     >
+                      {/* 새 쿠폰 추가 + 아이콘 */}
                       <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                       </svg>
@@ -892,6 +958,7 @@ const App = () => {
             )}
           </div>
         ) : (
+          // 상품 목록 페이지
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <div className="lg:col-span-3">
               {/* 상품 목록 */}
@@ -916,6 +983,7 @@ const App = () => {
                         {/* 상품 이미지 영역 (placeholder) */}
                         <div className="relative">
                           <div className="aspect-square bg-gray-100 flex items-center justify-center">
+                            {/* 상품 이미지 아이콘 */}
                             <svg className="w-24 h-24 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
@@ -980,10 +1048,12 @@ const App = () => {
               </section>
             </div>
             
+            {/* 장바구니 + 결제 정보 컨테이너 */}
             <div className="lg:col-span-1">
               <div className="sticky top-24 space-y-4">
                 <section className="bg-white rounded-lg border border-gray-200 p-4">
                   <h2 className="text-lg font-semibold mb-4 flex items-center">
+                    {/* 장바구니 아이콘 */}
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                     </svg>
@@ -991,6 +1061,7 @@ const App = () => {
                   </h2>
                   {cart.length === 0 ? (
                     <div className="text-center py-8">
+                      {/* 장바구니 큰 아이콘 */}
                       <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                       </svg>
@@ -1012,6 +1083,7 @@ const App = () => {
                                 onClick={() => removeFromCart(item.product.id)} 
                                 className="text-gray-400 hover:text-red-500 ml-2"
                               >
+                                {/* 장바구니 상품 - x 아이콘 */}
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                                 </svg>
