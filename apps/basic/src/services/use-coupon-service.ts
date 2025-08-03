@@ -1,33 +1,31 @@
-import { calculateItemDiscounts, calculateSubtotal } from '@/models/cart';
+import { Coupon, isValidPercentageCoupon } from '@/models/coupon';
 import {
-  calculateCouponDiscount,
-  Coupon,
-  isValidPercentageCoupon
-} from '@/models/coupon';
-import { notificationTypeSchema } from '@/models/notification';
-import { useCartStore } from '@/store';
+  NotificationType,
+  notificationTypeSchema
+} from '@/models/notification';
+import { calculateTotalWithCouponDiscount } from '@/models/order';
+import { useCartStore, useCouponStore } from '@/store';
 import { useCallback, useState } from 'react';
-import { useNotificationService } from './use-notification-service';
 
-export const useCouponService = () => {
+type Props = {
+  addNotification: (message: string, type?: NotificationType) => void;
+};
+
+export const useCouponService = ({ addNotification }: Props) => {
   const [selectedCoupon, setSelectedCoupon] = useState<Nullable<Coupon>>(null);
-  const { addNotification } = useNotificationService();
+  const couponStore = useCouponStore();
   const cartStore = useCartStore();
 
-  const calculateTotalWithCouponDiscount = useCallback(() => {
-    const subtotal = calculateSubtotal(cartStore.cart);
-    const itemDiscounts = calculateItemDiscounts(cartStore.cart);
-    const totalAfterItemDiscounts = subtotal - itemDiscounts;
-    const couponDiscount = calculateCouponDiscount(
-      totalAfterItemDiscounts,
-      selectedCoupon
-    );
-    return Math.max(0, totalAfterItemDiscounts - couponDiscount);
+  const getTotalWithCouponDiscount = useCallback(() => {
+    return calculateTotalWithCouponDiscount(cartStore.cart, selectedCoupon);
   }, [cartStore.cart, selectedCoupon]);
 
   const validateCouponEligibility = useCallback(
     (coupon: Coupon) => {
-      const totalAfterDiscount = calculateTotalWithCouponDiscount();
+      const totalAfterDiscount = calculateTotalWithCouponDiscount(
+        cartStore.cart,
+        selectedCoupon
+      );
       if (totalAfterDiscount < 10000 && isValidPercentageCoupon(coupon)) {
         throw new Error(
           'percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.'
@@ -35,6 +33,13 @@ export const useCouponService = () => {
       }
     },
     [calculateTotalWithCouponDiscount]
+  );
+
+  const addCoupon = useCallback(
+    (coupon: Coupon) => {
+      couponStore.addCoupon(coupon);
+    },
+    [couponStore]
   );
 
   const applyCouponToCart = useCallback(
@@ -57,10 +62,21 @@ export const useCouponService = () => {
     setSelectedCoupon(null);
   }, []);
 
+  const getCoupons = useCallback(() => {
+    return couponStore.coupons;
+  }, [couponStore.coupons]);
+
   return {
+    // state
+    getCoupons: getCoupons,
+
+    // actions
+    addCoupon,
     selectedCoupon,
     applyCoupon: applyCouponToCart,
     resetSelectedCoupon: clearSelectedCoupon,
-    calculateTotalWithCouponDiscount
+    calculateTotalWithCouponDiscount: getTotalWithCouponDiscount,
+
+    removeCouponByCode: couponStore.removeCouponByCode
   };
 };
