@@ -12,7 +12,6 @@ import {
 } from "../features/product/libs";
 import { useCallback } from "react";
 import { CartItem } from "../features/cart/components/CartItem";
-import CartIcon from "../assets/icons/CartIcon.svg?react";
 import CartBagIcon from "../assets/icons/CartBagIcon.svg?react";
 
 interface ProductWithUI extends Product {
@@ -240,7 +239,7 @@ export function CartPage({
         <div className="sticky top-24 space-y-4">
           <section className="bg-white rounded-lg border border-gray-200 p-4">
             <h2 className="text-lg font-semibold mb-4 flex items-center">
-              <CartIcon className="w-5 h-5 mr-2" />
+              <CartBagIcon className="w-5 h-5 mr-2" />
               장바구니
             </h2>
             {cart.length === 0 ? (
