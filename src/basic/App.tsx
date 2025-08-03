@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { CartItem, Coupon, Product } from '../types';
-import Button from './components/shared/Button.tsx';
+import Button from './components/ui/Button.tsx';
+import Title from './components/ui/typography/Title.tsx';
 
 export interface ProductWithUI extends Product {
   description?: string;
@@ -604,7 +605,8 @@ const App = () => {
               <section className="bg-white rounded-lg border border-gray-200">
                 <div className="p-6 border-b border-gray-200">
                   <div className="flex justify-between items-center">
-                    <h2 className="text-lg font-semibold">상품 목록</h2>
+                    {/*<h2 className="text-lg font-semibold">상품 목록</h2>*/}
+                    <Title size={'lg'}>상품 목록</Title>
                     <button
                       onClick={() => {
                         setEditingProduct('new');
@@ -939,7 +941,8 @@ const App = () => {
             ) : (
               <section className="bg-white rounded-lg border border-gray-200">
                 <div className="p-6 border-b border-gray-200">
-                  <h2 className="text-lg font-semibold">쿠폰 관리</h2>
+                  {/*<h2 className="text-lg font-semibold">쿠폰 관리</h2>*/}
+                  <Title level={2}>쿠폰 관리</Title>
                 </div>
                 <div className="p-6">
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -1169,9 +1172,13 @@ const App = () => {
               {/* 상품 목록 */}
               <section>
                 <div className="mb-6 flex justify-between items-center">
-                  <h2 className="text-2xl font-semibold text-gray-800">
+                  {/*<h2 className="text-2xl font-semibold text-gray-800">*/}
+                  {/*  전체 상품*/}
+                  {/*</h2>*/}
+
+                  <Title level={2} className={'text-2xl text-gray-800'}>
                     전체 상품
-                  </h2>
+                  </Title>
                   <div className="text-sm text-gray-600">
                     총 {products.length}개 상품
                   </div>
