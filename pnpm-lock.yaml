@@ -55,7 +55,7 @@ importers:
         specifier: ^26.1.0
         version: 26.1.0
       typescript:
-        specifier: ^5.9.2
+        specifier: ^5.8.2
         version: 5.9.2
       vite:
         specifier: ^7.0.6
