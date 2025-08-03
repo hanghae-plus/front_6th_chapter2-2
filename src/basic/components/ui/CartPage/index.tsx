@@ -7,7 +7,7 @@ interface CartPageProps {
   products: ProductWithUI[];
   filteredProducts: ProductWithUI[];
   debouncedSearchTerm: string;
-  getRemainingStock: (product: ProductWithUI, cart: CartItem[]) => number;
+  getRemainingStock: (product: ProductWithUI) => number;
   onAddToCart: (product: ProductWithUI) => void;
 
   // 장바구니 관련
@@ -22,7 +22,7 @@ interface CartPageProps {
   onUpdateQuantity: (productId: string, newQuantity: number) => void;
   onApplyCoupon: (coupon: Coupon | null) => void;
   onCompleteOrder: () => void;
-  calculateItemTotal: (item: CartItem, cart: CartItem[]) => number;
+  calculateItemTotal: (item: CartItem) => number;
 }
 
 const CartPage = ({
@@ -64,7 +64,7 @@ const CartPage = ({
                 <ProductCard
                   key={product.id}
                   product={product}
-                  remainingStock={getRemainingStock(product, cart)}
+                  remainingStock={getRemainingStock(product)}
                   onAddToCart={onAddToCart}
                 />
               ))}
