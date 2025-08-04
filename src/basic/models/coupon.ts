@@ -1,5 +1,5 @@
 import type { Coupon } from '../../types';
-import { applyDiscount } from '../utils/discount';
+import { applyDiscount } from './discount';
 
 type CouponApplier = (params: { price: number }) => number;
 

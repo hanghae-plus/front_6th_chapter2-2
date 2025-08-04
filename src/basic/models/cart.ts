@@ -18,7 +18,7 @@
 // TODO: 구현
 
 import type { CartItem } from '../../types';
-import { applyDiscount } from '../utils/discount';
+import { applyDiscount } from './discount';
 
 interface GetMaxApplicableDiscountParams {
   item: CartItem;
