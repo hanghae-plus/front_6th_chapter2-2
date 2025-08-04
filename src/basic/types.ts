@@ -33,3 +33,12 @@ export interface Notification {
   message: string;
   type: "error" | "success" | "warning";
 }
+
+// admin
+export interface ProductFormData {
+  name: string;
+  price: number;
+  stock: number;
+  description: string;
+  discounts: Array<{ quantity: number; rate: number }>;
+}

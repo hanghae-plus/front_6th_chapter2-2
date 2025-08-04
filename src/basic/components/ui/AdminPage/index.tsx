@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ProductWithUI, Coupon } from "../../../types";
+import { useProductForm } from "../../../hooks/admin/useProductForm";
 import {
   formatPriceAtCart,
   formatPriceAtAdmin,
@@ -51,17 +52,18 @@ export function AdminPage({
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
     "products"
   );
-  const [showProductForm, setShowProductForm] = useState(false);
   const [showCouponForm, setShowCouponForm] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<string | null>(null);
 
-  const [productForm, setProductForm] = useState({
-    name: "",
-    price: 0,
-    stock: 0,
-    description: "",
-    discounts: [] as Array<{ quantity: number; rate: number }>,
-  });
+  const {
+    productForm,
+    setProductForm,
+    showProductForm,
+    setShowProductForm,
+    editingProduct,
+    setEditingProduct,
+    startEditProduct,
+    handleProductSubmit,
+  } = useProductForm();
 
   const [couponForm, setCouponForm] = useState({
     name: "",
@@ -69,42 +71,6 @@ export function AdminPage({
     discountType: "amount" as "amount" | "percentage",
     discountValue: 0,
   });
-
-  // 상품 편집 시작
-  const startEditProduct = (product: ProductWithUI) => {
-    setEditingProduct(product.id);
-    setProductForm({
-      name: product.name,
-      price: product.price,
-      stock: product.stock,
-      description: product.description || "",
-      discounts: product.discounts || [],
-    });
-    setShowProductForm(true);
-  };
-
-  // 상품 폼 제출
-  const handleProductSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editingProduct && editingProduct !== "new") {
-      onUpdateProduct(editingProduct, productForm);
-      setEditingProduct(null);
-    } else {
-      onAddProduct({
-        ...productForm,
-        discounts: productForm.discounts,
-      });
-    }
-    setProductForm({
-      name: "",
-      price: 0,
-      stock: 0,
-      description: "",
-      discounts: [],
-    });
-    setEditingProduct(null);
-    setShowProductForm(false);
-  };
 
   // 쿠폰 폼 제출
   const handleCouponSubmit = (e: React.FormEvent) => {
@@ -159,6 +125,7 @@ export function AdminPage({
               <button
                 onClick={() => {
                   setEditingProduct("new");
+                  setShowProductForm(true);
                   setProductForm({
                     name: "",
                     price: 0,
@@ -166,6 +133,7 @@ export function AdminPage({
                     description: "",
                     discounts: [],
                   });
+                  setEditingProduct("new");
                   setShowProductForm(true);
                 }}
                 className="px-4 py-2 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800"
@@ -246,7 +214,12 @@ export function AdminPage({
 
           {showProductForm && (
             <div className="p-6 border-t border-gray-200 bg-gray-50">
-              <form onSubmit={handleProductSubmit} className="space-y-4">
+              <form
+                onSubmit={(e) =>
+                  handleProductSubmit(e, onAddProduct, onUpdateProduct)
+                }
+                className="space-y-4"
+              >
                 <h3 className="text-lg font-medium text-gray-900">
                   {editingProduct === "new" ? "새 상품 추가" : "상품 수정"}
                 </h3>
@@ -456,7 +429,7 @@ export function AdminPage({
                   <button
                     type="button"
                     onClick={() => {
-                      setEditingProduct(null);
+                      setShowProductForm(false);
                       setProductForm({
                         name: "",
                         price: 0,
