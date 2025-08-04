@@ -5,6 +5,16 @@ interface SearchProps {
   setSearchTerm: Dispatch<SetStateAction<string>>;
 }
 
+function NoResults({ debouncedSearchTerm }: { debouncedSearchTerm: string }) {
+  return (
+    <div className="text-center py-12">
+      <p className="text-gray-500">
+        "{debouncedSearchTerm}"에 대한 검색 결과가 없습니다.
+      </p>
+    </div>
+  );
+}
+
 export function Search({ searchTerm, setSearchTerm }: SearchProps) {
   return (
     <div className="ml-8 flex-1 max-w-md">
@@ -18,3 +28,5 @@ export function Search({ searchTerm, setSearchTerm }: SearchProps) {
     </div>
   );
 }
+
+Search.NoResults = NoResults;

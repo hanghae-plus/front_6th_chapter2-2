@@ -5,6 +5,7 @@ import { formatPrice } from "../utils/formatters";
 import { getRemainingStock } from "../models/cart";
 import { ProductListSummary } from "./ui/ProductListSummary";
 import { CloseIcon, ImageIcon, ShoppingBagIcon } from "./icons";
+import { Search } from "./ui/Search";
 
 // TODO: 장바구니 페이지 컴포넌트
 // 힌트:
@@ -230,11 +231,7 @@ export function CartPage({
         <section>
           <ProductListSummary products={products} />
           {filteredProducts.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-gray-500">
-                "{debouncedSearchTerm}"에 대한 검색 결과가 없습니다.
-              </p>
-            </div>
+            <Search.NoResults debouncedSearchTerm={debouncedSearchTerm} />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredProducts.map((product) => {
