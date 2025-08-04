@@ -1,5 +1,7 @@
+import { Dispatch, SetStateAction } from "react";
 import { CartItem } from "../../../types";
 import { ShoppingCartIcon } from "../icons";
+import { Search } from "../ui/Search";
 
 function Layout({ children }: { children: React.ReactNode }) {
   return <div className="min-h-screen bg-gray-50">{children}</div>;
@@ -8,8 +10,8 @@ function Layout({ children }: { children: React.ReactNode }) {
 interface HeaderProps {
   isAdmin: boolean;
   searchTerm: string;
-  setSearchTerm: (value: string) => void;
-  setIsAdmin: (value: boolean) => void;
+  setSearchTerm: Dispatch<SetStateAction<string>>;
+  setIsAdmin: Dispatch<SetStateAction<boolean>>;
   cart: CartItem[];
   totalItemCount: number;
 }
@@ -30,15 +32,7 @@ function Header({
             <h1 className="text-xl font-semibold text-gray-800">SHOP</h1>
             {/* 검색창 - 안티패턴: 검색 로직이 컴포넌트에 직접 포함 */}
             {!isAdmin && (
-              <div className="ml-8 flex-1 max-w-md">
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="상품 검색..."
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                />
-              </div>
+              <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
             )}
           </div>
           <nav className="flex items-center space-x-4">
