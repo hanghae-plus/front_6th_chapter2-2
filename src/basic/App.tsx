@@ -1403,12 +1403,20 @@ const App = () => {
                         </div>
                       </div>
 
-                      <button
+                      {/* <button
                         onClick={completeOrder}
                         className='w-full mt-4 py-3 bg-yellow-400 text-gray-900 rounded-md font-medium hover:bg-yellow-500 transition-colors'
                       >
                         {totals.totalAfterDiscount.toLocaleString()}원 결제하기
-                      </button>
+                      </button> */}
+                      {/* Todo :: primary - lg 사이즈 옵션 수정 */}
+                      <Button
+                        onClick={completeOrder}
+                        size='lg'
+                        className='w-full hover:bg-yellow-500 bg-yellow-400 !text-gray-900 mt-4 py-3'
+                      >
+                        {totals.totalAfterDiscount.toLocaleString()}원 결제하기
+                      </Button>
 
                       <div className='mt-3 text-xs text-gray-500 text-center'>
                         <p>* 실제 결제는 이루어지지 않습니다</p>
