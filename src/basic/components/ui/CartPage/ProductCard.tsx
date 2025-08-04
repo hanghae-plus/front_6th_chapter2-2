@@ -14,10 +14,7 @@ const ProductCard = ({
   onAddToCart,
 }: ProductCardProps) => {
   return (
-    <div
-      key={product.id}
-      className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
-    >
+    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
       {/* 상품 이미지 영역 (placeholder) */}
       <div className="relative">
         <div className="aspect-square bg-gray-100 flex items-center justify-center">

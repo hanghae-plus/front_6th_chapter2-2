@@ -20,7 +20,7 @@ const App = () => {
   // 알림 메시지 추가 (3초 후 자동 삭제)
   const addNotification = useCallback(
     (message: string, type: "error" | "success" | "warning" = "success") => {
-      const id = Date.now().toString();
+      const id = `${Date.now()}-${Math.random()}`;
       setNotifications((prev) => [...prev, { id, message, type }]);
 
       setTimeout(() => {
