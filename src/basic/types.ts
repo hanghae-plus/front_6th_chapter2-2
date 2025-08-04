@@ -42,3 +42,10 @@ export interface ProductFormData {
   description: string;
   discounts: Array<{ quantity: number; rate: number }>;
 }
+
+export interface CouponFormData {
+  name: string;
+  code: string;
+  discountType: "amount" | "percentage";
+  discountValue: number;
+}

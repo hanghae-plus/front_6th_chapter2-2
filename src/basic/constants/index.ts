@@ -1,4 +1,9 @@
-import { ProductWithUI, Coupon, ProductFormData } from "../types";
+import {
+  ProductWithUI,
+  Coupon,
+  ProductFormData,
+  CouponFormData,
+} from "../types";
 
 export const INITIAL_PRODUCTS: ProductWithUI[] = [
   {
@@ -56,4 +61,11 @@ export const INITIAL_PRODUCT_FORM: ProductFormData = {
   stock: 0,
   description: "",
   discounts: [],
+};
+
+export const INITIAL_COUPON_FORM: CouponFormData = {
+  name: "",
+  code: "",
+  discountType: "amount",
+  discountValue: 0,
 };

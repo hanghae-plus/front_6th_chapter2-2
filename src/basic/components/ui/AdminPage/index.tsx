@@ -17,6 +17,7 @@ import {
   validateDiscountRate,
   validateDiscountAmount,
 } from "../../../utils/validators";
+import { useCouponForm } from "../../../hooks/admin/useCouponForm";
 
 interface AdminPageProps {
   // 상품 관련
@@ -49,11 +50,21 @@ export function AdminPage({
   onDeleteCoupon,
   addNotification,
 }: AdminPageProps) {
+  // =========== 탭 전환 관리 ===========
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
     "products"
   );
-  const [showCouponForm, setShowCouponForm] = useState(false);
 
+  // =========== 쿠폰 폼 관리 ===========
+  const {
+    couponForm,
+    setCouponForm,
+    showCouponForm,
+    setShowCouponForm,
+    handleCouponSubmit,
+  } = useCouponForm();
+
+  // =========== 상품 폼 관리 ===========
   const {
     productForm,
     setProductForm,
@@ -64,26 +75,6 @@ export function AdminPage({
     startEditProduct,
     handleProductSubmit,
   } = useProductForm();
-
-  const [couponForm, setCouponForm] = useState({
-    name: "",
-    code: "",
-    discountType: "amount" as "amount" | "percentage",
-    discountValue: 0,
-  });
-
-  // 쿠폰 폼 제출
-  const handleCouponSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onAddCoupon(couponForm);
-    setCouponForm({
-      name: "",
-      code: "",
-      discountType: "amount",
-      discountValue: 0,
-    });
-    setShowCouponForm(false);
-  };
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -531,7 +522,10 @@ export function AdminPage({
 
             {showCouponForm && (
               <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-                <form onSubmit={handleCouponSubmit} className="space-y-4">
+                <form
+                  onSubmit={(e) => handleCouponSubmit(e, onAddCoupon)}
+                  className="space-y-4"
+                >
                   <h3 className="text-md font-medium text-gray-900">
                     새 쿠폰 생성
                   </h3>
