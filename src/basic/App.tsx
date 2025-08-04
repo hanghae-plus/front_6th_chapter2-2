@@ -161,7 +161,7 @@ const App = () => {
     return getRemainingStockPure(product, cart);
   };
 
-  const addNotification = useCallback((message: string, type: 'error' | 'success' | 'warning' = 'success') => {
+  const handleNotificationAdd = useCallback((message: string, type: 'error' | 'success' | 'warning' = 'success') => {
     const id = Date.now().toString();
     setNotifications(prev => [...prev, { id, message, type }]);
     
@@ -201,30 +201,30 @@ const App = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  const addToCart = useCallback((product: ProductWithUI) => {
+  const handleProductAddToCart = useCallback((product: ProductWithUI) => {
     if (!canAddToCart(cart, product)) {
       const remainingStock = getRemainingStock(product);
       if (remainingStock <= 0) {
-        addNotification('재고가 부족합니다!', 'error');
+        handleNotificationAdd('재고가 부족합니다!', 'error');
       } else {
-        addNotification(`재고는 ${product.stock}개까지만 있습니다.`, 'error');
+        handleNotificationAdd(`재고는 ${product.stock}개까지만 있습니다.`, 'error');
       }
       return;
     }
 
     const newCart = addItemToCart(cart, product);
     setCart(newCart);
-    addNotification('장바구니에 담았습니다', 'success');
-  }, [cart, addNotification, getRemainingStock]);
+    handleNotificationAdd('장바구니에 담았습니다', 'success');
+  }, [cart, handleNotificationAdd, getRemainingStock]);
 
-  const removeFromCart = useCallback((productId: string) => {
+  const handleProductRemoveFromCart = useCallback((productId: string) => {
     const newCart = removeItemFromCart(cart, productId);
     setCart(newCart);
   }, [cart]);
 
-  const updateQuantity = useCallback((productId: string, newQuantity: number) => {
+  const handleProductQuantityUpdate = useCallback((productId: string, newQuantity: number) => {
     if (newQuantity <= 0) {
-      removeFromCart(productId);
+      handleProductRemoveFromCart(productId);
       return;
     }
 
@@ -233,43 +233,43 @@ const App = () => {
 
     const maxStock = product.stock;
     if (newQuantity > maxStock) {
-      addNotification(`재고는 ${maxStock}개까지만 있습니다.`, 'error');
+      handleNotificationAdd(`재고는 ${maxStock}개까지만 있습니다.`, 'error');
       return;
     }
 
     const newCart = updateCartItemQuantity(cart, productId, newQuantity);
     setCart(newCart);
-  }, [cart, products, removeFromCart, addNotification]);
+  }, [cart, products, handleProductRemoveFromCart, handleNotificationAdd]);
 
-  const applyCoupon = useCallback((coupon: Coupon) => {
+  const handleCouponApply = useCallback((coupon: Coupon) => {
     const currentTotal = calculateCartTotal(cart, selectedCoupon).totalAfterDiscount;
     
     if (currentTotal < 10000 && coupon.discountType === 'percentage') {
-      addNotification('percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.', 'error');
+      handleNotificationAdd('percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.', 'error');
       return;
     }
 
     setSelectedCoupon(coupon);
-    addNotification('쿠폰이 적용되었습니다.', 'success');
-  }, [cart, selectedCoupon, addNotification]);
+    handleNotificationAdd('쿠폰이 적용되었습니다.', 'success');
+  }, [cart, selectedCoupon, handleNotificationAdd]);
 
-  const completeOrder = useCallback(() => {
+  const handleOrderComplete = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
-    addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
+    handleNotificationAdd(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
     setCart([]);
     setSelectedCoupon(null);
-  }, [addNotification]);
+  }, [handleNotificationAdd]);
 
-  const addProduct = useCallback((newProduct: Omit<ProductWithUI, 'id'>) => {
+  const handleProductAdd = useCallback((newProduct: Omit<ProductWithUI, 'id'>) => {
     const product: ProductWithUI = {
       ...newProduct,
       id: `p${Date.now()}`
     };
     setProducts(prev => [...prev, product]);
-    addNotification('상품이 추가되었습니다.', 'success');
-  }, [addNotification]);
+    handleNotificationAdd('상품이 추가되었습니다.', 'success');
+  }, [handleNotificationAdd]);
 
-  const updateProduct = useCallback((productId: string, updates: Partial<ProductWithUI>) => {
+  const handleProductUpdate = useCallback((productId: string, updates: Partial<ProductWithUI>) => {
     setProducts(prev =>
       prev.map(product =>
         product.id === productId
@@ -277,39 +277,39 @@ const App = () => {
           : product
       )
     );
-    addNotification('상품이 수정되었습니다.', 'success');
-  }, [addNotification]);
+    handleNotificationAdd('상품이 수정되었습니다.', 'success');
+  }, [handleNotificationAdd]);
 
-  const deleteProduct = useCallback((productId: string) => {
+  const handleProductDelete = useCallback((productId: string) => {
     setProducts(prev => prev.filter(p => p.id !== productId));
-    addNotification('상품이 삭제되었습니다.', 'success');
-  }, [addNotification]);
+    handleNotificationAdd('상품이 삭제되었습니다.', 'success');
+  }, [handleNotificationAdd]);
 
-  const addCoupon = useCallback((newCoupon: Coupon) => {
+  const handleCouponAdd = useCallback((newCoupon: Coupon) => {
     const existingCoupon = coupons.find(c => c.code === newCoupon.code);
     if (existingCoupon) {
-      addNotification('이미 존재하는 쿠폰 코드입니다.', 'error');
+      handleNotificationAdd('이미 존재하는 쿠폰 코드입니다.', 'error');
       return;
     }
     setCoupons(prev => [...prev, newCoupon]);
-    addNotification('쿠폰이 추가되었습니다.', 'success');
-  }, [coupons, addNotification]);
+    handleNotificationAdd('쿠폰이 추가되었습니다.', 'success');
+  }, [coupons, handleNotificationAdd]);
 
-  const deleteCoupon = useCallback((couponCode: string) => {
+  const handleCouponDelete = useCallback((couponCode: string) => {
     setCoupons(prev => prev.filter(c => c.code !== couponCode));
     if (selectedCoupon?.code === couponCode) {
       setSelectedCoupon(null);
     }
-    addNotification('쿠폰이 삭제되었습니다.', 'success');
-  }, [selectedCoupon, addNotification]);
+    handleNotificationAdd('쿠폰이 삭제되었습니다.', 'success');
+  }, [selectedCoupon, handleNotificationAdd]);
 
   const handleProductSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (editingProduct && editingProduct !== 'new') {
-      updateProduct(editingProduct, productForm);
+      handleProductUpdate(editingProduct, productForm);
       setEditingProduct(null);
     } else {
-      addProduct({
+      handleProductAdd({
         ...productForm,
         discounts: productForm.discounts
       });
@@ -321,7 +321,7 @@ const App = () => {
 
   const handleCouponSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    addCoupon(couponForm);
+    handleCouponAdd(couponForm);
     setCouponForm({
       name: '',
       code: '',
@@ -331,7 +331,7 @@ const App = () => {
     setShowCouponForm(false);
   };
 
-  const startEditProduct = (product: ProductWithUI) => {
+  const handleProductStartEdit = (product: ProductWithUI) => {
     setEditingProduct(product.id);
     setProductForm({
       name: product.name,
@@ -502,13 +502,13 @@ const App = () => {
                         <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">{product.description || '-'}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                           <button
-                            onClick={() => startEditProduct(product)}
+                            onClick={() => handleProductStartEdit(product)}
                             className="text-indigo-600 hover:text-indigo-900 mr-3"
                           >
                             수정
                           </button>
                           <button
-                            onClick={() => deleteProduct(product.id)}
+                            onClick={() => handleProductDelete(product.id)}
                             className="text-red-600 hover:text-red-900"
                           >
                             삭제
@@ -561,7 +561,7 @@ const App = () => {
                             if (value === '') {
                               setProductForm({ ...productForm, price: 0 });
                             } else if (parseInt(value) < 0) {
-                              addNotification('가격은 0보다 커야 합니다', 'error');
+                              handleNotificationAdd('가격은 0보다 커야 합니다', 'error');
                               setProductForm({ ...productForm, price: 0 });
                             }
                           }}
@@ -586,10 +586,10 @@ const App = () => {
                             if (value === '') {
                               setProductForm({ ...productForm, stock: 0 });
                             } else if (parseInt(value) < 0) {
-                              addNotification('재고는 0보다 커야 합니다', 'error');
+                              handleNotificationAdd('재고는 0보다 커야 합니다', 'error');
                               setProductForm({ ...productForm, stock: 0 });
                             } else if (parseInt(value) > 9999) {
-                              addNotification('재고는 9999개를 초과할 수 없습니다', 'error');
+                              handleNotificationAdd('재고는 9999개를 초과할 수 없습니다', 'error');
                               setProductForm({ ...productForm, stock: 9999 });
                             }
                           }}
@@ -705,7 +705,7 @@ const App = () => {
                           </div>
                         </div>
                         <button
-                          onClick={() => deleteCoupon(coupon.code)}
+                          onClick={() => handleCouponDelete(coupon.code)}
                           className="text-gray-400 hover:text-red-600 transition-colors"
                         >
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -787,14 +787,14 @@ const App = () => {
                             const value = parseInt(e.target.value) || 0;
                             if (couponForm.discountType === 'percentage') {
                               if (value > 100) {
-                                addNotification('할인율은 100%를 초과할 수 없습니다', 'error');
+                                handleNotificationAdd('할인율은 100%를 초과할 수 없습니다', 'error');
                                 setCouponForm({ ...couponForm, discountValue: 100 });
                               } else if (value < 0) {
                                 setCouponForm({ ...couponForm, discountValue: 0 });
                               }
                             } else {
                               if (value > 100000) {
-                                addNotification('할인 금액은 100,000원을 초과할 수 없습니다', 'error');
+                                handleNotificationAdd('할인 금액은 100,000원을 초과할 수 없습니다', 'error');
                                 setCouponForm({ ...couponForm, discountValue: 100000 });
                               } else if (value < 0) {
                                 setCouponForm({ ...couponForm, discountValue: 0 });
@@ -899,7 +899,7 @@ const App = () => {
                           
                           {/* 장바구니 버튼 */}
                           <button
-                            onClick={() => addToCart(product)}
+                            onClick={() => handleProductAddToCart(product)}
                             disabled={remainingStock <= 0}
                             className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
                               remainingStock <= 0
@@ -947,7 +947,7 @@ const App = () => {
                             <div className="flex justify-between items-start mb-2">
                               <h4 className="text-sm font-medium text-gray-900 flex-1">{item.product.name}</h4>
                               <button 
-                                onClick={() => removeFromCart(item.product.id)} 
+                                onClick={() => handleProductRemoveFromCart(item.product.id)}
                                 className="text-gray-400 hover:text-red-500 ml-2"
                               >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -958,14 +958,14 @@ const App = () => {
                             <div className="flex items-center justify-between">
                               <div className="flex items-center">
                                 <button 
-                                  onClick={() => updateQuantity(item.product.id, item.quantity - 1)} 
+                                  onClick={() => handleProductQuantityUpdate(item.product.id, item.quantity - 1)}
                                   className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                                 >
                                   <span className="text-xs">−</span>
                                 </button>
                                 <span className="mx-3 text-sm font-medium w-8 text-center">{item.quantity}</span>
                                 <button 
-                                  onClick={() => updateQuantity(item.product.id, item.quantity + 1)} 
+                                  onClick={() => handleProductQuantityUpdate(item.product.id, item.quantity + 1)}
                                   className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                                 >
                                   <span className="text-xs">+</span>
@@ -1002,7 +1002,7 @@ const App = () => {
                           value={selectedCoupon?.code || ''}
                           onChange={(e) => {
                             const coupon = coupons.find(c => c.code === e.target.value);
-                            if (coupon) applyCoupon(coupon);
+                            if (coupon) handleCouponApply(coupon);
                             else setSelectedCoupon(null);
                           }}
                         >
@@ -1038,7 +1038,7 @@ const App = () => {
                       </div>
                       
                       <button
-                        onClick={completeOrder}
+                        onClick={handleOrderComplete}
                         className="w-full mt-4 py-3 bg-yellow-400 text-gray-900 rounded-md font-medium hover:bg-yellow-500 transition-colors"
                       >
                         {totals.totalAfterDiscount.toLocaleString()}원 결제하기
