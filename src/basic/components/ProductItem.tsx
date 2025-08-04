@@ -5,14 +5,14 @@ interface ProductItemProps {
   product: IProductWithUI;
   priceText: string;
   remainingStock: number;
-  addToCart: (product: IProductWithUI) => void;
+  addItemToCart: (product: IProductWithUI) => void;
 }
 
 const ProductItem = ({
   product,
   priceText,
   remainingStock,
-  addToCart,
+  addItemToCart,
 }: ProductItemProps) => {
   return (
     <div
@@ -71,7 +71,7 @@ const ProductItem = ({
 
         {/* 장바구니 버튼 */}
         <button
-          onClick={() => addToCart(product)}
+          onClick={() => addItemToCart(product)}
           disabled={remainingStock <= 0}
           className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
             remainingStock <= 0

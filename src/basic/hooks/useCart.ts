@@ -24,37 +24,38 @@
 // - getRemainingStock: 재고 확인 함수 !
 // - clearCart: 장바구니 비우기 함수 ?
 
+import { useMemo, useState } from "react";
 import { ICartItem, ICoupon, IProductWithUI } from "../type";
 import { initialCarts } from "../constants/initialStates";
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 import { cartModel } from "../models/cart";
-import { useMemo } from "react";
 
-export const useCart = (selectedCoupon: ICoupon) => {
+export const useCart = () => {
   // 로컬스토리지 연동된 cart
   const [cart, setCart] = useLocalStorage<ICartItem[]>("cart", initialCarts);
+
+  // 현재 선택된 쿠폰
+  const [selectedCoupon, setSelectedCoupon] = useState<ICoupon | null>(null);
 
   /**
    * 장바구니 상품 수량 변경
    */
-  const updateCartItemQuantity = (productId: string, quantity: number) => {
-    setCart((prev) =>
-      cartModel.updateCartItemQuantity(prev, productId, quantity)
-    );
+  const updateQuantity = (productId: string, quantity: number) => {
+    setCart((prev) => cartModel.updateQuantity(prev, productId, quantity));
   };
 
   /**
    * 장바구니에 상품 추가
    */
-  const addItemTocart = (product: IProductWithUI) => {
-    setCart((prev) => cartModel.addItemToCart(prev, product));
+  const addToCart = (product: IProductWithUI) => {
+    setCart((prev) => cartModel.addToCart(prev, product));
   };
 
   /**
    * 장바구니 상품 제거
    */
-  const removeItemFromCart = (productId: string) => {
-    setCart((prev) => cartModel.removeItemFromCart(prev, productId));
+  const removeFromCart = (productId: string) => {
+    setCart((prev) => cartModel.removeFromCart(prev, productId));
   };
 
   /**
@@ -72,6 +73,13 @@ export const useCart = (selectedCoupon: ICoupon) => {
   };
 
   /**
+   *  개별 아이템의 할인 적용 후 총액 계산
+   */
+  const calculateItemTotal = (item: ICartItem) => {
+    return cartModel.calculateItemTotal(item, cart);
+  };
+
+  /**
    * 장바구니 총액 계산 (할인 전/후 할인액)
    */
   const cartTotal = useMemo(
@@ -81,11 +89,14 @@ export const useCart = (selectedCoupon: ICoupon) => {
 
   return {
     cart,
-    updateCartItemQuantity,
-    addItemTocart,
-    removeItemFromCart,
+    updateQuantity,
+    addToCart,
+    removeFromCart,
     clearCart,
     getRemainingStock,
+    calculateItemTotal,
     cartTotal, // { totalBeforeDiscount: number; totalAfterDiscount: number; }
+    selectedCoupon,
+    setSelectedCoupon,
   };
 };

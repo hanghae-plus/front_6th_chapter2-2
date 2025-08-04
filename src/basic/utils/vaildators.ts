@@ -28,7 +28,7 @@ export const validator = {
   },
 
   /**
-   * boolean - 가격 검증 (양수)
+   * 가격 검증 (양수)
    */
   isValidPrice: (price: number): { isValid: boolean; message: string } => {
     if (price <= 0)

@@ -4,15 +4,15 @@ import { CloseIcon } from "./icon";
 interface CartItemProps {
   item: ICartItem;
   calculateItemTotal: (item: ICartItem) => number;
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, newQuantity: number) => void;
+  removeItemFromCart: (productId: string) => void;
+  updateItemQuantity: (productId: string, newQuantity: number) => void;
 }
 
 const CartItem = ({
   item,
   calculateItemTotal,
-  removeFromCart,
-  updateQuantity,
+  removeItemFromCart,
+  updateItemQuantity,
 }: CartItemProps) => {
   const itemTotal = calculateItemTotal(item);
   const originalPrice = item.product.price * item.quantity;
@@ -28,7 +28,7 @@ const CartItem = ({
           {item.product.name}
         </h4>
         <button
-          onClick={() => removeFromCart(item.product.id)}
+          onClick={() => removeItemFromCart(item.product.id)}
           className="text-gray-400 hover:text-red-500 ml-2"
         >
           {/* 장바구니 상품 - x 아이콘 */}
@@ -38,7 +38,7 @@ const CartItem = ({
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <button
-            onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+            onClick={() => updateItemQuantity(item.product.id, item.quantity - 1)}
             className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
           >
             <span className="text-xs">−</span>
@@ -47,7 +47,7 @@ const CartItem = ({
             {item.quantity}
           </span>
           <button
-            onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+            onClick={() => updateItemQuantity(item.product.id, item.quantity + 1)}
             className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
           >
             <span className="text-xs">+</span>

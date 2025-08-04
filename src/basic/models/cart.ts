@@ -57,7 +57,7 @@ export const cartModel = {
    */
   calculateCartTotal: (
     cart: ICartItem[],
-    selectedCoupon?: ICoupon
+    selectedCoupon: ICoupon | null
   ): {
     totalBeforeDiscount: number;
     totalAfterDiscount: number;
@@ -94,7 +94,7 @@ export const cartModel = {
   /**
    * 장바구니 상품 수량 변경
    */
-  updateCartItemQuantity: (
+  updateQuantity: (
     cart: ICartItem[],
     productId: string,
     quantity: number
@@ -112,7 +112,7 @@ export const cartModel = {
   /**
    * 장바구니에 상품 추가
    */
-  addItemToCart: (cart: ICartItem[], product: IProductWithUI): ICartItem[] => {
+  addToCart: (cart: ICartItem[], product: IProductWithUI): ICartItem[] => {
     // 이미 장바구니에 존재하는 상품 처리
     const existingItem = cart.find((item) => item.product.id === product.id);
 
@@ -139,7 +139,7 @@ export const cartModel = {
   /**
    * 장바구니 상품 제거
    */
-  removeItemFromCart: (cart: ICartItem[], productId: string): ICartItem[] => {
+  removeFromCart: (cart: ICartItem[], productId: string): ICartItem[] => {
     return cart.filter((item) => item.product.id !== productId);
   },
 

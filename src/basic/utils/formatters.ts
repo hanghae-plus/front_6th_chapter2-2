@@ -22,5 +22,5 @@ export const formatPrice = (
  * 소수를 퍼센트로 변환 (0.1 → 10%)
  */
 export const formatPercentage = (rate: number): string => {
-  return `${rate * 100}%`;
+  return `${Math.round(rate) * 100}%`;
 };
