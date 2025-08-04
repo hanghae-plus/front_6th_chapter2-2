@@ -18,6 +18,7 @@
 // TODO: 구현
 
 import type { CartItem } from '../../types';
+import { applyDiscount } from '../utils/discount';
 
 interface GetMaxApplicableDiscountParams {
   item: CartItem;
@@ -89,16 +90,7 @@ export function calculateTotalDiscount({
   }, baseDiscount);
 }
 
-export function applyDiscount({
-  price,
-  discount,
-}: {
-  price: number;
-  discount: number;
-}) {
-  return Math.round(price * (1 - discount));
-}
-
+// 개별 아이템의 할인 적용 후 총액 계산
 export function calculateItemTotal({
   item,
   cart,
