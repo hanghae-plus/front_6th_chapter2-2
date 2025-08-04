@@ -25,6 +25,7 @@ interface GetMaxApplicableDiscountParams {
   cart: CartItem[];
 }
 
+// 적용 가능한 최대 할인율 계산
 export function getMaxApplicableDiscount({
   item,
   cart,
@@ -41,6 +42,7 @@ interface CreateItemMaxDiscountApplierParams {
   item: CartItem;
 }
 
+// 개별 아이템의 할인율 계산
 export function createItemMaxDiscountApplier({
   item,
 }: CreateItemMaxDiscountApplierParams) {
@@ -62,6 +64,7 @@ interface CreateBulkPurchaseDiscountApplierParams {
   cart: CartItem[];
 }
 
+// 대량 구매 할인율 계산
 export function createBulkPurchaseDiscountApplier({
   cart,
 }: CreateBulkPurchaseDiscountApplierParams) {
@@ -81,6 +84,7 @@ interface ApplyDiscountsParams {
   >;
 }
 
+// 총 할인율 계산
 export function calculateTotalDiscount({
   baseDiscount = 0,
   discountAppliers,
@@ -104,4 +108,38 @@ export function calculateItemTotal({
   const discount = getMaxApplicableDiscount({ item, cart });
 
   return applyDiscount({ price: price * quantity, discount });
+}
+
+// 장바구니 총액 계산 (할인 전/후, 할인액)
+export function calculateCartTotal({
+  cart,
+  applyCoupon,
+}: {
+  cart: CartItem[];
+  applyCoupon: (params: { price: number }) => number;
+}) {
+  const { totalBeforeDiscount, totalAfterDiscount } = cart.reduce(
+    (acc, item) => {
+      const { product, quantity } = item;
+
+      const itemPrice = product.price * quantity;
+      acc.totalBeforeDiscount += itemPrice;
+
+      acc.totalAfterDiscount += calculateItemTotal({
+        item,
+        cart,
+      });
+
+      return acc;
+    },
+    {
+      totalBeforeDiscount: 0,
+      totalAfterDiscount: 0,
+    }
+  );
+
+  return {
+    totalBeforeDiscount: Math.round(totalBeforeDiscount),
+    totalAfterDiscount: Math.round(applyCoupon({ price: totalAfterDiscount })),
+  };
 }
