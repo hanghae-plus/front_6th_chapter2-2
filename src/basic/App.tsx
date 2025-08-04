@@ -1,15 +1,10 @@
 import { useState, useCallback, useEffect } from 'react';
 
-import { Coupon } from '../types';
+import type { Coupon, Notification as NotificationType, NotificationVariant } from '../types';
 import { AdminPage } from './components/AdminPage';
 import { CartPage } from './components/CartPage';
-import { type ProductWithUI, initialProducts, initialCoupons } from './constants';
-
-interface Notification {
-  id: string;
-  message: string;
-  type: 'error' | 'success' | 'warning';
-}
+import { Notifications } from './components/ui/Notifications';
+import { initialCoupons, initialProducts, type ProductWithUI } from './constants';
 
 const App = () => {
   const [products, setProducts] = useState<ProductWithUI[]>(() => {
@@ -37,7 +32,7 @@ const App = () => {
   });
 
   const [isAdmin, setIsAdmin] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifications, setNotifications] = useState<NotificationType[]>([]);
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
   const formatPrice = (price: number): string => {
@@ -57,9 +52,9 @@ const App = () => {
   };
 
   const addNotification = useCallback(
-    (message: string, type: 'error' | 'success' | 'warning' = 'success') => {
+    (message: string, variant: NotificationVariant = 'success') => {
       const id = Date.now().toString();
-      setNotifications((prev) => [...prev, { id, message, type }]);
+      setNotifications((prev) => [...prev, { id, message, variant }]);
 
       setTimeout(() => {
         setNotifications((prev) => prev.filter((n) => n.id !== id));
@@ -78,37 +73,8 @@ const App = () => {
 
   return (
     <div className='min-h-screen bg-gray-50'>
-      {notifications.length > 0 && (
-        <div className='fixed top-20 right-4 z-50 space-y-2 max-w-sm'>
-          {notifications.map((notif) => (
-            <div
-              key={notif.id}
-              className={`p-4 rounded-md shadow-md text-white flex justify-between items-center ${
-                notif.type === 'error'
-                  ? 'bg-red-600'
-                  : notif.type === 'warning'
-                  ? 'bg-yellow-600'
-                  : 'bg-green-600'
-              }`}
-            >
-              <span className='mr-2'>{notif.message}</span>
-              <button
-                onClick={() => setNotifications((prev) => prev.filter((n) => n.id !== notif.id))}
-                className='text-white hover:text-gray-200'
-              >
-                <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth={2}
-                    d='M6 18L18 6M6 6l12 12'
-                  />
-                </svg>
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
+      <Notifications notifications={notifications} setNotifications={setNotifications} />
+
       {isAdmin ? (
         <AdminPage
           setIsAdmin={setIsAdmin}
