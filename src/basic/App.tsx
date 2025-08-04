@@ -163,7 +163,7 @@ const App = () => {
     return `₩${price.toLocaleString()}`;
   };
 
-  // 최대 할인율 계산 **
+  // 최대 할인율 계산 ** cartModel
   const getMaxApplicableDiscount = (item: ICartItem): number => {
     const { discounts } = item.product;
     const { quantity } = item;
@@ -184,7 +184,7 @@ const App = () => {
     return baseDiscount;
   };
 
-  // 최종 할인율이 반영된 상품 가격 **
+  // 최종 할인율이 반영된 상품 가격 ** cartModel
   const calculateItemTotal = (item: ICartItem): number => {
     const { price } = item.product;
     const { quantity } = item;
@@ -193,7 +193,7 @@ const App = () => {
     return Math.round(price * quantity * (1 - discount));
   };
 
-  // 할인 전, 할인 후 가격 반환 ** 
+  // 할인 전, 할인 후 가격 반환 ** cartModel
   const calculateCartTotal = (): {
     totalBeforeDiscount: number;
     totalAfterDiscount: number;
@@ -227,7 +227,7 @@ const App = () => {
     };
   };
 
-  // 재고 확인 함수 **
+  // 재고 확인 함수 ** cartModel
   const getRemainingStock = (product: IProduct): number => {
     // 상품 재고 수 - 카트에 담긴 상품 수
     const cartItem = cart.find((item) => item.product.id === product.id);
@@ -284,7 +284,7 @@ const App = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  // 장바구니 담기 버튼 처리 **
+  // 장바구니 담기 버튼 처리 ** cartModel
   const addToCart = useCallback(
     (product: IProductWithUI) => {
       const remainingStock = getRemainingStock(product);
@@ -326,14 +326,14 @@ const App = () => {
     [cart, addNotification, getRemainingStock]
   );
 
-  // 장바구니에서 상품 제거 **
+  // 장바구니에서 상품 제거 ** cartModel
   const removeFromCart = useCallback((productId: string) => {
     setCart((prevCart) =>
       prevCart.filter((item) => item.product.id !== productId)
     );
   }, []);
 
-  // 장바구니의 상품 수 업데이트 (-1, +1 처리) **
+  // 장바구니의 상품 수 업데이트 (-1, +1 처리) ** cartModel
   const updateQuantity = useCallback(
     (productId: string, newQuantity: number) => {
       if (newQuantity <= 0) {
@@ -394,7 +394,7 @@ const App = () => {
     setSelectedCoupon(null);
   }, [addNotification]);
 
-  // 상품 추가
+  // 상품 추가 ** productModel
   const addProduct = useCallback(
     (newProduct: Omit<IProductWithUI, "id">) => {
       const product: IProductWithUI = {
@@ -407,7 +407,7 @@ const App = () => {
     [addNotification]
   );
 
-  // 상품 수정
+  // 상품 수정 ** productModel
   const updateProduct = useCallback(
     (productId: string, updates: Partial<IProductWithUI>) => {
       setProducts((prev) =>
@@ -420,7 +420,7 @@ const App = () => {
     [addNotification]
   );
 
-  // 상품 삭제
+  // 상품 삭제 **    odel
   const deleteProduct = useCallback(
     (productId: string) => {
       setProducts((prev) => prev.filter((p) => p.id !== productId));
@@ -429,7 +429,7 @@ const App = () => {
     [addNotification]
   );
 
-  // 쿠폰 추가
+  // 쿠폰 추가 ** couponModel
   const addCoupon = useCallback(
     (newCoupon: ICoupon) => {
       // 이미 존재하는 쿠폰인지 코드로 확인
@@ -444,7 +444,7 @@ const App = () => {
     [coupons, addNotification]
   );
 
-  // 쿠폰 삭제
+  // 쿠폰 삭제 ** couponModel
   const deleteCoupon = useCallback(
     (couponCode: string) => {
       setCoupons((prev) => prev.filter((c) => c.code !== couponCode));

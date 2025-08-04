@@ -18,7 +18,9 @@
 import { ICartItem, ICoupon, IProductWithUI } from "../type";
 
 export const cartModel = {
-  // 적용 가능한 최대 할인율 계산
+  /**
+   * 적용 가능한 최대 할인율 계산
+   */
   getMaxApplicableDiscount: (item: ICartItem, cart: ICartItem[]): number => {
     const { discounts } = item.product;
     const { quantity } = item;
@@ -39,7 +41,9 @@ export const cartModel = {
     return baseDiscount;
   },
 
-  // 개별 아이템의 할인 적용 후 총액 계산
+  /**
+   * 개별 아이템의 할인 적용 후 총액 계산
+   */
   calculateItemTotal: (item: ICartItem, cart: ICartItem[]): number => {
     const { price } = item.product;
     const { quantity } = item;
@@ -48,7 +52,9 @@ export const cartModel = {
     return Math.round(price * quantity * (1 - discount));
   },
 
-  // 장바구니 총액 계산 (할인 전/후, 할인액)
+  /**
+   * 장바구니 총액 계산 (할인 전/후, 할인액)
+   */
   calculateCartTotal: (
     cart: ICartItem[],
     selectedCoupon?: ICoupon
@@ -85,7 +91,9 @@ export const cartModel = {
     };
   },
 
-  // 수량 변경
+  /**
+   * 장바구니 상품 수량 변경
+   */
   updateCartItemQuantity: (
     cart: ICartItem[],
     productId: string,
@@ -101,7 +109,9 @@ export const cartModel = {
     );
   },
 
-  // 상품 추가
+  /**
+   * 장바구니에 상품 추가
+   */
   addItemToCart: (cart: ICartItem[], product: IProductWithUI): ICartItem[] => {
     // 이미 장바구니에 존재하는 상품 처리
     const existingItem = cart.find((item) => item.product.id === product.id);
@@ -126,12 +136,16 @@ export const cartModel = {
     return [...cart, { product, quantity: 1 }];
   },
 
-  // 상품 제거
+  /**
+   * 장바구니 상품 제거
+   */
   removeItemFromCart: (cart: ICartItem[], productId: string): ICartItem[] => {
     return cart.filter((item) => item.product.id !== productId);
   },
 
-  // 남은 재고 계산
+  /**
+   * 남은 재고 계산
+   */
   getRemainingStock: (product: IProductWithUI, cart: ICartItem[]): number => {
     // 상품 재고 수 - 카트에 담긴 상품 수
     const cartItem = cart.find((item) => item.product.id === product.id);
