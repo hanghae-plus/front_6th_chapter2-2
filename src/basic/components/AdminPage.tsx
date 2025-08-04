@@ -15,80 +15,156 @@
 // - CouponForm: 새 쿠폰 추가 폼
 // - CouponList: 쿠폰 목록 표시
 
+import { useCallback, useState } from 'react';
+
 import { Coupon } from '../../types';
 import { ProductWithUI } from '../constants';
 
 interface AdminPageProps {
   setIsAdmin: (isAdmin: boolean) => void;
-  activeTab: 'products' | 'coupons'; // admin
-  setActiveTab: (tab: 'products' | 'coupons') => void; // admin
-  setEditingProduct: (product: string | null) => void; // admin
-  setProductForm: (productForm: {
-    name: string;
-    price: number;
-    stock: number;
-    description: string;
-    discounts: { quantity: number; rate: number }[];
-  }) => void; // admin
-  setShowProductForm: (showProductForm: boolean) => void; // admin
-  products: ProductWithUI[]; // globals
-  formatPrice: (price: number, productId?: string) => string; // globals
-  startEditProduct: (product: ProductWithUI) => void; // globals
-  deleteProduct: (productId: string) => void; // globals
-  showProductForm: boolean; // globals
-  handleProductSubmit: (e: React.FormEvent) => void; // globals
-  editingProduct: string | null; // globals
-  productForm: {
-    name: string;
-    price: number;
-    stock: number;
-    description: string;
-    discounts: { quantity: number; rate: number }[];
-  };
-  addNotification: (message: string, type: 'error' | 'success' | 'warning') => void; // globals
-  coupons: Coupon[]; // globals
-  deleteCoupon: (couponCode: string) => void; // globals
-  setShowCouponForm: (showCouponForm: boolean) => void; // globals
-  showCouponForm: boolean; // globals
-  couponForm: {
-    name: string;
-    code: string;
-    discountType: 'amount' | 'percentage';
-    discountValue: number;
-  };
-  handleCouponSubmit: (e: React.FormEvent) => void; // globals
-  setCouponForm: (couponForm: {
-    name: string;
-    code: string;
-    discountType: 'amount' | 'percentage';
-    discountValue: number;
-  }) => void; // globals
+  addNotification: (message: string, type: 'error' | 'success' | 'warning') => void;
+
+  products: ProductWithUI[];
+  setProducts: React.Dispatch<React.SetStateAction<ProductWithUI[]>>;
+
+  coupons: Coupon[];
+  setCoupons: React.Dispatch<React.SetStateAction<Coupon[]>>;
+
+  selectedCoupon: Coupon | null;
+  setSelectedCoupon: (coupon: Coupon | null) => void;
+
+  formatPrice: (price: number, productId?: string) => string;
 }
 
 export function AdminPage({
   setIsAdmin,
-  activeTab,
-  setActiveTab,
-  setEditingProduct,
-  setProductForm,
-  setShowProductForm,
-  products,
-  formatPrice,
-  startEditProduct,
-  deleteProduct,
-  showProductForm,
-  handleProductSubmit,
-  editingProduct,
-  productForm,
   addNotification,
+
+  products,
+  setProducts,
+
   coupons,
-  deleteCoupon,
-  setShowCouponForm,
-  showCouponForm,
-  couponForm,
-  handleCouponSubmit,
-  setCouponForm,
+  setCoupons,
+
+  selectedCoupon,
+  setSelectedCoupon,
+
+  formatPrice,
 }: AdminPageProps) {
+  const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
+
+  const [showProductForm, setShowProductForm] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<string | null>(null);
+  const [productForm, setProductForm] = useState({
+    name: '',
+    price: 0,
+    stock: 0,
+    description: '',
+    discounts: [] as Array<{ quantity: number; rate: number }>,
+  });
+
+  const [showCouponForm, setShowCouponForm] = useState(false);
+  const [couponForm, setCouponForm] = useState({
+    name: '',
+    code: '',
+    discountType: 'amount' as 'amount' | 'percentage',
+    discountValue: 0,
+  });
+
+  const startEditProduct = (product: ProductWithUI) => {
+    setEditingProduct(product.id);
+    setProductForm({
+      name: product.name,
+      price: product.price,
+      stock: product.stock,
+      description: product.description || '',
+      discounts: product.discounts || [],
+    });
+    setShowProductForm(true);
+  };
+
+  const handleProductSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editingProduct && editingProduct !== 'new') {
+      updateProduct(editingProduct, productForm);
+      setEditingProduct(null);
+    } else {
+      addProduct({
+        ...productForm,
+        discounts: productForm.discounts,
+      });
+    }
+    setProductForm({ name: '', price: 0, stock: 0, description: '', discounts: [] });
+    setEditingProduct(null);
+    setShowProductForm(false);
+  };
+
+  const handleCouponSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    addCoupon(couponForm);
+    setCouponForm({
+      name: '',
+      code: '',
+      discountType: 'amount',
+      discountValue: 0,
+    });
+    setShowCouponForm(false);
+  };
+
+  const addProduct = useCallback(
+    (newProduct: Omit<ProductWithUI, 'id'>) => {
+      const product: ProductWithUI = {
+        ...newProduct,
+        id: `p${Date.now()}`,
+      };
+      setProducts((prev) => [...prev, product]);
+      addNotification('상품이 추가되었습니다.', 'success');
+    },
+    [addNotification]
+  );
+
+  const updateProduct = useCallback(
+    (productId: string, updates: Partial<ProductWithUI>) => {
+      setProducts((prev) =>
+        prev.map((product) => (product.id === productId ? { ...product, ...updates } : product))
+      );
+      addNotification('상품이 수정되었습니다.', 'success');
+    },
+    [addNotification]
+  );
+
+  const deleteProduct = useCallback(
+    (productId: string) => {
+      setProducts((prev) => prev.filter((p) => p.id !== productId));
+      addNotification('상품이 삭제되었습니다.', 'success');
+    },
+    [addNotification]
+  );
+
+  const addCoupon = useCallback(
+    (newCoupon: Coupon) => {
+      const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
+      if (existingCoupon) {
+        addNotification('이미 존재하는 쿠폰 코드입니다.', 'error');
+        return;
+      }
+      setCoupons((prev) => [...prev, newCoupon]);
+      addNotification('쿠폰이 추가되었습니다.', 'success');
+    },
+    [coupons, addNotification]
+  );
+
+  const deleteCoupon = useCallback(
+    (couponCode: string) => {
+      setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
+      if (selectedCoupon?.code === couponCode) {
+        setSelectedCoupon(null);
+      }
+      addNotification('쿠폰이 삭제되었습니다.', 'success');
+    },
+    [selectedCoupon, addNotification]
+  );
+
   return (
     <>
       <header className='bg-white shadow-sm sticky top-0 z-40 border-b'>
