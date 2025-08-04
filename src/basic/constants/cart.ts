@@ -1,0 +1,4 @@
+export const CART = {
+  BULK_PURCHASE_THRESHOLD: 10,
+  DEFAULT_QUANTITY_INCREMENT: 1,
+} as const;
