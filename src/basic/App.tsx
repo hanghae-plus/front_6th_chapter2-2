@@ -6,7 +6,7 @@ import HeaderLayout from "./components/Header/HeaderLayout";
 import ShopHeaderContent from "./components/Header/ShopHeaderContent";
 import AdminHeaderContent from "./components/Header/AdminHeaderContent";
 import AdminPage from "./components/ui/AdminPage";
-import CartPage from "./components/ui/CartPage";
+import ShopPage from "./components/ui/ShopPage";
 import Toast from "./components/ui/Toast";
 import { NOTIFICATION_DURATION } from "./constants/system";
 
@@ -98,7 +98,7 @@ const App = () => {
             addNotification={addNotification}
           />
         ) : (
-          <CartPage
+          <ShopPage
             products={products}
             filteredProducts={filteredProducts}
             debouncedSearchTerm={debouncedSearchTerm}
