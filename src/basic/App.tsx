@@ -7,6 +7,7 @@ import { Header } from './components/Header';
 import { NotificationPanel } from './components/NotificationPanel';
 import { useCart } from './hooks/useCart';
 import { useCoupons } from './hooks/useCoupons';
+import { useNotifications } from './hooks/useNotifications';
 import { useProducts } from './hooks/useProducts';
 
 interface ProductWithUI extends Product {
@@ -14,24 +15,9 @@ interface ProductWithUI extends Product {
   isRecommended?: boolean;
 }
 
-interface Notification {
-  id: string;
-  message: string;
-  type: 'error' | 'success' | 'warning';
-}
-
 const App = () => {
-  const addNotification = useCallback(
-    (message: string, type: 'error' | 'success' | 'warning' = 'success') => {
-      const id = Date.now().toString();
-      setNotifications((prev) => [...prev, { id, message, type }]);
+  const { notifications, setNotifications, addNotification } = useNotifications();
 
-      setTimeout(() => {
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
-      }, 3000);
-    },
-    [],
-  );
   const { products, addProduct, updateProduct, deleteProduct } = useProducts({ addNotification });
 
   const {
@@ -57,7 +43,6 @@ const App = () => {
   });
 
   const [isAdmin, setIsAdmin] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
   const [showProductForm, setShowProductForm] = useState(false);
