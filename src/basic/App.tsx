@@ -1253,7 +1253,7 @@ const App = () => {
                               <h4 className='text-sm font-medium text-gray-900 flex-1'>
                                 {item.product.name}
                               </h4>
-                              <button
+                              {/* <button
                                 onClick={() => removeFromCart(item.product.id)}
                                 className='text-gray-400 hover:text-red-500 ml-2'
                               >
@@ -1270,7 +1270,28 @@ const App = () => {
                                     d='M6 18L18 6M6 6l12 12'
                                   />
                                 </svg>
-                              </button>
+                              </button> */}
+                              {/* Todo :: Button Ghost 수정 예정 */}
+                              <Button
+                                variant='ghost'
+                                size='xs'
+                                className='!text-gray-400 hover:text-red-500 ml-2 !p-0 w-auto h-auto'
+                                onClick={() => removeFromCart(item.product.id)}
+                              >
+                                <svg
+                                  className='w-4 h-4'
+                                  fill='none'
+                                  stroke='currentColor'
+                                  viewBox='0 0 24 24'
+                                >
+                                  <path
+                                    strokeLinecap='round'
+                                    strokeLinejoin='round'
+                                    strokeWidth={2}
+                                    d='M6 18L18 6M6 6l12 12'
+                                  />
+                                </svg>
+                              </Button>
                             </div>
                             <div className='flex items-center justify-between'>
                               <div className='flex items-center'>
