@@ -1,31 +1,27 @@
-import { CartItem, Coupon, Product } from "@/types";
-import { useState, useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
+
 import {
-  NOTIFICATION_TIMEOUT_MS,
-  SEARCH_DEBOUNCE_DELAY_MS,
-  COUPON,
-  DISCOUNT,
   CART,
-  STOCK,
-  PRODUCT_LIMITS,
+  COUPON,
   COUPON_LIMITS,
-  DEFAULT_PRODUCT_FORM,
   DEFAULT_COUPON_FORM,
+  DEFAULT_PRODUCT_FORM,
   DEFAULT_QUANTITY,
   DEFAULT_TOTAL,
+  DISCOUNT,
   MATH,
-} from "./constants";
-
-interface ProductWithUI extends Product {
-  description?: string;
-  isRecommended?: boolean;
-}
-
-interface Notification {
-  id: string;
-  message: string;
-  type: "error" | "success" | "warning";
-}
+  NOTIFICATION_TIMEOUT_MS,
+  PRODUCT_LIMITS,
+  SEARCH_DEBOUNCE_DELAY_MS,
+  STOCK,
+} from "@/basic/constants";
+import {
+  CartItem,
+  Coupon,
+  Notification,
+  Product,
+  ProductWithUI,
+} from "@/types";
 
 // 초기 데이터
 const initialProducts: ProductWithUI[] = [
@@ -1256,7 +1252,9 @@ const App = () => {
                               <span className="absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded">
                                 ~
                                 {Math.max(
-                                  ...product.discounts.map((d) => d.rate)
+                                  ...product.discounts.map(
+                                    (d: { rate: number }) => d.rate
+                                  )
                                 ) * 100}
                                 %
                               </span>

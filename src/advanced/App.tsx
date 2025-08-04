@@ -1,4 +1,5 @@
-import { useState, useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
+
 import { CartItem, Coupon, Product } from "@/types";
 
 interface ProductWithUI extends Product {

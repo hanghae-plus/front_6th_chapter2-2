@@ -1,14 +1,15 @@
 // @ts-nocheck
 import {
+  fireEvent,
   render,
   screen,
-  fireEvent,
-  within,
   waitFor,
+  within,
 } from "@testing-library/react";
 import { vi } from "vitest";
-import App from "../App";
+
 import "../../setupTests";
+import App from "../App";
 
 describe("쇼핑몰 앱 통합 테스트", () => {
   beforeEach(() => {
