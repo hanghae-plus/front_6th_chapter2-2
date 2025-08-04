@@ -566,7 +566,7 @@ const App = () => {
                 <div className='p-6 border-b border-gray-200'>
                   <div className='flex justify-between items-center'>
                     <h2 className='text-lg font-semibold'>상품 목록</h2>
-                    <button
+                    {/* <button
                       onClick={() => {
                         setEditingProduct('new');
                         setProductForm({
@@ -581,7 +581,24 @@ const App = () => {
                       className='px-4 py-2 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800'
                     >
                       새 상품 추가
-                    </button>
+                    </button> */}
+                    <Button
+                      variant='primary'
+                      size='md'
+                      onClick={() => {
+                        setEditingProduct('new');
+                        setProductForm({
+                          name: '',
+                          price: 0,
+                          stock: 0,
+                          description: '',
+                          discounts: [],
+                        });
+                        setShowProductForm(true);
+                      }}
+                    >
+                      새 상품 추가
+                    </Button>
                   </div>
                 </div>
 
@@ -827,7 +844,7 @@ const App = () => {
                       </div>
 
                       <div className='flex justify-end gap-3'>
-                        <button
+                        {/* <button
                           type='button'
                           onClick={() => {
                             setEditingProduct(null);
@@ -843,13 +860,37 @@ const App = () => {
                           className='px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50'
                         >
                           취소
-                        </button>
-                        <button
+                        </button> */}
+                        <Button
+                          type='button'
+                          onClick={() => {
+                            setEditingProduct(null);
+                            setProductForm({
+                              name: '',
+                              price: 0,
+                              stock: 0,
+                              description: '',
+                              discounts: [],
+                            });
+                            setShowProductForm(false);
+                          }}
+                          variant='outline'
+                        >
+                          취소
+                        </Button>
+                        {/* <button
                           type='submit'
                           className='px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700'
                         >
                           {editingProduct === 'new' ? '추가' : '수정'}
-                        </button>
+                        </button> */}
+                        <Button
+                          type='submit'
+                          variant='primary'
+                          className='bg-indigo-600 text-white'
+                        >
+                          {editingProduct === 'new' ? '추가' : '수정'}
+                        </Button>
                       </div>
                     </form>
                   </div>
@@ -1147,6 +1188,7 @@ const App = () => {
                               size='lg'
                               disabled={remainingStock <= 0}
                               onClick={() => addToCart(product)}
+                              className='w-full'
                             >
                               {remainingStock <= 0 ? '품절' : '장바구니 담기'}
                             </Button>
