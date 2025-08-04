@@ -6,6 +6,7 @@ import {
   useState,
 } from "react";
 import { CartItem, Coupon, Product } from "../../../types";
+import { useNotification } from "../../___features/notification/use-notification";
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -17,10 +18,6 @@ interface ShopPageProps {
   coupons: Coupon[];
   cart: CartItem[];
   setCart: Dispatch<SetStateAction<CartItem[]>>;
-  addNotification: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
   searchTerm: string;
   getRemainingStock: (product: Product) => number;
   formatPrice: (price: number, productId?: string) => string;
@@ -31,11 +28,11 @@ function ShopPage({
   coupons,
   cart,
   setCart,
-  addNotification,
   searchTerm,
   getRemainingStock,
   formatPrice,
 }: ShopPageProps) {
+  const { addNotification } = useNotification();
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
@@ -57,7 +54,10 @@ function ShopPage({
     (product: ProductWithUI) => {
       const remainingStock = getRemainingStock(product);
       if (remainingStock <= 0) {
-        addNotification("재고가 부족합니다!", "error");
+        addNotification({
+          message: "재고가 부족합니다!",
+          type: "error",
+        });
         return;
       }
 
@@ -70,10 +70,10 @@ function ShopPage({
           const newQuantity = existingItem.quantity + 1;
 
           if (newQuantity > product.stock) {
-            addNotification(
-              `재고는 ${product.stock}개까지만 있습니다.`,
-              "error"
-            );
+            addNotification({
+              message: `재고는 ${product.stock}개까지만 있습니다.`,
+              type: "error",
+            });
             return prevCart;
           }
 
@@ -87,7 +87,10 @@ function ShopPage({
         return [...prevCart, { product, quantity: 1 }];
       });
 
-      addNotification("장바구니에 담았습니다", "success");
+      addNotification({
+        message: "장바구니에 담았습니다",
+        type: "success",
+      });
     },
     [cart, addNotification, getRemainingStock]
   );
@@ -136,7 +139,10 @@ function ShopPage({
 
       const maxStock = product.stock;
       if (newQuantity > maxStock) {
-        addNotification(`재고는 ${maxStock}개까지만 있습니다.`, "error");
+        addNotification({
+          message: `재고는 ${maxStock}개까지만 있습니다.`,
+          type: "error",
+        });
         return;
       }
 
@@ -188,25 +194,30 @@ function ShopPage({
       const currentTotal = calculateCartTotal().totalAfterDiscount;
 
       if (currentTotal < 10000 && coupon.discountType === "percentage") {
-        addNotification(
-          "percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.",
-          "error"
-        );
+        addNotification({
+          message: "percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.",
+          type: "error",
+        });
         return;
       }
 
       setSelectedCoupon(coupon);
-      addNotification("쿠폰이 적용되었습니다.", "success");
+
+      addNotification({
+        message: "쿠폰이 적용되었습니다.",
+        type: "success",
+      });
     },
     [addNotification, calculateCartTotal]
   );
 
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
-    addNotification(
-      `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
-      "success"
-    );
+
+    addNotification({
+      message: `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
+      type: "success",
+    });
     setCart([]);
     setSelectedCoupon(null);
   }, [addNotification]);

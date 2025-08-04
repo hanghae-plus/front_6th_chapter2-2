@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useCallback, useState } from "react";
 import { Coupon, Product } from "../../../types";
+import { useNotification } from "../../___features/notification/use-notification";
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -11,10 +12,6 @@ interface AdminPageProps {
   setProducts: Dispatch<SetStateAction<ProductWithUI[]>>;
   coupons: Coupon[];
   setCoupons: Dispatch<SetStateAction<Coupon[]>>;
-  addNotification: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
   formatPrice: (price: number, productId?: string) => string;
 }
 
@@ -23,9 +20,10 @@ function AdminPage({
   setProducts,
   coupons,
   setCoupons,
-  addNotification,
   formatPrice,
 }: AdminPageProps) {
+  const { addNotification } = useNotification();
+
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
     "products"
   );
@@ -72,7 +70,10 @@ function AdminPage({
         id: `p${Date.now()}`,
       };
       setProducts((prev) => [...prev, product]);
-      addNotification("상품이 추가되었습니다.", "success");
+      addNotification({
+        message: "상품이 추가되었습니다.",
+        type: "success",
+      });
     },
     [addNotification]
   );
@@ -84,7 +85,10 @@ function AdminPage({
           product.id === productId ? { ...product, ...updates } : product
         )
       );
-      addNotification("상품이 수정되었습니다.", "success");
+      addNotification({
+        message: "상품이 수정되었습니다.",
+        type: "success",
+      });
     },
     [addNotification]
   );
@@ -92,7 +96,10 @@ function AdminPage({
   const deleteProduct = useCallback(
     (productId: string) => {
       setProducts((prev) => prev.filter((p) => p.id !== productId));
-      addNotification("상품이 삭제되었습니다.", "success");
+      addNotification({
+        message: "상품이 삭제되었습니다.",
+        type: "success",
+      });
     },
     [addNotification]
   );
@@ -125,7 +132,10 @@ function AdminPage({
       if (selectedCoupon?.code === couponCode) {
         setSelectedCoupon(null);
       }
-      addNotification("쿠폰이 삭제되었습니다.", "success");
+      addNotification({
+        message: "쿠폰이 삭제되었습니다.",
+        type: "success",
+      });
     },
     [selectedCoupon, addNotification]
   );
@@ -134,11 +144,17 @@ function AdminPage({
     (newCoupon: Coupon) => {
       const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
       if (existingCoupon) {
-        addNotification("이미 존재하는 쿠폰 코드입니다.", "error");
+        addNotification({
+          message: "이미 존재하는 쿠폰 코드입니다.",
+          type: "error",
+        });
         return;
       }
       setCoupons((prev) => [...prev, newCoupon]);
-      addNotification("쿠폰이 추가되었습니다.", "success");
+      addNotification({
+        message: "쿠폰이 추가되었습니다.",
+        type: "success",
+      });
     },
     [coupons, addNotification]
   );
@@ -339,10 +355,10 @@ function AdminPage({
                           if (value === "") {
                             setProductForm({ ...productForm, price: 0 });
                           } else if (parseInt(value) < 0) {
-                            addNotification(
-                              "가격은 0보다 커야 합니다",
-                              "error"
-                            );
+                            addNotification({
+                              message: "가격은 0보다 커야 합니다",
+                              type: "error",
+                            });
                             setProductForm({ ...productForm, price: 0 });
                           }
                         }}
@@ -372,16 +388,16 @@ function AdminPage({
                           if (value === "") {
                             setProductForm({ ...productForm, stock: 0 });
                           } else if (parseInt(value) < 0) {
-                            addNotification(
-                              "재고는 0보다 커야 합니다",
-                              "error"
-                            );
+                            addNotification({
+                              message: "재고는 0보다 커야 합니다",
+                              type: "error",
+                            });
                             setProductForm({ ...productForm, stock: 0 });
                           } else if (parseInt(value) > 9999) {
-                            addNotification(
-                              "재고는 9999개를 초과할 수 없습니다",
-                              "error"
-                            );
+                            addNotification({
+                              message: "재고는 9999개를 초과할 수 없습니다",
+                              type: "error",
+                            });
                             setProductForm({ ...productForm, stock: 9999 });
                           }
                         }}
@@ -675,10 +691,10 @@ function AdminPage({
                             const value = parseInt(e.target.value) || 0;
                             if (couponForm.discountType === "percentage") {
                               if (value > 100) {
-                                addNotification(
-                                  "할인율은 100%를 초과할 수 없습니다",
-                                  "error"
-                                );
+                                addNotification({
+                                  message: "할인율은 100%를 초과할 수 없습니다",
+                                  type: "error",
+                                });
                                 setCouponForm({
                                   ...couponForm,
                                   discountValue: 100,
@@ -691,10 +707,11 @@ function AdminPage({
                               }
                             } else {
                               if (value > 100000) {
-                                addNotification(
-                                  "할인 금액은 100,000원을 초과할 수 없습니다",
-                                  "error"
-                                );
+                                addNotification({
+                                  message:
+                                    "할인 금액은 100,000원을 초과할 수 없습니다",
+                                  type: "error",
+                                });
                                 setCouponForm({
                                   ...couponForm,
                                   discountValue: 100000,
