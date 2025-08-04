@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { Notification } from "./types";
 import { useCart } from "./hooks/useCart";
 import { useProducts } from "./hooks/useProducts";
@@ -12,6 +12,7 @@ import {
   NOTIFICATION_DURATION,
   SEARCH_DEBOUNCE_DELAY,
 } from "./constants/system";
+import { useDebounce } from "./utils/hooks/useDebounce";
 
 const App = () => {
   // ========== 📋 상태 관리 섹션 ==========
@@ -58,23 +59,15 @@ const App = () => {
   } = useProducts(addNotification);
 
   // 🎛️ UI 상태들
-  const [isAdmin, setIsAdmin] = useState(false); // 관리자 모드 여부
-  const [notifications, setNotifications] = useState<Notification[]>([]); // 알림 메시지들
-  const [searchTerm, setSearchTerm] = useState(""); // 검색어
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(""); // 디바운스된 검색어
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, SEARCH_DEBOUNCE_DELAY);
 
   // 알림 메시지 제거
   const removeNotification = useCallback((id: string) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   }, []);
-
-  // 검색어 디바운싱
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, SEARCH_DEBOUNCE_DELAY);
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
 
   // 검색어로 필터링된 상품 목록
   const filteredProducts = getFilteredProducts(debouncedSearchTerm);
