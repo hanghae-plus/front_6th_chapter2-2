@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { CartItem, Coupon, Product } from '../types';
-import { getMaxApplicableDiscount } from './models/cart';
+import { calculateItemTotal } from './models/cart';
 import { formatNumberWon, formatPriceKRW } from './utils/formatters';
 
 interface ProductWithUI extends Product {
@@ -129,14 +129,6 @@ const App = () => {
     discountValue: 0,
   });
 
-  const calculateItemTotal = (item: CartItem): number => {
-    const { price } = item.product;
-    const { quantity } = item;
-    const discount = getMaxApplicableDiscount({ item, cart });
-
-    return Math.round(price * quantity * (1 - discount));
-  };
-
   const calculateCartTotal = (): {
     totalBeforeDiscount: number;
     totalAfterDiscount: number;
@@ -147,7 +139,10 @@ const App = () => {
     cart.forEach((item) => {
       const itemPrice = item.product.price * item.quantity;
       totalBeforeDiscount += itemPrice;
-      totalAfterDiscount += calculateItemTotal(item);
+      totalAfterDiscount += calculateItemTotal({
+        item,
+        cart,
+      });
     });
 
     if (selectedCoupon) {
@@ -1298,7 +1293,7 @@ const App = () => {
                   ) : (
                     <div className="space-y-3">
                       {cart.map((item) => {
-                        const itemTotal = calculateItemTotal(item);
+                        const itemTotal = calculateItemTotal({ item, cart });
                         const originalPrice =
                           item.product.price * item.quantity;
                         const hasDiscount = itemTotal < originalPrice;

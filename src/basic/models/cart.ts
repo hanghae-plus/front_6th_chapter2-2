@@ -98,3 +98,18 @@ export function applyDiscount({
 }) {
   return Math.round(price * (1 - discount));
 }
+
+export function calculateItemTotal({
+  item,
+  cart,
+}: {
+  item: CartItem;
+  cart: CartItem[];
+}) {
+  const { price } = item.product;
+  const { quantity } = item;
+
+  const discount = getMaxApplicableDiscount({ item, cart });
+
+  return applyDiscount({ price: price * quantity, discount });
+}
