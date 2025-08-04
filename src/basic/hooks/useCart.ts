@@ -47,12 +47,6 @@ export function useCart({ products, addNotification }) {
   });
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
-  const [totalItemCount, setTotalItemCount] = useState(0);
-
-  useEffect(() => {
-    const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-    setTotalItemCount(count);
-  }, [cart]);
 
   useEffect(() => {
     if (cart.length > 0) {
@@ -209,8 +203,6 @@ export function useCart({ products, addNotification }) {
     cart,
     selectedCoupon,
     setSelectedCoupon,
-    totalItemCount,
-    setTotalItemCount,
     addToCart,
     removeFromCart,
     updateQuantity,

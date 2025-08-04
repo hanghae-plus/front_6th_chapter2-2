@@ -1,11 +1,13 @@
-export const Header = ({
-  isAdmin,
-  searchTerm,
-  setSearchTerm,
-  setIsAdmin,
-  cart,
-  totalItemCount,
-}) => {
+import { useState, useEffect } from 'react';
+
+export const Header = ({ isAdmin, searchTerm, setSearchTerm, setIsAdmin, cart }) => {
+  const [totalItemCount, setTotalItemCount] = useState(0);
+
+  useEffect(() => {
+    const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+    setTotalItemCount(count);
+  }, [cart]);
+
   return (
     <header className='bg-white shadow-sm sticky top-0 z-40 border-b'>
       <div className='max-w-7xl mx-auto px-4'>

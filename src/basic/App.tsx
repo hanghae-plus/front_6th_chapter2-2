@@ -24,8 +24,6 @@ const App = () => {
     cart,
     selectedCoupon,
     setSelectedCoupon,
-    totalItemCount,
-    setTotalItemCount,
     addToCart,
     removeFromCart,
     updateQuantity,
@@ -153,7 +151,6 @@ const App = () => {
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
         cart={cart}
-        totalItemCount={totalItemCount}
       />
       <main className='max-w-7xl mx-auto px-4 py-8'>
         {isAdmin ? (
