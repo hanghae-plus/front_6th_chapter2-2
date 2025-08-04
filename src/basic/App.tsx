@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { CartItem, Coupon, Product } from "../types";
-import { getTotalItemCount } from "./entities/CartItem";
-import { getRemainingStock as getRemainingStockPure } from "./entities/Product";
+import { getRemainingStock } from "./entities/Product";
 import { useLocalStorage } from "./utils/hooks/useLocalStorage";
 import { initialProducts } from "./data/products.ts";
 import { initialCoupons } from "./data/coupons.ts";
@@ -39,7 +38,7 @@ const App = () => {
   const formatPrice = (price: number, productId?: string): string => {
     if (productId) {
       const product = products.find((p) => p.id === productId);
-      if (product && getRemainingStock(product) <= 0) {
+      if (product && getRemainingStock(product, cart) <= 0) {
         return "SOLD OUT";
       }
     }
@@ -49,10 +48,6 @@ const App = () => {
     }
 
     return `₩${price.toLocaleString()}`;
-  };
-
-  const getRemainingStock = (product: Product): number => {
-    return getRemainingStockPure(product, cart);
   };
 
   const handleNotificationAdd = useCallback(
@@ -66,13 +61,6 @@ const App = () => {
     },
     []
   );
-
-  const [totalItemCount, setTotalItemCount] = useState(0);
-
-  useEffect(() => {
-    const count = getTotalItemCount(cart);
-    setTotalItemCount(count);
-  }, [cart]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -94,7 +82,6 @@ const App = () => {
         setSearchTerm={setSearchTerm}
         setIsAdmin={setIsAdmin}
         cart={cart}
-        totalItemCount={totalItemCount}
       />
 
       <main className="max-w-7xl mx-auto px-4 py-8">
@@ -113,7 +100,6 @@ const App = () => {
           <PageCart
             products={products}
             debouncedSearchTerm={debouncedSearchTerm}
-            getRemainingStock={getRemainingStock}
             formatPrice={formatPrice}
             cart={cart}
             coupons={coupons}

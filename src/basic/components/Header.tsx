@@ -1,4 +1,5 @@
 import { CartItem } from "../../types.ts";
+import { getTotalItemCount } from "../entities/CartItem.ts";
 
 interface HeaderProps {
   isAdmin: boolean;
@@ -6,7 +7,6 @@ interface HeaderProps {
   setSearchTerm: (term: string) => void;
   setIsAdmin: (isAdmin: boolean) => void;
   cart: CartItem[];
-  totalItemCount: number;
 }
 
 function Header({
@@ -15,8 +15,9 @@ function Header({
   setSearchTerm,
   setIsAdmin,
   cart,
-  totalItemCount,
 }: HeaderProps) {
+  const totalItemCount = getTotalItemCount(cart);
+
   return (
     <header className="bg-white shadow-sm sticky top-0 z-40 border-b">
       <div className="max-w-7xl mx-auto px-4">

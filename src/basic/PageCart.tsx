@@ -3,9 +3,11 @@ import {
   addItemToCart,
   calculateCartTotal,
   calculateItemTotalWithBulkPurchase,
-  canAddToCart, removeItemFromCart,
-  updateCartItemQuantity
-} from './entities/CartItem.ts';
+  canAddToCart,
+  removeItemFromCart,
+  updateCartItemQuantity,
+} from "./entities/CartItem.ts";
+import { getRemainingStock } from "./entities/Product.ts";
 
 import { ProductWithUI } from "./ProductWithUI.tsx";
 import { useCallback } from "react";
@@ -13,7 +15,6 @@ import { useCallback } from "react";
 interface PageCartProps {
   products: ProductWithUI[];
   debouncedSearchTerm: string;
-  getRemainingStock: (product: Product) => number;
   formatPrice: (price: number, productId?: string) => string;
   cart: CartItem[];
   setCart: (cart: CartItem[]) => void;
@@ -29,7 +30,6 @@ interface PageCartProps {
 function PageCart({
   products,
   debouncedSearchTerm,
-  getRemainingStock,
   formatPrice,
   cart,
   setCart,
@@ -41,7 +41,7 @@ function PageCart({
   const handleProductAddToCart = useCallback(
     (product: ProductWithUI) => {
       if (!canAddToCart(cart, product)) {
-        const remainingStock = getRemainingStock(product);
+        const remainingStock = getRemainingStock(product, cart);
         if (remainingStock <= 0) {
           handleNotificationAdd("재고가 부족합니다!", "error");
         } else {
@@ -57,7 +57,7 @@ function PageCart({
       setCart(newCart);
       handleNotificationAdd("장바구니에 담았습니다", "success");
     },
-    [cart, handleNotificationAdd, getRemainingStock]
+    [cart, handleNotificationAdd]
   );
 
   const handleProductRemoveFromCart = useCallback(
@@ -156,7 +156,7 @@ function PageCart({
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredProducts.map((product) => {
-                const remainingStock = getRemainingStock(product);
+                const remainingStock = getRemainingStock(product, cart);
 
                 return (
                   <div
