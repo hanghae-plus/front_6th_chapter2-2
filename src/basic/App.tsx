@@ -8,20 +8,19 @@ import AdminHeaderContent from "./components/Header/AdminHeaderContent";
 import AdminPage from "./components/ui/AdminPage";
 import CartPage from "./components/ui/CartPage";
 import Toast from "./components/ui/Toast";
-import {
-  NOTIFICATION_DURATION,
-} from "./constants/system";
+import { NOTIFICATION_DURATION } from "./constants/system";
 
 const App = () => {
-  // ========== 📋 상태 관리 섹션 ==========
+  // =========== 페이지 전환 관리 ===========
+  const [isAdmin, setIsAdmin] = useState(false);
 
-  // ========== 🔔 알림 시스템 ==========
-  // 알림 메시지 추가 (3초 후 자동 삭제)
+  // =========== 알림 관리 ===========
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+
   const addNotification = useCallback(
     (message: string, type: "error" | "success" | "warning" = "success") => {
       const id = `${Date.now()}-${Math.random()}`;
       setNotifications((prev) => [...prev, { id, message, type }]);
-
       setTimeout(() => {
         setNotifications((prev) => prev.filter((n) => n.id !== id));
       }, NOTIFICATION_DURATION);
@@ -29,8 +28,13 @@ const App = () => {
     []
   );
 
-  // 🛒 장바구니 + 쿠폰 통합 관리 (useCart 훅 사용)
+  const removeNotification = useCallback((id: string) => {
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
+  }, []);
+
+  // =========== 장바구니 관리 ===========
   const {
+    // 장바구니
     cart,
     cartTotal,
     totalItemCount,
@@ -40,6 +44,7 @@ const App = () => {
     removeFromCart,
     updateQuantity,
     completeOrder,
+    // 쿠폰
     coupons,
     selectedCoupon,
     addCoupon,
@@ -47,32 +52,22 @@ const App = () => {
     applyCoupon,
   } = useCart(addNotification);
 
-  // 📦 상품 관리 + 검색 기능 (useProducts 훅 사용)
+  // =========== 상품 관리 ===========
   const {
+    // 상품
     products,
     addProduct,
     updateProduct,
     deleteProduct,
+    // 검색
     searchTerm,
     setSearchTerm,
     debouncedSearchTerm,
     filteredProducts,
   } = useProducts(addNotification);
 
-  // 🎛️ UI 상태들
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-
-  // 알림 메시지 제거
-  const removeNotification = useCallback((id: string) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
-  }, []);
-
-
-  // ========== 🎨 렌더링 섹션 ==========
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* 🔔 알림 메시지들 - 화면 우상단에 표시 */}
       <Toast
         notifications={notifications}
         onRemoveNotification={removeNotification}
