@@ -22,3 +22,14 @@ export interface Coupon {
   discountType: 'amount' | 'percentage';
   discountValue: number;
 }
+
+//
+export interface ProductWithUI extends Product {
+  description?: string;
+  isRecommended?: boolean;
+}
+export interface Notification {
+  id: string;
+  message: string;
+  type: 'error' | 'success' | 'warning';
+}
