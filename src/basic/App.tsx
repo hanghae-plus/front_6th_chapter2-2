@@ -15,6 +15,8 @@ import {
   SEARCH_DEBOUNCE_DELAY_MS,
   STOCK,
 } from "@/basic/constants";
+import { initialCoupons, initialProducts } from "@/basic/data";
+import { useLocalStorage } from "@/basic/hooks/useLocalStorage";
 import {
   CartItem,
   Coupon,
@@ -23,92 +25,16 @@ import {
   ProductWithUI,
 } from "@/types";
 
-// 초기 데이터
-const initialProducts: ProductWithUI[] = [
-  {
-    id: "p1",
-    name: "상품1",
-    price: 10000,
-    stock: 20,
-    discounts: [
-      { quantity: 10, rate: 0.1 },
-      { quantity: 20, rate: 0.2 },
-    ],
-    description: "최고급 품질의 프리미엄 상품입니다.",
-  },
-  {
-    id: "p2",
-    name: "상품2",
-    price: 20000,
-    stock: 20,
-    discounts: [{ quantity: 10, rate: 0.15 }],
-    description: "다양한 기능을 갖춘 실용적인 상품입니다.",
-    isRecommended: true,
-  },
-  {
-    id: "p3",
-    name: "상품3",
-    price: 30000,
-    stock: 20,
-    discounts: [
-      { quantity: 10, rate: 0.2 },
-      { quantity: 30, rate: 0.25 },
-    ],
-    description: "대용량과 고성능을 자랑하는 상품입니다.",
-  },
-];
-
-const initialCoupons: Coupon[] = [
-  {
-    name: "5000원 할인",
-    code: "AMOUNT5000",
-    discountType: "amount",
-    discountValue: 5000,
-  },
-  {
-    name: "10% 할인",
-    code: "PERCENT10",
-    discountType: "percentage",
-    discountValue: 10,
-  },
-];
-
 const App = () => {
-  const [products, setProducts] = useState<ProductWithUI[]>(() => {
-    const saved = localStorage.getItem("products");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialProducts;
-      }
-    }
-    return initialProducts;
-  });
-
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem("cart");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return [];
-      }
-    }
-    return [];
-  });
-
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem("coupons");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialCoupons;
-      }
-    }
-    return initialCoupons;
-  });
+  const [products, setProducts] = useLocalStorage<ProductWithUI[]>(
+    "products",
+    initialProducts
+  );
+  const [cart, setCart] = useLocalStorage<CartItem[]>("cart", []);
+  const [coupons, setCoupons] = useLocalStorage<Coupon[]>(
+    "coupons",
+    initialCoupons
+  );
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -239,22 +165,6 @@ const App = () => {
   }, [cart]);
 
   useEffect(() => {
-    localStorage.setItem("products", JSON.stringify(products));
-  }, [products]);
-
-  useEffect(() => {
-    localStorage.setItem("coupons", JSON.stringify(coupons));
-  }, [coupons]);
-
-  useEffect(() => {
-    if (cart.length > 0) {
-      localStorage.setItem("cart", JSON.stringify(cart));
-    } else {
-      localStorage.removeItem("cart");
-    }
-  }, [cart]);
-
-  useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
     }, SEARCH_DEBOUNCE_DELAY_MS);
@@ -301,9 +211,10 @@ const App = () => {
   );
 
   const removeFromCart = useCallback((productId: string) => {
-    setCart((prevCart) =>
-      prevCart.filter((item) => item.product.id !== productId)
-    );
+    setCart((prevCart) => {
+      const newCart = prevCart.filter((item) => item.product.id !== productId);
+      return newCart;
+    });
   }, []);
 
   const updateQuantity = useCallback(
