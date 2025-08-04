@@ -1131,7 +1131,7 @@ const App = () => {
                             </div>
 
                             {/* 장바구니 버튼 */}
-                            <button
+                            {/* <button
                               onClick={() => addToCart(product)}
                               disabled={remainingStock <= 0}
                               className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
@@ -1141,7 +1141,15 @@ const App = () => {
                               }`}
                             >
                               {remainingStock <= 0 ? '품절' : '장바구니 담기'}
-                            </button>
+                            </button> */}
+                            <Button
+                              variant='primary'
+                              size='lg'
+                              disabled={remainingStock <= 0}
+                              onClick={() => addToCart(product)}
+                            >
+                              {remainingStock <= 0 ? '품절' : '장바구니 담기'}
+                            </Button>
                           </div>
                         </div>
                       );

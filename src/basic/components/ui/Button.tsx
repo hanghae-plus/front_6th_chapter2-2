@@ -20,15 +20,15 @@ export default function Button({
   const baseClasses = '';
 
   const variantClasses = {
-    primary: `bg-gray-900 text-white transition-colors text-sm  hover:bg-gray-800 ${disabled && 'bg-gray-100 text-gray-400 cursor-not-allowed'}`,
+    primary: `bg-gray-900 text-white transition-colors hover:bg-gray-800 ${disabled && '!bg-gray-100 !text-gray-400 cursor-not-allowed'}`,
     ghost: 'px-3 py-1.5 text-sm rounded transition-colors text-gray-600 hover:text-gray-900',
     link: '',
   };
 
   const sizeClasses = {
     xs: '',
-    sm: 'rounded px-3 py-1.5',
-    md: 'rounded-md px-4 py-2',
+    sm: 'rounded px-3 py-1.5 text-sm',
+    md: 'rounded-md px-4 py-2 text-sm',
     lg: 'py-2 px-4 rounded-md font-medium w-full ',
   };
 
