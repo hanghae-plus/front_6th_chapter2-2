@@ -8,5 +8,13 @@
 // - ChevronDownIcon: 아래 화살표
 // - ChevronUpIcon: 위 화살표
 // - CheckIcon: 체크 아이콘
+// - CloseIcon: 닫기 아이콘
 
 // TODO: 구현
+
+export * from "./CloseIcon";
+export * from "./TrashIcon";
+export * from "./PlusIcon";
+export * from "./ImageIcon";
+export * from "./ShoppingBagIcon";
+export * from "./ShoppingCartIcon";

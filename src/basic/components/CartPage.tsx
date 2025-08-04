@@ -4,6 +4,7 @@ import { CartItem, Coupon } from "../../types";
 import { formatPrice } from "../utils/formatters";
 import { getRemainingStock } from "../models/cart";
 import { ProductListSummary } from "./ui/ProductListSummary";
+import { CloseIcon, ImageIcon, ShoppingBagIcon } from "./icons";
 
 // TODO: 장바구니 페이지 컴포넌트
 // 힌트:
@@ -250,19 +251,7 @@ export function CartPage({
                     {/* 상품 이미지 영역 (placeholder) */}
                     <div className="relative">
                       <div className="aspect-square bg-gray-100 flex items-center justify-center">
-                        <svg
-                          className="w-24 h-24 text-gray-300"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={1}
-                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                          />
-                        </svg>
+                        <ImageIcon />
                       </div>
                       {product.isRecommended && (
                         <span className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
@@ -348,36 +337,15 @@ export function CartPage({
         <div className="sticky top-24 space-y-4">
           <section className="bg-white rounded-lg border border-gray-200 p-4">
             <h2 className="text-lg font-semibold mb-4 flex items-center">
-              <svg
-                className="w-5 h-5 mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                />
-              </svg>
+              <ShoppingBagIcon />
               장바구니
             </h2>
             {cart.length === 0 ? (
               <div className="text-center py-8">
-                <svg
+                <ShoppingBagIcon
                   className="w-16 h-16 text-gray-300 mx-auto mb-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1}
-                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                  />
-                </svg>
+                  strokeWidth={1}
+                />
                 <p className="text-gray-500 text-sm">장바구니가 비어있습니다</p>
               </div>
             ) : (
@@ -403,19 +371,7 @@ export function CartPage({
                           onClick={() => removeFromCart(item.product.id)}
                           className="text-gray-400 hover:text-red-500 ml-2"
                         >
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M6 18L18 6M6 6l12 12"
-                            />
-                          </svg>
+                          <CloseIcon />
                         </button>
                       </div>
                       <div className="flex items-center justify-between">
