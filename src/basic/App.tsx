@@ -649,18 +649,32 @@ const App = () => {
                             {product.description || '-'}
                           </td>
                           <td className='px-6 py-4 whitespace-nowrap text-right text-sm font-medium'>
-                            <button
+                            {/* <button
                               onClick={() => startEditProduct(product)}
                               className='text-indigo-600 hover:text-indigo-900 mr-3'
                             >
                               수정
-                            </button>
-                            <button
+                            </button> */}
+                            <Button
+                              variant='link'
+                              onClick={() => startEditProduct(product)}
+                              className='text-indigo-600 hover:text-indigo-900 mr-3'
+                            >
+                              수정
+                            </Button>
+                            {/* <button
                               onClick={() => deleteProduct(product.id)}
                               className='text-red-600 hover:text-red-900'
                             >
                               삭제
-                            </button>
+                            </button> */}
+                            <Button
+                              variant='link'
+                              onClick={() => deleteProduct(product.id)}
+                              className='text-red-600 hover:text-red-900'
+                            >
+                              삭제
+                            </Button>
                           </td>
                         </tr>
                       ))}
@@ -828,7 +842,7 @@ const App = () => {
                               </button>
                             </div>
                           ))}
-                          <button
+                          {/* <button
                             type='button'
                             onClick={() => {
                               setProductForm({
@@ -839,7 +853,20 @@ const App = () => {
                             className='text-sm text-indigo-600 hover:text-indigo-800'
                           >
                             + 할인 추가
-                          </button>
+                          </button> */}
+                          <Button
+                            type='button'
+                            onClick={() => {
+                              setProductForm({
+                                ...productForm,
+                                discounts: [...productForm.discounts, { quantity: 10, rate: 0.1 }],
+                              });
+                            }}
+                            variant='link'
+                            className='text-sm text-indigo-600 hover:text-indigo-800'
+                          >
+                            + 할인 추가
+                          </Button>
                         </div>
                       </div>
 
@@ -1348,7 +1375,10 @@ const App = () => {
                     <section className='bg-white rounded-lg border border-gray-200 p-4'>
                       <div className='flex items-center justify-between mb-3'>
                         <h3 className='text-sm font-semibold text-gray-700'>쿠폰 할인</h3>
-                        <button className='text-xs text-blue-600 hover:underline'>쿠폰 등록</button>
+                        {/* <button className='text-xs text-blue-600 hover:underline'>쿠폰 등록</button> */}
+                        <Button variant='link' className='text-xs'>
+                          쿠폰 등록
+                        </Button>
                       </div>
                       {coupons.length > 0 && (
                         <select
@@ -1406,7 +1436,7 @@ const App = () => {
                       {/* <button
                         onClick={completeOrder}
                         className='w-full mt-4 py-3 bg-yellow-400 text-gray-900 rounded-md font-medium hover:bg-yellow-500 transition-colors'
-                      >
+                      > mt-4 py-3
                         {totals.totalAfterDiscount.toLocaleString()}원 결제하기
                       </button> */}
                       {/* Todo :: primary - lg 사이즈 옵션 수정 */}

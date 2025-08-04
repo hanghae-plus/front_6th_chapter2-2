@@ -24,7 +24,7 @@ export default function Button({
   const variantClasses = {
     primary: `bg-gray-900 text-white transition-colors hover:bg-gray-800 ${disabled && '!bg-gray-100 !text-gray-400 cursor-not-allowed'}`,
     ghost: 'px-3 py-1.5 text-sm rounded transition-colors text-gray-600 hover:text-gray-900',
-    link: '',
+    link: 'text-blue-600 hover:underline !p-0',
     outline: 'border border-gray-300 font-medium text-gray-700 hover:bg-gray-50',
   };
 
