@@ -6,7 +6,11 @@ import * as productModel from "../models/product";
 import * as couponModel from "../models/coupon";
 import { INITIAL_COUPONS } from "../constants";
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
-import { validateCartStock, validateCouponAvailable, validateCouponCode } from "../utils/validators";
+import {
+  validateCartStock,
+  validateCouponAvailable,
+  validateCouponCode,
+} from "../utils/validators";
 
 // 장바구니 + 쿠폰 통합 관리 훅
 export function useCart(
@@ -27,21 +31,21 @@ export function useCart(
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
   // ========== 계산된 값들 (useMemo로 최적화) ==========
-  const totals = useMemo(() => {
+  const cartTotal = useMemo(() => {
     return composedModels.calculateCartTotal(cart, selectedCoupon);
   }, [cart, selectedCoupon]);
 
-  const getRemainingStock = useMemo(() => {
-    return (product: Product) => productModel.getRemainingStock(product, cart);
-  }, [cart]);
+  const getRemainingStock = useCallback(
+    (product: Product) => productModel.getRemainingStock(product, cart),
+    [cart]
+  );
 
-  const calculateItemTotal = useMemo(() => {
-    return (item: CartItem) => composedModels.calculateItemTotal(item, cart);
-  }, [cart]);
+  const calculateItemTotal = useCallback(
+    (item: CartItem) => composedModels.calculateItemTotal(item, cart),
+    [cart]
+  );
 
-  const totalItemCount = useMemo(() => {
-    return cart.reduce((sum, item) => sum + item.quantity, 0);
-  }, [cart]);
+  const totalItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   // ========== 장바구니 비즈니스 로직 ==========
   const addToCart = useCallback(
@@ -49,7 +53,7 @@ export function useCart(
       // 장바구니 수량 + 1로 재고 검증
       const existingItem = cart.find((item) => item.product.id === product.id);
       const newQuantity = (existingItem?.quantity || 0) + 1;
-      
+
       const validation = validateCartStock(product, newQuantity, cart);
       if (validation.errorMessage) {
         addNotification?.(validation.errorMessage, "error");
@@ -136,9 +140,12 @@ export function useCart(
       }
 
       // 쿠폰 검증
-      const cartTotal = composedModels.calculateCartTotal(cart, null);
-      const validation = validateCouponAvailable(coupon, cartTotal.totalAfterDiscount);
-      
+      const cartTotalForValidation = composedModels.calculateCartTotal(cart, null);
+      const validation = validateCouponAvailable(
+        coupon,
+        cartTotalForValidation.totalAfterDiscount
+      );
+
       if (validation.errorMessage) {
         addNotification?.(validation.errorMessage, "error");
         return;
@@ -153,7 +160,7 @@ export function useCart(
   return {
     // ========== 장바구니 상태 및 기능 ==========
     cart,
-    totals,
+    cartTotal,
     totalItemCount,
     getRemainingStock,
     calculateItemTotal,

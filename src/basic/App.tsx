@@ -33,7 +33,7 @@ const App = () => {
   // 🛒 장바구니 + 쿠폰 통합 관리 (useCart 훅 사용)
   const {
     cart,
-    totals,
+    cartTotal,
     totalItemCount,
     getRemainingStock,
     calculateItemTotal,
@@ -122,7 +122,7 @@ const App = () => {
             cart={cart}
             coupons={coupons}
             selectedCoupon={selectedCoupon}
-            totals={totals}
+            totals={cartTotal}
             onRemoveFromCart={removeFromCart}
             onUpdateQuantity={(productId: string, newQuantity: number) =>
               updateQuantity(productId, newQuantity, products)
