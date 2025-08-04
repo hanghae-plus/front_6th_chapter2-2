@@ -1,37 +1,24 @@
-import { useCallback, useEffect, useState } from "react";
-import { CartItem, Coupon, Product } from "../types";
-import { getRemainingStock } from "./entities/Product";
-import { useLocalStorage } from "./utils/hooks/useLocalStorage";
-import { initialProducts } from "./data/products.ts";
-import { initialCoupons } from "./data/coupons.ts";
-import Notifications from "./components/Notifications.tsx";
+import { useEffect, useState } from "react";
 import Header from "./components/Header.tsx";
+import Notifications from "./components/Notifications.tsx";
+import { getRemainingStock } from "./entities/Product";
+import { useCart } from "./hooks/useCart.ts";
+import { useCoupons } from "./hooks/useCoupons.ts";
+import { useNotification } from "./hooks/useNotification.ts";
+import { useProducts } from "./hooks/useProducts.ts";
 import PageAdmin from "./PageAdmin.tsx";
-import { ProductWithUI } from "./ProductWithUI.tsx";
 import PageCart from "./PageCart.tsx";
 
-interface Notification {
-  id: string;
-  message: string;
-  type: "error" | "success" | "warning";
-}
-
 const App = () => {
-  const [products, setProducts] = useLocalStorage<ProductWithUI[]>(
-    "products",
-    initialProducts
-  );
-  const [coupons, setCoupons] = useLocalStorage<Coupon[]>(
-    "coupons",
-    initialCoupons
-  );
-  const [cart, setCart] = useLocalStorage<CartItem[]>("cart", [], {
-    removeWhenEmpty: true,
-  });
+  const { products, setProducts } = useProducts();
+  const { coupons, setCoupons, selectedCoupon, setSelectedCoupon } =
+    useCoupons();
+  const { cart, setCart } = useCart();
+  const { notifications, setNotifications, handleNotificationAdd } =
+    useNotification();
 
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
 
@@ -49,18 +36,6 @@ const App = () => {
 
     return `₩${price.toLocaleString()}`;
   };
-
-  const handleNotificationAdd = useCallback(
-    (message: string, type: "error" | "success" | "warning" = "success") => {
-      const id = Date.now().toString();
-      setNotifications((prev) => [...prev, { id, message, type }]);
-
-      setTimeout(() => {
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
-      }, 3000);
-    },
-    []
-  );
 
   useEffect(() => {
     const timer = setTimeout(() => {
