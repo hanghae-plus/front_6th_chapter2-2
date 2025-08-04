@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { formatPrice } from "../../utils/formatters";
-import { ProductForm, ProductWithUI } from "../../types";
+import { ProductCreationPayload, ProductWithUI } from "../../types";
 
 interface ProductSectionProps {
   products: ProductWithUI[];
@@ -22,7 +22,7 @@ export const ProductSection = ({
 }: ProductSectionProps) => {
   const [showProductForm, setShowProductForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
-  const [productForm, setProductForm] = useState<ProductForm>({
+  const [productForm, setProductForm] = useState<ProductCreationPayload>({
     name: "",
     price: 0,
     stock: 0,

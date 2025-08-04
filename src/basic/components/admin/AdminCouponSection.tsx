@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { CouponForm } from "../../types";
+import { CouponCreationPayload } from "../../types";
 import { Coupon } from "../../../types";
 
 interface CouponSectionProps {
@@ -20,7 +20,7 @@ export const CouponSection = ({
   addNotification,
 }: CouponSectionProps) => {
   const [showCouponForm, setShowCouponForm] = useState(false);
-  const [couponForm, setCouponForm] = useState<CouponForm>({
+  const [couponForm, setCouponForm] = useState<CouponCreationPayload>({
     name: "",
     code: "",
     discountType: "amount",
