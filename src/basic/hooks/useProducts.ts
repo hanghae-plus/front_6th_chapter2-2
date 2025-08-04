@@ -1,7 +1,9 @@
-import { useCallback } from "react";
+import { useCallback, useState, useMemo } from "react";
 import { ProductWithUI } from "../types";
 import { INITIAL_PRODUCTS } from "../constants";
+import { SEARCH_DEBOUNCE_DELAY } from "../constants/system";
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
+import { useDebounce } from "../utils/hooks/useDebounce";
 
 export function useProducts(
   addNotification?: (
@@ -13,6 +15,10 @@ export function useProducts(
     "products",
     INITIAL_PRODUCTS
   );
+
+  // ========== 검색 상태 ==========
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, SEARCH_DEBOUNCE_DELAY);
 
   // 새 상품 추가
   const addProduct = useCallback(
@@ -49,28 +55,32 @@ export function useProducts(
     [addNotification]
   );
 
-  // 검색어로 필터링된 상품 목록
-  const getFilteredProducts = useCallback(
-    (searchTerm: string) => {
-      if (!searchTerm) return products;
+  // 검색어로 필터링된 상품 목록 (내부에서 자동 계산)
+  const filteredProducts = useMemo(() => {
+    if (!debouncedSearchTerm) return products;
 
-      return products.filter(
-        (product) =>
-          product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          (product.description &&
-            product.description
-              .toLowerCase()
-              .includes(searchTerm.toLowerCase()))
-      );
-    },
-    [products]
-  );
+    return products.filter(
+      (product) =>
+        product.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+        (product.description &&
+          product.description
+            .toLowerCase()
+            .includes(debouncedSearchTerm.toLowerCase()))
+    );
+  }, [products, debouncedSearchTerm]);
+
 
   return {
+    // ========== 상품 관리 ==========
     products,
     addProduct,
     updateProduct,
     deleteProduct,
-    getFilteredProducts,
+
+    // ========== 검색 기능 ==========
+    searchTerm,
+    setSearchTerm,
+    debouncedSearchTerm,
+    filteredProducts, // 자동으로 계산된 필터링 결과
   };
 }

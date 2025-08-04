@@ -10,9 +10,7 @@ import CartPage from "./components/ui/CartPage";
 import Toast from "./components/ui/Toast";
 import {
   NOTIFICATION_DURATION,
-  SEARCH_DEBOUNCE_DELAY,
 } from "./constants/system";
-import { useDebounce } from "./utils/hooks/useDebounce";
 
 const App = () => {
   // ========== 📋 상태 관리 섹션 ==========
@@ -49,28 +47,27 @@ const App = () => {
     applyCoupon,
   } = useCart(addNotification);
 
-  // 📦 상품 관리 (useProducts 훅 사용)
+  // 📦 상품 관리 + 검색 기능 (useProducts 훅 사용)
   const {
     products,
     addProduct,
     updateProduct,
     deleteProduct,
-    getFilteredProducts,
+    searchTerm,
+    setSearchTerm,
+    debouncedSearchTerm,
+    filteredProducts,
   } = useProducts(addNotification);
 
   // 🎛️ UI 상태들
   const [isAdmin, setIsAdmin] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const debouncedSearchTerm = useDebounce(searchTerm, SEARCH_DEBOUNCE_DELAY);
 
   // 알림 메시지 제거
   const removeNotification = useCallback((id: string) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   }, []);
 
-  // 검색어로 필터링된 상품 목록
-  const filteredProducts = getFilteredProducts(debouncedSearchTerm);
 
   // ========== 🎨 렌더링 섹션 ==========
   return (
