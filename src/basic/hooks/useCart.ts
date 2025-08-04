@@ -39,6 +39,10 @@ export function useCart(
     return (item: CartItem) => composedModels.calculateItemTotal(item, cart);
   }, [cart]);
 
+  const totalItemCount = useMemo(() => {
+    return cart.reduce((sum, item) => sum + item.quantity, 0);
+  }, [cart]);
+
   // ========== 장바구니 비즈니스 로직 ==========
   const addToCart = useCallback(
     (product: Product) => {
@@ -150,6 +154,7 @@ export function useCart(
     // ========== 장바구니 상태 및 기능 ==========
     cart,
     totals,
+    totalItemCount,
     getRemainingStock,
     calculateItemTotal,
     addToCart,

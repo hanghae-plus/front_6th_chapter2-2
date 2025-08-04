@@ -34,6 +34,7 @@ const App = () => {
   const {
     cart,
     totals,
+    totalItemCount,
     getRemainingStock,
     calculateItemTotal,
     addToCart,
@@ -48,8 +49,13 @@ const App = () => {
   } = useCart(addNotification);
 
   // 📦 상품 관리 (useProducts 훅 사용)
-  const { products, addProduct, updateProduct, deleteProduct, getFilteredProducts } =
-    useProducts(addNotification);
+  const {
+    products,
+    addProduct,
+    updateProduct,
+    deleteProduct,
+    getFilteredProducts,
+  } = useProducts(addNotification);
 
   // 🎛️ UI 상태들
   const [isAdmin, setIsAdmin] = useState(false); // 관리자 모드 여부
@@ -61,17 +67,6 @@ const App = () => {
   const removeNotification = useCallback((id: string) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   }, []);
-
-  // 장바구니 총 아이템 개수 (헤더 뱃지용)
-  const [totalItemCount, setTotalItemCount] = useState(0);
-
-  // ========== 🔄 useEffect 훅들 ==========
-  // 장바구니 총 개수 계산
-  useEffect(() => {
-    const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-    setTotalItemCount(count);
-  }, [cart]);
-
 
   // 검색어 디바운싱
   useEffect(() => {
