@@ -9,7 +9,7 @@ interface UIToastProps {
   setNotifications: React.Dispatch<React.SetStateAction<Notification[]>>;
 }
 
-export const UIToast = ({ notifications, setNotifications }: UIToastProps) => {
+export function UIToast({ notifications, setNotifications }: UIToastProps) {
   return (
     <>
       {notifications.length > 0 && (
@@ -54,4 +54,4 @@ export const UIToast = ({ notifications, setNotifications }: UIToastProps) => {
       )}
     </>
   );
-};
+}

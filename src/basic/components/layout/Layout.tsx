@@ -1,8 +1,8 @@
 import { CartItem } from "../../../types";
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+function Layout({ children }: { children: React.ReactNode }) {
   return <div className="min-h-screen bg-gray-50">{children}</div>;
-};
+}
 
 interface HeaderProps {
   isAdmin: boolean;
@@ -13,14 +13,14 @@ interface HeaderProps {
   totalItemCount: number;
 }
 
-const Header = ({
+function Header({
   isAdmin,
   searchTerm,
   setSearchTerm,
   setIsAdmin,
   cart,
   totalItemCount,
-}: HeaderProps) => {
+}: HeaderProps) {
   return (
     <header className="bg-white shadow-sm sticky top-0 z-40 border-b">
       <div className="max-w-7xl mx-auto px-4">
@@ -78,11 +78,11 @@ const Header = ({
       </div>
     </header>
   );
-};
+}
 
-const Main = ({ children }: { children: React.ReactNode }) => {
+function Main({ children }: { children: React.ReactNode }) {
   return <main className="max-w-7xl mx-auto px-4 py-8">{children}</main>;
-};
+}
 
 Layout.Header = Header;
 Layout.Main = Main;
