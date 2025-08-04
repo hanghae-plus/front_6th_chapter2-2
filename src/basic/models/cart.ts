@@ -15,4 +15,19 @@
 // - 외부 상태에 의존하지 않음
 // - 모든 필요한 데이터는 파라미터로 전달받음
 
+import { CartItem, Product } from "../../types";
+
 // TODO: 구현
+
+export const getRemainingStock = ({
+  product,
+  cart,
+}: {
+  product: Product;
+  cart: CartItem[];
+}): number => {
+  const cartItem = cart.find((item) => item.product.id === product.id);
+  const remaining = product.stock - (cartItem?.quantity || 0);
+
+  return remaining;
+};
