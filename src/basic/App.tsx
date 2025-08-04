@@ -381,60 +381,89 @@ const App = () => {
       )
     : products;
 
-  if (isAdmin) {
-    return (
-      <AdminPage
-        setIsAdmin={setIsAdmin}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        setEditingProduct={setEditingProduct}
-        setProductForm={setProductForm}
-        setShowProductForm={setShowProductForm}
-        products={products}
-        formatPrice={formatPrice}
-        startEditProduct={startEditProduct}
-        deleteProduct={deleteProduct}
-        showProductForm={showProductForm}
-        handleProductSubmit={handleProductSubmit}
-        editingProduct={editingProduct}
-        productForm={productForm}
-        addNotification={addNotification}
-        coupons={coupons}
-        deleteCoupon={deleteCoupon}
-        setShowCouponForm={setShowCouponForm}
-        showCouponForm={showCouponForm}
-        couponForm={couponForm}
-        handleCouponSubmit={handleCouponSubmit}
-        setCouponForm={setCouponForm}
-      />
-    );
-  }
-
   return (
-    <CartPage
-      notifications={notifications}
-      setNotifications={setNotifications}
-      setIsAdmin={setIsAdmin}
-      searchTerm={searchTerm}
-      setSearchTerm={setSearchTerm}
-      cart={cart}
-      products={products}
-      filteredProducts={filteredProducts}
-      debouncedSearchTerm={debouncedSearchTerm}
-      getRemainingStock={getRemainingStock}
-      formatPrice={formatPrice}
-      addToCart={addToCart}
-      removeFromCart={removeFromCart}
-      updateQuantity={updateQuantity}
-      calculateItemTotal={calculateItemTotal}
-      completeOrder={completeOrder}
-      selectedCoupon={selectedCoupon}
-      setSelectedCoupon={setSelectedCoupon}
-      applyCoupon={applyCoupon}
-      totals={totals}
-      totalItemCount={totalItemCount}
-      coupons={coupons}
-    />
+    <div className='min-h-screen bg-gray-50'>
+      {notifications.length > 0 && (
+        <div className='fixed top-20 right-4 z-50 space-y-2 max-w-sm'>
+          {notifications.map((notif) => (
+            <div
+              key={notif.id}
+              className={`p-4 rounded-md shadow-md text-white flex justify-between items-center ${
+                notif.type === 'error'
+                  ? 'bg-red-600'
+                  : notif.type === 'warning'
+                  ? 'bg-yellow-600'
+                  : 'bg-green-600'
+              }`}
+            >
+              <span className='mr-2'>{notif.message}</span>
+              <button
+                onClick={() => setNotifications((prev) => prev.filter((n) => n.id !== notif.id))}
+                className='text-white hover:text-gray-200'
+              >
+                <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M6 18L18 6M6 6l12 12'
+                  />
+                </svg>
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+      {isAdmin ? (
+        <AdminPage
+          setIsAdmin={setIsAdmin}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          setEditingProduct={setEditingProduct}
+          setProductForm={setProductForm}
+          setShowProductForm={setShowProductForm}
+          products={products}
+          formatPrice={formatPrice}
+          startEditProduct={startEditProduct}
+          deleteProduct={deleteProduct}
+          showProductForm={showProductForm}
+          handleProductSubmit={handleProductSubmit}
+          editingProduct={editingProduct}
+          productForm={productForm}
+          addNotification={addNotification}
+          coupons={coupons}
+          deleteCoupon={deleteCoupon}
+          setShowCouponForm={setShowCouponForm}
+          showCouponForm={showCouponForm}
+          couponForm={couponForm}
+          handleCouponSubmit={handleCouponSubmit}
+          setCouponForm={setCouponForm}
+        />
+      ) : (
+        <CartPage
+          setIsAdmin={setIsAdmin}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          cart={cart}
+          products={products}
+          filteredProducts={filteredProducts}
+          debouncedSearchTerm={debouncedSearchTerm}
+          getRemainingStock={getRemainingStock}
+          formatPrice={formatPrice}
+          addToCart={addToCart}
+          removeFromCart={removeFromCart}
+          updateQuantity={updateQuantity}
+          calculateItemTotal={calculateItemTotal}
+          completeOrder={completeOrder}
+          selectedCoupon={selectedCoupon}
+          setSelectedCoupon={setSelectedCoupon}
+          applyCoupon={applyCoupon}
+          totals={totals}
+          totalItemCount={totalItemCount}
+          coupons={coupons}
+        />
+      )}
+    </div>
   );
 };
 
