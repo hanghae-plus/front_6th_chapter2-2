@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { CartItem, Coupon, Product } from '../types';
 import Button from './components/ui/Button';
 import IconButton from './components/ui/IconButton';
+import Tab from './components/ui/Tab';
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -530,7 +531,7 @@ const App = () => {
             </div>
             <div className='border-b border-gray-200 mb-6'>
               <nav className='-mb-px flex space-x-8'>
-                <button
+                {/* <button
                   onClick={() => setActiveTab('products')}
                   className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
                     activeTab === 'products'
@@ -539,9 +540,8 @@ const App = () => {
                   }`}
                 >
                   상품 관리
-                </button>
-
-                <button
+                </button> */}
+                {/* <button
                   onClick={() => setActiveTab('coupons')}
                   className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
                     activeTab === 'coupons'
@@ -550,7 +550,14 @@ const App = () => {
                   }`}
                 >
                   쿠폰 관리
-                </button>
+                </button> */}
+
+                <Tab isActive={activeTab === 'products'} onClick={() => setActiveTab('products')}>
+                  상품 관리
+                </Tab>
+                <Tab isActive={activeTab === 'coupons'} onClick={() => setActiveTab('coupons')}>
+                  쿠폰 관리
+                </Tab>
               </nav>
             </div>
 
