@@ -227,7 +227,7 @@ const App = () => {
     };
   };
 
-  // 재고 확인 함수 ** cartModel
+  // 특정 상품의 재고 확인 함수 ** cartModel
   const getRemainingStock = (product: IProduct): number => {
     // 상품 재고 수 - 카트에 담긴 상품 수
     const cartItem = cart.find((item) => item.product.id === product.id);
