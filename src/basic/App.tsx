@@ -3,6 +3,7 @@ import { CartItem, Coupon, Product } from '../types';
 import Button from './components/ui/Button';
 import IconButton from './components/ui/IconButton';
 import Tab from './components/ui/Tab';
+import Toast from './components/ui/Toast';
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -439,33 +440,40 @@ const App = () => {
     <div className='min-h-screen bg-gray-50'>
       {notifications.length > 0 && (
         <div className='fixed top-20 right-4 z-50 space-y-2 max-w-sm'>
-          {notifications.map((notif) => (
-            <div
-              key={notif.id}
-              className={`p-4 rounded-md shadow-md text-white flex justify-between items-center ${
-                notif.type === 'error'
-                  ? 'bg-red-600'
-                  : notif.type === 'warning'
-                    ? 'bg-yellow-600'
-                    : 'bg-green-600'
-              }`}
-            >
-              <span className='mr-2'>{notif.message}</span>
+          {notifications.map((notification) => (
+            // <div
+            //   key={notif.id}
+            //   className={`p-4 rounded-md shadow-md text-white flex justify-between items-center ${
+            //     notif.type === 'error'
+            //       ? 'bg-red-600'
+            //       : notif.type === 'warning'
+            //         ? 'bg-yellow-600'
+            //         : 'bg-green-600'
+            //   }`}
+            // >
+            //   <span className='mr-2'>{notif.message}</span>
 
-              <IconButton
-                variant='toast'
-                onClick={() => setNotifications((prev) => prev.filter((n) => n.id !== notif.id))}
-              >
-                <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth={2}
-                    d='M6 18L18 6M6 6l12 12'
-                  />
-                </svg>
-              </IconButton>
-            </div>
+            //   <IconButton
+            //     variant='toast'
+            //     onClick={() => setNotifications((prev) => prev.filter((n) => n.id !== notif.id))}
+            //   >
+            //     <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+            //       <path
+            //         strokeLinecap='round'
+            //         strokeLinejoin='round'
+            //         strokeWidth={2}
+            //         d='M6 18L18 6M6 6l12 12'
+            //       />
+            //     </svg>
+            //   </IconButton>
+            // </div>
+            <Toast
+              type={notification.type}
+              message={notification.message}
+              onClose={() =>
+                setNotifications((prev) => prev.filter((n) => n.id !== notification.id))
+              }
+            />
           ))}
         </div>
       )}
