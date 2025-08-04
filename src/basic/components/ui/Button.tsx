@@ -29,7 +29,7 @@ export default function Button({
   };
 
   const sizeClasses = {
-    xs: '',
+    xs: 'w-6 h-6 rounded flex items-center justify-center hover:bg-gray-100',
     sm: 'rounded px-3 py-1.5 text-sm',
     md: 'rounded-md px-4 py-2 text-sm',
     lg: 'py-2 px-4 rounded-md font-medium',

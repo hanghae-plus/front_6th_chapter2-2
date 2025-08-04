@@ -1274,21 +1274,35 @@ const App = () => {
                             </div>
                             <div className='flex items-center justify-between'>
                               <div className='flex items-center'>
-                                <button
+                                {/* <button
                                   onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
                                   className='w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100'
                                 >
                                   <span className='text-xs'>−</span>
-                                </button>
+                                </button> */}
+                                <Button
+                                  onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                                  size='xs'
+                                  variant='outline'
+                                >
+                                  <span className='text-xs'>−</span>
+                                </Button>
                                 <span className='mx-3 text-sm font-medium w-8 text-center'>
                                   {item.quantity}
                                 </span>
-                                <button
+                                {/* <button
                                   onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
                                   className='w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100'
                                 >
                                   <span className='text-xs'>+</span>
-                                </button>
+                                </button> */}
+                                <Button
+                                  onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                                  size='xs'
+                                  variant='outline'
+                                >
+                                  <span className='text-xs'>+</span>
+                                </Button>
                               </div>
                               <div className='text-right'>
                                 {hasDiscount && (
