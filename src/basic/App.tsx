@@ -738,6 +738,7 @@ const App = () => {
                             }
                             onChange={(e) => {
                               const value = e.target.value;
+                              // 숫자만 처리
                               if (value === "" || /^\d+$/.test(value)) {
                                 setProductForm({
                                   ...productForm,
@@ -773,6 +774,7 @@ const App = () => {
                             }
                             onChange={(e) => {
                               const value = e.target.value;
+                              // 숫자만 처리
                               if (value === "" || /^\d+$/.test(value)) {
                                 setProductForm({
                                   ...productForm,
