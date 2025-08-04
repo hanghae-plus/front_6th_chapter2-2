@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 
 import { CartItem, Coupon, Product } from '../types';
+import { AdminPage } from './components/AdminPage';
 import { type ProductWithUI, initialProducts, initialCoupons } from './constants';
 
 interface Notification {
@@ -378,6 +379,35 @@ const App = () => {
             product.description.toLowerCase().includes(debouncedSearchTerm.toLowerCase()))
       )
     : products;
+
+  if (isAdmin) {
+    return (
+      <AdminPage
+        setIsAdmin={setIsAdmin}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        setEditingProduct={setEditingProduct}
+        setProductForm={setProductForm}
+        setShowProductForm={setShowProductForm}
+        products={products}
+        formatPrice={formatPrice}
+        startEditProduct={startEditProduct}
+        deleteProduct={deleteProduct}
+        showProductForm={showProductForm}
+        handleProductSubmit={handleProductSubmit}
+        editingProduct={editingProduct}
+        productForm={productForm}
+        addNotification={addNotification}
+        coupons={coupons}
+        deleteCoupon={deleteCoupon}
+        setShowCouponForm={setShowCouponForm}
+        showCouponForm={showCouponForm}
+        couponForm={couponForm}
+        handleCouponSubmit={handleCouponSubmit}
+        setCouponForm={setCouponForm}
+      />
+    );
+  }
 
   return (
     <div className='min-h-screen bg-gray-50'>
