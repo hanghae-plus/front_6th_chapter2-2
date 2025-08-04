@@ -1,0 +1,11 @@
+pre-commit:
+  parallel: true
+  commands:
+    lint:
+      glob: "**/*.{js,ts,tsx}"
+      run: pnpm lint:check
+      fail_text: "🚨 ESLint 검사 실패! 'pnpm lint'로 수정 후 다시 커밋하세요."
+    format:
+      glob: "**/*.{js,ts,tsx,html,json,yaml,yml,md}"
+      run: pnpm format:check
+      fail_text: "🎨 코드 포맷팅이 필요합니다! 'pnpm format'로 수정 후 다시 커밋하세요."
