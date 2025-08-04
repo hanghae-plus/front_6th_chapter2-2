@@ -10,6 +10,8 @@ import {
   Payments,
   ProductList,
 } from './ui';
+import { useCoupons } from './entities/coupons';
+import { useProducts } from './entities/products';
 
 interface Notification {
   id: string;
@@ -18,18 +20,7 @@ interface Notification {
 }
 
 const App = () => {
-  const [products, setProducts] = useState<ProductWithUI[]>(() => {
-    const saved = localStorage.getItem('products');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialProducts;
-      }
-    }
-    return initialProducts;
-  });
-
+  const [isAdmin, setIsAdmin] = useState(false);
   const [cart, setCart] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem('cart');
     if (saved) {
@@ -41,43 +32,29 @@ const App = () => {
     }
     return [];
   });
-
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem('coupons');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialCoupons;
-      }
-    }
-    return initialCoupons;
-  });
-
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [showCouponForm, setShowCouponForm] = useState(false);
-  const [showProductForm, setShowProductForm] = useState(false);
+  const {
+    coupons,
+    setCoupons,
+    selectedCoupon,
+    setSelectedCoupon,
+    showCouponForm,
+    setShowCouponForm,
+    couponForm,
+    setCouponForm,
+  } = useCoupons();
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
-
-  // Admin
-  const [editingProduct, setEditingProduct] = useState<string | null>(null);
-  const [productForm, setProductForm] = useState({
-    name: '',
-    price: 0,
-    stock: 0,
-    description: '',
-    discounts: [] as Array<{ quantity: number; rate: number }>,
-  });
-
-  const [couponForm, setCouponForm] = useState({
-    name: '',
-    code: '',
-    discountType: 'amount' as 'amount' | 'percentage',
-    discountValue: 0,
-  });
+  const {
+    products,
+    setProducts,
+    productForm,
+    editingProduct,
+    showProductForm,
+    setShowProductForm,
+    setEditingProduct,
+    setProductForm,
+  } = useProducts();
 
   const formatPrice = (price: number, productId?: string): string => {
     if (productId) {
