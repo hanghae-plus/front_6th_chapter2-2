@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { CartItem, Coupon, Product } from '../types';
 import Button from './components/ui/Button';
+import IconButton from './components/ui/IconButton';
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -449,7 +450,7 @@ const App = () => {
               }`}
             >
               <span className='mr-2'>{notif.message}</span>
-              <button
+              {/* <button
                 onClick={() => setNotifications((prev) => prev.filter((n) => n.id !== notif.id))}
                 className='text-white hover:text-gray-200'
               >
@@ -461,7 +462,35 @@ const App = () => {
                     d='M6 18L18 6M6 6l12 12'
                   />
                 </svg>
-              </button>
+              </button> */}
+              {/* <Button
+                variant='link'
+                onClick={() => setNotifications((prev) => prev.filter((n) => n.id !== notif.id))}
+                className='text-white hover:text-gray-200'
+              >
+                <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M6 18L18 6M6 6l12 12'
+                  />
+                </svg>
+              </Button> */}
+
+              <IconButton
+                variant='toast'
+                onClick={() => setNotifications((prev) => prev.filter((n) => n.id !== notif.id))}
+              >
+                <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M6 18L18 6M6 6l12 12'
+                  />
+                </svg>
+              </IconButton>
             </div>
           ))}
         </div>
@@ -548,6 +577,7 @@ const App = () => {
                 >
                   상품 관리
                 </button>
+
                 <button
                   onClick={() => setActiveTab('coupons')}
                   className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
@@ -816,7 +846,7 @@ const App = () => {
                                 placeholder='%'
                               />
                               <span className='text-sm'>% 할인</span>
-                              <button
+                              {/* <button
                                 type='button'
                                 onClick={() => {
                                   const newDiscounts = productForm.discounts.filter(
@@ -839,7 +869,56 @@ const App = () => {
                                     d='M6 18L18 6M6 6l12 12'
                                   />
                                 </svg>
-                              </button>
+                              </button> */}
+                              {/* <Button
+                                type='button'
+                                onClick={() => {
+                                  const newDiscounts = productForm.discounts.filter(
+                                    (_, i) => i !== index,
+                                  );
+                                  setProductForm({ ...productForm, discounts: newDiscounts });
+                                }}
+                                variant='link'
+                                className='text-red-600 hover:text-red-800'
+                              >
+                                <svg
+                                  className='w-4 h-4'
+                                  fill='none'
+                                  stroke='currentColor'
+                                  viewBox='0 0 24 24'
+                                >
+                                  <path
+                                    strokeLinecap='round'
+                                    strokeLinejoin='round'
+                                    strokeWidth={2}
+                                    d='M6 18L18 6M6 6l12 12'
+                                  />
+                                </svg>
+                              </Button> */}
+                              <IconButton
+                                variant='error'
+                                type='button'
+                                onClick={() => {
+                                  const newDiscounts = productForm.discounts.filter(
+                                    (_, i) => i !== index,
+                                  );
+                                  setProductForm({ ...productForm, discounts: newDiscounts });
+                                }}
+                              >
+                                <svg
+                                  className='w-4 h-4'
+                                  fill='none'
+                                  stroke='currentColor'
+                                  viewBox='0 0 24 24'
+                                >
+                                  <path
+                                    strokeLinecap='round'
+                                    strokeLinejoin='round'
+                                    strokeWidth={2}
+                                    d='M6 18L18 6M6 6l12 12'
+                                  />
+                                </svg>
+                              </IconButton>
                             </div>
                           ))}
                           {/* <button
@@ -947,7 +1026,7 @@ const App = () => {
                               </span>
                             </div>
                           </div>
-                          <button
+                          {/* <button
                             onClick={() => deleteCoupon(coupon.code)}
                             className='text-gray-400 hover:text-red-600 transition-colors'
                           >
@@ -964,13 +1043,47 @@ const App = () => {
                                 d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16'
                               />
                             </svg>
-                          </button>
+                          </button> */}
+                          {/* <Button
+                            variant='link'
+                            onClick={() => deleteCoupon(coupon.code)}
+                            className='text-gray-400 hover:text-red-600 transition-colors'
+                          >
+                            <svg
+                              className='w-5 h-5'
+                              fill='none'
+                              stroke='currentColor'
+                              viewBox='0 0 24 24'
+                            >
+                              <path
+                                strokeLinecap='round'
+                                strokeLinejoin='round'
+                                strokeWidth={2}
+                                d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16'
+                              />
+                            </svg>
+                          </Button> */}
+                          <IconButton variant='danger' onClick={() => deleteCoupon(coupon.code)}>
+                            <svg
+                              className='w-5 h-5'
+                              fill='none'
+                              stroke='currentColor'
+                              viewBox='0 0 24 24'
+                            >
+                              <path
+                                strokeLinecap='round'
+                                strokeLinejoin='round'
+                                strokeWidth={2}
+                                d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16'
+                              />
+                            </svg>
+                          </IconButton>
                         </div>
                       </div>
                     ))}
 
                     <div className='border-2 border-dashed border-gray-300 rounded-lg p-4 flex items-center justify-center hover:border-gray-400 transition-colors'>
-                      <button
+                      {/* <button
                         onClick={() => setShowCouponForm(!showCouponForm)}
                         className='text-gray-400 hover:text-gray-600 flex flex-col items-center'
                       >
@@ -988,7 +1101,27 @@ const App = () => {
                           />
                         </svg>
                         <p className='mt-2 text-sm font-medium'>새 쿠폰 추가</p>
-                      </button>
+                      </button> */}
+                      <Button
+                        onClick={() => setShowCouponForm(!showCouponForm)}
+                        className='!text-gray-400 hover:text-gray-600 flex flex-col items-center'
+                        variant='ghost'
+                      >
+                        <svg
+                          className='w-8 h-8'
+                          fill='none'
+                          stroke='currentColor'
+                          viewBox='0 0 24 24'
+                        >
+                          <path
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                            strokeWidth={2}
+                            d='M12 4v16m8-8H4'
+                          />
+                        </svg>
+                        <p className='mt-2 text-sm font-medium'>새 쿠폰 추가</p>
+                      </Button>
                     </div>
                   </div>
 
@@ -1089,7 +1222,7 @@ const App = () => {
                           </div>
                         </div>
                         <div className='flex justify-end gap-3'>
-                          <button
+                          {/* <button
                             type='button'
                             onClick={() => setShowCouponForm(false)}
                             className='px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50'
@@ -1101,7 +1234,21 @@ const App = () => {
                             className='px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700'
                           >
                             쿠폰 생성
-                          </button>
+                          </button> */}
+                          <Button
+                            type='button'
+                            onClick={() => setShowCouponForm(false)}
+                            variant='outline'
+                          >
+                            취소
+                          </Button>
+                          <Button
+                            type='submit'
+                            variant='primary'
+                            className='bg-indigo-600 text-white'
+                          >
+                            쿠폰 생성
+                          </Button>
                         </div>
                       </form>
                     </div>
@@ -1299,7 +1446,7 @@ const App = () => {
                                 </svg>
                               </button> */}
                               {/* Todo :: Button Ghost 수정 예정 */}
-                              <Button
+                              {/* <Button
                                 variant='ghost'
                                 size='xs'
                                 className='!text-gray-400 hover:text-red-500 ml-2 !p-0 w-auto h-auto'
@@ -1318,7 +1465,26 @@ const App = () => {
                                     d='M6 18L18 6M6 6l12 12'
                                   />
                                 </svg>
-                              </Button>
+                              </Button> */}
+
+                              <IconButton
+                                variant='danger'
+                                onClick={() => removeFromCart(item.product.id)}
+                              >
+                                <svg
+                                  className='w-4 h-4'
+                                  fill='none'
+                                  stroke='currentColor'
+                                  viewBox='0 0 24 24'
+                                >
+                                  <path
+                                    strokeLinecap='round'
+                                    strokeLinejoin='round'
+                                    strokeWidth={2}
+                                    d='M6 18L18 6M6 6l12 12'
+                                  />
+                                </svg>
+                              </IconButton>
                             </div>
                             <div className='flex items-center justify-between'>
                               <div className='flex items-center'>
