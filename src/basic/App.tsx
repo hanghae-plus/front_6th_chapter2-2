@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { CartItem, Coupon, Product } from '../types';
+import { formatNumberWon, formatPriceKRW } from './utils/formatters';
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -126,21 +127,6 @@ const App = () => {
     discountType: 'amount' as 'amount' | 'percentage',
     discountValue: 0,
   });
-
-  const formatPrice = (price: number, productId?: string): string => {
-    if (productId) {
-      const product = products.find((p) => p.id === productId);
-      if (product && getRemainingStock(product) <= 0) {
-        return 'SOLD OUT';
-      }
-    }
-
-    if (isAdmin) {
-      return `${price.toLocaleString()}원`;
-    }
-
-    return `₩${price.toLocaleString()}`;
-  };
 
   const getMaxApplicableDiscount = (item: CartItem): number => {
     const { discounts } = item.product;
@@ -653,7 +639,9 @@ const App = () => {
                               {product.name}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {formatPrice(product.price, product.id)}
+                              {getRemainingStock(product) <= 0
+                                ? 'SOLD OUT'
+                                : formatNumberWon(product.price)}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               <span
@@ -1239,7 +1227,9 @@ const App = () => {
                             {/* 가격 정보 */}
                             <div className="mb-3">
                               <p className="text-lg font-bold text-gray-900">
-                                {formatPrice(product.price, product.id)}
+                                {getRemainingStock(product) <= 0
+                                  ? 'SOLD OUT'
+                                  : formatPriceKRW(product.price)}
                               </p>
                               {product.discounts.length > 0 && (
                                 <p className="text-xs text-gray-500">
