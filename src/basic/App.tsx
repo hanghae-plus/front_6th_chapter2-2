@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { CartItem, Coupon, Product } from '../types';
+import { getMaxApplicableDiscount } from './models/cart';
 import { formatNumberWon, formatPriceKRW } from './utils/formatters';
 
 interface ProductWithUI extends Product {
@@ -128,28 +129,10 @@ const App = () => {
     discountValue: 0,
   });
 
-  const getMaxApplicableDiscount = (item: CartItem): number => {
-    const { discounts } = item.product;
-    const { quantity } = item;
-
-    const baseDiscount = discounts.reduce((maxDiscount, discount) => {
-      return quantity >= discount.quantity && discount.rate > maxDiscount
-        ? discount.rate
-        : maxDiscount;
-    }, 0);
-
-    const hasBulkPurchase = cart.some((cartItem) => cartItem.quantity >= 10);
-    if (hasBulkPurchase) {
-      return Math.min(baseDiscount + 0.05, 0.5); // 대량 구매 시 추가 5% 할인
-    }
-
-    return baseDiscount;
-  };
-
   const calculateItemTotal = (item: CartItem): number => {
     const { price } = item.product;
     const { quantity } = item;
-    const discount = getMaxApplicableDiscount(item);
+    const discount = getMaxApplicableDiscount({ item, cart });
 
     return Math.round(price * quantity * (1 - discount));
   };

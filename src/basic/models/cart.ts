@@ -16,3 +16,85 @@
 // - 모든 필요한 데이터는 파라미터로 전달받음
 
 // TODO: 구현
+
+import type { CartItem } from '../../types';
+
+interface GetMaxApplicableDiscountParams {
+  item: CartItem;
+  cart: CartItem[];
+}
+
+export function getMaxApplicableDiscount({
+  item,
+  cart,
+}: GetMaxApplicableDiscountParams) {
+  return calculateTotalDiscount({
+    discountAppliers: [
+      createItemMaxDiscountApplier({ item }),
+      createBulkPurchaseDiscountApplier({ cart }),
+    ],
+  });
+}
+
+interface CreateItemMaxDiscountApplierParams {
+  item: CartItem;
+}
+
+export function createItemMaxDiscountApplier({
+  item,
+}: CreateItemMaxDiscountApplierParams) {
+  return ({ baseDiscount }: { baseDiscount: number }) => {
+    const { quantity, product } = item;
+    const { discounts } = product;
+
+    const discount = discounts.reduce((maxDiscount, discount) => {
+      return quantity >= discount.quantity && discount.rate > maxDiscount
+        ? discount.rate
+        : maxDiscount;
+    }, baseDiscount);
+
+    return baseDiscount + discount;
+  };
+}
+
+interface CreateBulkPurchaseDiscountApplierParams {
+  cart: CartItem[];
+}
+
+export function createBulkPurchaseDiscountApplier({
+  cart,
+}: CreateBulkPurchaseDiscountApplierParams) {
+  return ({ baseDiscount }: { baseDiscount: number }) => {
+    const hasBulkPurchase = cart.some((cartItem) => cartItem.quantity >= 10);
+
+    return hasBulkPurchase
+      ? Math.min(baseDiscount + 0.05, 0.5) // 대량 구매 시 추가 5% 할인
+      : baseDiscount;
+  };
+}
+
+interface ApplyDiscountsParams {
+  baseDiscount?: number;
+  discountAppliers: Array<
+    ({ baseDiscount }: { baseDiscount: number }) => number
+  >;
+}
+
+export function calculateTotalDiscount({
+  baseDiscount = 0,
+  discountAppliers,
+}: ApplyDiscountsParams) {
+  return discountAppliers.reduce((acc, applyDiscount) => {
+    return applyDiscount({ baseDiscount: acc });
+  }, baseDiscount);
+}
+
+export function applyDiscount({
+  price,
+  discount,
+}: {
+  price: number;
+  discount: number;
+}) {
+  return Math.round(price * (1 - discount));
+}
