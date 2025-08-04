@@ -1,6 +1,7 @@
 import { HTMLAttributes } from 'react';
 
 import type { Notification, NotificationVariant } from '../../../types';
+import { Icon } from '../icons';
 
 interface NotificationProps {
   notifications: Notification[];
@@ -25,14 +26,7 @@ export function Notifications({ notifications, setNotifications }: NotificationP
               onClick={() => setNotifications((prev) => prev.filter((n) => n.id !== id))}
               className='text-white hover:text-gray-200'
             >
-              <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                  d='M6 18L18 6M6 6l12 12'
-                />
-              </svg>
+              <Icon name='x' width={16} height={16} />
             </button>
           </div>
         );
