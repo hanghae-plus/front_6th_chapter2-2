@@ -4,11 +4,12 @@ import type { Coupon, Notification as NotificationType, NotificationVariant } fr
 import { AdminPage } from './components/AdminPage';
 import { CartPage } from './components/CartPage';
 import { Notifications } from './components/ui/Notifications';
-import { initialCoupons, initialProducts, type ProductWithUI } from './constants';
+import { initialCoupons } from './constants';
+import { useProductStore } from './hooks/useProductStore';
 import { useLocalStorage } from './utils/hooks/useLocalStorage';
 
 const App = () => {
-  const [products, setProducts] = useLocalStorage<ProductWithUI[]>('products', initialProducts);
+  const { products, addProduct, updateProduct, deleteProduct } = useProductStore();
   const [coupons, setCoupons] = useLocalStorage<Coupon[]>('coupons', initialCoupons);
 
   const [isAdmin, setIsAdmin] = useState(false);
@@ -37,7 +38,9 @@ const App = () => {
           addNotification={addNotification}
           // products
           products={products}
-          setProducts={setProducts}
+          onAddProduct={addProduct}
+          onUpdateProduct={updateProduct}
+          onDeleteProduct={deleteProduct}
           // coupons
           coupons={coupons}
           setCoupons={setCoupons}

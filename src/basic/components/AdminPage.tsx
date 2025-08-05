@@ -1,20 +1,3 @@
-// TODO: 관리자 페이지 컴포넌트
-// 힌트:
-// 1. 탭 UI로 상품 관리와 쿠폰 관리 분리
-// 2. 상품 추가/수정/삭제 기능
-// 3. 쿠폰 생성 기능
-// 4. 할인 규칙 설정
-//
-// 필요한 hooks:
-// - useProducts: 상품 CRUD
-// - useCoupons: 쿠폰 CRUD
-//
-// 하위 컴포넌트:
-// - ProductForm: 새 상품 추가 폼
-// - ProductAccordion: 상품 정보 표시 및 수정
-// - CouponForm: 새 쿠폰 추가 폼
-// - CouponList: 쿠폰 목록 표시
-
 import { useCallback, useState } from 'react';
 
 import type { Coupon, NotificationVariant } from '../../types';
@@ -35,7 +18,9 @@ interface AdminPageProps {
   addNotification: (message: string, type: NotificationVariant) => void;
 
   products: ProductWithUI[];
-  setProducts: React.Dispatch<React.SetStateAction<ProductWithUI[]>>;
+  onAddProduct: (newProduct: Omit<ProductWithUI, 'id'>) => void;
+  onUpdateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
+  onDeleteProduct: (productId: string) => void;
 
   coupons: Coupon[];
   setCoupons: React.Dispatch<React.SetStateAction<Coupon[]>>;
@@ -49,7 +34,9 @@ export function AdminPage({
   addNotification,
 
   products,
-  setProducts,
+  onAddProduct,
+  onUpdateProduct,
+  onDeleteProduct,
 
   coupons,
   setCoupons,
@@ -97,11 +84,7 @@ export function AdminPage({
 
   const addProduct = useCallback(
     (newProduct: Omit<ProductWithUI, 'id'>) => {
-      const product: ProductWithUI = {
-        ...newProduct,
-        id: `p${Date.now()}`,
-      };
-      setProducts((prev) => [...prev, product]);
+      onAddProduct(newProduct);
       addNotification('상품이 추가되었습니다.', 'success');
     },
     [addNotification]
@@ -109,9 +92,7 @@ export function AdminPage({
 
   const updateProduct = useCallback(
     (productId: string, updates: Partial<ProductWithUI>) => {
-      setProducts((prev) =>
-        prev.map((product) => (product.id === productId ? { ...product, ...updates } : product))
-      );
+      onUpdateProduct(productId, updates);
       addNotification('상품이 수정되었습니다.', 'success');
     },
     [addNotification]
@@ -119,7 +100,7 @@ export function AdminPage({
 
   const deleteProduct = useCallback(
     (productId: string) => {
-      setProducts((prev) => prev.filter((p) => p.id !== productId));
+      onDeleteProduct(productId);
       addNotification('상품이 삭제되었습니다.', 'success');
     },
     [addNotification]
