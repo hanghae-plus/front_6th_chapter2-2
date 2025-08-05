@@ -17,14 +17,14 @@
 
 import { useCallback, useState } from 'react';
 
-import { Coupon } from '../../types';
+import type { Coupon, NotificationVariant } from '../../types';
 import { ProductWithUI } from '../constants';
 import { Icon } from './icons';
 import { formatKRWPrice } from '../utils/formatters';
 
 interface AdminPageProps {
   setIsAdmin: (isAdmin: boolean) => void;
-  addNotification: (message: string, type: 'error' | 'success' | 'warning') => void;
+  addNotification: (message: string, type: NotificationVariant) => void;
 
   products: ProductWithUI[];
   setProducts: React.Dispatch<React.SetStateAction<ProductWithUI[]>>;

@@ -18,7 +18,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { CartItem, Coupon, Product } from '../../types';
+import type { CartItem, Coupon, NotificationVariant, Product } from '../../types';
 import { ProductWithUI } from '../constants';
 import { Icon } from './icons';
 import { formatKRWPrice } from '../utils/formatters';
@@ -27,7 +27,7 @@ import { useLocalStorage } from '../utils/hooks/useLocalStorage';
 
 interface CartPageProps {
   setIsAdmin: (isAdmin: boolean) => void;
-  addNotification: (message: string, type: 'error' | 'success' | 'warning') => void;
+  addNotification: (message: string, type: NotificationVariant) => void;
 
   products: ProductWithUI[];
   coupons: Coupon[];
