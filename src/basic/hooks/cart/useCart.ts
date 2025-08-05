@@ -77,7 +77,6 @@ export const useCart = (
         return [...prevCart, { product, quantity: 1 }];
       });
 
-      // addNotification('장바구니에 담았습니다', 'success');
       onSuccess?.('장바구니에 담았습니다');
     },
     [cart, onSuccess, onError, getRemainingStock],

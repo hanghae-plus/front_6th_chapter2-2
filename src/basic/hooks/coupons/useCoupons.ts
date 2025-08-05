@@ -27,13 +27,11 @@ export const useCoupons = (
       const currentTotal = calculateCartTotal(cart, selectedCoupon).totalAfterDiscount;
 
       if (currentTotal < 10000 && coupon.discountType === 'percentage') {
-        // addNotification('percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.', 'error');
         onError?.('percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.');
         return;
       }
 
       setSelectedCoupon(coupon);
-      // addNotification('쿠폰이 적용되었습니다.', 'success');
       onSuccess?.('쿠폰이 적용되었습니다.');
     },
     [onSuccess, onError],

@@ -49,7 +49,6 @@ const App = () => {
   const [isAdmin, setIsAdmin] = useState(false); // admin ui
   const [showCouponForm, setShowCouponForm] = useState(false); // 쿠폰 ui
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products'); // tab ui
-
   const [showProductForm, setShowProductForm] = useState(false);
 
   // Admin
