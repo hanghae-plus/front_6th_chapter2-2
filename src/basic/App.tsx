@@ -130,12 +130,15 @@ const App = () => {
     discountValue: 0,
   });
 
-  const getRemainingStock = (product: Product): number => {
-    const cartItem = cart.find((item) => item.product.id === product.id);
-    const remaining = product.stock - (cartItem?.quantity || 0);
+  const getRemainingStock = useCallback(
+    (product: Product): number => {
+      const cartItem = cart.find((item) => item.product.id === product.id);
+      const remaining = product.stock - (cartItem?.quantity || 0);
 
-    return remaining;
-  };
+      return remaining;
+    },
+    [cart]
+  );
 
   const addNotification = useCallback(
     (message: string, type: 'error' | 'success' | 'warning' = 'success') => {
@@ -215,7 +218,7 @@ const App = () => {
 
       addNotification('장바구니에 담았습니다', 'success');
     },
-    [cart, addNotification, getRemainingStock]
+    [addNotification, getRemainingStock]
   );
 
   const removeFromCart = useCallback((productId: string) => {
@@ -248,7 +251,7 @@ const App = () => {
         )
       );
     },
-    [products, removeFromCart, addNotification, getRemainingStock]
+    [products, removeFromCart, addNotification]
   );
 
   const applyCoupon = useCallback(
@@ -269,7 +272,7 @@ const App = () => {
       setSelectedCoupon(coupon);
       addNotification('쿠폰이 적용되었습니다.', 'success');
     },
-    [addNotification, calculateCartTotal]
+    [cart, addNotification]
   );
 
   const completeOrder = useCallback(() => {
