@@ -1,14 +1,15 @@
 // @ts-nocheck
+import { App } from '@/App';
+
+import '@/setupTests';
 import {
+  fireEvent,
   render,
   screen,
-  fireEvent,
-  within,
   waitFor,
+  within
 } from '@testing-library/react';
-import { vi } from 'vitest';
-import App from '../App';
-import '../../setupTests';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 describe('쇼핑몰 앱 통합 테스트', () => {
   beforeEach(() => {
@@ -258,7 +259,7 @@ describe('쇼핑몰 앱 통합 테스트', () => {
       await waitFor(() => {
         const discount25 = screen.queryByText('-25%');
         const discount30 = screen.queryByText('-30%');
-        expect(discount25 || discount30).toBeTruthy();
+        expect(discount25 ?? discount30).toBeTruthy();
       });
     });
   });
@@ -309,10 +310,10 @@ describe('쇼핑몰 앱 통합 테스트', () => {
 
       // 쿠폰 정보 입력
       fireEvent.change(screen.getByPlaceholderText('신규 가입 쿠폰'), {
-        target: { value: '테스트 쿠폰' },
+        target: { value: '테스트 쿠폰' }
       });
       fireEvent.change(screen.getByPlaceholderText('WELCOME2024'), {
-        target: { value: 'TEST2024' },
+        target: { value: 'TEST2024' }
       });
 
       const discountInput = screen.getByPlaceholderText('5000');
@@ -327,7 +328,7 @@ describe('쇼핑몰 앱 통합 테스트', () => {
       expect(screen.getByText('7,000원 할인')).toBeInTheDocument();
     });
 
-    test('상품의 가격 입력 시 숫자만 허용된다', async () => {
+    test('상품의 가격 입력 시 숫자만 허용된다', () => {
       // 상품 수정
       fireEvent.click(screen.getAllByText('수정')[0]);
 

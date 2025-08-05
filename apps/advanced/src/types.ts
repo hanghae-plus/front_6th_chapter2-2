@@ -1,24 +1,12 @@
-export interface Product {
-  id: string;
-  name: string;
-  price: number;
-  stock: number;
-  discounts: Discount[];
-}
+import type { ComponentPropsWithoutRef, ElementType } from 'react';
 
-export interface Discount {
-  quantity: number;
-  rate: number;
-}
+export type Nullable<T> = T | null;
+export type Undefinable<T> = T | undefined;
 
-export interface CartItem {
-  product: Product;
-  quantity: number;
-}
-
-export interface Coupon {
-  name: string;
-  code: string;
-  discountType: 'amount' | 'percentage';
-  discountValue: number;
-}
+export type PolymorphicProp<E extends ElementType, T> = Omit<
+  ComponentPropsWithoutRef<E>,
+  keyof T
+> & {
+  as?: E;
+  asChild?: boolean;
+} & T;

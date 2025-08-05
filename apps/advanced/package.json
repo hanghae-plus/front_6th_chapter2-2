@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -18,10 +19,13 @@
   "license": "ISC",
   "packageManager": "pnpm@10.13.1",
   "dependencies": {
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "react": "catalog:react",
     "react-dom": "catalog:react",
     "react-router-dom": "catalog:react",
+    "uuid": "^11.1.0",
+    "valtio": "^2.1.5",
     "zod": "^4.0.14"
   },
   "devDependencies": {
@@ -41,7 +45,7 @@
     "eslint-plugin-react-refresh": "catalog:eslint",
     "jsdom": "catalog:test",
     "prettier": "catalog:config",
-    "typescript": "catalog:typescript",
+    "typescript": "5.8.3",
     "vite": "catalog:vite",
     "vitest": "catalog:test"
   }
