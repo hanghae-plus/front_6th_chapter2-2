@@ -1,9 +1,5 @@
 import { useAtom } from "jotai";
-import {
-  isAdminAtom,
-  notificationsAtom,
-  removeNotificationAtom,
-} from "./store";
+import { isAdminAtom } from "./store";
 
 import Layout from "./components/Layout";
 import Header from "./components/Layout/Header";
@@ -14,15 +10,10 @@ import NotificationToast from "./components/ui/UIToast";
 
 function App() {
   const [isAdmin] = useAtom(isAdminAtom);
-  const [notifications] = useAtom(notificationsAtom);
-  const [, removeNotification] = useAtom(removeNotificationAtom);
 
   return (
     <Layout>
-      <NotificationToast
-        notifications={notifications}
-        onRemove={removeNotification}
-      />
+      <NotificationToast />
       <Header />
       <main className="max-w-7xl mx-auto px-4 py-8">
         {isAdmin ? (
