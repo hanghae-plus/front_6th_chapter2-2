@@ -7,9 +7,34 @@
 //
 // 반환값: [저장된 값, 값 설정 함수]
 
-export function useLocalStorage<T>(
-  key: string,
-  initialValue: T
-): [T, (value: T | ((val: T) => T)) => void] {
-  // TODO: 구현
+import { useEffect, useState } from 'react';
+
+interface UseLocalStorageParams<T> {
+  key: string;
+  initialValue: T;
+}
+
+type UseLocalStorageReturn<T> = [T, (value: T | ((val: T) => T)) => void];
+
+export function useLocalStorage<T>({
+  initialValue,
+  key,
+}: UseLocalStorageParams<T>): UseLocalStorageReturn<T> {
+  const [value, setValue] = useState(() => {
+    const saved = localStorage.getItem(key);
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return initialValue;
+      }
+    }
+    return initialValue;
+  });
+
+  useEffect(() => {
+    localStorage.setItem(key, JSON.stringify(value));
+  }, [key, value]);
+
+  return [value, setValue];
 }
