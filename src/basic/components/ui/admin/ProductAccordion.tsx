@@ -1,6 +1,6 @@
-import { CartItem } from '../../../types'
-import { ProductWithUI } from '../../types'
-import { formatPrice } from '../../utils/formatters'
+import { CartItem } from '../../../../types'
+import { ProductWithUI } from '../../../types'
+import { formatPrice } from '../../../utils/formatters'
 
 export const ProductAccordion = ({
   products,

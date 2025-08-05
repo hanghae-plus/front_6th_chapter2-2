@@ -12,11 +12,11 @@ import { CartItem, Coupon } from '../../types'
 import { ProductWithUI } from '../types'
 import { useCouponForm, useProductForm } from '../hooks/useForm'
 import { useState } from 'react'
-import { AdminHeader } from './ui/AdminHeader'
-import { ProductFom } from './ui/ProductFom'
-import { CouponForm } from './ui/CouponForm'
-import { CouponList } from './ui/CouponList'
-import { ProductAccordion } from './ui/ProductAccordion'
+import { AdminHeader } from './ui/admin/AdminHeader'
+import { ProductFom } from './ui/admin/ProductFom'
+import { CouponForm } from './ui/admin/CouponForm'
+import { CouponList } from './ui/admin/CouponList'
+import { ProductAccordion } from './ui/admin/ProductAccordion'
 
 export function AdminPage({
   isAdmin,

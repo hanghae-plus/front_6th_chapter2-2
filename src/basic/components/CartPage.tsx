@@ -14,9 +14,9 @@
 import { useEffect, useState } from 'react'
 import { CartItem, Coupon } from '../../types'
 import { ProductWithUI } from '../types'
-import { CartHeader } from './ui/CartHeader'
-import { ProductList } from './ui/ProductList'
-import { Cart } from './ui/Cart'
+import { CartHeader } from './ui/cart/CartHeader'
+import { ProductList } from './ui/cart/ProductList'
+import { Cart } from './ui/cart/Cart'
 import { useDebounce } from '../utils/hooks/useDebounce'
 
 export function CartPage({

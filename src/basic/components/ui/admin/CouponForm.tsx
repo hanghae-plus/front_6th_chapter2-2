@@ -1,5 +1,5 @@
 import { FocusEvent } from 'react'
-import { Coupon } from '../../../types'
+import { Coupon } from '../../../../types'
 
 export function CouponForm({
   couponForm,

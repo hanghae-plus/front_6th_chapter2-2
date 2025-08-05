@@ -1,5 +1,5 @@
-import { CartItem, Coupon } from '../../../types'
-import { ProductWithUI } from '../../types'
+import { CartItem, Coupon } from '../../../../types'
+import { ProductWithUI } from '../../../types'
 
 export const Cart = ({
   cart,

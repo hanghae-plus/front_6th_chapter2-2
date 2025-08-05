@@ -1,4 +1,4 @@
-import { Coupon } from '../../../types'
+import { Coupon } from '../../../../types'
 
 export const CouponList = ({
   coupons,

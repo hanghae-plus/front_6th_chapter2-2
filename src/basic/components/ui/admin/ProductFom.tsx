@@ -1,5 +1,5 @@
 import React, { FocusEvent } from 'react'
-import { ProductForm } from '../../../types'
+import { ProductForm } from '../../../../types'
 
 export function ProductFom({
   productForm,
