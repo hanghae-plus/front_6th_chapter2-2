@@ -5,7 +5,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { Message, ToastConfig } from "./type";
+import { Message, ToastCommand, ToastConfig } from "./type";
 import { useAutoCallback } from "../../utility-hooks/use-auto-callback";
 
 export const ToastValueContext = createContext<{
@@ -19,10 +19,7 @@ export const ToastValueContext = createContext<{
   },
 });
 
-export const ToastCommandContext = createContext<{
-  show: (message: Message, options: { duration: number }) => void;
-  hide: (id: string) => void;
-}>({
+export const ToastCommandContext = createContext<ToastCommand>({
   show: () => {},
   hide: () => {},
 });

@@ -1,15 +1,34 @@
 import { PropsWithChildren } from "react";
 import { ToastProvider } from "../../_shared/ui/toast";
 import Toast from "../../_shared/ui/toast/Toast";
+import Notification from "./Notification";
 
 function NotificationProvider({ children }: PropsWithChildren) {
   return (
     <ToastProvider
       config={{
         cases: {
-          success: { className: "bg-green-600" },
-          error: { className: "bg-red-600" },
-          warning: { className: "bg-yellow-600" },
+          success: ({ message, command }) => (
+            <Notification
+              text={message.text}
+              onClickCloseButton={() => command.hide(message.id)}
+              className="bg-green-600"
+            />
+          ),
+          error: ({ message, command }) => (
+            <Notification
+              text={message.text}
+              onClickCloseButton={() => command.hide(message.id)}
+              className="bg-red-600"
+            />
+          ),
+          warning: ({ message, command }) => (
+            <Notification
+              text={message.text}
+              onClickCloseButton={() => command.hide(message.id)}
+              className="bg-yellow-600"
+            />
+          ),
         },
         defaultDuration: 3000,
       }}

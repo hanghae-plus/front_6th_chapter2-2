@@ -71,7 +71,7 @@ function AdminPage({
       };
       setProducts((prev) => [...prev, product]);
       addNotification({
-        message: "상품이 추가되었습니다.",
+        text: "상품이 추가되었습니다.",
         type: "success",
       });
     },
@@ -86,7 +86,7 @@ function AdminPage({
         )
       );
       addNotification({
-        message: "상품이 수정되었습니다.",
+        text: "상품이 수정되었습니다.",
         type: "success",
       });
     },
@@ -97,7 +97,7 @@ function AdminPage({
     (productId: string) => {
       setProducts((prev) => prev.filter((p) => p.id !== productId));
       addNotification({
-        message: "상품이 삭제되었습니다.",
+        text: "상품이 삭제되었습니다.",
         type: "success",
       });
     },
@@ -134,7 +134,7 @@ function AdminPage({
       }
       // addNotification("쿠폰이 삭제되었습니다.", "success");
       addNotification({
-        message: "쿠폰이 삭제되었습니다.",
+        text: "쿠폰이 삭제되었습니다.",
         type: "success",
       });
     },
@@ -146,14 +146,14 @@ function AdminPage({
       const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
       if (existingCoupon) {
         addNotification({
-          message: "이미 존재하는 쿠폰 코드입니다.",
+          text: "이미 존재하는 쿠폰 코드입니다.",
           type: "error",
         });
         return;
       }
       setCoupons((prev) => [...prev, newCoupon]);
       addNotification({
-        message: "쿠폰이 추가되었습니다.",
+        text: "쿠폰이 추가되었습니다.",
         type: "success",
       });
     },
@@ -357,7 +357,7 @@ function AdminPage({
                             setProductForm({ ...productForm, price: 0 });
                           } else if (parseInt(value) < 0) {
                             addNotification({
-                              message: "가격은 0보다 커야 합니다",
+                              text: "가격은 0보다 커야 합니다",
                               type: "error",
                             });
                             setProductForm({ ...productForm, price: 0 });
@@ -390,13 +390,13 @@ function AdminPage({
                             setProductForm({ ...productForm, stock: 0 });
                           } else if (parseInt(value) < 0) {
                             addNotification({
-                              message: "재고는 0보다 커야 합니다",
+                              text: "재고는 0보다 커야 합니다",
                               type: "error",
                             });
                             setProductForm({ ...productForm, stock: 0 });
                           } else if (parseInt(value) > 9999) {
                             addNotification({
-                              message: "재고는 9999개를 초과할 수 없습니다",
+                              text: "재고는 9999개를 초과할 수 없습니다",
                               type: "error",
                             });
                             setProductForm({ ...productForm, stock: 9999 });
@@ -693,7 +693,7 @@ function AdminPage({
                             if (couponForm.discountType === "percentage") {
                               if (value > 100) {
                                 addNotification({
-                                  message: "할인율은 100%를 초과할 수 없습니다",
+                                  text: "할인율은 100%를 초과할 수 없습니다",
                                   type: "error",
                                 });
                                 setCouponForm({
@@ -709,8 +709,7 @@ function AdminPage({
                             } else {
                               if (value > 100000) {
                                 addNotification({
-                                  message:
-                                    "할인 금액은 100,000원을 초과할 수 없습니다",
+                                  text: "할인 금액은 100,000원을 초과할 수 없습니다",
                                   type: "error",
                                 });
                                 setCouponForm({
