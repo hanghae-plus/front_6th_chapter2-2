@@ -51,7 +51,6 @@ const App = () => {
 
   // 장바구니 관리 훅
   const { cart, setCart, totalCartItem, addToCart, removeFromCart, updateQuantity } = useCart(
-    products,
     (message) => addNotification(message, 'success'),
     (message) => addNotification(message, 'error'),
   );
