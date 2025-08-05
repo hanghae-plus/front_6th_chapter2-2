@@ -51,14 +51,6 @@ const App = () => {
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
   // Admin
-  // const [editingProduct, setEditingProduct] = useState<string | null>(null);
-  // const [productForm, setProductForm] = useState({
-  //   name: '',
-  //   price: 0,
-  //   stock: 0,
-  //   description: '',
-  //   discounts: [] as Array<{ quantity: number; rate: number }>,
-  // });
 
   const [couponForm, setCouponForm] = useState({
     name: '',
@@ -150,10 +142,6 @@ const App = () => {
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);
     setTotalCartItem(count);
   }, [cart]);
-
-  useEffect(() => {
-    localStorage.setItem('products', JSON.stringify(products));
-  }, [products]);
 
   useEffect(() => {
     localStorage.setItem('coupons', JSON.stringify(coupons));
