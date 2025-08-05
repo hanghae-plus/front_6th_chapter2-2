@@ -3,9 +3,9 @@ import { MESSAGES } from "../constants/messages";
 
 export const validator = {
   /**
-   * 문자열 전체가 숫자인 경우만 반환
+   * 문자열 전체가 숫자인지 확인
    */
-  extractNumbers: (value: string): string | null => {
+  validateNumericString: (value: string): string | null => {
     if (value === "") return "";
     if (/^\d+$/.test(value)) return value;
 

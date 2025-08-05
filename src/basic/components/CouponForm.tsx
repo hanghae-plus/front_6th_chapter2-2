@@ -130,14 +130,14 @@ const CouponForm = ({
                 couponForm.discountValue === 0 ? "" : couponForm.discountValue
               }
               onChange={(e) => {
-                const value = validator.extractNumbers(e.target.value);
+                const value = validator.validateNumericString(e.target.value);
                 if (value === null) return;
 
                 const discountValue = value === "" ? 0 : parseInt(value);
                 setCouponForm({ ...couponForm, discountValue });
               }}
               onBlur={(e) => {
-                const inputValue = validator.extractNumbers(e.target.value);
+                const inputValue = validator.validateNumericString(e.target.value);
                 if (inputValue === null) return;
 
                 const value = inputValue === "" ? 0 : parseInt(inputValue);

@@ -11,8 +11,13 @@ import AdminPage from "./pages/AdminPage";
 import CartPage from "./pages/CartPage";
 
 const App = () => {
+  // 상품 관리
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
+
+  // 쿠폰 관리
   const { coupons, addCoupon, deleteCoupon } = useCoupons();
+
+  // 장바구니 관리
   const {
     cart,
     updateQuantity,
@@ -27,12 +32,13 @@ const App = () => {
     setSelectedCoupon,
   } = useCart();
 
+  // 알림 처리
   const {notifications, addNotification, removeNotification} = useNotification();
 
-  // 관리자 페이지 여부
+  // 페이지 처리
   const [isAdmin, setIsAdmin] = useState(false);
 
-  // 검색창 내 검색어
+  // 검색 처리
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, SEARCH_DELAY);
 

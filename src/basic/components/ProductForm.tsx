@@ -130,14 +130,14 @@ const ProductForm = ({
               type="text"
               value={productForm.price === 0 ? "" : productForm.price}
               onChange={(e) => {
-                const value = validator.extractNumbers(e.target.value);
+                const value = validator.validateNumericString(e.target.value);
                 if (value === null) return;
 
                 const price = value === "" ? 0 : parseInt(value);
                 setProductForm({ ...productForm, price });
               }}
               onBlur={(e) => {
-                const inputValue = validator.extractNumbers(e.target.value);
+                const inputValue = validator.validateNumericString(e.target.value);
                 if (inputValue === null) return;
 
                 const value = inputValue === "" ? 0 : parseInt(inputValue);
@@ -161,14 +161,14 @@ const ProductForm = ({
               type="text"
               value={productForm.stock === 0 ? "" : productForm.stock}
               onChange={(e) => {
-                const value = validator.extractNumbers(e.target.value);
+                const value = validator.validateNumericString(e.target.value);
                 if (value === null) return;
 
                 const stock = value === "" ? 0 : parseInt(value);
                 setProductForm({ ...productForm, stock });
               }}
               onBlur={(e) => {
-                const inputValue = validator.extractNumbers(e.target.value);
+                const inputValue = validator.validateNumericString(e.target.value);
                 if (inputValue === null) return;
 
                 const value = inputValue === "" ? 0 : parseInt(inputValue);
