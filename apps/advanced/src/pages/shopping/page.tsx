@@ -2,7 +2,7 @@ import { CartSection } from './components/cart-section';
 import { CouponSection } from './components/coupon-section';
 import { PaymentInfoSection } from './components/payment-info-section';
 import { ProductSection } from './components/product-section';
-import { useShoppingPageViewModel } from './view-model';
+import { useShoppingPresenter } from './presenter';
 
 type Props = {
   searchTerm: string;
@@ -23,7 +23,7 @@ const ShoppingPage = ({ searchTerm }: Props) => {
     removeFromCart,
     formatPrice,
     filterProducts
-  } = useShoppingPageViewModel();
+  } = useShoppingPresenter();
 
   const filteredProducts = filterProducts(searchTerm);
 

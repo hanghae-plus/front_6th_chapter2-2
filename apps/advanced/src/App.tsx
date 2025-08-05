@@ -3,8 +3,8 @@ import z from 'zod';
 import AdminPage from './pages/admin/page';
 import { Notifications } from './pages/shopping/components/notifications';
 import ShoppingPage from './pages/shopping/page';
-import { useNotificationService } from './services';
 import { useDebounceValue } from './shared/hooks';
+import { Button } from './shared/ui';
 import { useCartStore } from './store';
 
 const pageEnum = z.enum(['SHOPPING_PAGE', 'ADMIN_PAGE']);
@@ -13,7 +13,6 @@ export const App = () => {
   const [currentPage, setCurrentPage] = useState<z.infer<typeof pageEnum>>(
     pageEnum.enum.SHOPPING_PAGE
   );
-  const notificationService = useNotificationService();
   const { cart, totalItemCount } = useCartStore();
 
   const {
@@ -24,10 +23,7 @@ export const App = () => {
 
   return (
     <div className='min-h-screen bg-gray-50'>
-      <Notifications
-        notifications={notificationService.notifications}
-        removeNotification={notificationService.removeNotification}
-      />
+      <Notifications />
       <header className='bg-white shadow-sm sticky top-0 z-40 border-b'>
         <div className='max-w-7xl mx-auto px-4'>
           <div className='flex justify-between items-center h-16'>
@@ -45,20 +41,23 @@ export const App = () => {
                 </div>
               )}
             </div>
+
             <nav className='flex items-center space-x-4'>
               {currentPage === pageEnum.enum.ADMIN_PAGE && (
-                <button
-                  onClick={() => setCurrentPage(pageEnum.enum.SHOPPING_PAGE)}
-                  className={`px-3 py-1.5 text-sm rounded transition-colors bg-gray-800 text-white`}>
+                <Button
+                  size='small'
+                  variant='ghost'
+                  onClick={() => setCurrentPage(pageEnum.enum.SHOPPING_PAGE)}>
                   쇼핑몰로 돌아가기
-                </button>
+                </Button>
               )}
               {currentPage === pageEnum.enum.SHOPPING_PAGE && (
-                <button
-                  onClick={() => setCurrentPage(pageEnum.enum.ADMIN_PAGE)}
-                  className={`px-3 py-1.5 text-sm rounded transition-colors text-gray-600 hover:text-gray-900`}>
+                <Button
+                  size='small'
+                  variant='ghost'
+                  onClick={() => setCurrentPage(pageEnum.enum.ADMIN_PAGE)}>
                   관리자 페이지로
-                </button>
+                </Button>
               )}
               {currentPage === pageEnum.enum.SHOPPING_PAGE && (
                 <div className='relative'>

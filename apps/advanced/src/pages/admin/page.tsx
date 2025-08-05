@@ -3,7 +3,7 @@ import z from 'zod';
 import CouponSection from './components/coupon';
 import Header from './components/header';
 import ProductSection from './components/product';
-import { useAdminViewModel } from './view-model';
+import { useAdminPresenter } from './presenter';
 
 export const tabTypeSchema = z.enum(['PRODUCTS', 'COUPONS']);
 
@@ -23,7 +23,7 @@ const AdminPage = () => {
     deleteProduct,
     showProductForm,
     setShowProductForm
-  } = useAdminViewModel();
+  } = useAdminPresenter();
 
   const [activeTab, setActiveTab] = useState<z.infer<typeof tabTypeSchema>>(
     tabTypeSchema.enum.PRODUCTS
