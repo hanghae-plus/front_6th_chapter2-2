@@ -5,15 +5,19 @@ import IconButton from './components/ui/IconButton';
 import Tab from './components/ui/Tab';
 import Toast from './components/ui/Toast';
 import Header from './components/ui/Header';
-import { initialProducts } from './data/mockProducts';
 import { initialCoupons } from './data/mockCoupons';
 import { useProducts } from './hooks/product/useProducts';
 import { useNotifications } from './hooks/notifications/useNotifications';
-
+import { useProductForm } from './hooks/product/useProductForm';
 
 const App = () => {
-  const {products, addProduct, updateProduct, deleteProduct} = useProducts()
-  const {notifications, setNotifications, addNotification} = useNotifications()
+  const { products, deleteProduct, updateProduct, addProduct } = useProducts();
+  const { notifications, setNotifications, addNotification } = useNotifications();
+
+  const [showProductForm, setShowProductForm] = useState(false);
+
+  const { productForm, setProductForm, editingProduct, setEditingProduct, handleProductSubmit } =
+    useProductForm(addProduct, updateProduct);
 
   const [cart, setCart] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem('cart');
@@ -41,22 +45,20 @@ const App = () => {
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  // const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
-  const [showProductForm, setShowProductForm] = useState(false);
   const [searchInputValue, setSearchInputValue] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
   // Admin
-  const [editingProduct, setEditingProduct] = useState<string | null>(null);
-  const [productForm, setProductForm] = useState({
-    name: '',
-    price: 0,
-    stock: 0,
-    description: '',
-    discounts: [] as Array<{ quantity: number; rate: number }>,
-  });
+  // const [editingProduct, setEditingProduct] = useState<string | null>(null);
+  // const [productForm, setProductForm] = useState({
+  //   name: '',
+  //   price: 0,
+  //   stock: 0,
+  //   description: '',
+  //   discounts: [] as Array<{ quantity: number; rate: number }>,
+  // });
 
   const [couponForm, setCouponForm] = useState({
     name: '',
@@ -255,7 +257,6 @@ const App = () => {
     setSelectedCoupon(null);
   }, [addNotification]);
 
-
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {
       const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
@@ -279,22 +280,6 @@ const App = () => {
     },
     [selectedCoupon, addNotification],
   );
-
-  const handleProductSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editingProduct && editingProduct !== 'new') {
-      updateProduct(editingProduct, productForm);
-      setEditingProduct(null);
-    } else {
-      addProduct({
-        ...productForm,
-        discounts: productForm.discounts,
-      });
-    }
-    setProductForm({ name: '', price: 0, stock: 0, description: '', discounts: [] });
-    setEditingProduct(null);
-    setShowProductForm(false);
-  };
 
   const handleCouponSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -469,7 +454,12 @@ const App = () => {
                 </div>
                 {showProductForm && (
                   <div className='p-6 border-t border-gray-200 bg-gray-50'>
-                    <form onSubmit={handleProductSubmit} className='space-y-4'>
+                    <form
+                      onSubmit={(e) => {
+                        handleProductSubmit(e, () => setShowProductForm(false));
+                      }}
+                      className='space-y-4'
+                    >
                       <h3 className='text-lg font-medium text-gray-900'>
                         {editingProduct === 'new' ? '새 상품 추가' : '상품 수정'}
                       </h3>
