@@ -6,3 +6,8 @@
 // - extractNumbers(value: string): string - 문자열에서 숫자만 추출
 
 // TODO: 구현
+
+// 문자열 숫자 확인
+export function isValidStrNumber(value: string) {
+  return /^\d+$/.test(value)
+}

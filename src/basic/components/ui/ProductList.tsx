@@ -1,13 +1,16 @@
 import { CartItem } from '../../../types'
 import { getRemainingStock } from '../../models/cart'
 import { ProductWithUI } from '../../types'
+import { formatPrice } from '../../utils/formatters'
 
 export function ProductList({
   filteredProducts,
   cart,
+  addToCart,
 }: {
   filteredProducts: ProductWithUI[]
   cart: CartItem[]
+  addToCart: (product: ProductWithUI) => void
 }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -60,7 +63,11 @@ export function ProductList({
               {/* 가격 정보 */}
               <div className="mb-3">
                 <p className="text-lg font-bold text-gray-900">
-                  {formatPrice(product.price, product.id)}
+                  {formatPrice(
+                    product.price,
+                    false,
+                    getRemainingStock(product, cart) <= 0,
+                  )}
                 </p>
                 {product.discounts.length > 0 && (
                   <p className="text-xs text-gray-500">

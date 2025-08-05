@@ -177,6 +177,25 @@ export function useCart(
     [addNotification, calculateCartTotal, setSelectedCoupon],
   )
 
+  const completeOrder = useCallback(() => {
+    const orderNumber = `ORD-${Date.now()}`
+    addNotification(
+      `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
+      'success',
+    )
+    setCart([])
+    setSelectedCoupon(null)
+  }, [addNotification, setCart, setSelectedCoupon])
+
+  const handleSelectCoupon = (
+    e: React.ChangeEvent<HTMLSelectElement>,
+    coupons: Coupon[],
+  ) => {
+    const coupon = coupons.find((c) => c.code === e.target.value)
+    if (coupon) applyCoupon(coupon)
+    else setSelectedCoupon(null)
+  }
+
   useEffect(() => {
     if (cart.length > 0) {
       localStorage.setItem('cart', JSON.stringify(cart))
@@ -187,7 +206,6 @@ export function useCart(
 
   return {
     cart,
-    setCart,
     addToCart,
     removeFromCart,
     updateQuantity,
@@ -196,5 +214,8 @@ export function useCart(
     applyCoupon,
     calculateCartTotal,
     calculateItemTotal,
+    completeOrder,
+    getRemainingStock,
+    handleSelectCoupon,
   }
 }

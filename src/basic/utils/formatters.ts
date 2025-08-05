@@ -5,3 +5,19 @@
 // - formatPercentage(rate: number): string - 소수를 퍼센트로 변환 (0.1 → 10%)
 
 // TODO: 구현
+
+export const formatPrice = (
+  price: number,
+  isAdmin: boolean,
+  isSoldOut: boolean,
+): string => {
+  if (isSoldOut) {
+    return 'SOLD OUT'
+  }
+
+  if (isAdmin) {
+    return `${price.toLocaleString()}원`
+  }
+
+  return `₩${price.toLocaleString()}`
+}
