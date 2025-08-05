@@ -1,4 +1,3 @@
-import React from "react";
 import { Coupon } from "../../../types";
 
 interface CartCouponProps {
@@ -8,7 +7,13 @@ interface CartCouponProps {
   onRemoveCoupon: () => void;
 }
 
-export const CartCoupon: React.FC<CartCouponProps> = ({ coupons, selectedCoupon, onApplyCoupon, onRemoveCoupon }) => {
+export const CartCoupon = ({ coupons, selectedCoupon, onApplyCoupon, onRemoveCoupon }: CartCouponProps) => {
+  // 쿠폰 선택 핸들러
+  const handleChangeCoupon = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const coupon = coupons.find((c) => c.code === e.target.value);
+    coupon ? onApplyCoupon(coupon) : onRemoveCoupon();
+  };
+
   return (
     <section className="bg-white rounded-lg border border-gray-200 p-4">
       <div className="flex items-center justify-between mb-3">
@@ -19,24 +24,23 @@ export const CartCoupon: React.FC<CartCouponProps> = ({ coupons, selectedCoupon,
         <select
           className="w-full text-sm border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
           value={selectedCoupon?.code || ""}
-          onChange={(e) => {
-            const coupon = coupons.find((c) => c.code === e.target.value);
-            if (coupon) onApplyCoupon(coupon);
-            else onRemoveCoupon();
-          }}
+          onChange={handleChangeCoupon}
         >
           <option value="">쿠폰 선택</option>
           {coupons.map((coupon) => (
-            <option key={coupon.code} value={coupon.code}>
-              {coupon.name} (
-              {coupon.discountType === "amount"
-                ? `${coupon.discountValue.toLocaleString()}원`
-                : `${coupon.discountValue}%`}
-              )
-            </option>
+            <CouponItem key={coupon.code} coupon={coupon} />
           ))}
         </select>
       )}
     </section>
+  );
+};
+
+const CouponItem = ({ coupon }: { coupon: Coupon }) => {
+  return (
+    <option value={coupon.code}>
+      {coupon.name} (
+      {coupon.discountType === "amount" ? `${coupon.discountValue.toLocaleString()}원` : `${coupon.discountValue}%`})
+    </option>
   );
 };
