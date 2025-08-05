@@ -1,5 +1,6 @@
 import { ProductView } from '@/models/product';
 import { useLocalStorageObject } from '@/shared/hooks';
+import { ensureArray } from '@/utils/store-utils';
 
 export const useProductStore = () => {
   const [products, setProducts] = useLocalStorageObject<ProductView[]>(
@@ -42,7 +43,7 @@ export const useProductStore = () => {
   );
 
   const addProduct = (product: ProductView) => {
-    setProducts(prev => [...(prev ?? []), product]);
+    setProducts(prev => [...ensureArray(prev), product]);
   };
 
   const findProductById = (id: string) => {
@@ -50,17 +51,17 @@ export const useProductStore = () => {
   };
 
   const updateProduct = (id: string, updates: Partial<ProductView>) => {
-    setProducts(
-      prev => prev?.map(p => (p.id === id ? { ...p, ...updates } : p)) ?? []
+    setProducts(prev =>
+      ensureArray(prev).map(p => (p.id === id ? { ...p, ...updates } : p))
     );
   };
 
   const removeProductById = (id: string) => {
-    setProducts(prev => prev?.filter(p => p.id !== id) ?? []);
+    setProducts(prev => ensureArray(prev).filter(p => p.id !== id));
   };
 
   return {
-    products: products ?? [],
+    products: ensureArray(products),
     addProduct,
     updateProduct,
     findProductById,

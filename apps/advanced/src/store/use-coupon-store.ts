@@ -1,28 +1,34 @@
 import { Coupon } from '@/models/coupon';
 import { useLocalStorageObject } from '@/shared/hooks';
+import { ensureArray } from '@/utils/store-utils';
+
+const initialCoupons: Coupon[] = [
+  {
+    name: '5000원 할인',
+    code: 'AMOUNT5000',
+    discountType: 'amount',
+    discountValue: 5000
+  },
+  {
+    name: '10% 할인',
+    code: 'PERCENT10',
+    discountType: 'percentage',
+    discountValue: 10
+  }
+];
 
 export const useCouponStore = () => {
-  const [coupons, setCoupons] = useLocalStorageObject<Coupon[]>('coupons', [
-    {
-      name: '5000원 할인',
-      code: 'AMOUNT5000',
-      discountType: 'amount',
-      discountValue: 5000
-    },
-    {
-      name: '10% 할인',
-      code: 'PERCENT10',
-      discountType: 'percentage',
-      discountValue: 10
-    }
-  ]);
+  const [coupons, setCoupons] = useLocalStorageObject<Coupon[]>(
+    'coupons',
+    initialCoupons
+  );
 
   const addCoupon = (coupon: Coupon) => {
-    setCoupons(prev => [...(prev ?? []), coupon]);
+    setCoupons(prev => [...ensureArray(prev), coupon]);
   };
 
   const removeCouponByCode = (code: string) => {
-    setCoupons(prev => prev?.filter(c => c.code !== code) ?? []);
+    setCoupons(prev => ensureArray(prev).filter(c => c.code !== code));
   };
 
   const hasCouponWithCode = (code: string) => {
