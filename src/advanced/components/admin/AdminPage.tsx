@@ -1,34 +1,8 @@
 import { FC, useState } from "react";
-
-import { ProductWithUI } from "../../types";
-import { Coupon } from "../../../types";
 import ProductSection from "./AdminProductSection";
 import CouponSection from "./AdminCouponSection";
 
-interface AdminPageProps {
-  products: ProductWithUI[];
-  coupons: Coupon[];
-  onAddProduct: (product: Omit<ProductWithUI, "id">) => void;
-  onUpdateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
-  onDeleteProduct: (productId: string) => void;
-  onAddCoupon: (coupon: Coupon) => void;
-  onDeleteCoupon: (couponCode: string) => void;
-  addNotification: (
-    message: string,
-    type?: "error" | "success" | "warning"
-  ) => void;
-}
-
-const AdminPage: FC<AdminPageProps> = ({
-  products,
-  coupons,
-  onAddProduct,
-  onUpdateProduct,
-  onDeleteProduct,
-  onAddCoupon,
-  onDeleteCoupon,
-  addNotification,
-}) => {
+const AdminPage: FC = () => {
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
     "products"
   );
@@ -68,21 +42,10 @@ const AdminPage: FC<AdminPageProps> = ({
 
       {/* 상품 관리 탭 내용 */}
       {activeTab === "products" ? (
-        <ProductSection
-          products={products}
-          onAddProduct={onAddProduct}
-          onUpdateProduct={onUpdateProduct}
-          onDeleteProduct={onDeleteProduct}
-          addNotification={addNotification}
-        />
+        <ProductSection />
       ) : (
         <div className="space-y-6">
-          <CouponSection
-            coupons={coupons}
-            onAddCoupon={onAddCoupon}
-            onDeleteCoupon={onDeleteCoupon}
-            addNotification={addNotification}
-          />
+          <CouponSection />
         </div>
       )}
     </div>
