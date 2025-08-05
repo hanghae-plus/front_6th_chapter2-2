@@ -1,24 +1,12 @@
-import React from "react";
+import { useAtom } from "jotai";
+import { isAdminAtom, toggleAdminAtom, totalCartCountAtom } from "../../store";
 import { Icons } from "../icons";
 import { SearchBar } from "../searchBar";
 
-type HeaderProps = {
-  isAdmin: boolean;
-  onChangeIsAdmin: () => void;
-  searchTerm: string;
-  setSearchTerm: (value: string) => void;
-  cartCount: number;
-  totalCartCount: number;
-};
+const Header = () => {
+  const [isAdmin] = useAtom(isAdminAtom);
+  const [, toggleAdmin] = useAtom(toggleAdminAtom);
 
-const Header: React.FC<HeaderProps> = ({
-  isAdmin,
-  onChangeIsAdmin,
-  searchTerm,
-  setSearchTerm,
-  cartCount: cartLength,
-  totalCartCount,
-}) => {
   return (
     <div className="bg-white shadow-sm sticky top-0 z-40 border-b">
       <div className="max-w-7xl mx-auto px-4">
@@ -27,13 +15,13 @@ const Header: React.FC<HeaderProps> = ({
             <span className="text-x/l font-bold text-gray-800">SHOP</span>
             {!isAdmin && (
               <div className="ml-8 flex-1 max-w-md">
-                <SearchBar searchTerm={searchTerm} onSearch={setSearchTerm} />
+                <SearchBar />
               </div>
             )}
           </div>
           <div className="flex items-center space-x-4">
             <button
-              onClick={onChangeIsAdmin}
+              onClick={toggleAdmin}
               className={`px-3 py-1.5 text-sm rounded transition-colors ${
                 isAdmin
                   ? "bg-gray-800 text-white"
@@ -45,17 +33,26 @@ const Header: React.FC<HeaderProps> = ({
             {!isAdmin && (
               <div className="relative">
                 <Icons.Cart />
-                {cartLength > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                    {totalCartCount}
-                  </span>
-                )}
+                <CartBadge />
               </div>
             )}
           </div>
         </div>
       </div>
     </div>
+  );
+};
+
+// 장바구니 배지 컴포넌트
+const CartBadge = () => {
+  const [totalCartCount] = useAtom(totalCartCountAtom);
+
+  if (totalCartCount <= 0) return null;
+
+  return (
+    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+      {totalCartCount}
+    </span>
   );
 };
 
