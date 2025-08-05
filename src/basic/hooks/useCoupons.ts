@@ -10,21 +10,8 @@
 import { useState, useCallback, useEffect } from 'react';
 
 import { Coupon } from '../../types';
+import { initialCoupons } from '../constants';
 
-const initialCoupons: Coupon[] = [
-  {
-    name: '5000원 할인',
-    code: 'AMOUNT5000',
-    discountType: 'amount',
-    discountValue: 5000,
-  },
-  {
-    name: '10% 할인',
-    code: 'PERCENT10',
-    discountType: 'percentage',
-    discountValue: 10,
-  },
-];
 
 export function useCoupons({ selectedCoupon, setSelectedCoupon, addNotification }) {
   const [coupons, setCoupons] = useState<Coupon[]>(() => {
