@@ -10,9 +10,8 @@ export type CartItem = z.infer<typeof cartItemSchema>;
 
 const getMaxApplicableDiscount = (
   item: CartItem,
-  cartItems: CartItem[] | null | undefined
+  cartItems: CartItem[]
 ): number => {
-  if (!cartItems || !Array.isArray(cartItems)) return 0;
   const baseDiscount = item.product.discounts.reduce(
     (maxDiscount, discount) => {
       return item.quantity >= discount.quantity && discount.rate > maxDiscount
@@ -31,46 +30,35 @@ const getMaxApplicableDiscount = (
 };
 
 export const calculateItemTotal = (
-  item: CartItem,
-  cartItems: CartItem[] | null | undefined
+  cartItem: CartItem,
+  cartItems: CartItem[]
 ): number => {
-  if (!cartItems || !Array.isArray(cartItems))
-    return item.product.price * item.quantity;
-  const { price } = item.product;
-  const { quantity } = item;
-  const discount = getMaxApplicableDiscount(item, cartItems);
+  const discount = getMaxApplicableDiscount(cartItem, cartItems);
 
-  return Math.round(price * quantity * (1 - discount));
+  return Math.round(
+    cartItem.product.price * cartItem.quantity * (1 - discount)
+  );
 };
 
 export const getRemainingStock = (
   product: Product,
-  cartItems: CartItem[] | null | undefined
+  cartItems: CartItem[]
 ): number => {
-  if (!cartItems || !Array.isArray(cartItems)) return product.stock;
   const cartItem = cartItems.find(item => item.product.id === product.id);
-  const remainingStock = product.stock - (cartItem?.quantity || 0);
-
-  return remainingStock;
+  return product.stock - (cartItem?.quantity || 0);
 };
 
-export const calculateSubtotal = (
-  items: CartItem[] | null | undefined
-): number => {
-  if (!items || !Array.isArray(items)) return 0;
-  return items.reduce(
+export const calculateSubtotal = (cartItems: CartItem[]): number => {
+  return cartItems.reduce(
     (total, item) => total + item.product.price * item.quantity,
     0
   );
 };
 
-export const calculateItemDiscounts = (
-  items: CartItem[] | null | undefined
-): number => {
-  if (!items || !Array.isArray(items)) return 0;
-  return items.reduce((total, item) => {
-    const originalPrice = item.product.price * item.quantity;
-    const discountedPrice = calculateItemTotal(item, items);
+export const calculateItemDiscounts = (cartItems: CartItem[]): number => {
+  return cartItems.reduce((total, cartItem) => {
+    const originalPrice = cartItem.product.price * cartItem.quantity;
+    const discountedPrice = calculateItemTotal(cartItem, cartItems);
     return total + (originalPrice - discountedPrice);
   }, 0);
 };

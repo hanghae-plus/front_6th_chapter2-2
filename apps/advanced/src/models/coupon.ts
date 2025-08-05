@@ -13,18 +13,20 @@ export type Coupon = z.infer<typeof couponSchema>;
 
 export const calculateCouponDiscount = (
   totalAfterItemDiscounts: number,
-  coupon: Coupon | null
+  selectedCoupon: Nullable<Coupon>
 ): number => {
-  if (!coupon) return 0;
+  if (!selectedCoupon) return 0;
 
   if (
     couponDiscountTypeSchema
       .extract([couponDiscountTypeSchema.enum.amount])
-      .safeParse(coupon.discountType).success
+      .safeParse(selectedCoupon.discountType).success
   ) {
-    return Math.min(coupon.discountValue, totalAfterItemDiscounts);
+    return Math.min(selectedCoupon.discountValue, totalAfterItemDiscounts);
   } else {
-    return Math.round(totalAfterItemDiscounts * (coupon.discountValue / 100));
+    return Math.round(
+      totalAfterItemDiscounts * (selectedCoupon.discountValue / 100)
+    );
   }
 };
 
@@ -34,4 +36,32 @@ export const isValidPercentageCoupon = (coupon: Coupon): boolean => {
 
 export const isValidAmountCoupon = (coupon: Coupon): boolean => {
   return coupon.discountType === couponDiscountTypeSchema.enum.amount;
+};
+
+export const isMaxPercentageCoupon = (
+  type: z.infer<typeof couponDiscountTypeSchema>,
+  value: number
+): boolean => {
+  return type === couponDiscountTypeSchema.enum.percentage && value > 100;
+};
+
+export const isMinAmountCoupon = (
+  type: z.infer<typeof couponDiscountTypeSchema>,
+  value: number
+): boolean => {
+  return type === couponDiscountTypeSchema.enum.amount && value < 0;
+};
+
+export const isMaxAmountCoupon = (
+  type: z.infer<typeof couponDiscountTypeSchema>,
+  value: number
+): boolean => {
+  return type === couponDiscountTypeSchema.enum.amount && value > 1000000;
+};
+
+export const isMinPercentageCoupon = (
+  type: z.infer<typeof couponDiscountTypeSchema>,
+  value: number
+): boolean => {
+  return type === couponDiscountTypeSchema.enum.percentage && value < 0;
 };

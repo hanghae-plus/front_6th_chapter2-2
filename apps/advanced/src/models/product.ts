@@ -1,6 +1,12 @@
 import { z } from 'zod';
 import { discountSchema } from './discount';
 
+export const STOCK_STATUS = {
+  SUFFICIENT: 10,
+  LOW: 0,
+  MAX: 9999
+} as const;
+
 export const productSchema = z.object({
   id: z.string(),
   name: z.string(),
