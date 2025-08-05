@@ -2,21 +2,15 @@ import { useCallback, useState } from "react";
 import { ProductWithUI } from "./types";
 import { initialProducts } from "./constants";
 import { NotificationType } from "../../hooks/useNotifications";
+import { useLocalStorageState } from "../../utils/hooks/useLocalStorageState";
 
 export const useProducts = (
   addNotification: (message: string, type: NotificationType) => void
 ) => {
-  const [products, setProducts] = useState<ProductWithUI[]>(() => {
-    const saved = localStorage.getItem("products");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialProducts;
-      }
-    }
-    return initialProducts;
-  });
+  const [products, setProducts] = useLocalStorageState<ProductWithUI[]>(
+    "products",
+    initialProducts
+  );
 
   const addProduct = useCallback(
     (newProduct: Omit<ProductWithUI, "id">) => {

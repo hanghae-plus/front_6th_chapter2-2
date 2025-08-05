@@ -3,21 +3,12 @@ import { CartItem, Product } from "../../../types";
 import { ProductWithUI } from "../products/types";
 import { NotificationType } from "../../hooks/useNotifications";
 import { calculateRemainingStock } from "../../utils/calculateRemainingStock";
+import { useLocalStorageState } from "../../utils/hooks/useLocalStorageState";
 
 export const useCart = (
   addNotification: (message: string, type: NotificationType) => void
 ) => {
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem("cart");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return [];
-      }
-    }
-    return [];
-  });
+  const [cart, setCart] = useLocalStorageState<CartItem[]>("cart", []);
 
   const addToCart = useCallback(
     (product: ProductWithUI) => {
@@ -27,7 +18,7 @@ export const useCart = (
         return;
       }
 
-      setCart((prevCart) => {
+      setCart((prevCart: CartItem[]) => {
         const existingItem = prevCart.find(
           (item) => item.product.id === product.id
         );

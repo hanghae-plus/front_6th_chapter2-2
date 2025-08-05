@@ -3,21 +3,15 @@ import { CartItem, Coupon } from "../../../types";
 import { initialCoupons } from "./constants";
 import { NotificationType } from "../../hooks/useNotifications";
 import { calculateCartTotal } from "../../utils/calculateCartTotal";
+import { useLocalStorageState } from "../../utils/hooks/useLocalStorageState";
 
 export const useCoupon = (
   addNotification: (message: string, type: NotificationType) => void
 ) => {
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem("coupons");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialCoupons;
-      }
-    }
-    return initialCoupons;
-  });
+  const [coupons, setCoupons] = useLocalStorageState<Coupon[]>(
+    "coupons",
+    initialCoupons
+  );
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
