@@ -1,4 +1,5 @@
 import { CartItem } from "../../../types";
+import { SearchInput } from "../ui/SearchInput";
 
 interface HeaderProps {
   isAdmin: boolean;
@@ -26,12 +27,16 @@ export const Header = ({
             {/* 검색창 - 안티패턴: 검색 로직이 컴포넌트에 직접 포함 */}
             {!isAdmin && (
               <div className="ml-8 flex-1 max-w-md">
-                <input
+                {/* <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="상품 검색..."
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                /> */}
+                <SearchInput
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
             )}

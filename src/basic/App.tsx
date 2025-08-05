@@ -13,6 +13,7 @@ import { calculateCartTotal } from "./utils/calculateCartTotal";
 import { calculateItemTotal } from "./utils/calculateItemTotal";
 import { useDebounce } from "./utils/hooks/useDebounce";
 import { Header } from "./components/layouts/Header";
+import { useSearchProduct } from "./hooks/useSearchProduct";
 
 const App = () => {
   const { notifications, setNotifications, addNotification } =
@@ -49,8 +50,7 @@ const App = () => {
     startEditProduct,
   } = useProductForm();
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const { searchTerm, setSearchTerm, debouncedSearchTerm } = useSearchProduct();
 
   const [couponForm, setCouponForm] = useState({
     name: "",
