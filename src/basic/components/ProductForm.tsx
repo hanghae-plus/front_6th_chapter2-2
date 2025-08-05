@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { IProductForm, IProductWithUI } from "../type";
 import { CloseIcon } from "./icon";
+import { validator } from "../utils/vaildators";
 
 interface ProductFormProps {
   // product
@@ -128,23 +129,23 @@ const ProductForm = ({
               type="text"
               value={productForm.price === 0 ? "" : productForm.price}
               onChange={(e) => {
-                const value = e.target.value;
-                // 숫자만 처리
-                if (value === "" || /^\d+$/.test(value)) {
-                  setProductForm({
-                    ...productForm,
-                    price: value === "" ? 0 : parseInt(value),
-                  });
-                }
+                const value = validator.extractNumbers(e.target.value);
+                if (value === null) return;
+
+                const price = value === "" ? 0 : parseInt(value);
+                setProductForm({ ...productForm, price });
               }}
               onBlur={(e) => {
-                const value = e.target.value;
-                if (value === "") {
-                  setProductForm({ ...productForm, price: 0 });
-                } else if (parseInt(value) < 0) {
-                  addNotification("가격은 0보다 커야 합니다", "error");
-                  setProductForm({ ...productForm, price: 0 });
-                }
+                const inputValue = validator.extractNumbers(e.target.value);
+                if (inputValue === null) return;
+
+                const value = inputValue === "" ? 0 : parseInt(inputValue);
+
+                const { isValid, message, correctedValue } =
+                  validator.isValidPrice(value);
+
+                if (!isValid) addNotification(message, "error");
+                setProductForm({ ...productForm, price: correctedValue });
               }}
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
               placeholder="숫자만 입력"
@@ -159,29 +160,23 @@ const ProductForm = ({
               type="text"
               value={productForm.stock === 0 ? "" : productForm.stock}
               onChange={(e) => {
-                const value = e.target.value;
-                // 숫자만 처리
-                if (value === "" || /^\d+$/.test(value)) {
-                  setProductForm({
-                    ...productForm,
-                    stock: value === "" ? 0 : parseInt(value),
-                  });
-                }
+                const value = validator.extractNumbers(e.target.value);
+                if (value === null) return;
+
+                const stock = value === "" ? 0 : parseInt(value);
+                setProductForm({ ...productForm, stock });
               }}
               onBlur={(e) => {
-                const value = e.target.value;
-                if (value === "") {
-                  setProductForm({ ...productForm, stock: 0 });
-                } else if (parseInt(value) < 0) {
-                  addNotification("재고는 0보다 커야 합니다", "error");
-                  setProductForm({ ...productForm, stock: 0 });
-                } else if (parseInt(value) > 9999) {
-                  addNotification(
-                    "재고는 9999개를 초과할 수 없습니다",
-                    "error"
-                  );
-                  setProductForm({ ...productForm, stock: 9999 });
-                }
+                const inputValue = validator.extractNumbers(e.target.value);
+                if (inputValue === null) return;
+
+                const value = inputValue === "" ? 0 : parseInt(inputValue);
+
+                const { isValid, message, correctedValue } =
+                  validator.isValidStock(value);
+
+                if (!isValid) addNotification(message, "error");
+                setProductForm({ ...productForm, stock: correctedValue });
               }}
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
               placeholder="숫자만 입력"

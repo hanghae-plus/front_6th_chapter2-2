@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { ICoupon, ICouponForm } from "../type";
+import { validator } from "../utils/vaildators";
 
 interface CouponFormProps {
   // coupon
@@ -128,48 +129,36 @@ const CouponForm = ({
                 couponForm.discountValue === 0 ? "" : couponForm.discountValue
               }
               onChange={(e) => {
-                const value = e.target.value;
-                if (value === "" || /^\d+$/.test(value)) {
-                  setCouponForm({
-                    ...couponForm,
-                    discountValue: value === "" ? 0 : parseInt(value),
-                  });
-                }
+                const value = validator.extractNumbers(e.target.value);
+                if (value === null) return;
+
+                const discountValue = value === "" ? 0 : parseInt(value);
+                setCouponForm({ ...couponForm, discountValue });
               }}
               onBlur={(e) => {
-                const value = parseInt(e.target.value) || 0;
+                const inputValue = validator.extractNumbers(e.target.value);
+                if (inputValue === null) return;
+
+                const value = inputValue === "" ? 0 : parseInt(inputValue);
+
                 if (couponForm.discountType === "percentage") {
-                  if (value > 100) {
-                    addNotification(
-                      "할인율은 100%를 초과할 수 없습니다",
-                      "error"
-                    );
-                    setCouponForm({
-                      ...couponForm,
-                      discountValue: 100,
-                    });
-                  } else if (value < 0) {
-                    setCouponForm({
-                      ...couponForm,
-                      discountValue: 0,
-                    });
-                  }
+                  const { isValid, message, correctedValue } =
+                    validator.isValidDiscountPercentage(value);
+
+                  if (!isValid) addNotification(message, "error");
+                  setCouponForm({
+                    ...couponForm,
+                    discountValue: correctedValue,
+                  });
                 } else {
-                  if (value > 100000) {
-                    addNotification(
-                      "할인 금액은 100,000원을 초과할 수 없습니다",
-                      "error"
-                    );
-                    setCouponForm({
-                      ...couponForm,
-                      discountValue: 100000,
-                    });
-                  } else if (value < 0) {
-                    setCouponForm({
-                      ...couponForm,
-                      discountValue: 0,
-                    });
-                  }
+                  const { isValid, message, correctedValue } =
+                    validator.isValidDiscountAmount(value);
+
+                  if (!isValid) addNotification(message, "error");
+                  setCouponForm({
+                    ...couponForm,
+                    discountValue: correctedValue,
+                  });
                 }
               }}
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
