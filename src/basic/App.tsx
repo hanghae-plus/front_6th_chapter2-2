@@ -18,7 +18,7 @@ const App = () => {
   const { products, setProducts, addProduct, updateProduct, deleteProduct } =
     useProducts(addNotification);
 
-  const { cart, setCart, addToCart } = useCart(addNotification);
+  const { cart, setCart, addToCart, totalItemCount } = useCart(addNotification);
 
   const {
     coupons,
@@ -63,13 +63,6 @@ const App = () => {
     }
     return false;
   };
-
-  const [totalItemCount, setTotalItemCount] = useState(0);
-
-  useEffect(() => {
-    const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-    setTotalItemCount(count);
-  }, [cart]);
 
   useEffect(() => {
     localStorage.setItem("products", JSON.stringify(products));

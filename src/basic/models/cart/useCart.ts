@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { CartItem, Product } from "../../../types";
 import { ProductWithUI } from "../products/types";
 import { NotificationType } from "../../hooks/useNotifications";
@@ -58,9 +58,14 @@ export const useCart = (
     [cart, addNotification, calculateRemainingStock]
   );
 
+  const totalItemCount = useMemo(() => {
+    return cart.reduce((sum, item) => sum + item.quantity, 0);
+  }, [cart]);
+
   return {
     cart,
     setCart,
     addToCart,
+    totalItemCount,
   };
 };
