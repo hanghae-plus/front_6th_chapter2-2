@@ -12,6 +12,10 @@ export const addNotificationAtom = atom(
       type,
     };
 
+    // 새 알림을 배열에 추가
+    set(notificationsAtom, (prev) => [...prev, newNotification]);
+
+    // 3초 후 자동 제거
     setTimeout(() => {
       set(notificationsAtom, (prev) => prev.filter((n) => n.id !== newNotification.id));
     }, 3000);
