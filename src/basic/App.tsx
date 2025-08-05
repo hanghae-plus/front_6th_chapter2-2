@@ -10,6 +10,7 @@ import {
   TrashIcon,
   PlusIcon,
 } from './components/icons';
+import Badge from './components/ui/Badge';
 import Card from './components/ui/Card';
 import Input from './components/ui/Input';
 import {
@@ -525,8 +526,10 @@ const App = () => {
                             {formatPrice(product.price, product.id)}
                           </td>
                           <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>
-                            <span
-                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            <Badge
+                              size='xs'
+                              rounded='full'
+                              className={`inline-flex items-center px-2.5 py-0.5 font-medium ${
                                 product.stock > 10
                                   ? 'bg-green-100 text-green-800'
                                   : product.stock > 0
@@ -535,7 +538,7 @@ const App = () => {
                               }`}
                             >
                               {product.stock}개
-                            </span>
+                            </Badge>
                           </td>
                           <td className='px-6 py-4 text-sm text-gray-500 max-w-xs truncate'>
                             {product.description || '-'}
@@ -765,11 +768,15 @@ const App = () => {
                             <h3 className='font-semibold text-gray-900'>{coupon.name}</h3>
                             <p className='text-sm text-gray-600 mt-1 font-mono'>{coupon.code}</p>
                             <div className='mt-2'>
-                              <span className='inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white text-indigo-700'>
+                              <Badge
+                                size='sm'
+                                rounded='full'
+                                className='inline-flex items-center px-3 py-1 font-medium bg-white text-indigo-700'
+                              >
                                 {coupon.discountType === 'amount'
                                   ? `${coupon.discountValue.toLocaleString()}원 할인`
                                   : `${coupon.discountValue}% 할인`}
-                              </span>
+                              </Badge>
                             </div>
                           </div>
                           <button
@@ -939,14 +946,22 @@ const App = () => {
                               <ImageIcon />
                             </div>
                             {product.isRecommended && (
-                              <span className='absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded'>
+                              <Badge
+                                size='xs'
+                                rounded='sm'
+                                className='absolute top-2 right-2 bg-red-500 text-white px-2 py-1'
+                              >
                                 BEST
-                              </span>
+                              </Badge>
                             )}
                             {product.discounts.length > 0 && (
-                              <span className='absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded'>
+                              <Badge
+                                size='xs'
+                                rounded='sm'
+                                className='absolute top-2 left-2 bg-orange-500 text-white px-2 py-1'
+                              >
                                 ~{Math.max(...product.discounts.map((d) => d.rate)) * 100}%
-                              </span>
+                              </Badge>
                             )}
                           </div>
 
@@ -1065,9 +1080,13 @@ const App = () => {
                               </div>
                               <div className='text-right'>
                                 {hasDiscount && (
-                                  <span className='text-xs text-red-500 font-medium block'>
+                                  <Badge
+                                    size='xs'
+                                    rounded='none'
+                                    className='text-red-500 font-medium block'
+                                  >
                                     -{discountRate}%
-                                  </span>
+                                  </Badge>
                                 )}
                                 <p className='text-sm font-medium text-gray-900'>
                                   {Math.round(itemTotal).toLocaleString()}원
