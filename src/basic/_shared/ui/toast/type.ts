@@ -1,16 +1,18 @@
 import { ReactNode } from "react";
 
-export type Message = {
-  type: "error" | "success" | "warning";
+export type Message<Type extends string = string> = {
+  type: Type;
   text: string;
 };
 
-export interface ToastCommand {
-  show: (message: Message, options: { duration: number }) => void;
+export type MessageWithId<Type extends string = string> = Message<Type> & { id: string };
+
+export interface ToastCommand<Type extends string = string> {
+  show: (message: Message<Type>, options: { duration: number }) => void;
   hide: (id: string) => void;
 }
 
-export type ToastConfig<Type extends string> = {
+export type ToastConfig<Type extends string = string> = {
   cases: Readonly<
     Record<
       Type,
@@ -18,8 +20,8 @@ export type ToastConfig<Type extends string> = {
         message,
         command,
       }: {
-        message: Message & { id: string };
-        command: ToastCommand;
+        message: MessageWithId<Type>;
+        command: ToastCommand<Type>;
       }) => ReactNode
     >
   >;

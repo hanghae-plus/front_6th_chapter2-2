@@ -3,9 +3,11 @@ import { ToastProvider } from "../../_shared/ui/toast";
 import Toast from "../../_shared/ui/toast/Toast";
 import Notification from "./Notification";
 
+export type NotificationType = 'success' | 'error' | 'warning';
+
 function NotificationProvider({ children }: PropsWithChildren) {
   return (
-    <ToastProvider
+    <ToastProvider<NotificationType>
       config={{
         cases: {
           success: ({ message, command }) => (

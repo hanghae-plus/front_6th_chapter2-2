@@ -5,12 +5,12 @@ import {
   useRef,
   useState,
 } from "react";
-import { Message, ToastCommand, ToastConfig } from "./type";
+import { Message, MessageWithId, ToastCommand, ToastConfig } from "./type";
 import { useAutoCallback } from "../../utility-hooks/use-auto-callback";
 
 export const ToastValueContext = createContext<{
-  messages: (Message & { id: string })[];
-  config: ToastConfig<string>;
+  messages: MessageWithId[];
+  config: ToastConfig;
 }>({
   messages: [],
   config: {
@@ -20,19 +20,23 @@ export const ToastValueContext = createContext<{
 });
 
 export const ToastCommandContext = createContext<ToastCommand>({
-  show: () => {},
-  hide: () => {},
+  show: () => {
+    throw new Error("useToast must be used within a ToastProvider");
+  },
+  hide: () => {
+    throw new Error("useToast must be used within a ToastProvider");
+  },
 });
 
 export function ToastProvider<Type extends string>({
   children,
   config,
 }: PropsWithChildren<{ config: ToastConfig<Type> }>) {
-  const [messages, setMessages] = useState<(Message & { id: string })[]>([]);
+  const [messages, setMessages] = useState<MessageWithId<Type>[]>([]);
   const configRef = useRef(config);
 
   const show = useAutoCallback(
-    (message: Message, options: { duration: number }) => {
+    (message: Message<Type>, options: { duration: number }) => {
       const { duration } = options;
 
       const id = Date.now().toString();
@@ -50,10 +54,16 @@ export function ToastProvider<Type extends string>({
   });
 
   const value = useMemo(
-    () => ({ messages, config: configRef.current }),
+    () => ({ 
+      messages: messages as unknown as MessageWithId[], 
+      config: configRef.current as unknown as ToastConfig 
+    }),
     [messages]
   );
-  const commands = useMemo(() => ({ show, hide }), [show, hide]);
+  const commands = useMemo(() => ({ 
+    show: show as unknown as ToastCommand['show'], 
+    hide 
+  }), [show, hide]);
 
   return (
     <ToastValueContext value={value}>
