@@ -2,19 +2,10 @@ import { useState, useEffect, useCallback } from "react";
 import { CartItem, Product } from "../../types";
 
 import { ProductWithUI } from "../types";
+import { useLocalStorage } from "./useLocalStorage";
 
 export function useCart(products: ProductWithUI[]) {
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem("cart");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return [];
-      }
-    }
-    return [];
-  });
+  const [cart, setCart] = useLocalStorage<CartItem[]>("cart", []);
 
   const [totalCartCount, setTotalCartCount] = useState(0);
 

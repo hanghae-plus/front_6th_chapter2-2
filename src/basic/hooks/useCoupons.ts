@@ -1,19 +1,13 @@
-import { useState, useEffect, useCallback } from "react";
+import { useEffect, useCallback } from "react";
 import { Coupon } from "../../types";
 import { initialCoupons } from "../data";
+import { useLocalStorage } from "./useLocalStorage";
 
 export function useCoupons() {
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem("coupons");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialCoupons;
-      }
-    }
-    return initialCoupons;
-  });
+  const [coupons, setCoupons] = useLocalStorage<Coupon[]>(
+    "coupons",
+    initialCoupons
+  );
 
   useEffect(() => {
     localStorage.setItem("coupons", JSON.stringify(coupons));
