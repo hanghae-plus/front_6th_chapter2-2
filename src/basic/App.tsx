@@ -19,7 +19,8 @@ const App = () => {
     clearCart,
     getRemainingStock,
     calculateItemTotal,
-    cartTotal,
+    cartTotalPrice,
+    cartTotalItem,
     selectedCoupon,
     setSelectedCoupon,
   } = useCart();
@@ -47,14 +48,6 @@ const App = () => {
     },
     []
   );
-
-  // 장바구니 내 전체 상품 수
-  const [totalItemCount, setTotalItemCount] = useState(0);
-
-  useEffect(() => {
-    const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-    setTotalItemCount(count);
-  }, [cart]);
 
   // 검색창 내 검색어가 바뀔 때 5초마다 바로 검색 반영
   useEffect(() => {
@@ -85,7 +78,7 @@ const App = () => {
         setIsAdmin={setIsAdmin}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
-        cartItemCount={totalItemCount}
+        cartTotalItem={cartTotalItem}
       />
 
       <main className="max-w-7xl mx-auto px-4 py-8">
@@ -113,7 +106,7 @@ const App = () => {
             addToCart={addToCart}
             removeFromCart={removeFromCart}
             cart={cart}
-            cartTotal={cartTotal}
+            cartTotalPrice={cartTotalPrice}
             calculateItemTotal={calculateItemTotal}
             clearCart={clearCart}
             coupons={coupons}

@@ -15,7 +15,7 @@ interface CartPageProps {
 
   // cart
   cart: ICartItem[];
-  cartTotal: { totalBeforeDiscount: number; totalAfterDiscount: number };
+  cartTotalPrice: { totalBeforeDiscount: number; totalAfterDiscount: number };
   calculateItemTotal: (item: ICartItem) => number;
   clearCart: () => void;
 
@@ -41,7 +41,7 @@ const CartPage = ({
   addToCart,
   removeFromCart,
   cart,
-  cartTotal,
+  cartTotalPrice,
   calculateItemTotal,
   clearCart,
   coupons,
@@ -50,7 +50,7 @@ const CartPage = ({
   debouncedSearchTerm,
   addNotification,
 }: CartPageProps) => {
-  // 장바구니 담기 버튼 처리 ** cartModel
+  // 장바구니 담기 버튼 처리
   const addItemToCart = useCallback(
     (product: IProductWithUI) => {
       const remainingStock = getRemainingStock(product);
@@ -65,7 +65,7 @@ const CartPage = ({
     [cart, addNotification, getRemainingStock]
   );
 
-  // 장바구니의 상품 수 업데이트 (-1, +1 처리) ** cartModel
+  // 장바구니의 상품 수 업데이트 (-1, +1 처리)
   const updateItemQuantity = useCallback(
     (productId: string, newQuantity: number) => {
       if (newQuantity <= 0) {
@@ -96,7 +96,7 @@ const CartPage = ({
   const applyCoupon = useCallback(
     (coupon: ICoupon) => {
       // 할인 적용 전 총 가격
-      const currentTotal = cartTotal.totalAfterDiscount;
+      const currentTotal = cartTotalPrice.totalAfterDiscount;
 
       // 총 가격 10000원 이하일 경우 처리
       if (currentTotal < 10000 && coupon.discountType === "percentage") {
@@ -111,7 +111,7 @@ const CartPage = ({
       setSelectedCoupon(coupon);
       addNotification("쿠폰이 적용되었습니다.", "success");
     },
-    [addNotification, cartTotal]
+    [addNotification, cartTotalPrice]
   );
 
   // 주문 완료 처리 함수
@@ -257,19 +257,19 @@ const CartPage = ({
                   <div className="flex justify-between">
                     <span className="text-gray-600">상품 금액</span>
                     <span className="font-medium">
-                      {cartTotal.totalBeforeDiscount.toLocaleString()}원
+                      {cartTotalPrice.totalBeforeDiscount.toLocaleString()}원
                     </span>
                   </div>
-                  {cartTotal.totalBeforeDiscount -
-                    cartTotal.totalAfterDiscount >
+                  {cartTotalPrice.totalBeforeDiscount -
+                    cartTotalPrice.totalAfterDiscount >
                     0 && (
                     <div className="flex justify-between text-red-500">
                       <span>할인 금액</span>
                       <span>
                         -
                         {(
-                          cartTotal.totalBeforeDiscount -
-                          cartTotal.totalAfterDiscount
+                          cartTotalPrice.totalBeforeDiscount -
+                          cartTotalPrice.totalAfterDiscount
                         ).toLocaleString()}
                         원
                       </span>
@@ -278,7 +278,7 @@ const CartPage = ({
                   <div className="flex justify-between py-2 border-t border-gray-200">
                     <span className="font-semibold">결제 예정 금액</span>
                     <span className="font-bold text-lg text-gray-900">
-                      {cartTotal.totalAfterDiscount.toLocaleString()}원
+                      {cartTotalPrice.totalAfterDiscount.toLocaleString()}원
                     </span>
                   </div>
                 </div>
@@ -287,7 +287,7 @@ const CartPage = ({
                   onClick={completeOrder}
                   className="w-full mt-4 py-3 bg-yellow-400 text-gray-900 rounded-md font-medium hover:bg-yellow-500 transition-colors"
                 >
-                  {cartTotal.totalAfterDiscount.toLocaleString()}원 결제하기
+                  {cartTotalPrice.totalAfterDiscount.toLocaleString()}원 결제하기
                 </button>
 
                 <div className="mt-3 text-xs text-gray-500 text-center">

@@ -5,7 +5,7 @@ interface HeaderProps {
   searchTerm: string;
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
   setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>;
-  cartItemCount: number;
+  cartTotalItem: number;
 }
 
 const Header = ({
@@ -13,7 +13,7 @@ const Header = ({
   setIsAdmin,
   searchTerm,
   setSearchTerm,
-  cartItemCount,
+  cartTotalItem,
 }: HeaderProps) => {
   return (
     <header className="bg-white shadow-sm sticky top-0 z-40 border-b">
@@ -49,9 +49,9 @@ const Header = ({
               <div className="relative">
                 {/* 카트 아이콘 */}
                 <CartIcon />
-                {cartItemCount > 0 && (
+                {cartTotalItem > 0 && (
                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                    {cartItemCount}
+                    {cartTotalItem}
                   </span>
                 )}
               </div>

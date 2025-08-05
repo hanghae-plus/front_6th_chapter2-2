@@ -56,9 +56,17 @@ export const useCart = () => {
   /**
    * 장바구니 총액 계산 (할인 전/후 할인액)
    */
-  const cartTotal = useMemo(
+  const cartTotalPrice = useMemo(
     () => cartModel.calculateCartTotal(cart, selectedCoupon),
     [cart, selectedCoupon]
+  );
+
+  /**
+   * 장바구니 총 상품 수
+   */
+  const cartTotalItem = useMemo(
+    () => cart.reduce((sum, item) => sum + item.quantity, 0),
+    [cart]
   );
 
   return {
@@ -69,7 +77,8 @@ export const useCart = () => {
     clearCart,
     getRemainingStock,
     calculateItemTotal,
-    cartTotal, // { totalBeforeDiscount: number; totalAfterDiscount: number; }
+    cartTotalPrice, // { totalBeforeDiscount: number; totalAfterDiscount: number; }
+    cartTotalItem,
     selectedCoupon,
     setSelectedCoupon,
   };
