@@ -10,6 +10,7 @@ import {
   TrashIcon,
   PlusIcon,
 } from './components/icons';
+import Card from './components/ui/Card';
 import Input from './components/ui/Input';
 import {
   initialProducts,
@@ -473,8 +474,8 @@ const App = () => {
             </div>
 
             {activeTab === 'products' ? (
-              <section className='bg-white rounded-lg border border-gray-200'>
-                <div className='p-6 border-b border-gray-200'>
+              <Card
+                header={
                   <div className='flex justify-between items-center'>
                     <h2 className='text-lg font-semibold'>상품 목록</h2>
                     <button
@@ -488,8 +489,8 @@ const App = () => {
                       새 상품 추가
                     </button>
                   </div>
-                </div>
-
+                }
+              >
                 <div className='overflow-x-auto'>
                   <table className='w-full'>
                     <thead className='bg-gray-50 border-b border-gray-200'>
@@ -741,12 +742,9 @@ const App = () => {
                     </form>
                   </div>
                 )}
-              </section>
+              </Card>
             ) : (
-              <section className='bg-white rounded-lg border border-gray-200'>
-                <div className='p-6 border-b border-gray-200'>
-                  <h2 className='text-lg font-semibold'>쿠폰 관리</h2>
-                </div>
+              <Card header={<h2 className='text-lg font-semibold'>쿠폰 관리</h2>}>
                 <div className='p-6'>
                   <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
                     {coupons.map((coupon) => (
@@ -898,7 +896,7 @@ const App = () => {
                     </div>
                   )}
                 </div>
-              </section>
+              </Card>
             )}
           </div>
         ) : (
@@ -922,9 +920,10 @@ const App = () => {
                       const remainingStock = getRemainingStock(product);
 
                       return (
-                        <div
+                        <Card
                           key={product.id}
-                          className='bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow'
+                          padding='none'
+                          className='overflow-hidden hover:shadow-lg transition-shadow'
                         >
                           {/* 상품 이미지 영역 (placeholder) */}
                           <div className='relative'>
@@ -990,7 +989,7 @@ const App = () => {
                               {remainingStock <= 0 ? '품절' : '장바구니 담기'}
                             </button>
                           </div>
-                        </div>
+                        </Card>
                       );
                     })}
                   </div>
@@ -1000,11 +999,15 @@ const App = () => {
 
             <div className='lg:col-span-1'>
               <div className='sticky top-24 space-y-4'>
-                <section className='bg-white rounded-lg border border-gray-200 p-4'>
-                  <h2 className='text-lg font-semibold mb-4 flex items-center'>
-                    <CartHeaderIcon />
-                    장바구니
-                  </h2>
+                <Card
+                  padding='sm'
+                  header={
+                    <h2 className='text-lg font-semibold flex items-center'>
+                      <CartHeaderIcon />
+                      장바구니
+                    </h2>
+                  }
+                >
                   {cart.length === 0 ? (
                     <div className='text-center py-8'>
                       <EmptyCartIcon />
@@ -1067,15 +1070,21 @@ const App = () => {
                       })}
                     </div>
                   )}
-                </section>
+                </Card>
 
                 {cart.length > 0 && (
                   <>
-                    <section className='bg-white rounded-lg border border-gray-200 p-4'>
-                      <div className='flex items-center justify-between mb-3'>
-                        <h3 className='text-sm font-semibold text-gray-700'>쿠폰 할인</h3>
-                        <button className='text-xs text-blue-600 hover:underline'>쿠폰 등록</button>
-                      </div>
+                    <Card
+                      padding='sm'
+                      header={
+                        <div className='flex items-center justify-between'>
+                          <h3 className='text-sm font-semibold text-gray-700'>쿠폰 할인</h3>
+                          <button className='text-xs text-blue-600 hover:underline'>
+                            쿠폰 등록
+                          </button>
+                        </div>
+                      }
+                    >
                       {coupons.length > 0 && (
                         <select
                           className='w-full text-sm border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500'
@@ -1098,10 +1107,12 @@ const App = () => {
                           ))}
                         </select>
                       )}
-                    </section>
+                    </Card>
 
-                    <section className='bg-white rounded-lg border border-gray-200 p-4'>
-                      <h3 className='text-lg font-semibold mb-4'>결제 정보</h3>
+                    <Card
+                      padding='sm'
+                      header={<h3 className='text-lg font-semibold'>결제 정보</h3>}
+                    >
                       <div className='space-y-2 text-sm'>
                         <div className='flex justify-between'>
                           <span className='text-gray-600'>상품 금액</span>
@@ -1139,7 +1150,7 @@ const App = () => {
                       <div className='mt-3 text-xs text-gray-500 text-center'>
                         <p>* 실제 결제는 이루어지지 않습니다</p>
                       </div>
-                    </section>
+                    </Card>
                   </>
                 )}
               </div>
