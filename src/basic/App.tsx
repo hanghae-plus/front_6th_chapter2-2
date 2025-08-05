@@ -3,25 +3,12 @@ import { CartItem, Coupon, Product } from '../types';
 import { formatPrice } from './utils/formatters';
 import { Products } from './constants/products';
 import { Coupons } from './constants/coupons';
-
-interface Notification {
-  id: string;
-  message: string;
-  type: 'error' | 'success' | 'warning';
-}
+import { useNotification } from './hooks/useNotification';
+import { useProducts } from './hooks/useProducts';
 
 const App = () => {
-  const [products, setProducts] = useState<typeof Products>(() => {
-    const saved = localStorage.getItem('products');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return Products;
-      }
-    }
-    return Products;
-  });
+  const { notifications, addNotification, setNotifications } = useNotification();
+  const { products, updateProduct, addProduct, deleteProduct } = useProducts();
 
   const [cart, setCart] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem('cart');
@@ -49,7 +36,6 @@ const App = () => {
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
   const [showProductForm, setShowProductForm] = useState(false);
@@ -142,18 +128,6 @@ const App = () => {
 
     return remaining;
   };
-
-  const addNotification = useCallback(
-    (message: string, type: 'error' | 'success' | 'warning' = 'success') => {
-      const id = Date.now().toString();
-      setNotifications((prev) => [...prev, { id, message, type }]);
-
-      setTimeout(() => {
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
-      }, 3000);
-    },
-    [],
-  );
 
   const [totalItemCount, setTotalItemCount] = useState(0);
 
@@ -268,36 +242,6 @@ const App = () => {
     setSelectedCoupon(null);
   }, [addNotification]);
 
-  const addProduct = useCallback(
-    (newProduct: Omit<(typeof Products)[number], 'id'>) => {
-      const product: (typeof Products)[number] = {
-        ...newProduct,
-        id: `p${Date.now()}`,
-      };
-      setProducts((prev) => [...prev, product]);
-      addNotification('상품이 추가되었습니다.', 'success');
-    },
-    [addNotification],
-  );
-
-  const updateProduct = useCallback(
-    (productId: string, updates: Partial<(typeof Products)[number]>) => {
-      setProducts((prev) =>
-        prev.map((product) => (product.id === productId ? { ...product, ...updates } : product)),
-      );
-      addNotification('상품이 수정되었습니다.', 'success');
-    },
-    [addNotification],
-  );
-
-  const deleteProduct = useCallback(
-    (productId: string) => {
-      setProducts((prev) => prev.filter((p) => p.id !== productId));
-      addNotification('상품이 삭제되었습니다.', 'success');
-    },
-    [addNotification],
-  );
-
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {
       const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
@@ -326,6 +270,7 @@ const App = () => {
     e.preventDefault();
     if (editingProduct && editingProduct !== 'new') {
       updateProduct(editingProduct, productForm);
+      addNotification('상품이 수정되었습니다.', 'success');
       setEditingProduct(null);
     } else {
       addProduct({
