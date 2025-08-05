@@ -132,6 +132,7 @@ function AdminPage({
       if (selectedCoupon?.code === couponCode) {
         setSelectedCoupon(null);
       }
+      // addNotification("쿠폰이 삭제되었습니다.", "success");
       addNotification({
         message: "쿠폰이 삭제되었습니다.",
         type: "success",

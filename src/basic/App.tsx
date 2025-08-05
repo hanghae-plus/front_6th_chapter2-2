@@ -4,6 +4,7 @@ import ShopPage from "./____pages/shop/ShopPage";
 import AdminPage from "./____pages/admin/AdminPage";
 import Layout from "./____pages/Layout";
 import NotificationProvider from "./___features/notification/NotificationProvider";
+import { useLocalStorage } from "./_shared/utility-hooks/use-local-storage";
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -61,68 +62,29 @@ const initialCoupons: Coupon[] = [
 ];
 
 const App = () => {
-  const [products, setProducts] = useState<ProductWithUI[]>(() => {
-    const saved = localStorage.getItem("products");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialProducts;
-      }
-    }
-    return initialProducts;
-  });
+  const [products, setProducts] = useLocalStorage<ProductWithUI[]>(
+    "products",
+    initialProducts
+  );
 
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem("cart");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return [];
-      }
-    }
-    return [];
-  });
+  const [cart, setCart, removeCart] = useLocalStorage<CartItem[]>("cart", []);
 
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem("coupons");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialCoupons;
-      }
-    }
-    return initialCoupons;
-  });
+  const [coupons, setCoupons] = useLocalStorage<Coupon[]>(
+    "coupons",
+    initialCoupons
+  );
 
   const [isAdmin, setIsAdmin] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState("");
 
-  const [totalItemCount, setTotalItemCount] = useState(0);
+  const totalItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   useEffect(() => {
-    const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-    setTotalItemCount(count);
-  }, [cart]);
-
-  useEffect(() => {
-    localStorage.setItem("products", JSON.stringify(products));
-  }, [products]);
-
-  useEffect(() => {
-    localStorage.setItem("coupons", JSON.stringify(coupons));
-  }, [coupons]);
-
-  useEffect(() => {
-    if (cart.length > 0) {
-      localStorage.setItem("cart", JSON.stringify(cart));
-    } else {
-      localStorage.removeItem("cart");
+    if (cart.length === 0) {
+      removeCart();
     }
-  }, [cart]);
+  }, [cart, removeCart]);
 
   const getRemainingStock = (product: Product): number => {
     const cartItem = cart.find((item) => item.product.id === product.id);
@@ -147,19 +109,19 @@ const App = () => {
   };
 
   return (
-    <Layout
-      isAdmin={isAdmin}
-      setIsAdmin={setIsAdmin}
-      searchTerm={searchTerm}
-      setSearchTerm={setSearchTerm}
-      cart={cart}
-      totalItemCount={totalItemCount}
-    >
-      <NotificationProvider>
+    <NotificationProvider>
+      <Layout
+        isAdmin={isAdmin}
+        setIsAdmin={setIsAdmin}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        cart={cart}
+        totalItemCount={totalItemCount}
+      >
         {isAdmin ? (
           <AdminPage
             products={products}
-            setProducts={setProducts}
+            setProducts={(value) => setProducts(value)}
             coupons={coupons}
             setCoupons={setCoupons}
             formatPrice={formatPrice}
@@ -175,8 +137,8 @@ const App = () => {
             formatPrice={formatPrice}
           />
         )}
-      </NotificationProvider>
-    </Layout>
+      </Layout>
+    </NotificationProvider>
   );
 };
 
