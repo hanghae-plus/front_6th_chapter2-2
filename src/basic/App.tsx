@@ -1,5 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
-import { CartItem, ProductWithUI } from '../types';
+import { useState } from 'react';
 import Button from './components/ui/Button';
 import IconButton from './components/ui/IconButton';
 import Tab from './components/ui/Tab';
@@ -16,6 +15,7 @@ import { useCouponsForm } from './hooks/coupons/useCouponsForm';
 import { useCart } from './hooks/cart/useCart';
 import useCheckout from './hooks/checkout/useCheckout';
 import { filteredProducts } from './utils/calculations/productCalculations';
+import { useSearch } from './hooks/search/useSearch';
 
 const App = () => {
   const { products, deleteProduct, updateProduct, addProduct } = useProducts();
@@ -49,8 +49,7 @@ const App = () => {
   const [isAdmin, setIsAdmin] = useState(false); // admin ui
   const [showCouponForm, setShowCouponForm] = useState(false); // 쿠폰 ui
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products'); // tab ui
-  const [query, setQuery] = useState('');
-  const [debouncedQuery, setDebouncedQuery] = useState('');
+
   const [showProductForm, setShowProductForm] = useState(false);
 
   // Admin
@@ -70,15 +69,11 @@ const App = () => {
     (message) => addNotification(message, 'success'),
   );
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedQuery(query);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [query]);
+  // search --------------- !!
+  const { query, setQuery, debouncedQuery } = useSearch();
 
   const totals = calculateCartTotal(cart, selectedCoupon);
-  const filterProducts = filteredProducts(products, debouncedQuery);
+  const filteredProductList = filteredProducts(products, debouncedQuery);
 
   return (
     <div className='min-h-screen bg-gray-50'>
@@ -635,13 +630,13 @@ const App = () => {
                   <h2 className='text-2xl font-semibold text-gray-800'>전체 상품</h2>
                   <div className='text-sm text-gray-600'>총 {products.length}개 상품</div>
                 </div>
-                {filterProducts.length === 0 ? (
+                {filteredProductList.length === 0 ? (
                   <div className='text-center py-12'>
                     <p className='text-gray-500'>"{debouncedQuery}"에 대한 검색 결과가 없습니다.</p>
                   </div>
                 ) : (
                   <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-                    {filterProducts?.map((product) => {
+                    {filteredProductList?.map((product) => {
                       const remainingStock = getRemainingStock(product, cart);
 
                       return (
