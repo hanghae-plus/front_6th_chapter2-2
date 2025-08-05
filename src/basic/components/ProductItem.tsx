@@ -1,4 +1,5 @@
 import { IProductWithUI } from "../type";
+import { formatPercentage } from "../utils/formatters";
 import { ImageIcon } from "./icon";
 
 interface ProductItemProps {
@@ -32,7 +33,10 @@ const ProductItem = ({
         )}
         {product.discounts.length > 0 && (
           <span className="absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded">
-            ~{Math.max(...product.discounts.map((d) => d.rate)) * 100}%
+            ~
+            {formatPercentage(
+              Math.max(...product.discounts.map((d) => d.rate))
+            )}
           </span>
         )}
       </div>
@@ -52,7 +56,7 @@ const ProductItem = ({
           {product.discounts.length > 0 && (
             <p className="text-xs text-gray-500">
               {product.discounts[0].quantity}개 이상 구매시 할인{" "}
-              {product.discounts[0].rate * 100}%
+              {formatPercentage(product.discounts[0].rate)}
             </p>
           )}
         </div>
