@@ -54,7 +54,6 @@
 ### 1.1 Clean Code 분석 ✅
 
 - **목적**: 현재 코드의 문제점 파악 및 리팩토링 우선순위 결정
-- **완료 일시**: 2024년 진행
 - **작업 내용**:
   - `src/basic/App.tsx` (1,502줄) 전체 분석
   - 7개 주요 클린 코드 원칙 위반 사항 발견
@@ -71,7 +70,6 @@
 ### 1.2 Prettier 설정 ✅
 
 - **목적**: 일관된 코드 포맷팅 적용
-- **완료 일시**: 2024년 진행
 - **작업 내용**:
   - `prettier` 패키지 설치 (v3.6.2)
   - `.prettierrc` 설정 파일 생성
@@ -91,7 +89,6 @@
 ### 1.3 Vite 절대 경로 설정 ✅
 
 - **목적**: 복잡한 상대 경로를 절대 경로로 대체하여 가독성 향상
-- **완료 일시**: 2024년 진행
 - **작업 내용**:
   - `vite.config.ts`에 alias 설정 추가:
     - `@`: `/src` (기본 src 폴더)
@@ -147,7 +144,6 @@
 ### 2.2 중복 코드 제거 (localStorage 패턴) ✅
 
 - **목적**: DRY 원칙 준수 및 코드 재사용성 향상
-- **완료 일시**: 2024년 진행
 - **작업 내용**:
   - [x] `src/basic/hooks/useLocalStorage.ts` 커스텀 훅 생성
     - `[storedValue, setValue]` 형태로 단순화
@@ -183,7 +179,6 @@
 ### 2.3 함수형 프로그래밍 원칙 적용 - getFormattedProductPrice 개선 ✅
 
 - **목적**: 함수형 프로그래밍 원칙에 따른 순수 함수 변환 및 비즈니스 로직 분리
-- **완료 일시**: 2024년 진행
 - **작업 내용**:
   - [x] **함수형 프로그래밍 문제점 분석**:
     - 순수 함수가 아님 (외부 상태 의존: products, cart, isAdmin)
@@ -216,22 +211,46 @@
 
 ### 2.4 계산 함수 분리
 
-- **목적**: README 요구사항에 따른 계산 함수 분리
-- **작업 예정**:
-  - [ ] `calculateItemTotal` - 개별 상품 총액 계산
-  - [ ] `getMaxApplicableDiscount` - 최대 적용 가능 할인율 계산
-  - [ ] `calculateCartTotal` - 장바구니 전체 총액 계산
-  - [ ] `updateCartItemQuantity` - 장바구니 상품 수량 업데이트
+- **목적**: README 요구사항에 따른 계산 함수 분리 및 함수형 프로그래밍 원칙 적용
 - **작업 내용**:
-  - [ ] `src/basic/utils/calculations.ts` 파일 생성
-  - [ ] App.tsx에서 계산 함수들을 유틸리티로 분리
-  - [ ] 함수 시그니처 개선 (cart 파라미터 추가 등)
-  - [ ] App.tsx에서 분리된 함수들 import하여 사용
-- **검증 예정**:
-  - [ ] TypeScript 컴파일 오류 없음
-  - [ ] 테스트 코드 통과
-  - [ ] 모든 계산 로직 정상 작동
-- **개선 효과**: 계산 로직 분리로 재사용성 및 테스트 가능성 향상
+  - [x] **할인 계산 로직 유틸화**:
+    - `src/basic/utils/calculation.util.ts` 파일 생성
+    - 할인 계산 관련 순수 함수들 구현:
+      - `calculateAmountDiscount`: 정액 할인 계산
+      - `calculatePercentageDiscount`: 정률 할인 계산
+      - `calculateDiscountedPrice`: 할인율 적용 계산
+      - `calculateDiscountAmount`: 할인 금액 계산
+      - `calculateDiscountPercentage`: 할인율(%) 계산
+  - [x] **기존 모델 리팩토링**:
+    - `src/basic/models/coupon.model.ts`: 유틸 함수 사용으로 변경
+    - `src/basic/models/discount.model.ts`: 중복 함수 제거
+    - 함수명 충돌 해결 및 의존성 정리
+  - [x] **함수형 프로그래밍 원칙 적용**:
+    - 모든 계산 함수를 순수 함수로 구현
+    - 외부 상태 의존성 제거
+    - 명시적 파라미터 전달로 의존성 명확화
+    - 테스트 가능한 구조로 개선
+  - [x] **이미 분리 완료된 함수들**:
+    - `calculateItemTotal` - 개별 상품 총액 계산 (cart.model.ts)
+    - `getMaxApplicableDiscountRate` - 최대 적용 가능 할인율 계산 (discount.model.ts)
+    - `calculateCartTotal` - 장바구니 전체 총액 계산 (cart.model.ts)
+    - `getRemainingStock` - 상품 재고 계산 (cart.model.ts)
+  - [ ] **계산 함수 추가 분리 예정**:
+    - [ ] `updateQuantity` - 장바구니 상품 수량 업데이트 (App.tsx에 남아있음)
+    - [ ] `addToCart` - 장바구니에 상품 추가 (App.tsx에 남아있음)
+    - [ ] `removeFromCart` - 장바구니에서 상품 제거 (App.tsx에 남아있음)
+    - [ ] `calculateTotalItemCount` - 장바구니 총 상품 수 계산 (useEffect 로직)
+    - [ ] `applyCoupon` - 쿠폰 적용 로직 (App.tsx에 남아있음)
+    - [ ] `completeOrder` - 주문 완료 로직 (App.tsx에 남아있음)
+- **검증**:
+  - [x] TypeScript 컴파일 오류 없음
+  - [x] 함수명 충돌 해결 완료
+  - [x] 의존성 정리 완료
+- **개선 효과**:
+  - 할인 계산 로직의 재사용성 크게 향상
+  - 함수형 프로그래밍 원칙 준수로 테스트 가능성 증대
+  - 중복 코드 제거로 유지보수성 향상
+  - 명확한 함수 시그니처로 코드 가독성 개선
 
 ### 2.5 긴 함수 분할
 
@@ -370,6 +389,8 @@
 
 - [x] 매직 넘버 상수화
 - [x] 중복 코드 제거 (localStorage 패턴)
+- [x] 함수형 프로그래밍 원칙 적용 (getFormattedProductPrice)
+- [x] 할인 계산 로직 유틸화
 - [ ] 함수 단일 책임 원칙 적용
 - [ ] 네이밍 컨벤션 통일
 
@@ -531,7 +552,13 @@ function calculateCartTotal(cart, coupon) {
 
 ### 기본과제 (현재 진행중)
 
-1. **Phase 2.4: 계산 함수 분리** - README 요구사항 (다음 우선순위)
+1. **Phase 2.4: 계산 함수 추가 분리** - README 요구사항 (다음 우선순위)
+   - `updateQuantity` - 장바구니 상품 수량 업데이트 (App.tsx에 남아있음)
+   - `addToCart` - 장바구니에 상품 추가 (App.tsx에 남아있음)
+   - `removeFromCart` - 장바구니에서 상품 제거 (App.tsx에 남아있음)
+   - `calculateTotalItemCount` - 장바구니 총 상품 수 계산 (useEffect 로직)
+   - `applyCoupon` - 쿠폰 적용 로직 (App.tsx에 남아있음)
+   - `completeOrder` - 주문 완료 로직 (App.tsx에 남아있음)
 2. **Phase 2.5: 긴 함수 분할** - 20줄 이하 함수 규칙 준수
 3. **Phase 3.1: 엔티티 컴포넌트와 UI 컴포넌트 분리** - README 요구사항
 4. **Phase 3.2: 커스텀 훅 분리** - useCart, useCoupon, useProduct
@@ -554,4 +581,4 @@ function calculateCartTotal(cart, coupon) {
 
 ---
 
-**마지막 업데이트**: 2024년 (Clean Code 분석, Prettier, 절대 경로 설정, 매직넘버 상수화, 함수형 프로그래밍 원칙 적용 완료)
+**마지막 업데이트**: 2024년 (Clean Code 분석, Prettier, 절대 경로 설정, 매직넘버 상수화, 함수형 프로그래밍 원칙 적용, 할인 계산 로직 유틸화 완료)

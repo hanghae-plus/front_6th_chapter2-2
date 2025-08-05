@@ -1,31 +1,27 @@
-import { getFormattedProductPrice } from "./models/product.model";
-
 import { useCallback, useEffect, useState } from "react";
 
 import {
-  CART,
   COUPON,
   COUPON_LIMITS,
   DEFAULT_COUPON_FORM,
   DEFAULT_PRODUCT_FORM,
   DEFAULT_QUANTITY,
   DEFAULT_TOTAL,
-  DISCOUNT,
-  MATH,
   NOTIFICATION_TIMEOUT_MS,
   PRODUCT_LIMITS,
   SEARCH_DEBOUNCE_DELAY_MS,
   STOCK,
 } from "@/basic/constants";
-import { initialCoupons, initialProducts } from "@/basic/data";
-import { useLocalStorage } from "@/basic/hooks/useLocalStorage";
+import { initialCoupons } from "@/basic/data/coupon.data";
+import { initialProducts } from "@/basic/data/product.data";
+import { useLocalStorage } from "@/basic/hooks";
 import {
-  CartItem,
-  Coupon,
-  Notification,
-  Product,
-  ProductWithUI,
-} from "@/types";
+  calculateCartTotal,
+  calculateItemTotal,
+  getRemainingStock,
+} from "@/basic/models/cart.model";
+import { getFormattedProductPrice } from "@/basic/models/product.model";
+import { CartItem, Coupon, Notification, ProductWithUI } from "@/types";
 
 const App = () => {
   const [products, setProducts] = useLocalStorage<ProductWithUI[]>(
@@ -54,80 +50,6 @@ const App = () => {
   const [productForm, setProductForm] = useState(DEFAULT_PRODUCT_FORM);
 
   const [couponForm, setCouponForm] = useState(DEFAULT_COUPON_FORM);
-
-  const getMaxApplicableDiscount = (item: CartItem): number => {
-    const { discounts } = item.product;
-    const { quantity } = item;
-
-    const baseDiscount = discounts.reduce((maxDiscount, discount) => {
-      return quantity >= discount.quantity && discount.rate > maxDiscount
-        ? discount.rate
-        : maxDiscount;
-    }, DEFAULT_TOTAL);
-
-    const hasBulkPurchase = cart.some(
-      (cartItem) => cartItem.quantity >= CART.BULK_PURCHASE_THRESHOLD
-    );
-    if (hasBulkPurchase) {
-      return Math.min(
-        baseDiscount + DISCOUNT.BULK_PURCHASE_BONUS_RATE,
-        DISCOUNT.MAX_DISCOUNT_RATE
-      );
-    }
-
-    return baseDiscount;
-  };
-
-  const calculateItemTotal = (item: CartItem): number => {
-    const { price } = item.product;
-    const { quantity } = item;
-    const discount = getMaxApplicableDiscount(item);
-
-    return Math.round(
-      price * quantity * (MATH.ORIGINAL_PRICE_RATIO - discount)
-    );
-  };
-
-  const calculateCartTotal = (): {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
-  } => {
-    let totalBeforeDiscount = DEFAULT_TOTAL;
-    let totalAfterDiscount = DEFAULT_TOTAL;
-
-    cart.forEach((item) => {
-      const itemPrice = item.product.price * item.quantity;
-      totalBeforeDiscount += itemPrice;
-      totalAfterDiscount += calculateItemTotal(item);
-    });
-
-    if (selectedCoupon) {
-      if (selectedCoupon.discountType === "amount") {
-        totalAfterDiscount = Math.max(
-          0,
-          totalAfterDiscount - selectedCoupon.discountValue
-        );
-      } else {
-        totalAfterDiscount = Math.round(
-          totalAfterDiscount *
-            (MATH.ORIGINAL_PRICE_RATIO -
-              selectedCoupon.discountValue / MATH.PERCENTAGE_TO_DECIMAL)
-        );
-      }
-    }
-
-    return {
-      totalBeforeDiscount: Math.round(totalBeforeDiscount),
-      totalAfterDiscount: Math.round(totalAfterDiscount),
-    };
-  };
-
-  const getRemainingStock = (product: Product): number => {
-    const cartItem = cart.find((item) => item.product.id === product.id);
-    const remaining = product.stock - (cartItem?.quantity || 0);
-
-    return remaining;
-  };
 
   const addNotification = useCallback(
     (message: string, type: "error" | "success" | "warning" = "success") => {
@@ -160,7 +82,7 @@ const App = () => {
 
   const addToCart = useCallback(
     (product: ProductWithUI) => {
-      const remainingStock = getRemainingStock(product);
+      const remainingStock = getRemainingStock(product, cart);
       if (remainingStock <= STOCK.OUT_OF_STOCK_THRESHOLD) {
         addNotification("재고가 부족합니다!", "error");
         return;
@@ -233,7 +155,10 @@ const App = () => {
 
   const applyCoupon = useCallback(
     (coupon: Coupon) => {
-      const currentTotal = calculateCartTotal().totalAfterDiscount;
+      const currentTotal = calculateCartTotal(
+        cart,
+        selectedCoupon
+      ).totalAfterDiscount;
 
       if (
         currentTotal < COUPON.MINIMUM_AMOUNT_FOR_PERCENTAGE &&
@@ -353,7 +278,7 @@ const App = () => {
     setShowProductForm(true);
   };
 
-  const totals = calculateCartTotal();
+  const totals = calculateCartTotal(cart, selectedCoupon);
 
   const filteredProducts = debouncedSearchTerm
     ? products.filter(
@@ -1122,7 +1047,7 @@ const App = () => {
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {filteredProducts.map((product) => {
-                      const remainingStock = getRemainingStock(product);
+                      const remainingStock = getRemainingStock(product, cart);
 
                       return (
                         <div
@@ -1271,7 +1196,7 @@ const App = () => {
                   ) : (
                     <div className="space-y-3">
                       {cart.map((item) => {
-                        const itemTotal = calculateItemTotal(item);
+                        const itemTotal = calculateItemTotal(item, cart);
                         const originalPrice =
                           item.product.price * item.quantity;
                         const hasDiscount = itemTotal < originalPrice;
