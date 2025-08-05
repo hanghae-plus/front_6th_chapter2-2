@@ -1,6 +1,6 @@
 import type { CartItem, Product } from '../../types';
 
-interface IsSoldOutParams {
+export interface IsSoldOutParams {
   cart: CartItem[];
   product: Product;
 }
