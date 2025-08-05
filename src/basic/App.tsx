@@ -6,6 +6,8 @@ import { initialProducts } from "./models/products/constants";
 import { initialCoupons } from "./models/coupon/constants";
 import { useProducts } from "./models/products/useProducts";
 import { useNotifications } from "./hooks/useNotifications";
+import { useCart } from "./models/cart/useCart";
+import { calculateRemainingStock } from "./utils/calculateRemainingStock";
 
 const App = () => {
   const { notifications, setNotifications, addNotification } =
@@ -13,17 +15,7 @@ const App = () => {
   const { products, setProducts, addProduct, updateProduct, deleteProduct } =
     useProducts(addNotification);
 
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem("cart");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return [];
-      }
-    }
-    return [];
-  });
+  const { cart, setCart, addToCart } = useCart(addNotification);
 
   const [coupons, setCoupons] = useState<Coupon[]>(() => {
     const saved = localStorage.getItem("coupons");
@@ -67,7 +59,7 @@ const App = () => {
 
   const checkSoldOutByProductId = (productId: string) => {
     const product = products.find((p) => p.id === productId);
-    if (product && getRemainingStock(product) <= 0) {
+    if (product && calculateRemainingStock(product, cart) <= 0) {
       return true;
     }
     return false;
@@ -132,13 +124,6 @@ const App = () => {
     };
   };
 
-  const getRemainingStock = (product: Product): number => {
-    const cartItem = cart.find((item) => item.product.id === product.id);
-    const remaining = product.stock - (cartItem?.quantity || 0);
-
-    return remaining;
-  };
-
   const [totalItemCount, setTotalItemCount] = useState(0);
 
   useEffect(() => {
@@ -168,45 +153,6 @@ const App = () => {
     }, 500);
     return () => clearTimeout(timer);
   }, [searchTerm]);
-
-  const addToCart = useCallback(
-    (product: ProductWithUI) => {
-      const remainingStock = getRemainingStock(product);
-      if (remainingStock <= 0) {
-        addNotification("재고가 부족합니다!", "error");
-        return;
-      }
-
-      setCart((prevCart) => {
-        const existingItem = prevCart.find(
-          (item) => item.product.id === product.id
-        );
-
-        if (existingItem) {
-          const newQuantity = existingItem.quantity + 1;
-
-          if (newQuantity > product.stock) {
-            addNotification(
-              `재고는 ${product.stock}개까지만 있습니다.`,
-              "error"
-            );
-            return prevCart;
-          }
-
-          return prevCart.map((item) =>
-            item.product.id === product.id
-              ? { ...item, quantity: newQuantity }
-              : item
-          );
-        }
-
-        return [...prevCart, { product, quantity: 1 }];
-      });
-
-      addNotification("장바구니에 담았습니다", "success");
-    },
-    [cart, addNotification, getRemainingStock]
-  );
 
   const removeFromCart = useCallback((productId: string) => {
     setCart((prevCart) =>
@@ -238,7 +184,12 @@ const App = () => {
         )
       );
     },
-    [products, removeFromCart, addNotification, getRemainingStock]
+    [
+      products,
+      removeFromCart,
+      addNotification,
+      // getRemainingStock
+    ]
   );
 
   const applyCoupon = useCallback(
@@ -1077,7 +1028,10 @@ const App = () => {
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {filteredProducts.map((product) => {
-                      const remainingStock = getRemainingStock(product);
+                      const remainingStock = calculateRemainingStock(
+                        product,
+                        cart
+                      );
 
                       return (
                         <div
