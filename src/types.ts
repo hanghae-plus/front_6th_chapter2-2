@@ -23,11 +23,11 @@ export interface Coupon {
   discountValue: number;
 }
 
-//
 export interface ProductWithUI extends Product {
   description?: string;
   isRecommended?: boolean;
 }
+
 export interface Notification {
   id: string;
   message: string;

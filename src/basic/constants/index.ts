@@ -1,9 +1,7 @@
 import { Coupon, ProductWithUI } from '../../types';
-// TODO: 초기 데이터 상수
-// 정의할 상수들:
-// - initialProducts: 초기 상품 목록 (상품1, 상품2, 상품3 + 설명 필드 포함)
-// 초기 데이터
-const initialProducts: ProductWithUI[] = [
+
+// 초기 상품 데이터
+export const initialProducts: ProductWithUI[] = [
   {
     id: 'p1',
     name: '상품1',
@@ -37,8 +35,8 @@ const initialProducts: ProductWithUI[] = [
   },
 ];
 
-// - initialCoupons: 초기 쿠폰 목록 (5000원 할인, 10% 할인)
-const initialCoupons: Coupon[] = [
+// 초기 쿠폰 데이터
+export const initialCoupons: Coupon[] = [
   {
     name: '5000원 할인',
     code: 'AMOUNT5000',
@@ -52,8 +50,19 @@ const initialCoupons: Coupon[] = [
     discountValue: 10,
   },
 ];
-// 참고: origin/App.tsx의 초기 데이터 구조를 참조
 
-// TODO: 구현
+// 기본 폼 상태
+export const defaultProductForm = {
+  name: '',
+  price: 0,
+  stock: 0,
+  description: '',
+  discounts: [] as Array<{ quantity: number; rate: number }>,
+};
 
-export { initialProducts, initialCoupons };
+export const defaultCouponForm = {
+  name: '',
+  code: '',
+  discountType: 'amount' as 'amount' | 'percentage',
+  discountValue: 0,
+};
