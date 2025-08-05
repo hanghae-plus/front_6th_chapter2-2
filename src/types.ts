@@ -4,6 +4,7 @@ export interface Product {
   price: number;
   stock: number;
   discounts: Discount[];
+  description?: string;
 }
 
 export interface Discount {
@@ -23,7 +24,6 @@ export interface Coupon {
   discountValue: number;
 }
 
-
 export interface ProductWithUI extends Product {
   description?: string;
   isRecommended?: boolean;
@@ -33,4 +33,12 @@ export interface Notification {
   id: string;
   message: string;
   type: 'error' | 'success' | 'warning';
+}
+
+export interface ProductFormType {
+  name: string;
+  price: number;
+  stock: number;
+  description: string;
+  discounts: Discount[];
 }

@@ -1,16 +1,16 @@
 import { useState } from 'react';
-import { ProductWithUI } from '../../../types';
+import { ProductFormType, ProductWithUI } from '../../../types';
 
 export const useProductForm = (
   addProduct: (newProduct: Omit<ProductWithUI, 'id'>) => void,
   updateProduct: (productId: string, updates: Partial<ProductWithUI>) => void,
 ) => {
-  const [productForm, setProductForm] = useState({
+  const [productForm, setProductForm] = useState<ProductFormType>({
     name: '',
     price: 0,
     stock: 0,
     description: '',
-    discounts: [] as Array<{ quantity: number; rate: number }>,
+    discounts: [],
   });
 
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
