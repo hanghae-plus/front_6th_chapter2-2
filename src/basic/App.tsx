@@ -11,6 +11,7 @@ import { useCoupon } from "./models/coupon/useCoupon";
 import { useProductForm } from "./models/products/useProductForm";
 import { calculateCartTotal } from "./utils/calculateCartTotal";
 import { calculateItemTotal } from "./utils/calculateItemTotal";
+import { useDebounce } from "./utils/hooks/useDebounce";
 
 const App = () => {
   const { notifications, setNotifications, addNotification } =
@@ -48,7 +49,7 @@ const App = () => {
   } = useProductForm();
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   const [couponForm, setCouponForm] = useState({
     name: "",
@@ -64,19 +65,6 @@ const App = () => {
     }
     return false;
   };
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
-
-  // const removeFromCart = useCallback((productId: string) => {
-  //   setCart((prevCart) =>
-  //     prevCart.filter((item) => item.product.id !== productId)
-  //   );
-  // }, []);
 
   const updateQuantity = useCallback(
     (productId: string, newQuantity: number) => {
@@ -148,18 +136,6 @@ const App = () => {
     });
     setShowCouponForm(false);
   };
-
-  // const startEditProduct = (product: ProductWithUI) => {
-  //   setEditingProduct(product.id);
-  //   setProductForm({
-  //     name: product.name,
-  //     price: product.price,
-  //     stock: product.stock,
-  //     description: product.description || "",
-  //     discounts: product.discounts || [],
-  //   });
-  //   setShowProductForm(true);
-  // };
 
   const totals = calculateCartTotal(cart, selectedCoupon);
 
