@@ -1,7 +1,8 @@
 import { useState, useCallback, useEffect } from 'react';
 
-import { CartItem, ProductWithUI, Coupon } from '../types';
-import Header from './components/Header';
+import { CartItem, ProductWithUI, Coupon, Notification, Product } from '../types';
+
+import Button from './components/ui/Button';
 import {
   CartHeaderIcon,
   CartIcon,
@@ -11,7 +12,7 @@ import {
   PlusIcon,
   TrashIcon,
 } from './components/icons';
-import Toast from './components/Toast';
+
 import { initialProducts, initialCoupons } from './constants';
 
 const App = () => {
@@ -383,20 +384,77 @@ const App = () => {
             product.description.toLowerCase().includes(debouncedSearchTerm.toLowerCase()))
       )
     : products;
-  const removeNotification = (id: string) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
-  };
+
   return (
     <div className='min-h-screen bg-gray-50'>
-      <Toast notifications={notifications} onRemove={removeNotification} />
-      <Header
-        isAdmin={isAdmin}
-        setIsAdmin={setIsAdmin}
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        cart={cart}
-        totalItemCount={totalItemCount}
-      />
+      {notifications.length > 0 && (
+        <div className='fixed top-20 right-4 z-50 space-y-2 max-w-sm'>
+          {notifications.map((notif) => (
+            <div
+              key={notif.id}
+              className={`p-4 rounded-md shadow-md text-white flex justify-between items-center ${
+                notif.type === 'error'
+                  ? 'bg-red-600'
+                  : notif.type === 'warning'
+                  ? 'bg-yellow-600'
+                  : 'bg-green-600'
+              }`}
+            >
+              <span className='mr-2'>{notif.message}</span>
+              <Button
+                variant='text'
+                className='text-white hover:text-gray-200'
+                onClick={() => setNotifications((prev) => prev.filter((n) => n.id !== notif.id))}
+              >
+                <CloseIcon />
+              </Button>
+            </div>
+          ))}
+        </div>
+      )}
+      <header className='bg-white shadow-sm sticky top-0 z-40 border-b'>
+        <div className='max-w-7xl mx-auto px-4'>
+          <div className='flex justify-between items-center h-16'>
+            <div className='flex items-center flex-1'>
+              <h1 className='text-xl font-semibold text-gray-800'>SHOP</h1>
+              {/* 검색창 - 안티패턴: 검색 로직이 컴포넌트에 직접 포함 */}
+              {!isAdmin && (
+                <div className='ml-8 flex-1 max-w-md'>
+                  <input
+                    type='text'
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder='상품 검색...'
+                    className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500'
+                  />
+                </div>
+              )}
+            </div>
+            <nav className='flex items-center space-x-4'>
+              <Button
+                variant='secondary'
+                size='sm'
+                className={`rounded ${
+                  isAdmin ? 'bg-gray-800 text-white' : 'text-gray-600 hover:text-gray-900'
+                }`}
+                onClick={() => setIsAdmin(!isAdmin)}
+              >
+                {isAdmin ? '쇼핑몰로 돌아가기' : '관리자 페이지로'}
+              </Button>
+              {!isAdmin && (
+                <div className='relative'>
+                  <CartHeaderIcon />
+                  {cart.length > 0 && (
+                    <span className='absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center'>
+                      {totalItemCount}
+                    </span>
+                  )}
+                </div>
+              )}
+            </nav>
+          </div>
+        </div>
+      </header>
 
       <main className='max-w-7xl mx-auto px-4 py-8'>
         {isAdmin ? (
@@ -407,26 +465,28 @@ const App = () => {
             </div>
             <div className='border-b border-gray-200 mb-6'>
               <nav className='-mb-px flex space-x-8'>
-                <button
-                  onClick={() => setActiveTab('products')}
-                  className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
+                <Button
+                  variant='text'
+                  className={`py-2 px-1 border-b-2 text-sm ${
                     activeTab === 'products'
                       ? 'border-gray-900 text-gray-900'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   }`}
+                  onClick={() => setActiveTab('products')}
                 >
                   상품 관리
-                </button>
-                <button
-                  onClick={() => setActiveTab('coupons')}
-                  className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
+                </Button>
+                <Button
+                  variant='text'
+                  className={`py-2 px-1 border-b-2 text-sm ${
                     activeTab === 'coupons'
                       ? 'border-gray-900 text-gray-900'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   }`}
+                  onClick={() => setActiveTab('coupons')}
                 >
                   쿠폰 관리
-                </button>
+                </Button>
               </nav>
             </div>
 
@@ -435,7 +495,8 @@ const App = () => {
                 <div className='p-6 border-b border-gray-200'>
                   <div className='flex justify-between items-center'>
                     <h2 className='text-lg font-semibold'>상품 목록</h2>
-                    <button
+                    <Button
+                      variant='secondary'
                       onClick={() => {
                         setEditingProduct('new');
                         setProductForm({
@@ -447,10 +508,9 @@ const App = () => {
                         });
                         setShowProductForm(true);
                       }}
-                      className='px-4 py-2 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800'
                     >
                       새 상품 추가
-                    </button>
+                    </Button>
                   </div>
                 </div>
 
@@ -501,18 +561,20 @@ const App = () => {
                             {product.description || '-'}
                           </td>
                           <td className='px-6 py-4 whitespace-nowrap text-right text-sm font-medium'>
-                            <button
+                            <Button
+                              variant='text'
+                              className='mr-3'
                               onClick={() => startEditProduct(product)}
-                              className='text-indigo-600 hover:text-indigo-900 mr-3'
                             >
                               수정
-                            </button>
-                            <button
-                              onClick={() => deleteProduct(product.id)}
+                            </Button>
+                            <Button
+                              variant='text'
                               className='text-red-600 hover:text-red-900'
+                              onClick={() => deleteProduct(product.id)}
                             >
                               삭제
-                            </button>
+                            </Button>
                           </td>
                         </tr>
                       ))}
@@ -654,7 +716,9 @@ const App = () => {
                                 placeholder='%'
                               />
                               <span className='text-sm'>% 할인</span>
-                              <button
+                              <Button
+                                variant='text'
+                                className='red'
                                 type='button'
                                 onClick={() => {
                                   const newDiscounts = productForm.discounts.filter(
@@ -662,13 +726,14 @@ const App = () => {
                                   );
                                   setProductForm({ ...productForm, discounts: newDiscounts });
                                 }}
-                                className='text-red-600 hover:text-red-800'
                               >
-                                <CartIcon />
-                              </button>
+                                <CloseIcon />
+                              </Button>
                             </div>
                           ))}
-                          <button
+                          <Button
+                            variant='text'
+                            className='indigo'
                             type='button'
                             onClick={() => {
                               setProductForm({
@@ -676,15 +741,15 @@ const App = () => {
                                 discounts: [...productForm.discounts, { quantity: 10, rate: 0.1 }],
                               });
                             }}
-                            className='text-sm text-indigo-600 hover:text-indigo-800'
                           >
                             + 할인 추가
-                          </button>
+                          </Button>
                         </div>
                       </div>
 
                       <div className='flex justify-end gap-3'>
-                        <button
+                        <Button
+                          variant='ghost'
                           type='button'
                           onClick={() => {
                             setEditingProduct(null);
@@ -697,16 +762,12 @@ const App = () => {
                             });
                             setShowProductForm(false);
                           }}
-                          className='px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50'
                         >
                           취소
-                        </button>
-                        <button
-                          type='submit'
-                          className='px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700'
-                        >
+                        </Button>
+                        <Button variant='primary' type='submit'>
                           {editingProduct === 'new' ? '추가' : '수정'}
-                        </button>
+                        </Button>
                       </div>
                     </form>
                   </div>
@@ -736,24 +797,22 @@ const App = () => {
                               </span>
                             </div>
                           </div>
-                          <button
-                            onClick={() => deleteCoupon(coupon.code)}
-                            className='text-gray-400 hover:text-red-600 transition-colors'
-                          >
+                          <Button variant='icon' onClick={() => deleteCoupon(coupon.code)}>
                             <TrashIcon />
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     ))}
 
                     <div className='border-2 border-dashed border-gray-300 rounded-lg p-4 flex items-center justify-center hover:border-gray-400 transition-colors'>
-                      <button
-                        onClick={() => setShowCouponForm(!showCouponForm)}
+                      <Button
+                        variant='icon'
                         className='text-gray-400 hover:text-gray-600 flex flex-col items-center'
+                        onClick={() => setShowCouponForm(!showCouponForm)}
                       >
                         <PlusIcon />
                         <p className='mt-2 text-sm font-medium'>새 쿠폰 추가</p>
-                      </button>
+                      </Button>
                     </div>
                   </div>
 
@@ -854,19 +913,16 @@ const App = () => {
                           </div>
                         </div>
                         <div className='flex justify-end gap-3'>
-                          <button
+                          <Button
+                            variant='ghost'
                             type='button'
                             onClick={() => setShowCouponForm(false)}
-                            className='px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50'
                           >
                             취소
-                          </button>
-                          <button
-                            type='submit'
-                            className='px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700'
-                          >
+                          </Button>
+                          <Button variant='primary' type='submit'>
                             쿠폰 생성
-                          </button>
+                          </Button>
                         </div>
                       </form>
                     </div>
@@ -952,17 +1008,14 @@ const App = () => {
                             </div>
 
                             {/* 장바구니 버튼 */}
-                            <button
-                              onClick={() => addToCart(product)}
+                            <Button
+                              variant={remainingStock <= 0 ? 'ghost' : 'secondary'}
                               disabled={remainingStock <= 0}
-                              className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
-                                remainingStock <= 0
-                                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                  : 'bg-gray-900 text-white hover:bg-gray-800'
-                              }`}
+                              onClick={() => addToCart(product)}
+                              className='w-full'
                             >
                               {remainingStock <= 0 ? '품절' : '장바구니 담기'}
-                            </button>
+                            </Button>
                           </div>
                         </div>
                       );
@@ -1000,30 +1053,35 @@ const App = () => {
                               <h4 className='text-sm font-medium text-gray-900 flex-1'>
                                 {item.product.name}
                               </h4>
-                              <button
+                              <Button
+                                variant='icon'
                                 onClick={() => removeFromCart(item.product.id)}
-                                className='text-gray-400 hover:text-red-500 ml-2'
+                                className='ml-2'
                               >
                                 <CloseIcon />
-                              </button>
+                              </Button>
                             </div>
                             <div className='flex items-center justify-between'>
                               <div className='flex items-center'>
-                                <button
+                                <Button
+                                  variant='ghost'
+                                  size='sm'
                                   onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
-                                  className='w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100'
+                                  className='w-6 h-6 p-0 border border-gray-300 flex items-center justify-center'
                                 >
                                   <span className='text-xs'>−</span>
-                                </button>
+                                </Button>
                                 <span className='mx-3 text-sm font-medium w-8 text-center'>
                                   {item.quantity}
                                 </span>
-                                <button
+                                <Button
+                                  variant='ghost'
+                                  size='sm'
                                   onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                                  className='w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100'
+                                  className='w-6 h-6 p-0 border border-gray-300 flex items-center justify-center'
                                 >
                                   <span className='text-xs'>+</span>
-                                </button>
+                                </Button>
                               </div>
                               <div className='text-right'>
                                 {hasDiscount && (
@@ -1048,7 +1106,9 @@ const App = () => {
                     <section className='bg-white rounded-lg border border-gray-200 p-4'>
                       <div className='flex items-center justify-between mb-3'>
                         <h3 className='text-sm font-semibold text-gray-700'>쿠폰 할인</h3>
-                        <button className='text-xs text-blue-600 hover:underline'>쿠폰 등록</button>
+                        <Button variant='text' className='text-xs'>
+                          쿠폰 등록
+                        </Button>
                       </div>
                       {coupons.length > 0 && (
                         <select
@@ -1103,12 +1163,9 @@ const App = () => {
                         </div>
                       </div>
 
-                      <button
-                        onClick={completeOrder}
-                        className='w-full mt-4 py-3 bg-yellow-400 text-gray-900 rounded-md font-medium hover:bg-yellow-500 transition-colors'
-                      >
+                      <Button className='yellow' onClick={completeOrder}>
                         {totals.totalAfterDiscount.toLocaleString()}원 결제하기
-                      </button>
+                      </Button>
 
                       <div className='mt-3 text-xs text-gray-500 text-center'>
                         <p>* 실제 결제는 이루어지지 않습니다</p>
