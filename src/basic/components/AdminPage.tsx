@@ -15,29 +15,84 @@
 // - CouponForm: 새 쿠폰 추가 폼
 // - CouponList: 쿠폰 목록 표시
 
+import { useState } from "react";
+import { Product } from '../../types';
+
+interface ProductWithUI extends Product {
+	description?: string;
+	isRecommended?: boolean;
+}
+
 export function AdminPage({
-  activeTab,
-  setActiveTab,
   products,
-  deleteProduct,
-  startEditProduct,
-  handleProductSubmit,
   coupons,
+	addProduct,
+	updateProduct,
+  deleteProduct,
+	addCoupon,
   deleteCoupon,
-  handleCouponSubmit,
-  editingProduct,
-  setEditingProduct,
-  showProductForm,
-  setShowProductForm,
-  productForm,
-  setProductForm,
-  showCouponForm,
-  setShowCouponForm,
-  couponForm,
-  setCouponForm,
   formatPrice,
   addNotification,
-}) {
+}) {	
+	const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
+const [showProductForm, setShowProductForm] = useState(false);
+const [showCouponForm, setShowCouponForm] = useState(false);
+
+  const [editingProduct, setEditingProduct] = useState<string | null>(null);
+  const [productForm, setProductForm] = useState({
+    name: '',
+    price: 0,
+    stock: 0,
+    description: '',
+    discounts: [] as Array<{ quantity: number; rate: number }>,
+  });
+
+  const [couponForm, setCouponForm] = useState({
+    name: '',
+    code: '',
+    discountType: 'amount' as 'amount' | 'percentage',
+    discountValue: 0,
+  });
+
+	const handleProductSubmit = (e: React.FormEvent) => {
+		e.preventDefault();
+		if (editingProduct && editingProduct !== 'new') {
+			updateProduct(editingProduct, productForm);
+			setEditingProduct(null);
+		} else {
+			addProduct({
+				...productForm,
+				discounts: productForm.discounts,
+			});
+		}
+		setProductForm({ name: '', price: 0, stock: 0, description: '', discounts: [] });
+		setEditingProduct(null);
+		setShowProductForm(false);
+	};
+
+	const handleCouponSubmit = (e: React.FormEvent) => {
+		e.preventDefault();
+		addCoupon(couponForm);
+		setCouponForm({
+			name: '',
+			code: '',
+			discountType: 'amount',
+			discountValue: 0,
+		});
+		setShowCouponForm(false);
+	};
+
+	const startEditProduct = (product: ProductWithUI) => {
+		setEditingProduct(product.id);
+		setProductForm({
+			name: product.name,
+			price: product.price,
+			stock: product.stock,
+			description: product.description || '',
+			discounts: product.discounts || [],
+		});
+		setShowProductForm(true);
+	};
   return (
     <div className='max-w-6xl mx-auto'>
       <div className='mb-8'>
