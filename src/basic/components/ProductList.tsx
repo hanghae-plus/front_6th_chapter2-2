@@ -55,6 +55,7 @@ const ProductList = ({
             return (
               // 상품 컴포넌트
               <ProductItem
+                key={product.id}
                 product={product}
                 remainingStock={remainingStock}
                 priceText={getPriceText(product)}

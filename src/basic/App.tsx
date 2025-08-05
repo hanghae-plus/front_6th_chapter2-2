@@ -65,6 +65,7 @@ const App = () => {
           {notifications.map((notif) => (
             // 토스트 모달 컴포넌트
             <NotificationItem
+              key={notif.id}
               notification={notif}
               setNotifications={setNotifications}
             />

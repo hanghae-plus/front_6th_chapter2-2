@@ -34,6 +34,7 @@ const CartList = ({
             return (
               // 카트 상품 컴포넌트
               <CartItem
+                key={item.product.id}
                 item={item}
                 calculateItemTotal={calculateItemTotal}
                 removeItemFromCart={removeItemFromCart}

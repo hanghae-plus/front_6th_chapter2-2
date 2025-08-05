@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
+import { IProductForm, IProductWithUI } from "../type";
 import ProductForm from "./ProductForm";
 import ProductTable from "./ProductTable";
-import { IProductWithUI } from "../type";
 
 interface ProductTabProps {
   // product
@@ -33,7 +33,7 @@ const ProductTab = ({
   // 작성 중인 상품의 상태 - new(추가)이거나 상품의 id(수정)
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   // 현재 작성 중인 상품 정보
-  const [productForm, setProductForm] = useState({
+  const [productForm, setProductForm] = useState<IProductForm>({
     name: "",
     price: 0,
     stock: 0,

@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { ICoupon } from "../type";
+import { ICoupon, ICouponForm } from "../type";
 
 interface CouponFormProps {
   // coupon
@@ -21,7 +21,7 @@ const CouponForm = ({
   addNotification,
 }: CouponFormProps) => {
   // 현재 작성 중인 쿠폰 정보
-  const [couponForm, setCouponForm] = useState({
+  const [couponForm, setCouponForm] = useState<ICouponForm>({
     name: "",
     code: "",
     discountType: "amount" as "amount" | "percentage",

@@ -47,6 +47,7 @@ const ProductTable = ({
           {/* 기존 상품 목록 */}
           {products.map((product) => (
             <AdminProductItem
+              key={product.id}
               product={product}
               priceText={getPriceText(product)}
               startEditProduct={startEditProduct}

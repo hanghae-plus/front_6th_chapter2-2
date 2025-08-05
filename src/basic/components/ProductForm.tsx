@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { IProductWithUI } from "../type";
+import { IProductForm, IProductWithUI } from "../type";
 import { CloseIcon } from "./icon";
 
 interface ProductFormProps {
@@ -9,28 +9,8 @@ interface ProductFormProps {
   updateProduct: (productId: string, updates: Partial<IProductWithUI>) => void;
   editingProduct: string | null;
   setEditingProduct: React.Dispatch<React.SetStateAction<string | null>>;
-  productForm: {
-    name: string;
-    price: number;
-    stock: number;
-    description: string;
-    discounts: Array<{
-      quantity: number;
-      rate: number;
-    }>;
-  };
-  setProductForm: React.Dispatch<
-    React.SetStateAction<{
-      name: string;
-      price: number;
-      stock: number;
-      description: string;
-      discounts: Array<{
-        quantity: number;
-        rate: number;
-      }>;
-    }>
-  >;
+  productForm: IProductForm;
+  setProductForm: React.Dispatch<React.SetStateAction<IProductForm>>;
 
   // notification
   addNotification: (
