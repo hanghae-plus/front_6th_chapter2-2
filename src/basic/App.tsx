@@ -21,14 +21,15 @@ import {
   defaultProductForm,
   defaultCouponForm,
 } from './constants';
+import { calculateItemTotal, calculateCartTotal, getRemainingStock } from './models/cart';
 import {
-  calculateItemTotal,
-  calculateCartTotal,
-  getRemainingStock,
-  addItemToCart,
-  removeItemFromCart,
-  updateCartItemQuantity,
-} from './models/cart';
+  isCouponApplicable,
+  validateCouponCode,
+  formatCouponDisplay,
+  validateCouponDiscountValue,
+  getCouponDiscountLabel,
+  getCouponDiscountPlaceholder,
+} from './models/coupon';
 
 const App = () => {
   // ===== 상태 관리 =====
@@ -167,25 +168,34 @@ const App = () => {
         return;
       }
 
-      const newCart = addItemToCart(cart, product);
-      if (newCart === cart) {
-        addNotification(`재고는 ${product.stock}개까지만 있습니다.`, 'error');
-        return;
-      }
+      setCart((prevCart) => {
+        const existingItem = prevCart.find((item) => item.product.id === product.id);
 
-      setCart(newCart);
+        if (existingItem) {
+          const newQuantity = existingItem.quantity + 1;
+
+          if (newQuantity > product.stock) {
+            addNotification(`재고는 ${product.stock}개까지만 있습니다.`, 'error');
+            return prevCart;
+          }
+
+          return prevCart.map((item) =>
+            item.product.id === product.id ? { ...item, quantity: newQuantity } : item
+          );
+        }
+
+        return [...prevCart, { product, quantity: 1 }];
+      });
+
       addNotification('장바구니에 담았습니다', 'success');
     },
-    [cart, addNotification, getRemainingStock, addItemToCart]
+    [cart, addNotification, getRemainingStock]
   );
 
   // TODO: src/basic/hooks/useCart.ts로 분리 - removeFromCart(productId)
-  const removeFromCart = useCallback(
-    (productId: string) => {
-      setCart(removeItemFromCart(cart, productId));
-    },
-    [cart, removeItemFromCart]
-  );
+  const removeFromCart = useCallback((productId: string) => {
+    setCart((prevCart) => prevCart.filter((item) => item.product.id !== productId));
+  }, []);
 
   // TODO: src/basic/hooks/useCart.ts로 분리 - updateQuantity(productId, quantity)
   const updateQuantity = useCallback(
@@ -198,15 +208,19 @@ const App = () => {
       const product = products.find((p) => p.id === productId);
       if (!product) return;
 
-      const newCart = updateCartItemQuantity(cart, productId, newQuantity, products);
-      if (newCart === cart) {
-        addNotification(`재고는 ${product.stock}개까지만 있습니다.`, 'error');
+      const maxStock = product.stock;
+      if (newQuantity > maxStock) {
+        addNotification(`재고는 ${maxStock}개까지만 있습니다.`, 'error');
         return;
       }
 
-      setCart(newCart);
+      setCart((prevCart) =>
+        prevCart.map((item) =>
+          item.product.id === productId ? { ...item, quantity: newQuantity } : item
+        )
+      );
     },
-    [products, removeFromCart, addNotification, cart, updateCartItemQuantity]
+    [products, removeFromCart, addNotification, getRemainingStock]
   );
 
   // TODO: src/basic/hooks/useCart.ts로 분리 - applyCoupon(coupon)
@@ -214,7 +228,8 @@ const App = () => {
     (coupon: Coupon) => {
       const currentTotal = calculateCartTotal(cart, selectedCoupon).totalAfterDiscount;
 
-      if (currentTotal < 10000 && coupon.discountType === 'percentage') {
+      // TODO: src/basic/models/coupon.ts로 분리 - isCouponApplicable(coupon, cartTotal)
+      if (!isCouponApplicable(coupon, currentTotal)) {
         addNotification('percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.', 'error');
         return;
       }
@@ -267,8 +282,7 @@ const App = () => {
   // TODO: src/basic/hooks/useCoupons.ts로 분리 - addCoupon(coupon), removeCoupon(couponCode)
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {
-      const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
-      if (existingCoupon) {
+      if (!validateCouponCode(newCoupon.code, coupons)) {
         addNotification('이미 존재하는 쿠폰 코드입니다.', 'error');
         return;
       }
@@ -747,9 +761,7 @@ const App = () => {
                                 rounded='full'
                                 className='inline-flex items-center px-3 py-1 font-medium bg-white text-indigo-700'
                               >
-                                {coupon.discountType === 'amount'
-                                  ? `${coupon.discountValue.toLocaleString()}원 할인`
-                                  : `${coupon.discountValue}% 할인`}
+                                {formatCouponDisplay(coupon)}
                               </Badge>
                             </div>
                           </div>
@@ -827,9 +839,7 @@ const App = () => {
                           </div>
                           <div>
                             <Input
-                              label={
-                                couponForm.discountType === 'amount' ? '할인 금액' : '할인율(%)'
-                              }
+                              label={getCouponDiscountLabel(couponForm.discountType)}
                               type='text'
                               value={couponForm.discountValue === 0 ? '' : couponForm.discountValue}
                               onChange={(e) => {
@@ -843,28 +853,23 @@ const App = () => {
                               }}
                               onBlur={(e) => {
                                 const value = parseInt(e.target.value) || 0;
-                                // TODO: src/basic/utils/validators.ts로 분리 - 할인값 검증 로직
-                                if (couponForm.discountType === 'percentage') {
-                                  if (value > 100) {
-                                    addNotification('할인율은 100%를 초과할 수 없습니다', 'error');
-                                    setCouponForm({ ...couponForm, discountValue: 100 });
-                                  } else if (value < 0) {
-                                    setCouponForm({ ...couponForm, discountValue: 0 });
+                                const validation = validateCouponDiscountValue(
+                                  couponForm.discountType,
+                                  value
+                                );
+
+                                if (!validation.isValid) {
+                                  if (validation.errorMessage) {
+                                    addNotification(validation.errorMessage, 'error');
                                   }
-                                } else {
-                                  if (value > 100000) {
-                                    addNotification(
-                                      '할인 금액은 100,000원을 초과할 수 없습니다',
-                                      'error'
-                                    );
-                                    setCouponForm({ ...couponForm, discountValue: 100000 });
-                                  } else if (value < 0) {
-                                    setCouponForm({ ...couponForm, discountValue: 0 });
-                                  }
+                                  setCouponForm({
+                                    ...couponForm,
+                                    discountValue: validation.correctedValue || 0,
+                                  });
                                 }
                               }}
                               className='text-sm'
-                              placeholder={couponForm.discountType === 'amount' ? '5000' : '10'}
+                              placeholder={getCouponDiscountPlaceholder(couponForm.discountType)}
                               required
                             />
                           </div>

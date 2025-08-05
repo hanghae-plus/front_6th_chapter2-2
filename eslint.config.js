@@ -42,6 +42,7 @@ export default defineConfig([
       browsers: '> 0.5%, last 2 versions, not op_mini all, Firefox ESR, not dead',
     },
     rules: {
+      'react-hooks/exhaustive-deps': 'warn',
       // 기존 규칙 유지
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
 
