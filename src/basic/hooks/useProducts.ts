@@ -1,40 +1,16 @@
-// TODO: 상품 관리 Hook
-// 힌트:
-// 1. 상품 목록 상태 관리 (localStorage 연동 고려)
-// 2. 상품 CRUD 작업
-// 3. 재고 업데이트
-// 4. 할인 규칙 추가/삭제
-//
-// 반환할 값:
-// - products: 상품 배열
-// - updateProduct: 상품 정보 수정
-// - addProduct: 새 상품 추가
-// - updateProductStock: 재고 수정
-// - addProductDiscount: 할인 규칙 추가
-// - removeProductDiscount: 할인 규칙 삭제
-
 import { useState, useCallback, useEffect } from 'react';
-
-import { Product } from '../../types';
+import { Product, Discount } from '../../types';
 import { initialProducts } from '../constants';
+import * as productModel from '../models/product';
 
-interface ProductWithUI extends Product {
-  description?: string;
-  isRecommended?: boolean;
-}
-
-
-export const useProducts = ({ addNotification }) => {
-  const [products, setProducts] = useState<ProductWithUI[]>(() => {
+export const useProducts = ({
+  addNotification,
+}: {
+  addNotification: (message: string, type: string) => void;
+}) => {
+  const [products, setProducts] = useState<Product[]>(() => {
     const saved = localStorage.getItem('products');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialProducts;
-      }
-    }
-    return initialProducts;
+    return saved ? JSON.parse(saved) : initialProducts;
   });
 
   useEffect(() => {
@@ -42,33 +18,48 @@ export const useProducts = ({ addNotification }) => {
   }, [products]);
 
   const addProduct = useCallback(
-    (newProduct: Omit<ProductWithUI, 'id'>) => {
-      const product: ProductWithUI = {
-        ...newProduct,
-        id: `p${Date.now()}`,
-      };
-      setProducts((prev) => [...prev, product]);
+    (newProduct: Omit<Product, 'id'>) => {
+      setProducts(productModel.addProduct(products, newProduct));
       addNotification('상품이 추가되었습니다.', 'success');
     },
-    [addNotification],
+    [products, addNotification],
   );
 
   const updateProduct = useCallback(
-    (productId: string, updates: Partial<ProductWithUI>) => {
-      setProducts((prev) =>
-        prev.map((product) => (product.id === productId ? { ...product, ...updates } : product)),
-      );
+    (productId: string, updates: Partial<Product>) => {
+      setProducts(productModel.updateProduct(products, productId, updates));
       addNotification('상품이 수정되었습니다.', 'success');
     },
-    [addNotification],
+    [products, addNotification],
   );
 
   const deleteProduct = useCallback(
     (productId: string) => {
-      setProducts((prev) => prev.filter((p) => p.id !== productId));
+      setProducts(productModel.deleteProduct(products, productId));
       addNotification('상품이 삭제되었습니다.', 'success');
     },
-    [addNotification],
+    [products, addNotification],
+  );
+
+  const updateProductStock = useCallback(
+    (productId: string, newStock: number) => {
+      setProducts(productModel.updateProductStock(products, productId, newStock));
+    },
+    [products],
+  );
+
+  const addProductDiscount = useCallback(
+    (productId: string, newDiscount: Discount) => {
+      setProducts(productModel.addProductDiscount(products, productId, newDiscount));
+    },
+    [products],
+  );
+
+  const removeProductDiscount = useCallback(
+    (productId: string, discountQuantity: number) => {
+      setProducts(productModel.removeProductDiscount(products, productId, discountQuantity));
+    },
+    [products],
   );
 
   return {
@@ -76,5 +67,8 @@ export const useProducts = ({ addNotification }) => {
     addProduct,
     updateProduct,
     deleteProduct,
+    updateProductStock,
+    addProductDiscount,
+    removeProductDiscount,
   };
 };
