@@ -1,16 +1,9 @@
-import { FC } from "react";
-import { Notification } from "../../types";
+import { useAtom } from "jotai";
+import { notificationsAtom, removeNotificationAtom } from "../../store";
 
-interface NotificationToastProps {
-  notifications: Notification[];
-  onRemove: (id: string) => void;
-}
-
-export const NotificationToast: FC<NotificationToastProps> = ({
-  notifications,
-  onRemove,
-}: NotificationToastProps) => {
-  if (notifications.length === 0) return null;
+export const NotificationToast = () => {
+  const [notifications] = useAtom(notificationsAtom);
+  const [, removeNotification] = useAtom(removeNotificationAtom);
 
   return (
     <div className="fixed top-20 right-4 z-50 space-y-2 max-w-sm">
@@ -27,7 +20,7 @@ export const NotificationToast: FC<NotificationToastProps> = ({
         >
           <span className="mr-2">{notif.message}</span>
           <button
-            onClick={() => onRemove(notif.id)}
+            onClick={() => removeNotification(notif.id)}
             className="text-white hover:text-gray-200"
           >
             <svg
