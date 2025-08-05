@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { CartItem, Coupon, Product } from '../types';
-import { initialProducts, initialCoupons, ProductWithUI } from '../refactoring(hint)/constants';
+import { initialProducts, initialCoupons, ProductWithUI } from './constants';
 
 interface Notification {
   id: string;
