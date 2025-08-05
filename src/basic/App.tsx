@@ -35,22 +35,6 @@ const App = () => {
   const [notifications, setNotifications] = useState<NotificationType[]>([]);
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
-  const formatPrice = (price: number): string => {
-    // TODO: 상품 재고 확인 로직 주석 해제 필요
-    // if (productId) {
-    //   const product = products.find((p) => p.id === productId);
-    //   if (product && getRemainingStock(product) <= 0) {
-    //     return 'SOLD OUT';
-    //   }
-    // }
-
-    if (isAdmin) {
-      return `${price.toLocaleString()}원`;
-    }
-
-    return `₩${price.toLocaleString()}`;
-  };
-
   const addNotification = useCallback(
     (message: string, variant: NotificationVariant = 'success') => {
       const id = Date.now().toString();
@@ -78,7 +62,6 @@ const App = () => {
       {isAdmin ? (
         <AdminPage
           setIsAdmin={setIsAdmin}
-          formatPrice={formatPrice}
           addNotification={addNotification}
           // products
           products={products}
@@ -93,7 +76,6 @@ const App = () => {
       ) : (
         <CartPage
           setIsAdmin={setIsAdmin}
-          formatPrice={formatPrice}
           addNotification={addNotification}
           // products
           products={products}

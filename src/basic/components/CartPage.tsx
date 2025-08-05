@@ -21,13 +21,13 @@ import { useCallback, useEffect, useState } from 'react';
 import { CartItem, Coupon, Product } from '../../types';
 import { ProductWithUI } from '../constants';
 import { Icon } from './icons';
+import { formatKRWPrice } from '../utils/formatters';
 
 interface CartPageProps {
   setIsAdmin: (isAdmin: boolean) => void;
   addNotification: (message: string, type: 'error' | 'success' | 'warning') => void;
 
   products: ProductWithUI[];
-  formatPrice: (price: number, productId?: string) => string;
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
   setSelectedCoupon: (coupon: Coupon | null) => void;
@@ -38,7 +38,6 @@ export function CartPage({
   addNotification,
 
   products,
-  formatPrice,
   coupons,
   selectedCoupon,
   setSelectedCoupon,
@@ -328,7 +327,9 @@ export function CartPage({
                           {/* 가격 정보 */}
                           <div className='mb-3'>
                             <p className='text-lg font-bold text-gray-900'>
-                              {formatPrice(product.price, product.id)}
+                              {remainingStock <= 0
+                                ? 'SOLD OUT'
+                                : formatKRWPrice(product.price, 'symbol')}
                             </p>
                             {product.discounts.length > 0 && (
                               <p className='text-xs text-gray-500'>

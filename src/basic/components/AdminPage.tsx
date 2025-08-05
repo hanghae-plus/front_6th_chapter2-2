@@ -20,6 +20,7 @@ import { useCallback, useState } from 'react';
 import { Coupon } from '../../types';
 import { ProductWithUI } from '../constants';
 import { Icon } from './icons';
+import { formatKRWPrice } from '../utils/formatters';
 
 interface AdminPageProps {
   setIsAdmin: (isAdmin: boolean) => void;
@@ -33,8 +34,6 @@ interface AdminPageProps {
 
   selectedCoupon: Coupon | null;
   setSelectedCoupon: (coupon: Coupon | null) => void;
-
-  formatPrice: (price: number, productId?: string) => string;
 }
 
 export function AdminPage({
@@ -49,8 +48,6 @@ export function AdminPage({
 
   selectedCoupon,
   setSelectedCoupon,
-
-  formatPrice,
 }: AdminPageProps) {
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
 
@@ -269,7 +266,7 @@ export function AdminPage({
                           {product.name}
                         </td>
                         <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>
-                          {formatPrice(product.price, product.id)}
+                          {formatKRWPrice(product.price, 'text')}
                         </td>
                         <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>
                           <span
