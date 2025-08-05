@@ -11,7 +11,7 @@
 // - useCoupons: 쿠폰 목록 관리
 // - useDebounce: 검색어 디바운싱
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { CartItem, Coupon } from '../../types'
 import { ProductWithUI } from '../types'
 import { CartHeader } from './ui/cart/CartHeader'
@@ -35,6 +35,7 @@ export function CartPage({
   getFilteredProducts,
   getRemainingStock,
   calculateTotal,
+  totalItemCount,
 }: {
   isAdmin: boolean
   setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>
@@ -61,17 +62,11 @@ export function CartPage({
   getFilteredProducts: (searchTerm: string) => ProductWithUI[]
   getRemainingStock: (product: ProductWithUI) => number
   calculateTotal: (item: CartItem) => number
+  totalItemCount: number
 }) {
   // TODO: 구현
   const [searchTerm, setSearchTerm] = useState('')
-  const [totalItemCount, setTotalItemCount] = useState(0)
   const debouncedSearchTerm = useDebounce(searchTerm, 500)
-
-  useEffect(() => {
-    const count = cart.reduce((sum, item) => sum + item.quantity, 0)
-    setTotalItemCount(count)
-  }, [cart])
-
   const filteredProducts = getFilteredProducts(debouncedSearchTerm)
 
   const headerState = {

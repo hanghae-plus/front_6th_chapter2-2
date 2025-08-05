@@ -40,6 +40,7 @@ const App = () => {
     getRemainingStock,
     handleSelectCoupon,
     calculateTotal,
+    totalItemCount,
   } = useCart(addNotification)
   const { coupons, addCoupon, deleteCoupon } = useCoupons(
     addNotification,
@@ -79,6 +80,7 @@ const App = () => {
     getRemainingStock,
     getFilteredProducts,
     calculateTotal,
+    totalItemCount,
   }
 
   return (

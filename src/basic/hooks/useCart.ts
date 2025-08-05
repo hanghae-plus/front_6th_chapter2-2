@@ -24,7 +24,7 @@
 // - getRemainingStock: 재고 확인 함수
 // - clearCart: 장바구니 비우기 함수
 
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { CartItem, Coupon } from '../../types'
 import { ProductWithUI } from '../types'
 import {
@@ -204,6 +204,13 @@ export function useCart(
     else setSelectedCoupon(null)
   }
 
+  const [totalItemCount, setTotalItemCount] = useState(0)
+
+  useEffect(() => {
+    const count = cart.reduce((sum, item) => sum + item.quantity, 0)
+    setTotalItemCount(count)
+  }, [cart])
+
   return {
     cart,
     addToCart,
@@ -217,5 +224,6 @@ export function useCart(
     completeOrder,
     getRemainingStock,
     handleSelectCoupon,
+    totalItemCount,
   }
 }
