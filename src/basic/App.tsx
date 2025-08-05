@@ -13,6 +13,7 @@ import {
 import Badge from './components/ui/Badge';
 import Card from './components/ui/Card';
 import Input from './components/ui/Input';
+import Select from './components/ui/Selector';
 import {
   initialProducts,
   initialCoupons,
@@ -835,7 +836,9 @@ const App = () => {
                             <label className='block text-sm font-medium text-gray-700 mb-1'>
                               할인 타입
                             </label>
-                            <select
+                            <Select
+                              focusStyle='indigo'
+                              className='shadow-sm'
                               value={couponForm.discountType}
                               onChange={(e) =>
                                 setCouponForm({
@@ -843,11 +846,10 @@ const App = () => {
                                   discountType: e.target.value as 'amount' | 'percentage',
                                 })
                               }
-                              className='w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm'
                             >
                               <option value='amount'>정액 할인</option>
                               <option value='percentage'>정률 할인</option>
-                            </select>
+                            </Select>
                           </div>
                           <div>
                             <Input
@@ -1115,8 +1117,8 @@ const App = () => {
                       }
                     >
                       {coupons.length > 0 && (
-                        <select
-                          className='w-full text-sm border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500'
+                        <Select
+                          focusStyle='blue'
                           value={selectedCoupon?.code || ''}
                           onChange={(e) => {
                             const coupon = coupons.find((c) => c.code === e.target.value);
@@ -1134,7 +1136,7 @@ const App = () => {
                               )
                             </option>
                           ))}
-                        </select>
+                        </Select>
                       )}
                     </Card>
 
