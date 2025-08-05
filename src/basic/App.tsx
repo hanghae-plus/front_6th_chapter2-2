@@ -66,17 +66,7 @@ const App = () => {
     clearCart();
   }, [addNotification]);
 
-
   const totals = calculateCartTotal();
-
-  const filteredProducts = debouncedSearchTerm
-    ? products.filter(
-        (product) =>
-          product.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-          (product.description &&
-            product.description.toLowerCase().includes(debouncedSearchTerm.toLowerCase())),
-      )
-    : products;
 
   return (
     <div className='min-h-screen bg-gray-50'>
@@ -112,7 +102,6 @@ const App = () => {
             cart={cart}
             coupons={coupons}
             // --- 파생 데이터 ---
-            filteredProducts={filteredProducts}
             totals={totals}
             // --- UI 상태 ---
             selectedCoupon={selectedCoupon}
