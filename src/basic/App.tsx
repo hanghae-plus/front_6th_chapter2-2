@@ -1,8 +1,9 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { useProducts, ProductWithUI } from "./hooks/useProducts";
 import { useCart } from "./hooks/useCart";
 import { useCoupons } from "./hooks/useCoupons";
 import { useNotification } from "./hooks/useNotification";
+import { useSearch } from "./utils/hooks/useSearch";
 import { formatPrice } from "./utils/formatters";
 import { calculateFinalTotal } from "./utils/calculations";
 import { CartContainer } from "./components/cart/CartContainer";
@@ -26,13 +27,14 @@ const App = () => {
   const { coupons, selectedCoupon, addCoupon, deleteCoupon, applyCoupon, setSelectedCoupon } = useCoupons();
   const { notifications, addNotification, removeNotification } = useNotification();
 
+  // 검색 기능
+  const { searchTerm, setSearchTerm, filteredProducts, searchInfo } = useSearch(products);
+
   // 로컬 UI 상태
   const [isAdmin, setIsAdmin] = useState(false);
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [activeTab, setActiveTab] = useState<"products" | "coupons">("products");
   const [showProductForm, setShowProductForm] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
 
   // Admin
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
@@ -63,13 +65,6 @@ const App = () => {
     const cartTotals = calculateCartTotal();
     return calculateFinalTotal(cartTotals, selectedCoupon);
   };
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
 
   // 장바구니에 상품 추가 (에러 처리 포함)
   const addToCart = useCallback(
@@ -224,14 +219,6 @@ const App = () => {
   };
 
   const totals = getFinalTotal();
-
-  const filteredProducts = debouncedSearchTerm
-    ? products.filter(
-        (product) =>
-          product.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-          (product.description && product.description.toLowerCase().includes(debouncedSearchTerm.toLowerCase()))
-      )
-    : products;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -697,7 +684,11 @@ const App = () => {
                 </div>
                 {filteredProducts.length === 0 ? (
                   <div className="text-center py-12">
-                    <p className="text-gray-500">"{debouncedSearchTerm}"에 대한 검색 결과가 없습니다.</p>
+                    <p className="text-gray-500">
+                      {searchInfo.isSearching
+                        ? `"${searchInfo.searchTerm}"에 대한 검색 결과가 없습니다.`
+                        : "상품이 없습니다."}
+                    </p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
