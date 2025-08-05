@@ -1,19 +1,14 @@
-import { Notification } from '@/models/notification';
+import { useNotificationService } from '@/services';
 import clsx from 'clsx';
 
-type Props = {
-  notifications: Notification[];
-  removeNotification: (id: string) => void;
-};
+export const Notifications = () => {
+  const notificationService = useNotificationService();
 
-export const Notifications = ({ notifications, removeNotification }: Props) => {
-  const isEmpty = notifications.length === 0;
-
-  if (isEmpty) return null;
+  if (notificationService.notifications.length === 0) return null;
 
   return (
     <div className='fixed top-20 right-4 z-50 space-y-2 max-w-sm'>
-      {notifications.map(notification => (
+      {notificationService.notifications.map(notification => (
         <div
           key={notification.id}
           className={clsx([
@@ -26,7 +21,9 @@ export const Notifications = ({ notifications, removeNotification }: Props) => {
           ])}>
           <span className='mr-2'>{notification.message}</span>
           <button
-            onClick={() => removeNotification(notification.id)}
+            onClick={() =>
+              notificationService.removeNotification(notification.id)
+            }
             className='text-white hover:text-gray-200'>
             <svg
               className='w-4 h-4'
