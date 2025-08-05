@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { CartItem, Coupon, Product } from '../types';
 import { calculateCartTotal, calculateItemTotal } from './models/cart';
 import { getCouponApplier } from './models/coupon';
+import { getRemainingStock, isSoldOut } from './models/product';
 import { formatNumberWon, formatPriceKRW } from './utils/formatters';
 
 interface ProductWithUI extends Product {
@@ -130,16 +131,6 @@ const App = () => {
     discountValue: 0,
   });
 
-  const getRemainingStock = useCallback(
-    (product: Product): number => {
-      const cartItem = cart.find((item) => item.product.id === product.id);
-      const remaining = product.stock - (cartItem?.quantity || 0);
-
-      return remaining;
-    },
-    [cart]
-  );
-
   const addNotification = useCallback(
     (message: string, type: 'error' | 'success' | 'warning' = 'success') => {
       const id = Date.now().toString();
@@ -184,8 +175,7 @@ const App = () => {
 
   const addToCart = useCallback(
     (product: ProductWithUI) => {
-      const remainingStock = getRemainingStock(product);
-      if (remainingStock <= 0) {
+      if (isSoldOut({ cart, product })) {
         addNotification('재고가 부족합니다!', 'error');
         return;
       }
@@ -592,7 +582,7 @@ const App = () => {
                               {product.name}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {getRemainingStock(product) <= 0
+                              {isSoldOut({ cart, product })
                                 ? 'SOLD OUT'
                                 : formatNumberWon(product.price)}
                             </td>
@@ -1126,7 +1116,10 @@ const App = () => {
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {filteredProducts.map((product) => {
-                      const remainingStock = getRemainingStock(product);
+                      const remainingStock = getRemainingStock({
+                        product,
+                        cart,
+                      });
 
                       return (
                         <div
@@ -1180,7 +1173,7 @@ const App = () => {
                             {/* 가격 정보 */}
                             <div className="mb-3">
                               <p className="text-lg font-bold text-gray-900">
-                                {getRemainingStock(product) <= 0
+                                {isSoldOut({ cart, product })
                                   ? 'SOLD OUT'
                                   : formatPriceKRW(product.price)}
                               </p>
