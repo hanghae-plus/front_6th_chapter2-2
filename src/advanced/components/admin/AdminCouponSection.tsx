@@ -1,24 +1,18 @@
 import { useState } from "react";
-
+import { useAtom } from "jotai";
 import { CouponCreationPayload } from "../../types";
 import { Coupon } from "../../../types";
+import {
+  addCouponAtom,
+  couponsAtom,
+  removeCouponAtom,
+} from "../../store/coupon";
 
-interface CouponSectionProps {
-  coupons: Coupon[];
-  onAddCoupon: (coupon: Coupon) => void;
-  onDeleteCoupon: (couponCode: string) => void;
-  addNotification: (
-    message: string,
-    type?: "error" | "success" | "warning"
-  ) => void;
-}
+export const CouponSection = () => {
+  const [coupons] = useAtom(couponsAtom);
+  const [, addCoupon] = useAtom(addCouponAtom);
+  const [, removeCoupon] = useAtom(removeCouponAtom);
 
-export const CouponSection = ({
-  coupons,
-  onAddCoupon,
-  onDeleteCoupon,
-  addNotification,
-}: CouponSectionProps) => {
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [couponForm, setCouponForm] = useState<CouponCreationPayload>({
     name: "",
@@ -49,8 +43,7 @@ export const CouponSection = ({
       discountValue: couponForm.discountValue,
     };
 
-    onAddCoupon(newCoupon);
-    addNotification("쿠폰이 생성되었습니다.", "success");
+    addCoupon(newCoupon);
 
     setCouponForm({
       name: "",
@@ -119,6 +112,10 @@ export const CouponSection = ({
     setValidationError("");
   };
 
+  const handleDeleteCoupon = (couponCode: string) => {
+    removeCoupon(couponCode);
+  };
+
   return (
     <section className="bg-white rounded-lg border border-gray-200">
       <div className="p-6 border-b border-gray-200">
@@ -149,7 +146,7 @@ export const CouponSection = ({
                   </p>
                 </div>
                 <button
-                  onClick={() => onDeleteCoupon(coupon.code)}
+                  onClick={() => handleDeleteCoupon(coupon.code)}
                   className="text-gray-400 hover:text-red-600"
                 >
                   <svg
