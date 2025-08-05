@@ -3,25 +3,40 @@ import { ReactNode } from 'react';
 interface CardProps {
   children: ReactNode;
   className?: string;
-  padding?: 'none' | 'sm' | 'md' | 'lg';
+  padding?: 'none' | 'sm' | 'md';
   header?: ReactNode;
+  headerStyle?: 'border' | 'margin';
+  contentPadding?: boolean;
 }
 
-export default function Card({ children, className = '', padding = 'md', header }: CardProps) {
+export default function Card({
+  children,
+  className = '',
+  padding = 'sm',
+  header,
+  headerStyle = 'margin',
+  contentPadding = true,
+}: CardProps) {
   const baseClasses = 'bg-white rounded-lg border border-gray-200';
 
   const paddingClasses = {
     none: '',
     sm: 'p-4',
     md: 'p-6',
-    lg: 'p-8',
   };
 
-  const classes = [baseClasses, paddingClasses[padding], className].filter(Boolean).join(' ');
+  // 헤더가 있고 contentPadding이 false면 전체 패딩 없음
+  const finalPadding = header && !contentPadding ? 'none' : padding;
+  const classes = [baseClasses, paddingClasses[finalPadding], className].filter(Boolean).join(' ');
 
   return (
     <section className={classes}>
-      {header && <div className='border-b border-gray-200 pb-4 mb-4'>{header}</div>}
+      {header &&
+        (headerStyle === 'border' ? (
+          <div className='p-6 border-b border-gray-200'>{header}</div>
+        ) : (
+          header
+        ))}
       {children}
     </section>
   );

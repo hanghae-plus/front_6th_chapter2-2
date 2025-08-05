@@ -475,6 +475,9 @@ const App = () => {
 
             {activeTab === 'products' ? (
               <Card
+                padding='md'
+                headerStyle='border'
+                contentPadding={false}
                 header={
                   <div className='flex justify-between items-center'>
                     <h2 className='text-lg font-semibold'>상품 목록</h2>
@@ -744,7 +747,12 @@ const App = () => {
                 )}
               </Card>
             ) : (
-              <Card header={<h2 className='text-lg font-semibold'>쿠폰 관리</h2>}>
+              <Card
+                padding='md'
+                headerStyle='border'
+                contentPadding={false}
+                header={<h2 className='text-lg font-semibold'>쿠폰 관리</h2>}
+              >
                 <div className='p-6'>
                   <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
                     {coupons.map((coupon) => (
@@ -1001,8 +1009,9 @@ const App = () => {
               <div className='sticky top-24 space-y-4'>
                 <Card
                   padding='sm'
+                  headerStyle='margin'
                   header={
-                    <h2 className='text-lg font-semibold flex items-center'>
+                    <h2 className='text-lg font-semibold mb-4 flex items-center'>
                       <CartHeaderIcon />
                       장바구니
                     </h2>
@@ -1076,8 +1085,9 @@ const App = () => {
                   <>
                     <Card
                       padding='sm'
+                      headerStyle='margin'
                       header={
-                        <div className='flex items-center justify-between'>
+                        <div className='flex items-center justify-between mb-3'>
                           <h3 className='text-sm font-semibold text-gray-700'>쿠폰 할인</h3>
                           <button className='text-xs text-blue-600 hover:underline'>
                             쿠폰 등록
@@ -1111,7 +1121,8 @@ const App = () => {
 
                     <Card
                       padding='sm'
-                      header={<h3 className='text-lg font-semibold'>결제 정보</h3>}
+                      headerStyle='margin'
+                      header={<h3 className='text-lg font-semibold mb-4'>결제 정보</h3>}
                     >
                       <div className='space-y-2 text-sm'>
                         <div className='flex justify-between'>
