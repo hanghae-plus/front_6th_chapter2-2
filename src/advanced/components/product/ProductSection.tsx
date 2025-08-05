@@ -1,25 +1,13 @@
-import { Product } from "../../../types";
+import { useAtom } from "jotai";
+import { filteredProductsAtom } from "../../store";
 import { ProductCartList } from "./ProductCartList";
-
-// 필요한 props 타입 정의 (TypeScript의 경우)
-interface ProductListSectionProps {
-  products: Product[];
-  filteredProducts: Product[];
-  debouncedSearchTerm: string;
-  getRemainingStock: (product: Product) => number;
-  handleAddToCart: (product: Product) => void;
-  isAdmin: boolean;
-}
+import { productsAtom } from "../../store/product";
 
 // 컴포넌트 정의
-const ProductListSection = ({
-  products,
-  filteredProducts,
-  debouncedSearchTerm,
-  getRemainingStock,
-  handleAddToCart,
-  isAdmin,
-}: ProductListSectionProps) => {
+const ProductListSection = () => {
+  const [products] = useAtom(productsAtom);
+  const [filteredProducts] = useAtom(filteredProductsAtom);
+  console.log(products, filteredProducts);
   return (
     <div className="lg:col-span-3">
       <section>
@@ -31,17 +19,10 @@ const ProductListSection = ({
         </div>
         {filteredProducts.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-gray-500">
-              "{debouncedSearchTerm}"에 대한 검색 결과가 없습니다.
-            </p>
+            <p className="text-gray-500">검색 결과가 없습니다.</p>
           </div>
         ) : (
-          <ProductCartList
-            filteredProducts={filteredProducts}
-            getRemainingStock={getRemainingStock}
-            handleAddToCart={handleAddToCart}
-            isAdmin={isAdmin}
-          />
+          <ProductCartList />
         )}
       </section>
     </div>
