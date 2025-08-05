@@ -4,8 +4,8 @@ import Button from './Button';
 interface HeaderProps {
   isAdmin: boolean;
   setIsAdmin: (value: boolean) => void;
-  searchInputValue: string;
-  setSearchInputValue: (value: string) => void;
+  query: string;
+  setQuery: (value: string) => void;
   cart: CartItem[];
   totalCartItem: number;
 }
@@ -13,8 +13,8 @@ interface HeaderProps {
 export default function Header({
   isAdmin,
   setIsAdmin,
-  searchInputValue,
-  setSearchInputValue,
+  query,
+  setQuery,
   cart,
   totalCartItem,
 }: HeaderProps) {
@@ -29,8 +29,8 @@ export default function Header({
               <div className='ml-8 flex-1 max-w-md'>
                 <input
                   type='text'
-                  value={searchInputValue}
-                  onChange={(e) => setSearchInputValue(e.target.value)}
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
                   placeholder='상품 검색...'
                   className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500'
                 />

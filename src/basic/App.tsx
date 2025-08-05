@@ -15,6 +15,7 @@ import { calculateCartTotal, calculateItemTotal } from './utils/calculations/car
 import { useCouponsForm } from './hooks/coupons/useCouponsForm';
 import { useCart } from './hooks/cart/useCart';
 import useCheckout from './hooks/checkout/useCheckout';
+import { filteredProducts } from './utils/calculations/productCalculations';
 
 const App = () => {
   const { products, deleteProduct, updateProduct, addProduct } = useProducts();
@@ -48,8 +49,8 @@ const App = () => {
   const [isAdmin, setIsAdmin] = useState(false); // admin ui
   const [showCouponForm, setShowCouponForm] = useState(false); // 쿠폰 ui
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products'); // tab ui
-  const [searchInputValue, setSearchInputValue] = useState('');
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+  const [query, setQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
   const [showProductForm, setShowProductForm] = useState(false);
 
   // Admin
@@ -71,21 +72,13 @@ const App = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchInputValue);
+      setDebouncedQuery(query);
     }, 500);
     return () => clearTimeout(timer);
-  }, [searchInputValue]);
+  }, [query]);
 
   const totals = calculateCartTotal(cart, selectedCoupon);
-
-  const filteredProducts = debouncedSearchTerm
-    ? products.filter(
-        (product) =>
-          product.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-          (product.description &&
-            product.description.toLowerCase().includes(debouncedSearchTerm.toLowerCase())),
-      )
-    : products;
+  const filterProducts = filteredProducts(products, debouncedQuery);
 
   return (
     <div className='min-h-screen bg-gray-50'>
@@ -93,6 +86,7 @@ const App = () => {
         <div className='fixed top-20 right-4 z-50 space-y-2 max-w-sm'>
           {notifications.map((notification) => (
             <Toast
+              key={notification.id}
               type={notification.type}
               message={notification.message}
               onClose={() =>
@@ -105,8 +99,8 @@ const App = () => {
       <Header
         isAdmin={isAdmin}
         setIsAdmin={setIsAdmin}
-        searchInputValue={searchInputValue}
-        setSearchInputValue={setSearchInputValue}
+        query={query}
+        setQuery={setQuery}
         cart={cart}
         totalCartItem={totalCartItem}
       />
@@ -641,15 +635,13 @@ const App = () => {
                   <h2 className='text-2xl font-semibold text-gray-800'>전체 상품</h2>
                   <div className='text-sm text-gray-600'>총 {products.length}개 상품</div>
                 </div>
-                {filteredProducts.length === 0 ? (
+                {filterProducts.length === 0 ? (
                   <div className='text-center py-12'>
-                    <p className='text-gray-500'>
-                      "{debouncedSearchTerm}"에 대한 검색 결과가 없습니다.
-                    </p>
+                    <p className='text-gray-500'>"{debouncedQuery}"에 대한 검색 결과가 없습니다.</p>
                   </div>
                 ) : (
                   <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-                    {filteredProducts.map((product) => {
+                    {filterProducts?.map((product) => {
                       const remainingStock = getRemainingStock(product, cart);
 
                       return (
