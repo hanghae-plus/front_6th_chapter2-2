@@ -1,27 +1,35 @@
-import { CartItem as CartItemType, Coupon } from "../../../types";
-import { calculateCartTotal } from "../../service/cart";
+import { useAtom } from "jotai";
+import { selectedCouponAtom, cartTotalAtom } from "../../store";
 import CartItem from "./CartItem";
+import {
+  cartAtom,
+  completeOrderAtom,
+  removeFromCartAtom,
+  updateQuantityAtom,
+} from "../../store/cart";
+import { applyCouponAtom, couponsAtom } from "../../store/coupon";
 
-interface CartSectionProps {
-  cart: CartItemType[];
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  onRemove: (productId: string) => void;
-  onUpdateQuantity: (productId: string, quantity: number) => void;
-  onApplyCoupon: (coupon: Coupon) => void;
-  onCompleteOrder: () => void;
-}
+export const CartSection = () => {
+  const [cart] = useAtom(cartAtom);
+  const [coupons] = useAtom(couponsAtom);
+  const [selectedCoupon] = useAtom(selectedCouponAtom);
+  const [, removeFromCart] = useAtom(removeFromCartAtom);
+  const [, updateQuantity] = useAtom(updateQuantityAtom);
+  const [, applyCoupon] = useAtom(applyCouponAtom);
+  const [, completeOrder] = useAtom(completeOrderAtom);
+  const [totals] = useAtom(cartTotalAtom);
 
-export const CartSection = ({
-  cart,
-  coupons,
-  selectedCoupon,
-  onRemove,
-  onUpdateQuantity,
-  onApplyCoupon,
-  onCompleteOrder,
-}: CartSectionProps) => {
-  const totals = calculateCartTotal(cart, selectedCoupon);
+  const handleUpdateQuantity = (productId: string, quantity: number) => {
+    updateQuantity(productId, quantity);
+  };
+
+  const handleApplyCoupon = (coupon: any) => {
+    applyCoupon(coupon);
+  };
+
+  const handleCompleteOrder = () => {
+    completeOrder();
+  };
 
   return (
     <div className="sticky top-24 space-y-4">
@@ -65,9 +73,8 @@ export const CartSection = ({
               <CartItem
                 key={item.product.id}
                 item={item}
-                cart={cart}
-                onRemove={onRemove}
-                onUpdateQuantity={onUpdateQuantity}
+                onRemove={removeFromCart}
+                onUpdateQuantity={handleUpdateQuantity}
               />
             ))}
           </div>
@@ -89,7 +96,7 @@ export const CartSection = ({
                 value={selectedCoupon?.code || ""}
                 onChange={(e) => {
                   const coupon = coupons.find((c) => c.code === e.target.value);
-                  if (coupon) onApplyCoupon(coupon);
+                  if (coupon) handleApplyCoupon(coupon);
                 }}
               >
                 <option value="">쿠폰 선택</option>
@@ -136,7 +143,7 @@ export const CartSection = ({
             </div>
 
             <button
-              onClick={onCompleteOrder}
+              onClick={handleCompleteOrder}
               className="w-full mt-4 py-3 bg-yellow-400 text-gray-900 rounded-md font-medium hover:bg-yellow-500 transition-colors"
             >
               {totals.totalAfterDiscount.toLocaleString()}원 결제하기
