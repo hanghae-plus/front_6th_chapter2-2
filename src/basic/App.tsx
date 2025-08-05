@@ -121,7 +121,6 @@ const App = () => {
 
             {activeTab === 'products' ? (
               <ProductManagement
-                activeTab={activeTab}
                 products={products}
                 isAdmin={isAdmin}
                 cart={cart}

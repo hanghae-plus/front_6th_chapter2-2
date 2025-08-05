@@ -5,7 +5,6 @@ import Button from '../ui/Button';
 import ProductForm from './forms/ProductForm';
 
 interface ProductManagementProps {
-  activeTab: 'products' | 'coupons';
   products: Product[];
   isAdmin: boolean;
   cart: CartItem[];
@@ -22,7 +21,6 @@ interface ProductManagementProps {
 }
 
 export default function ProductManagement({
-  activeTab,
   products,
   isAdmin,
   cart,
@@ -85,7 +83,7 @@ export default function ProductManagement({
             </tr>
           </thead>
           <tbody className='bg-white divide-y divide-gray-200'>
-            {(activeTab === 'products' ? products : products).map((product) => (
+            {products.map((product) => (
               <tr key={product.id} className='hover:bg-gray-50'>
                 <td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900'>
                   {product.name}
