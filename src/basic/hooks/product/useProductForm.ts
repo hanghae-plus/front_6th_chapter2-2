@@ -30,11 +30,24 @@ export const useProductForm = (
     onSuccess?.();
   };
 
+  const handleProductEdit = (product: ProductWithUI) => {
+    setEditingProduct(product.id);
+    setProductForm({
+      name: product.name,
+      price: product.price,
+      stock: product.stock,
+      description: product.description || '',
+      discounts: product.discounts || [],
+    });
+    // setShowProductForm(true);
+  };
+
   return {
     productForm,
     setProductForm,
     handleProductSubmit,
     editingProduct,
     setEditingProduct,
+    handleProductEdit,
   };
 };

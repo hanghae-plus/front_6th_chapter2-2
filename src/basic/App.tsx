@@ -20,8 +20,14 @@ const App = () => {
   const { products, deleteProduct, updateProduct, addProduct } = useProducts();
   const { notifications, setNotifications, addNotification } = useNotifications();
 
-  const { productForm, setProductForm, editingProduct, setEditingProduct, handleProductSubmit } =
-    useProductForm(addProduct, updateProduct);
+  const {
+    productForm,
+    setProductForm,
+    editingProduct,
+    setEditingProduct,
+    handleProductSubmit,
+    handleProductEdit,
+  } = useProductForm(addProduct, updateProduct);
 
   // coupons---------------------!!
   const { coupons, setCoupons, selectedCoupon, setSelectedCoupon, applyCoupon } = useCoupons(
@@ -69,18 +75,6 @@ const App = () => {
     }, 500);
     return () => clearTimeout(timer);
   }, [searchInputValue]);
-
-  const startEditProduct = (product: ProductWithUI) => {
-    setEditingProduct(product.id);
-    setProductForm({
-      name: product.name,
-      price: product.price,
-      stock: product.stock,
-      description: product.description || '',
-      discounts: product.discounts || [],
-    });
-    setShowProductForm(true);
-  };
 
   const totals = calculateCartTotal(cart, selectedCoupon);
 
@@ -214,7 +208,10 @@ const App = () => {
                           <td className='px-6 py-4 whitespace-nowrap text-right text-sm font-medium'>
                             <Button
                               variant='link'
-                              onClick={() => startEditProduct(product)}
+                              onClick={() => {
+                                handleProductEdit(product);
+                                setShowProductForm(true);
+                              }}
                               className='text-indigo-600 hover:text-indigo-900 mr-3'
                             >
                               수정
