@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useProducts } from "./hooks/useProducts";
 import { useCoupons } from "./hooks/useCoupons";
 import { useCart } from "./hooks/useCart";
@@ -7,6 +7,7 @@ import Header from "./components/Header";
 import NotificationItem from "./components/NotificationItem";
 import AdminPage from "./pages/AdminPage";
 import CartPage from "./pages/CartPage";
+import { useDebounce } from "./utils/hooks/useDebounce";
 
 const App = () => {
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
@@ -32,16 +33,7 @@ const App = () => {
 
   // 검색창 내 검색어
   const [searchTerm, setSearchTerm] = useState("");
-  // 상품 검색어 - 자동으로 검색 반영되며 상품 페이지에 보여지는 값
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-
-  // 검색창 내 검색어가 바뀔 때 5초마다 바로 검색 반영
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   return (
     <div className="min-h-screen bg-gray-50">
