@@ -49,6 +49,12 @@ export const useCart = (
     [cart, addNotification, calculateRemainingStock]
   );
 
+  const removeFromCart = useCallback((productId: string) => {
+    setCart((prevCart) =>
+      prevCart.filter((item) => item.product.id !== productId)
+    );
+  }, []);
+
   const totalItemCount = useMemo(() => {
     return cart.reduce((sum, item) => sum + item.quantity, 0);
   }, [cart]);
@@ -58,5 +64,6 @@ export const useCart = (
     setCart,
     addToCart,
     totalItemCount,
+    removeFromCart,
   };
 };

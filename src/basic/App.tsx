@@ -18,7 +18,8 @@ const App = () => {
   const { products, setProducts, addProduct, updateProduct, deleteProduct } =
     useProducts(addNotification);
 
-  const { cart, setCart, addToCart, totalItemCount } = useCart(addNotification);
+  const { cart, setCart, addToCart, totalItemCount, removeFromCart } =
+    useCart(addNotification);
 
   const {
     coupons,
@@ -71,11 +72,11 @@ const App = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  const removeFromCart = useCallback((productId: string) => {
-    setCart((prevCart) =>
-      prevCart.filter((item) => item.product.id !== productId)
-    );
-  }, []);
+  // const removeFromCart = useCallback((productId: string) => {
+  //   setCart((prevCart) =>
+  //     prevCart.filter((item) => item.product.id !== productId)
+  //   );
+  // }, []);
 
   const updateQuantity = useCallback(
     (productId: string, newQuantity: number) => {
