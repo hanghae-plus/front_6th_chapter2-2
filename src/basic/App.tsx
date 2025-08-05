@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { CartItem, Coupon, Product } from "../types";
+import { formatPrice } from "./utils/formatters";
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -133,22 +134,6 @@ const App = () => {
       return true;
     }
     return false;
-  };
-
-  const formatPrice = (
-    price: number,
-    isSoldOut: boolean,
-    isAdmin: boolean
-  ): string => {
-    if (isSoldOut) {
-      return "SOLD OUT";
-    }
-
-    if (isAdmin) {
-      return `${price.toLocaleString()}원`;
-    }
-
-    return `₩${price.toLocaleString()}`;
   };
 
   //TODO : 할인 최대 적용 할인 금액 구하기
