@@ -108,7 +108,7 @@ export function useProductForm(
     price: 0,
     stock: 0,
     description: '',
-    discounts: [] as Array<{ quantity: number; rate: number }>,
+    discounts: [],
   })
 
   const startEditProduct = (product: ProductWithUI) => {

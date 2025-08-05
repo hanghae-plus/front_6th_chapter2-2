@@ -10,11 +10,6 @@
 // - useCart: 장바구니 상태 관리
 // - useCoupons: 쿠폰 목록 관리
 // - useDebounce: 검색어 디바운싱
-//
-// 하위 컴포넌트:
-// - SearchBar: 검색 입력
-// - ProductList: 상품 목록 표시
-// - Cart: 장바구니 표시 및 결제
 
 import { useEffect, useState } from 'react'
 import { CartItem, Coupon } from '../../types'
@@ -22,6 +17,7 @@ import { ProductWithUI } from '../types'
 import { CartHeader } from './ui/CartHeader'
 import { ProductList } from './ui/ProductList'
 import { Cart } from './ui/Cart'
+import { useDebounce } from '../utils/hooks/useDebounce'
 
 export function CartPage({
   isAdmin,
@@ -36,6 +32,7 @@ export function CartPage({
   updateQuantity,
   completeOrder,
   handleSelectCoupon,
+  getFilteredProducts,
 }: {
   isAdmin: boolean
   setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>
@@ -59,36 +56,19 @@ export function CartPage({
     e: React.ChangeEvent<HTMLSelectElement>,
     coupons: Coupon[],
   ) => void
+  getFilteredProducts: (searchTerm: string) => ProductWithUI[]
 }) {
   // TODO: 구현
   const [searchTerm, setSearchTerm] = useState('')
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
   const [totalItemCount, setTotalItemCount] = useState(0)
+  const debouncedSearchTerm = useDebounce(searchTerm, 500)
 
   useEffect(() => {
     const count = cart.reduce((sum, item) => sum + item.quantity, 0)
     setTotalItemCount(count)
   }, [cart])
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm)
-    }, 500)
-    return () => clearTimeout(timer)
-  }, [searchTerm])
-
-  const filteredProducts = debouncedSearchTerm
-    ? products.filter(
-        (product) =>
-          product.name
-            .toLowerCase()
-            .includes(debouncedSearchTerm.toLowerCase()) ||
-          (product.description &&
-            product.description
-              .toLowerCase()
-              .includes(debouncedSearchTerm.toLowerCase())),
-      )
-    : products
+  const filteredProducts = getFilteredProducts(debouncedSearchTerm)
 
   const headerState = {
     isAdmin,

@@ -24,10 +24,11 @@
 // - getRemainingStock: 재고 확인 함수
 // - clearCart: 장바구니 비우기 함수
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { CartItem, Coupon } from '../../types'
 import { ProductWithUI } from '../types'
 import { getRemainingStock, calculateItemTotal } from '../models/cart'
+import { useLocalStorage } from '../utils/hooks/useLocalStorage'
 
 export function useCart(
   addNotification: (
@@ -38,17 +39,7 @@ export function useCart(
   // TODO: 구현
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null)
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem('cart')
-    if (saved) {
-      try {
-        return JSON.parse(saved)
-      } catch {
-        return []
-      }
-    }
-    return []
-  })
+  const [cart, setCart] = useLocalStorage<CartItem[]>('cart', [])
 
   const addToCart = useCallback(
     (product: ProductWithUI) => {
@@ -88,7 +79,7 @@ export function useCart(
 
       addNotification('장바구니에 담았습니다', 'success')
     },
-    [addNotification, cart],
+    [addNotification, cart, setCart],
   )
 
   const removeFromCart = useCallback(
@@ -195,14 +186,6 @@ export function useCart(
     if (coupon) applyCoupon(coupon)
     else setSelectedCoupon(null)
   }
-
-  useEffect(() => {
-    if (cart.length > 0) {
-      localStorage.setItem('cart', JSON.stringify(cart))
-    } else {
-      localStorage.removeItem('cart')
-    }
-  }, [cart])
 
   return {
     cart,

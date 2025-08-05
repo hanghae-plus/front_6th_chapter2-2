@@ -13,9 +13,10 @@
 // - addProductDiscount: 할인 규칙 추가
 // - removeProductDiscount: 할인 규칙 삭제
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback } from 'react'
 import { initialProducts } from '../constants'
 import { ProductWithUI } from '../types'
+import { useLocalStorage } from '../utils/hooks/useLocalStorage'
 
 export function useProducts(
   addNotification: (
@@ -25,21 +26,10 @@ export function useProducts(
 ) {
   // TODO: 구현
 
-  const [products, setProducts] = useState<ProductWithUI[]>(() => {
-    const saved = localStorage.getItem('products')
-    if (saved) {
-      try {
-        return JSON.parse(saved)
-      } catch {
-        return initialProducts
-      }
-    }
-    return initialProducts
-  })
-
-  useEffect(() => {
-    localStorage.setItem('products', JSON.stringify(products))
-  }, [products])
+  const [products, setProducts] = useLocalStorage<ProductWithUI[]>(
+    'products',
+    initialProducts,
+  )
 
   const addProduct = useCallback(
     (newProduct: Omit<ProductWithUI, 'id'>) => {
@@ -50,7 +40,7 @@ export function useProducts(
       setProducts((prev) => [...prev, product])
       addNotification('상품이 추가되었습니다.', 'success')
     },
-    [addNotification],
+    [addNotification, setProducts],
   )
 
   const updateProduct = useCallback(
@@ -62,7 +52,7 @@ export function useProducts(
       )
       addNotification('상품이 수정되었습니다.', 'success')
     },
-    [addNotification],
+    [addNotification, setProducts],
   )
 
   const deleteProduct = useCallback(
@@ -73,10 +63,24 @@ export function useProducts(
     [addNotification, setProducts],
   )
 
+  const getFilteredProducts = useCallback(
+    (searchTerm: string) => {
+      if (!searchTerm) return products
+
+      return products.filter(
+        (product) =>
+          product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          product.description?.toLowerCase().includes(searchTerm.toLowerCase()),
+      )
+    },
+    [products],
+  )
+
   return {
     products,
     addProduct,
     updateProduct,
     deleteProduct,
+    getFilteredProducts,
   }
 }

@@ -21,8 +21,13 @@ const App = () => {
     [],
   )
 
-  const { products, addProduct, updateProduct, deleteProduct } =
-    useProducts(addNotification)
+  const {
+    products,
+    addProduct,
+    updateProduct,
+    deleteProduct,
+    getFilteredProducts,
+  } = useProducts(addNotification)
   const {
     cart,
     completeOrder,
@@ -70,6 +75,7 @@ const App = () => {
     updateQuantity,
     completeOrder,
     getRemainingStock,
+    getFilteredProducts,
   }
 
   return (
