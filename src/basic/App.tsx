@@ -8,6 +8,7 @@ import { useProducts } from "./models/products/useProducts";
 import { useNotifications } from "./hooks/useNotifications";
 import { useCart } from "./models/cart/useCart";
 import { calculateRemainingStock } from "./utils/calculateRemainingStock";
+import { useCoupon } from "./models/coupon/useCoupon";
 
 const App = () => {
   const { notifications, setNotifications, addNotification } =
@@ -17,21 +18,17 @@ const App = () => {
 
   const { cart, setCart, addToCart } = useCart(addNotification);
 
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem("coupons");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialCoupons;
-      }
-    }
-    return initialCoupons;
-  });
+  const {
+    coupons,
+    setCoupons,
+    addCoupon,
+    deleteCoupon,
+    selectedCoupon,
+    setSelectedCoupon,
+  } = useCoupon(addNotification);
 
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  // const [notifications, setNotifications] = useState<Notification[]>([]);
+
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
     "products"
@@ -220,29 +217,29 @@ const App = () => {
     setSelectedCoupon(null);
   }, [addNotification]);
 
-  const addCoupon = useCallback(
-    (newCoupon: Coupon) => {
-      const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
-      if (existingCoupon) {
-        addNotification("이미 존재하는 쿠폰 코드입니다.", "error");
-        return;
-      }
-      setCoupons((prev) => [...prev, newCoupon]);
-      addNotification("쿠폰이 추가되었습니다.", "success");
-    },
-    [coupons, addNotification]
-  );
+  // const addCoupon = useCallback(
+  //   (newCoupon: Coupon) => {
+  //     const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
+  //     if (existingCoupon) {
+  //       addNotification("이미 존재하는 쿠폰 코드입니다.", "error");
+  //       return;
+  //     }
+  //     setCoupons((prev) => [...prev, newCoupon]);
+  //     addNotification("쿠폰이 추가되었습니다.", "success");
+  //   },
+  //   [coupons, addNotification]
+  // );
 
-  const deleteCoupon = useCallback(
-    (couponCode: string) => {
-      setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
-      if (selectedCoupon?.code === couponCode) {
-        setSelectedCoupon(null);
-      }
-      addNotification("쿠폰이 삭제되었습니다.", "success");
-    },
-    [selectedCoupon, addNotification]
-  );
+  // const deleteCoupon = useCallback(
+  //   (couponCode: string) => {
+  //     setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
+  //     if (selectedCoupon?.code === couponCode) {
+  //       setSelectedCoupon(null);
+  //     }
+  //     addNotification("쿠폰이 삭제되었습니다.", "success");
+  //   },
+  //   [selectedCoupon, addNotification]
+  // );
 
   const handleProductSubmit = (e: React.FormEvent) => {
     e.preventDefault();
