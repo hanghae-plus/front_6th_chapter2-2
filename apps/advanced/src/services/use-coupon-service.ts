@@ -17,11 +17,14 @@ export const useCouponService = ({ addNotification }: Props) => {
   const cartStore = useCartStore();
 
   const getTotalWithCouponDiscount = useCallback(() => {
+    if (!selectedCoupon) return 0;
+
     return calculateTotalWithCouponDiscount(cartStore.cart, selectedCoupon);
   }, [cartStore.cart, selectedCoupon]);
 
   const validateCouponEligibility = useCallback(
     (coupon: Coupon) => {
+      if (!selectedCoupon) return;
       const totalAfterDiscount = calculateTotalWithCouponDiscount(
         cartStore.cart,
         selectedCoupon
@@ -32,7 +35,7 @@ export const useCouponService = ({ addNotification }: Props) => {
         );
       }
     },
-    [calculateTotalWithCouponDiscount]
+    [cartStore.cart, selectedCoupon]
   );
 
   const addCoupon = useCallback(

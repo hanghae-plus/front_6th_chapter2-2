@@ -1,3 +1,4 @@
+import { CartItem } from '@/models/cart';
 import { ProductView } from '@/models/product';
 import { useProductStore } from '@/store';
 import { useCallback } from 'react';
@@ -7,7 +8,7 @@ export const useProductService = () => {
   const productStore = useProductStore();
 
   const formatPrice = useCallback(
-    (price: number, productId: string, cart: any[]): string => {
+    (price: number, productId: string, cart: CartItem[]): string => {
       const product = productStore.findProductById(productId);
       if (!product) return `₩${price.toLocaleString()}`;
 

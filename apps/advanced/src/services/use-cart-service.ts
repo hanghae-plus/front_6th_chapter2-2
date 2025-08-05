@@ -65,7 +65,7 @@ export const useCartService = ({ addNotification }: Props) => {
         return;
       }
     },
-    [cartStore.cart, addNotification, getRemainingStock]
+    [cartStore, addNotification]
   );
 
   const removeFromCart = useCallback((productId: string) => {

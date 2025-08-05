@@ -3,51 +3,52 @@ import {
   NotificationType,
   notificationTypeSchema
 } from '@/models/notification';
-import { createContext, use, useState } from 'react';
+import { proxy, useSnapshot } from 'valtio';
 
-const NotificationContext = createContext<{
-  notifications: Notification[];
-  addNotification: (message: string, type?: NotificationType) => void;
-  removeNotification: (id: string) => void;
-} | null>(null);
+const state = proxy<{ notifications: Notification[] }>({ notifications: [] });
+
+// 알림 타이머를 저장하는 Map
+const notificationTimers = new Map<string, NodeJS.Timeout>();
 
 export const useNotificationService = () => {
-  const service = use(NotificationContext);
+  const { notifications } = useSnapshot(state);
 
-  if (!service) {
-    throw new Error('');
-  }
+  const removeNotification = (id: string) => {
+    // 기존 타이머가 있다면 제거
+    const existingTimer = notificationTimers.get(id);
+    if (existingTimer) {
+      clearTimeout(existingTimer);
+      notificationTimers.delete(id);
+    }
 
-  return service;
-};
-
-export const NotificationProvider = ({
-  children
-}: {
-  children: React.ReactNode;
-}) => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+    state.notifications = state.notifications.filter(
+      notification => notification.id !== id
+    );
+  };
 
   const addNotification = (
     message: string,
     type: NotificationType = notificationTypeSchema.enum.success
   ) => {
-    const id = Date.now().toString();
-    setNotifications(prev => [...prev, { id, message, type }]);
+    // 동일한 메시지의 알림이 이미 존재하는지 확인
+    const existingNotification = state.notifications.find(
+      notification => notification.message === message
+    );
 
-    setTimeout(() => {
+    if (existingNotification) {
+      // 기존 알림의 타이머를 리셋
+      removeNotification(existingNotification.id);
+    }
+
+    const id = Date.now().toString();
+    state.notifications.push({ id, message, type });
+
+    // 새로운 타이머 설정
+    const timer = setTimeout(() => {
       removeNotification(id);
     }, 3000);
+    notificationTimers.set(id, timer);
   };
 
-  const removeNotification = (id: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== id));
-  };
-
-  return (
-    <NotificationContext.Provider
-      value={{ notifications, addNotification, removeNotification }}>
-      {children}
-    </NotificationContext.Provider>
-  );
+  return { notifications, addNotification, removeNotification };
 };
