@@ -1,19 +1,21 @@
+import { useAtom } from "jotai";
 import { CartItem as CartItemType } from "../../../types";
 import { calculateItemTotal } from "../../service/cart";
+import { cartAtom } from "../../store/cart";
 
 interface CartItemProps {
   item: CartItemType;
-  cart: CartItemType[];
   onRemove: (productId: string) => void;
   onUpdateQuantity: (productId: string, quantity: number) => void;
 }
 
 export const CartItem = ({
   item,
-  cart,
   onRemove,
   onUpdateQuantity,
 }: CartItemProps) => {
+  const [cart] = useAtom(cartAtom);
+
   const itemTotal = calculateItemTotal(item, cart);
   const originalPrice = item.product.price * item.quantity;
   const hasDiscount = itemTotal < originalPrice;
