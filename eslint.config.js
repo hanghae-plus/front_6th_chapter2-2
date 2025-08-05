@@ -61,6 +61,7 @@ export default defineConfig([
       'react/prop-types': 'off',
       'react/react-in-jsx-scope': 'off',
       'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
 
       // TypeScript 관련 규칙
       '@typescript-eslint/no-explicit-any': 'warn',
