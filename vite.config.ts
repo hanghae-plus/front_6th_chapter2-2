@@ -5,11 +5,6 @@ import { defineConfig as defineTestConfig, mergeConfig } from "vitest/config";
 export default mergeConfig(
   defineConfig({
     plugins: [react()],
-    resolve: {
-      alias: {
-        "@": "./src",
-      },
-    },
   }),
   defineTestConfig({
     test: {

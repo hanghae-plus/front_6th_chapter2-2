@@ -3,7 +3,7 @@
 //
 // 구현할 함수들:
 
-import { CartItem } from "../../types/cart.type";
+import { CartItem } from "../../types/product.type";
 
 // 1. calculateItemTotal(item): 개별 아이템의 할인 적용 후 총액 계산
 export const calculateItemTotal = (item: CartItem): number => {
