@@ -23,6 +23,7 @@ import { ProductWithUI } from '../constants';
 import { Icon } from './icons';
 import { formatKRWPrice } from '../utils/formatters';
 import { useDebounce } from '../utils/hooks/useDebounce';
+import { useLocalStorage } from '../utils/hooks/useLocalStorage';
 
 interface CartPageProps {
   setIsAdmin: (isAdmin: boolean) => void;
@@ -46,18 +47,7 @@ export function CartPage({
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem('cart');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return [];
-      }
-    }
-    return [];
-  });
-
+  const [cart, setCart] = useLocalStorage<CartItem[]>('cart', []);
   const [totalItemCount, setTotalItemCount] = useState(0);
 
   useEffect(() => {
@@ -80,14 +70,6 @@ export function CartPage({
 
     return remaining;
   };
-
-  useEffect(() => {
-    if (cart.length > 0) {
-      localStorage.setItem('cart', JSON.stringify(cart));
-    } else {
-      localStorage.removeItem('cart');
-    }
-  }, [cart]);
 
   const getMaxApplicableDiscount = (item: CartItem): number => {
     const { discounts } = item.product;

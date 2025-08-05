@@ -1,35 +1,15 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 
 import type { Coupon, Notification as NotificationType, NotificationVariant } from '../types';
 import { AdminPage } from './components/AdminPage';
 import { CartPage } from './components/CartPage';
 import { Notifications } from './components/ui/Notifications';
 import { initialCoupons, initialProducts, type ProductWithUI } from './constants';
+import { useLocalStorage } from './utils/hooks/useLocalStorage';
 
 const App = () => {
-  const [products, setProducts] = useState<ProductWithUI[]>(() => {
-    const saved = localStorage.getItem('products');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialProducts;
-      }
-    }
-    return initialProducts;
-  });
-
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem('coupons');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialCoupons;
-      }
-    }
-    return initialCoupons;
-  });
+  const [products, setProducts] = useLocalStorage<ProductWithUI[]>('products', initialProducts);
+  const [coupons, setCoupons] = useLocalStorage<Coupon[]>('coupons', initialCoupons);
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [notifications, setNotifications] = useState<NotificationType[]>([]);
@@ -46,14 +26,6 @@ const App = () => {
     },
     []
   );
-
-  useEffect(() => {
-    localStorage.setItem('products', JSON.stringify(products));
-  }, [products]);
-
-  useEffect(() => {
-    localStorage.setItem('coupons', JSON.stringify(coupons));
-  }, [coupons]);
 
   return (
     <div className='min-h-screen bg-gray-50'>
