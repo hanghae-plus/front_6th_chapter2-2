@@ -1,7 +1,8 @@
 import { useCallback, useState } from "react";
-import { Coupon } from "../../../types";
+import { CartItem, Coupon } from "../../../types";
 import { initialCoupons } from "./constants";
 import { NotificationType } from "../../hooks/useNotifications";
+import { calculateCartTotal } from "../../utils/calculateCartTotal";
 
 export const useCoupon = (
   addNotification: (message: string, type: NotificationType) => void
@@ -44,6 +45,27 @@ export const useCoupon = (
     [selectedCoupon, addNotification]
   );
 
+  const applyCoupon = useCallback(
+    (coupon: Coupon, cart: CartItem[]) => {
+      const currentTotal = calculateCartTotal(
+        cart,
+        selectedCoupon
+      ).totalAfterDiscount;
+
+      if (currentTotal < 10000 && coupon.discountType === "percentage") {
+        addNotification(
+          "percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.",
+          "error"
+        );
+        return;
+      }
+
+      setSelectedCoupon(coupon);
+      addNotification("쿠폰이 적용되었습니다.", "success");
+    },
+    [addNotification, calculateCartTotal]
+  );
+
   return {
     coupons,
     setCoupons,
@@ -51,5 +73,6 @@ export const useCoupon = (
     deleteCoupon,
     selectedCoupon,
     setSelectedCoupon,
+    applyCoupon,
   };
 };

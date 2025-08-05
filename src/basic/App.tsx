@@ -9,6 +9,8 @@ import { useCart } from "./models/cart/useCart";
 import { calculateRemainingStock } from "./utils/calculateRemainingStock";
 import { useCoupon } from "./models/coupon/useCoupon";
 import { useProductForm } from "./models/products/useProductForm";
+import { calculateCartTotal } from "./utils/calculateCartTotal";
+import { calculateItemTotal } from "./utils/calculateItemTotal";
 
 const App = () => {
   const { notifications, setNotifications, addNotification } =
@@ -25,6 +27,7 @@ const App = () => {
     deleteCoupon,
     selectedCoupon,
     setSelectedCoupon,
+    applyCoupon,
   } = useCoupon(addNotification);
 
   const [isAdmin, setIsAdmin] = useState(false);
@@ -42,20 +45,9 @@ const App = () => {
     setShowProductForm,
     startEditProduct,
   } = useProductForm();
-  // const [showProductForm, setShowProductForm] = useState(false);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-
-  // Admin
-  // const [editingProduct, setEditingProduct] = useState<string | null>(null);
-
-  // const [productForm, setProductForm] = useState({
-  //   name: "",
-  //   price: 0,
-  //   stock: 0,
-  //   description: "",
-  //   discounts: [] as Array<{ quantity: number; rate: number }>,
-  // });
 
   const [couponForm, setCouponForm] = useState({
     name: "",
@@ -70,65 +62,6 @@ const App = () => {
       return true;
     }
     return false;
-  };
-
-  //TODO : 할인 최대 적용 할인 금액 구하기
-  const getMaxApplicableDiscount = (item: CartItem): number => {
-    const { discounts } = item.product;
-    const { quantity } = item;
-
-    const baseDiscount = discounts.reduce((maxDiscount, discount) => {
-      return quantity >= discount.quantity && discount.rate > maxDiscount
-        ? discount.rate
-        : maxDiscount;
-    }, 0);
-
-    const hasBulkPurchase = cart.some((cartItem) => cartItem.quantity >= 10);
-    if (hasBulkPurchase) {
-      return Math.min(baseDiscount + 0.05, 0.5); // 대량 구매 시 추가 5% 할인
-    }
-
-    return baseDiscount;
-  };
-
-  const calculateItemTotal = (item: CartItem): number => {
-    const { price } = item.product;
-    const { quantity } = item;
-    const discount = getMaxApplicableDiscount(item);
-
-    return Math.round(price * quantity * (1 - discount));
-  };
-
-  const calculateCartTotal = (): {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
-  } => {
-    let totalBeforeDiscount = 0;
-    let totalAfterDiscount = 0;
-
-    cart.forEach((item) => {
-      const itemPrice = item.product.price * item.quantity;
-      totalBeforeDiscount += itemPrice;
-      totalAfterDiscount += calculateItemTotal(item);
-    });
-
-    if (selectedCoupon) {
-      if (selectedCoupon.discountType === "amount") {
-        totalAfterDiscount = Math.max(
-          0,
-          totalAfterDiscount - selectedCoupon.discountValue
-        );
-      } else {
-        totalAfterDiscount = Math.round(
-          totalAfterDiscount * (1 - selectedCoupon.discountValue / 100)
-        );
-      }
-    }
-
-    return {
-      totalBeforeDiscount: Math.round(totalBeforeDiscount),
-      totalAfterDiscount: Math.round(totalAfterDiscount),
-    };
   };
 
   const [totalItemCount, setTotalItemCount] = useState(0);
@@ -194,24 +127,6 @@ const App = () => {
     [products, removeFromCart, addNotification]
   );
 
-  const applyCoupon = useCallback(
-    (coupon: Coupon) => {
-      const currentTotal = calculateCartTotal().totalAfterDiscount;
-
-      if (currentTotal < 10000 && coupon.discountType === "percentage") {
-        addNotification(
-          "percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.",
-          "error"
-        );
-        return;
-      }
-
-      setSelectedCoupon(coupon);
-      addNotification("쿠폰이 적용되었습니다.", "success");
-    },
-    [addNotification, calculateCartTotal]
-  );
-
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
     addNotification(
@@ -268,7 +183,7 @@ const App = () => {
   //   setShowProductForm(true);
   // };
 
-  const totals = calculateCartTotal();
+  const totals = calculateCartTotal(cart, selectedCoupon);
 
   const filteredProducts = debouncedSearchTerm
     ? products.filter(
@@ -1153,7 +1068,7 @@ const App = () => {
                   ) : (
                     <div className="space-y-3">
                       {cart.map((item) => {
-                        const itemTotal = calculateItemTotal(item);
+                        const itemTotal = calculateItemTotal(item, cart);
                         const originalPrice =
                           item.product.price * item.quantity;
                         const hasDiscount = itemTotal < originalPrice;
@@ -1254,7 +1169,7 @@ const App = () => {
                             const coupon = coupons.find(
                               (c) => c.code === e.target.value
                             );
-                            if (coupon) applyCoupon(coupon);
+                            if (coupon) applyCoupon(coupon, cart);
                             else setSelectedCoupon(null);
                           }}
                         >
