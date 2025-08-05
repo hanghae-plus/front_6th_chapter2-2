@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
-import { Coupon } from '../models/entities';
+import { CartItem, Coupon } from '../models/entities';
 import { useNotifications } from './useNotifications.ts';
+import { calculateCartTotal } from '../utils/calulator.ts';
 
 const initialCoupons: Coupon[] = [
   {
@@ -16,7 +17,7 @@ const initialCoupons: Coupon[] = [
     discountValue: 10,
   },
 ];
-export const useCoupons = () => {
+export const useCoupons = (cart: CartItem[]) => {
   const { addNotification } = useNotifications();
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [coupons, setCoupons] = useState<Coupon[]>(() => {
@@ -53,9 +54,44 @@ export const useCoupons = () => {
     },
     [selectedCoupon, addNotification]
   );
+  // const calculateCartTotal = (): {
+  //   totalBeforeDiscount: number;
+  //   totalAfterDiscount: number;
+  // } => {
+  //   let totalBeforeDiscount = 0;
+  //   let totalAfterDiscount = 0;
+  //
+  //   cart.forEach(item => {
+  //     const itemPrice = item.product.price * item.quantity;
+  //     totalBeforeDiscount += itemPrice;
+  //     totalAfterDiscount += calculateItemTotal(item);
+  //   });
+  //
+  //   if (selectedCoupon) {
+  //     if (selectedCoupon.discountType === 'amount') {
+  //       totalAfterDiscount = Math.max(
+  //         0,
+  //         totalAfterDiscount - selectedCoupon.discountValue
+  //       );
+  //     } else {
+  //       totalAfterDiscount = Math.round(
+  //         totalAfterDiscount * (1 - selectedCoupon.discountValue / 100)
+  //       );
+  //     }
+  //   }
+  //
+  //   return {
+  //     totalBeforeDiscount: Math.round(totalBeforeDiscount),
+  //     totalAfterDiscount: Math.round(totalAfterDiscount),
+  //   };
+  // };
+
   const applyCoupon = useCallback(
     (coupon: Coupon) => {
-      const currentTotal = calculateCartTotal().totalAfterDiscount;
+      const currentTotal = calculateCartTotal(
+        cart,
+        selectedCoupon
+      ).totalAfterDiscount;
 
       if (currentTotal < 10000 && coupon.discountType === 'percentage') {
         addNotification(

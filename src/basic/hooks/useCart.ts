@@ -1,7 +1,7 @@
 import { useNotifications } from './useNotifications.ts';
 import { useCallback, useEffect, useState } from 'react';
 import { ProductWithUI } from '../App.tsx';
-import { getRemainingStock } from '../utils/getRemainingStock.ts';
+import { getRemainingStock } from '../utils/formatters.ts';
 import { CartItem } from '../models/entities';
 import { useProducts } from './useProducts.ts';
 
@@ -19,12 +19,12 @@ export const useCart = () => {
     }
     return [];
   });
-  const [totalItemCount, setTotalItemCount] = useState(0);
+  const [_, setTotalItemCount] = useState(0);
 
   const addToCart = useCallback(
     (product: ProductWithUI) => {
       const cartItem = cart.find(item => item.product.id === product.id);
-      const remainingStock = getRemainingStock(product, cartItem as CartItem);
+      const remainingStock = getRemainingStock(product, cartItem?.quantity);
       if (remainingStock <= 0) {
         addNotification('재고가 부족합니다!', 'error');
         return;

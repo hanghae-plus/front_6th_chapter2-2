@@ -1,13 +1,19 @@
-import React from 'react';
-import { getRemainingStock } from '../../utils/getRemainingStock.ts';
 import { ProductIcon } from '../icons/ProductIcon.tsx';
 import Button from '../ui/Button.tsx';
-import { useCart } from '../../hooks/useCart.ts';
 import { useProducts } from '../../hooks/useProducts.ts';
+import { formatters, getRemainingStock } from '../../utils/formatters.ts';
+import { CartItem, Product } from '../../models/entities';
 
-const ProductList = () => {
+const ProductList = ({
+  debouncedSearchTerm,
+  cart,
+  addToCart,
+}: {
+  cart: CartItem[];
+  addToCart: (product: Product) => void;
+  debouncedSearchTerm: string;
+}) => {
   const { products } = useProducts();
-  const { cart, addToCart, removeFromCart, updateQuantity } = useCart();
   const filteredProducts = debouncedSearchTerm
     ? products.filter(
         product =>
@@ -38,7 +44,13 @@ const ProductList = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredProducts.map(product => {
-            const remainingStock = getRemainingStock(product, cart);
+            const cartItem = cart.find(item => item.product.id === product.id);
+            const remainingStock = getRemainingStock(
+              product,
+              cartItem?.quantity
+            );
+            const displayPrice =
+              remainingStock <= 0 ? 'SOLD OUT' : formatters(product.price);
 
             return (
               <div
@@ -76,7 +88,7 @@ const ProductList = () => {
                   {/* 가격 정보 */}
                   <div className="mb-3">
                     <p className="text-lg font-bold text-gray-900">
-                      {formatPrice(product.price, product.id)}
+                      {displayPrice}
                     </p>
                     {product.discounts.length > 0 && (
                       <p className="text-xs text-gray-500">

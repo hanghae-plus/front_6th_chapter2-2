@@ -1,6 +1,63 @@
-import React from 'react';
+import { CartItem, Coupon, Product } from '../../models/entities';
+import { useCallback, useState } from 'react';
+import { useNotifications } from '../../hooks/useNotifications.ts';
+import { calculateCartTotal } from '../../utils/calulator.ts';
 
-const CartList = () => {
+interface CartListProps {
+  cart: CartItem[];
+  coupons: Coupon[];
+  addToCart: (product: Product) => void;
+  onRemoveFromCart: (productId: string) => void;
+  onUpdateQuantity: (productId: string, quantity: number) => void;
+  onApplyCoupon: (coupon: Coupon) => void;
+
+  onResetCart: () => void;
+}
+const CartList = ({
+  cart,
+  coupons,
+  onRemoveFromCart,
+  onUpdateQuantity,
+  onApplyCoupon,
+  onResetCart,
+}: CartListProps) => {
+  const { addNotification } = useNotifications();
+  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+  const getMaxApplicableDiscount = (item: CartItem): number => {
+    const { discounts } = item.product;
+    const { quantity } = item;
+
+    const baseDiscount = discounts.reduce((maxDiscount, discount) => {
+      return quantity >= discount.quantity && discount.rate > maxDiscount
+        ? discount.rate
+        : maxDiscount;
+    }, 0);
+
+    const hasBulkPurchase = cart.some(cartItem => cartItem.quantity >= 10);
+    if (hasBulkPurchase) {
+      return Math.min(baseDiscount + 0.05, 0.5); // 대량 구매 시 추가 5% 할인
+    }
+
+    return baseDiscount;
+  };
+  const calculateItemTotal = (item: CartItem): number => {
+    const { price } = item.product;
+    const { quantity } = item;
+    const discount = getMaxApplicableDiscount(item);
+
+    return Math.round(price * quantity * (1 - discount));
+  };
+
+  const completeOrder = useCallback(() => {
+    const orderNumber = `ORD-${Date.now()}`;
+    addNotification(
+      `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
+      'success'
+    );
+    onResetCart();
+    setSelectedCoupon(null);
+  }, [addNotification]);
+  const totals = calculateCartTotal(cart, selectedCoupon);
   return (
     <div className="lg:col-span-1">
       <div className="sticky top-24 space-y-4">
@@ -58,7 +115,7 @@ const CartList = () => {
                         {item.product.name}
                       </h4>
                       <button
-                        onClick={() => removeFromCart(item.product.id)}
+                        onClick={() => onRemoveFromCart(item.product.id)}
                         className="text-gray-400 hover:text-red-500 ml-2"
                       >
                         <svg
@@ -80,7 +137,7 @@ const CartList = () => {
                       <div className="flex items-center">
                         <button
                           onClick={() =>
-                            updateQuantity(item.product.id, item.quantity - 1)
+                            onUpdateQuantity(item.product.id, item.quantity - 1)
                           }
                           className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                         >
@@ -91,7 +148,7 @@ const CartList = () => {
                         </span>
                         <button
                           onClick={() =>
-                            updateQuantity(item.product.id, item.quantity + 1)
+                            onUpdateQuantity(item.product.id, item.quantity + 1)
                           }
                           className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                         >
@@ -133,7 +190,7 @@ const CartList = () => {
                   value={selectedCoupon?.code || ''}
                   onChange={e => {
                     const coupon = coupons.find(c => c.code === e.target.value);
-                    if (coupon) applyCoupon(coupon);
+                    if (coupon) onApplyCoupon(coupon);
                     else setSelectedCoupon(null);
                   }}
                 >
