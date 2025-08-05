@@ -7,8 +7,8 @@ import {
   Tab,
 } from "@/types/product.type";
 import { Dispatch, SetStateAction } from "react";
-import CouponSelector from "./CouponSelector";
-import ProductsTab from "./ProductsTab";
+import CouponSelector from "../coupon";
+import ProductsTab from "../product";
 
 type Props = {
   activeTab: Tab;

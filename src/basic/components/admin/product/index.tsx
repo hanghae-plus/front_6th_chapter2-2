@@ -5,8 +5,8 @@ import {
   Tab,
 } from "@/types/product.type";
 import React, { Dispatch, SetStateAction } from "react";
-import ProductForm from "./ProductForm";
-import ProductTable from "./ProductTable";
+import ProductForm from "./product-form";
+import ProductTable from "./product-table";
 
 type Props = {
   activeTab: Tab;

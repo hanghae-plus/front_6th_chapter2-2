@@ -12,9 +12,9 @@ import {
   ProductWithUI,
   Tab,
 } from "../types/product.type";
-import AdminDashBoard from "./components/AdminDashBoard";
-import Header from "./components/Header";
-import Notification from "./components/Notification";
+import AdminDashBoard from "./components/admin";
+import Header from "./components/admin/header";
+import Notification from "./components/common/notification";
 
 const App = () => {
   const [products, setProducts] = useState<ProductWithUI[]>(() => {

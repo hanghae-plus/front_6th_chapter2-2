@@ -3,7 +3,7 @@ import {
   ProductForm as ProductFormType,
 } from "@/types/product.type";
 import React, { Dispatch, SetStateAction } from "react";
-import DiscountPolicy from "./DiscountPolicy";
+import DiscountPolicy from "./discount-policy";
 
 type Props = {
   editingProduct: EditProduct;
