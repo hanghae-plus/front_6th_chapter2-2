@@ -1,11 +1,12 @@
 import { ReactNode } from 'react';
 
 interface IconButtonProps {
-  children: ReactNode;
+  children?: ReactNode;
   variant?: 'default' | 'danger' | 'toast' | 'error';
   className?: string;
   type?: 'button' | 'submit' | 'reset';
   onClick?: () => void;
+  icon?: ReactNode;
 }
 
 export default function IconButton({
@@ -14,6 +15,7 @@ export default function IconButton({
   variant = 'default',
   className = '',
   onClick,
+  icon,
 }: IconButtonProps) {
   const baseClasses = 'p-0 w-auto h-auto transition-colors';
 
@@ -30,7 +32,7 @@ export default function IconButton({
       onClick={onClick}
       className={`${baseClasses} ${variantClasses[variant]} ${className}`}
     >
-      {children}
+      {icon || children}
     </button>
   );
 }

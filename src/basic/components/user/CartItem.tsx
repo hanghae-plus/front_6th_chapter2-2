@@ -1,6 +1,7 @@
 import type { CartItem } from '../../../types';
 import Button from '../ui/Button';
 import IconButton from '../ui/IconButton';
+import { DeleteIcon } from '../ui/Icons';
 
 interface CartItemProps {
   item: CartItem;
@@ -24,16 +25,11 @@ export default function CartItem({
       <div className='flex justify-between items-start mb-2'>
         <h4 className='text-sm font-medium text-gray-900 flex-1'>{item.product.name}</h4>
 
-        <IconButton variant='danger' onClick={() => onRemoveFromCart(item.product.id)}>
-          <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth={2}
-              d='M6 18L18 6M6 6l12 12'
-            />
-          </svg>
-        </IconButton>
+        <IconButton
+          variant='danger'
+          onClick={() => onRemoveFromCart(item.product.id)}
+          icon={<DeleteIcon />}
+        />
       </div>
       <div className='flex items-center justify-between'>
         <div className='flex items-center'>

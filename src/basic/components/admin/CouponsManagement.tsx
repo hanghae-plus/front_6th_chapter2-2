@@ -3,6 +3,7 @@ import { Coupon, CouponForm } from '../../../types';
 import Button from '../ui/Button';
 import IconButton from '../ui/IconButton';
 import CouponsForm from './forms/CouponsForm';
+import { PlusIcon, TrashIcon } from '../ui/Icons';
 
 interface CouponsManagementProps {
   coupons: Coupon[];
@@ -48,16 +49,11 @@ export default function CouponsManagement({
                   </div>
                 </div>
 
-                <IconButton variant='danger' onClick={() => onCouponDelete(coupon.code)}>
-                  <svg className='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                    <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      strokeWidth={2}
-                      d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16'
-                    />
-                  </svg>
-                </IconButton>
+                <IconButton
+                  variant='danger'
+                  onClick={() => onCouponDelete(coupon.code)}
+                  icon={<TrashIcon />}
+                />
               </div>
             </div>
           ))}
@@ -68,14 +64,7 @@ export default function CouponsManagement({
               className='!text-gray-400 hover:text-gray-600 flex flex-col items-center'
               variant='ghost'
             >
-              <svg className='w-8 h-8' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                  d='M12 4v16m8-8H4'
-                />
-              </svg>
+              <PlusIcon />
               <p className='mt-2 text-sm font-medium'>새 쿠폰 추가</p>
             </Button>
           </div>

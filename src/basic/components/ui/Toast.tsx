@@ -1,4 +1,5 @@
 import IconButton from './IconButton';
+import { DeleteIcon } from './Icons';
 
 interface ToastProps {
   type: 'success' | 'warning' | 'error';
@@ -19,16 +20,7 @@ export default function Toast({ type, message, onClose }: ToastProps) {
     <div className={`${baseClasses} ${typeClasses[type]}`}>
       <span className='mr-2'>{message}</span>
 
-      <IconButton variant='toast' onClick={onClose}>
-        <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-          <path
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            strokeWidth={2}
-            d='M6 18L18 6M6 6l12 12'
-          />
-        </svg>
-      </IconButton>
+      <IconButton variant='toast' onClick={onClose} icon={<DeleteIcon />} />
     </div>
   );
 }

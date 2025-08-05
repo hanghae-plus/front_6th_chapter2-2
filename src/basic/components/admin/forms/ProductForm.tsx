@@ -1,6 +1,7 @@
 import { ProductFormType } from '../../../../types';
 import Button from '../../ui/Button';
 import IconButton from '../../ui/IconButton';
+import { DeleteIcon } from '../../ui/Icons';
 import Input from '../../ui/Input';
 
 interface ProductFormProps {
@@ -149,16 +150,8 @@ export default function ProductForm({
                     const newDiscounts = productForm.discounts.filter((_, i) => i !== index);
                     onFormChange({ ...productForm, discounts: newDiscounts });
                   }}
-                >
-                  <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                    <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      strokeWidth={2}
-                      d='M6 18L18 6M6 6l12 12'
-                    />
-                  </svg>
-                </IconButton>
+                  icon={<DeleteIcon />}
+                />
               </div>
             ))}
 
