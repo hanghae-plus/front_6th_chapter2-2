@@ -9,6 +9,7 @@ export interface Notification {
   id: string;
   message: string;
   type: "error" | "success" | "warning";
+  timestamp: Date;
 }
 
 export interface CartTotals {
