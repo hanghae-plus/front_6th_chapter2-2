@@ -1,4 +1,4 @@
-import { CartItem, Coupon, Product } from '../../types';
+import { CartItem, Coupon, Product, ProductWithUI } from '../../types';
 
 // 적용 가능한 최대 할인율 계산 (순수 함수)
 export const getMaxApplicableDiscount = (item: CartItem, cart: CartItem[]): number => {
@@ -68,4 +68,47 @@ export const getRemainingStock = (product: Product, cart: CartItem[]): number =>
   const remaining = product.stock - (cartItem?.quantity || 0);
 
   return remaining;
+};
+
+// 상품을 장바구니에 추가 (순수 함수)
+export const addItemToCart = (cart: CartItem[], product: ProductWithUI): CartItem[] => {
+  const existingItem = cart.find((item) => item.product.id === product.id);
+
+  if (existingItem) {
+    const newQuantity = existingItem.quantity + 1;
+    if (newQuantity > product.stock) {
+      return cart; // 재고 초과 시 기존 장바구니 반환
+    }
+    return cart.map((item) =>
+      item.product.id === product.id ? { ...item, quantity: newQuantity } : item
+    );
+  }
+
+  return [...cart, { product, quantity: 1 }];
+};
+
+// 장바구니에서 상품 제거 (순수 함수)
+export const removeItemFromCart = (cart: CartItem[], productId: string): CartItem[] => {
+  return cart.filter((item) => item.product.id !== productId);
+};
+
+// 장바구니 상품 수량 변경 (순수 함수)
+export const updateCartItemQuantity = (
+  cart: CartItem[],
+  productId: string,
+  newQuantity: number,
+  products: ProductWithUI[]
+): CartItem[] => {
+  if (newQuantity <= 0) {
+    return removeItemFromCart(cart, productId);
+  }
+
+  const product = products.find((p) => p.id === productId);
+  if (!product || newQuantity > product.stock) {
+    return cart; // 유효하지 않은 수량이면 기존 장바구니 반환
+  }
+
+  return cart.map((item) =>
+    item.product.id === productId ? { ...item, quantity: newQuantity } : item
+  );
 };

@@ -21,7 +21,14 @@ import {
   defaultProductForm,
   defaultCouponForm,
 } from './constants';
-import { calculateItemTotal, calculateCartTotal, getRemainingStock } from './models/cart';
+import {
+  calculateItemTotal,
+  calculateCartTotal,
+  getRemainingStock,
+  addItemToCart,
+  removeItemFromCart,
+  updateCartItemQuantity,
+} from './models/cart';
 
 const App = () => {
   // ===== 상태 관리 =====
@@ -160,34 +167,25 @@ const App = () => {
         return;
       }
 
-      setCart((prevCart) => {
-        const existingItem = prevCart.find((item) => item.product.id === product.id);
+      const newCart = addItemToCart(cart, product);
+      if (newCart === cart) {
+        addNotification(`재고는 ${product.stock}개까지만 있습니다.`, 'error');
+        return;
+      }
 
-        if (existingItem) {
-          const newQuantity = existingItem.quantity + 1;
-
-          if (newQuantity > product.stock) {
-            addNotification(`재고는 ${product.stock}개까지만 있습니다.`, 'error');
-            return prevCart;
-          }
-
-          return prevCart.map((item) =>
-            item.product.id === product.id ? { ...item, quantity: newQuantity } : item
-          );
-        }
-
-        return [...prevCart, { product, quantity: 1 }];
-      });
-
+      setCart(newCart);
       addNotification('장바구니에 담았습니다', 'success');
     },
-    [cart, addNotification, getRemainingStock]
+    [cart, addNotification, getRemainingStock, addItemToCart]
   );
 
   // TODO: src/basic/hooks/useCart.ts로 분리 - removeFromCart(productId)
-  const removeFromCart = useCallback((productId: string) => {
-    setCart((prevCart) => prevCart.filter((item) => item.product.id !== productId));
-  }, []);
+  const removeFromCart = useCallback(
+    (productId: string) => {
+      setCart(removeItemFromCart(cart, productId));
+    },
+    [cart, removeItemFromCart]
+  );
 
   // TODO: src/basic/hooks/useCart.ts로 분리 - updateQuantity(productId, quantity)
   const updateQuantity = useCallback(
@@ -200,19 +198,15 @@ const App = () => {
       const product = products.find((p) => p.id === productId);
       if (!product) return;
 
-      const maxStock = product.stock;
-      if (newQuantity > maxStock) {
-        addNotification(`재고는 ${maxStock}개까지만 있습니다.`, 'error');
+      const newCart = updateCartItemQuantity(cart, productId, newQuantity, products);
+      if (newCart === cart) {
+        addNotification(`재고는 ${product.stock}개까지만 있습니다.`, 'error');
         return;
       }
 
-      setCart((prevCart) =>
-        prevCart.map((item) =>
-          item.product.id === productId ? { ...item, quantity: newQuantity } : item
-        )
-      );
+      setCart(newCart);
     },
-    [products, removeFromCart, addNotification, getRemainingStock]
+    [products, removeFromCart, addNotification, cart, updateCartItemQuantity]
   );
 
   // TODO: src/basic/hooks/useCart.ts로 분리 - applyCoupon(coupon)
