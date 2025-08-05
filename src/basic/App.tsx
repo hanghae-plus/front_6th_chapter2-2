@@ -1,14 +1,14 @@
 import { useState, useCallback, useEffect } from "react";
-import { CartItem, Coupon, Product } from "../types";
+import { CartItem, Coupon } from "../types";
 import { formatPrice } from "./utils/formatters";
 import { ProductWithUI } from "./models/products/types";
-import { initialProducts } from "./models/products/constants";
-import { initialCoupons } from "./models/coupon/constants";
+
 import { useProducts } from "./models/products/useProducts";
 import { useNotifications } from "./hooks/useNotifications";
 import { useCart } from "./models/cart/useCart";
 import { calculateRemainingStock } from "./utils/calculateRemainingStock";
 import { useCoupon } from "./models/coupon/useCoupon";
+import { useProductForm } from "./models/products/useProductForm";
 
 const App = () => {
   const { notifications, setNotifications, addNotification } =
@@ -33,19 +33,29 @@ const App = () => {
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
     "products"
   );
-  const [showProductForm, setShowProductForm] = useState(false);
+  const {
+    productForm,
+    setProductForm,
+    editingProduct,
+    setEditingProduct,
+    showProductForm,
+    setShowProductForm,
+    startEditProduct,
+  } = useProductForm();
+  // const [showProductForm, setShowProductForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
 
   // Admin
-  const [editingProduct, setEditingProduct] = useState<string | null>(null);
-  const [productForm, setProductForm] = useState({
-    name: "",
-    price: 0,
-    stock: 0,
-    description: "",
-    discounts: [] as Array<{ quantity: number; rate: number }>,
-  });
+  // const [editingProduct, setEditingProduct] = useState<string | null>(null);
+
+  // const [productForm, setProductForm] = useState({
+  //   name: "",
+  //   price: 0,
+  //   stock: 0,
+  //   description: "",
+  //   discounts: [] as Array<{ quantity: number; rate: number }>,
+  // });
 
   const [couponForm, setCouponForm] = useState({
     name: "",
@@ -181,12 +191,7 @@ const App = () => {
         )
       );
     },
-    [
-      products,
-      removeFromCart,
-      addNotification,
-      // getRemainingStock
-    ]
+    [products, removeFromCart, addNotification]
   );
 
   const applyCoupon = useCallback(
@@ -216,30 +221,6 @@ const App = () => {
     setCart([]);
     setSelectedCoupon(null);
   }, [addNotification]);
-
-  // const addCoupon = useCallback(
-  //   (newCoupon: Coupon) => {
-  //     const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
-  //     if (existingCoupon) {
-  //       addNotification("이미 존재하는 쿠폰 코드입니다.", "error");
-  //       return;
-  //     }
-  //     setCoupons((prev) => [...prev, newCoupon]);
-  //     addNotification("쿠폰이 추가되었습니다.", "success");
-  //   },
-  //   [coupons, addNotification]
-  // );
-
-  // const deleteCoupon = useCallback(
-  //   (couponCode: string) => {
-  //     setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
-  //     if (selectedCoupon?.code === couponCode) {
-  //       setSelectedCoupon(null);
-  //     }
-  //     addNotification("쿠폰이 삭제되었습니다.", "success");
-  //   },
-  //   [selectedCoupon, addNotification]
-  // );
 
   const handleProductSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -275,17 +256,17 @@ const App = () => {
     setShowCouponForm(false);
   };
 
-  const startEditProduct = (product: ProductWithUI) => {
-    setEditingProduct(product.id);
-    setProductForm({
-      name: product.name,
-      price: product.price,
-      stock: product.stock,
-      description: product.description || "",
-      discounts: product.discounts || [],
-    });
-    setShowProductForm(true);
-  };
+  // const startEditProduct = (product: ProductWithUI) => {
+  //   setEditingProduct(product.id);
+  //   setProductForm({
+  //     name: product.name,
+  //     price: product.price,
+  //     stock: product.stock,
+  //     description: product.description || "",
+  //     discounts: product.discounts || [],
+  //   });
+  //   setShowProductForm(true);
+  // };
 
   const totals = calculateCartTotal();
 
