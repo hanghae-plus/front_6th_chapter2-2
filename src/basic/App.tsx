@@ -17,9 +17,14 @@ import ProductCard from './components/ui/ProductCard';
 import Cart from './components/user/Cart';
 
 const App = () => {
+  // 기본 데이터 관리
   const { products, deleteProduct, updateProduct, addProduct } = useProducts();
   const { notifications, setNotifications, addNotification } = useNotifications();
 
+  // UI 상태 관리
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  // 상품 폼 관리 훅 (추가/수정)
   const {
     productForm,
     setProductForm,
@@ -29,12 +34,13 @@ const App = () => {
     handleProductEdit,
   } = useProductForm(addProduct, updateProduct);
 
-  // coupons---------------------!!
+  // 쿠폰 관리 훅
   const { coupons, setCoupons, selectedCoupon, setSelectedCoupon, applyCoupon } = useCoupons(
     (message) => addNotification(message, 'success'),
     (message) => addNotification(message, 'error'),
   );
 
+  // 쿠폰 폼 관리 훅
   const { couponForm, setCouponForm, deleteCoupon, handleCouponSubmit } = useCouponsForm(
     coupons,
     setCoupons,
@@ -45,28 +51,24 @@ const App = () => {
     (message) => addNotification(message, 'success'),
   );
 
-  const [isAdmin, setIsAdmin] = useState(false); // admin ui
-
-  // Admin
-
-  // cart---------------------!!
+  // 장바구니 관리 훅
   const { cart, setCart, totalCartItem, addToCart, removeFromCart, updateQuantity } = useCart(
     products,
     (message) => addNotification(message, 'success'),
     (message) => addNotification(message, 'error'),
   );
 
-  // checkout -----------------!!
+  // 검색 기능 훅
+  const { query, setQuery, debouncedQuery } = useSearch();
 
+  // 결제 처리 훅
   const { completeOrder } = useCheckout(
     () => setCart([]),
     () => setSelectedCoupon(null),
     (message) => addNotification(message, 'success'),
   );
 
-  // search --------------- !!
-  const { query, setQuery, debouncedQuery } = useSearch();
-
+  // 계산된 데이터
   const totals = calculateCartTotal(cart, selectedCoupon);
   const filteredProductList = filteredProducts(products, debouncedQuery);
 
