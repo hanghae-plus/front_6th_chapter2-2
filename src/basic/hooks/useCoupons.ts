@@ -1,7 +1,7 @@
 import { ICoupon } from "../type";
 import { initialCoupons } from "../constants/initialStates";
-import { couponModel } from "../models/coupon";
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
+import { couponModel } from "../models/coupon";
 
 export const useCoupons = () => {
   // 로컬스토리지 연동된 coupons
