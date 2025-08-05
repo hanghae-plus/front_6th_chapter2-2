@@ -13,6 +13,13 @@ export const useCoupon = (
     initialCoupons
   );
 
+  const [couponForm, setCouponForm] = useState({
+    name: "",
+    code: "",
+    discountType: "amount" as "amount" | "percentage",
+    discountValue: 0,
+  });
+
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
   const addCoupon = useCallback(
@@ -68,5 +75,7 @@ export const useCoupon = (
     selectedCoupon,
     setSelectedCoupon,
     applyCoupon,
+    couponForm,
+    setCouponForm,
   };
 };

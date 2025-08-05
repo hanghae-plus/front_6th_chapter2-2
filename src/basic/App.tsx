@@ -32,6 +32,8 @@ const App = () => {
     selectedCoupon,
     setSelectedCoupon,
     applyCoupon,
+    couponForm,
+    setCouponForm,
   } = useCoupon(addNotification);
 
   const [isAdmin, setIsAdmin] = useState(false);
@@ -50,14 +52,7 @@ const App = () => {
     startEditProduct,
   } = useProductForm();
 
-  const { searchTerm, setSearchTerm, debouncedSearchTerm } = useSearchProduct();
-
-  const [couponForm, setCouponForm] = useState({
-    name: "",
-    code: "",
-    discountType: "amount" as "amount" | "percentage",
-    discountValue: 0,
-  });
+  const { searchTerm, handleSearch, debouncedSearchTerm } = useSearchProduct();
 
   const checkSoldOutByProductId = (productId: string) => {
     const product = products.find((p) => p.id === productId);
@@ -198,7 +193,7 @@ const App = () => {
       <Header
         isAdmin={isAdmin}
         searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
+        handleSearch={handleSearch}
         cart={cart}
         totalItemCount={totalItemCount}
         setIsAdmin={setIsAdmin}

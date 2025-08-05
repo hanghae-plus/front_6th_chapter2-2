@@ -4,7 +4,7 @@ import { SearchInput } from "../ui/SearchInput";
 interface HeaderProps {
   isAdmin: boolean;
   searchTerm: string;
-  setSearchTerm: (value: string) => void;
+  handleSearch: (value: string) => void;
   cart: CartItem[];
   totalItemCount: number;
   setIsAdmin: (value: boolean) => void;
@@ -13,7 +13,7 @@ interface HeaderProps {
 export const Header = ({
   isAdmin,
   searchTerm,
-  setSearchTerm,
+  handleSearch,
   cart,
   totalItemCount,
   setIsAdmin,
@@ -36,7 +36,7 @@ export const Header = ({
                 /> */}
                 <SearchInput
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => handleSearch(e.target.value)}
                 />
               </div>
             )}
