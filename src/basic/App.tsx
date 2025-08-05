@@ -7,12 +7,6 @@ import { initialCoupons } from "./models/coupon/constants";
 import { useProducts } from "./models/products/useProducts";
 import { useNotifications } from "./hooks/useNotifications";
 
-interface Notification {
-  id: string;
-  message: string;
-  type: "error" | "success" | "warning";
-}
-
 const App = () => {
   const { notifications, setNotifications, addNotification } =
     useNotifications();
@@ -71,7 +65,7 @@ const App = () => {
     discountValue: 0,
   });
 
-  const isSoldOut = (productId: string) => {
+  const checkSoldOutByProductId = (productId: string) => {
     const product = products.find((p) => p.id === productId);
     if (product && getRemainingStock(product) <= 0) {
       return true;
@@ -549,7 +543,7 @@ const App = () => {
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               {formatPrice(
                                 product.price,
-                                isSoldOut(product.id),
+                                checkSoldOutByProductId(product.id),
                                 isAdmin
                               )}
                             </td>
@@ -1139,7 +1133,7 @@ const App = () => {
                               <p className="text-lg font-bold text-gray-900">
                                 {formatPrice(
                                   product.price,
-                                  isSoldOut(product.id),
+                                  checkSoldOutByProductId(product.id),
                                   isAdmin
                                 )}
                               </p>
