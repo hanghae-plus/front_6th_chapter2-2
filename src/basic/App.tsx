@@ -13,6 +13,7 @@ import { getRemainingStock } from './utils/calculations/stockCalculations';
 import { formatPriceWithSoldOut } from './utils/formatters/priceFormatter';
 import { useCoupons } from './hooks/coupons/useCoupons';
 import { calculateCartTotal, calculateItemTotal } from './utils/calculations/cartCalculations';
+import { useCouponsForm } from './hooks/coupons/useCouponsForm';
 
 const App = () => {
   const { products, deleteProduct, updateProduct, addProduct } = useProducts();
@@ -36,93 +37,28 @@ const App = () => {
   });
 
   // coupons---------------------!!
-  // const [coupons, setCoupons] = useState<Coupon[]>(() => {
-  //   const saved = localStorage.getItem('coupons');
-  //   if (saved) {
-  //     try {
-  //       return JSON.parse(saved);
-  //     } catch {
-  //       return initialCoupons;
-  //     }
-  //   }
-  //   return initialCoupons;
-  // });
-
   const { coupons, setCoupons, selectedCoupon, setSelectedCoupon, applyCoupon } = useCoupons(
     (message) => addNotification(message, 'success'),
     (message) => addNotification(message, 'error'),
   );
 
-  // const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const { couponForm, setCouponForm, deleteCoupon, handleCouponSubmit } = useCouponsForm(
+    coupons,
+    setCoupons,
+    selectedCoupon,
+    setSelectedCoupon,
+    (message) => addNotification(message, 'success'),
+    (message) => addNotification(message, 'error'),
+    (message) => addNotification(message, 'success'),
+  );
+
+  const [isAdmin, setIsAdmin] = useState(false); // admin ui
   const [showCouponForm, setShowCouponForm] = useState(false); // 쿠폰 ui
-  const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
+  const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products'); // tab ui
   const [searchInputValue, setSearchInputValue] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
   // Admin
-
-  const [couponForm, setCouponForm] = useState({
-    name: '',
-    code: '',
-    discountType: 'amount' as 'amount' | 'percentage',
-    discountValue: 0,
-  });
-
-  // const getMaxApplicableDiscount = (item: CartItem): number => {
-  //   const { discounts } = item.product;
-  //   const { quantity } = item;
-
-  //   const baseDiscount = discounts.reduce((maxDiscount, discount) => {
-  //     return quantity >= discount.quantity && discount.rate > maxDiscount
-  //       ? discount.rate
-  //       : maxDiscount;
-  //   }, 0);
-
-  //   const hasBulkPurchase = cart.some((cartItem) => cartItem.quantity >= 10);
-  //   if (hasBulkPurchase) {
-  //     return Math.min(baseDiscount + 0.05, 0.5); // 대량 구매 시 추가 5% 할인
-  //   }
-
-  //   return baseDiscount;
-  // };
-
-  // const calculateItemTotal = (item: CartItem): number => {
-  //   const { price } = item.product;
-  //   const { quantity } = item;
-  //   const discount = getMaxApplicableDiscount(item);
-
-  //   return Math.round(price * quantity * (1 - discount));
-  // };
-
-  // const calculateCartTotal = (): {
-  //   totalBeforeDiscount: number;
-  //   totalAfterDiscount: number;
-  // } => {
-  //   let totalBeforeDiscount = 0;
-  //   let totalAfterDiscount = 0;
-
-  //   cart.forEach((item) => {
-  //     const itemPrice = item.product.price * item.quantity;
-  //     totalBeforeDiscount += itemPrice;
-  //     totalAfterDiscount += calculateItemTotal(item);
-  //   });
-
-  //   if (selectedCoupon) {
-  //     if (selectedCoupon.discountType === 'amount') {
-  //       totalAfterDiscount = Math.max(0, totalAfterDiscount - selectedCoupon.discountValue);
-  //     } else {
-  //       totalAfterDiscount = Math.round(
-  //         totalAfterDiscount * (1 - selectedCoupon.discountValue / 100),
-  //       );
-  //     }
-  //   }
-
-  //   return {
-  //     totalBeforeDiscount: Math.round(totalBeforeDiscount),
-  //     totalAfterDiscount: Math.round(totalAfterDiscount),
-  //   };
-  // };
 
   const [totalCartItem, setTotalCartItem] = useState(0);
 
@@ -207,63 +143,12 @@ const App = () => {
     [products, removeFromCart, addNotification, getRemainingStock],
   );
 
-  // const applyCoupon = useCallback(
-  //   (coupon: Coupon) => {
-  //     const currentTotal = calculateCartTotal().totalAfterDiscount;
-
-  //     if (currentTotal < 10000 && coupon.discountType === 'percentage') {
-  //       addNotification('percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.', 'error');
-  //       return;
-  //     }
-
-  //     setSelectedCoupon(coupon);
-  //     addNotification('쿠폰이 적용되었습니다.', 'success');
-  //   },
-  //   [addNotification, calculateCartTotal],
-  // );
-
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
     addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
     setCart([]);
     setSelectedCoupon(null);
   }, [addNotification]);
-
-  const addCoupon = useCallback(
-    (newCoupon: Coupon) => {
-      const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
-      if (existingCoupon) {
-        addNotification('이미 존재하는 쿠폰 코드입니다.', 'error');
-        return;
-      }
-      setCoupons((prev) => [...prev, newCoupon]);
-      addNotification('쿠폰이 추가되었습니다.', 'success');
-    },
-    [coupons, addNotification],
-  );
-
-  const deleteCoupon = useCallback(
-    (couponCode: string) => {
-      setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
-      if (selectedCoupon?.code === couponCode) {
-        setSelectedCoupon(null);
-      }
-      addNotification('쿠폰이 삭제되었습니다.', 'success');
-    },
-    [selectedCoupon, addNotification],
-  );
-
-  const handleCouponSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    addCoupon(couponForm);
-    setCouponForm({
-      name: '',
-      code: '',
-      discountType: 'amount',
-      discountValue: 0,
-    });
-    setShowCouponForm(false);
-  };
 
   const startEditProduct = (product: ProductWithUI) => {
     setEditingProduct(product.id);
