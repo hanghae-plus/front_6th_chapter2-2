@@ -7,14 +7,14 @@
 //
 // 반환값: [저장된 값, 값 설정 함수]
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
 
 interface UseLocalStorageParams<T> {
   key: string;
   initialValue: T;
 }
 
-type UseLocalStorageReturn<T> = [T, (value: T | ((val: T) => T)) => void];
+type UseLocalStorageReturn<T> = [T, Dispatch<SetStateAction<T>>];
 
 export function useLocalStorage<T>({
   initialValue,
