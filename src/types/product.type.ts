@@ -11,9 +11,19 @@ export type ProductWithUI = Product & {
   isRecommended?: boolean;
 };
 
+export type Tab = "products" | "coupons";
+
 export type CartItem = {
   product: Product;
   quantity: number;
+};
+
+export type ProductForm = {
+  name: string;
+  price: number;
+  stock: number;
+  description: string;
+  discounts: Discount[];
 };
 
 export type Discount = {
@@ -28,6 +38,7 @@ export type Coupon = {
   discountValue: number;
 };
 
+export type EditProduct = string | null;
 export type Notification = {
   id: string;
   message: string;

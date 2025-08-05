@@ -2,13 +2,17 @@ import { useCallback, useEffect, useState } from "react";
 import {
   CartItem,
   Coupon,
+  EditProduct,
   initialCoupons,
   initialProducts,
-  Notification,
+  Notification as NotificationType,
   Product,
+  ProductForm,
   ProductWithUI,
+  Tab,
 } from "../types/product.type";
 import Header from "./components/Header";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [products, setProducts] = useState<ProductWithUI[]>(() => {
@@ -49,23 +53,21 @@ const App = () => {
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifications, setNotifications] = useState<NotificationType[]>([]);
   const [showCouponForm, setShowCouponForm] = useState(false);
-  const [activeTab, setActiveTab] = useState<"products" | "coupons">(
-    "products"
-  );
+  const [activeTab, setActiveTab] = useState<Tab>("products");
   const [showProductForm, setShowProductForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
 
   // Admin
-  const [editingProduct, setEditingProduct] = useState<string | null>(null);
-  const [productForm, setProductForm] = useState({
+  const [editingProduct, setEditingProduct] = useState<EditProduct>(null);
+  const [productForm, setProductForm] = useState<ProductForm>({
     name: "",
     price: 0,
     stock: 0,
     description: "",
-    discounts: [] as Array<{ quantity: number; rate: number }>,
+    discounts: [],
   });
 
   const [couponForm, setCouponForm] = useState({
@@ -416,46 +418,10 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {notifications.length > 0 && (
-        <div className="fixed top-20 right-4 z-50 space-y-2 max-w-sm">
-          {notifications.map((notif) => (
-            <div
-              key={notif.id}
-              className={`p-4 rounded-md shadow-md text-white flex justify-between items-center ${
-                notif.type === "error"
-                  ? "bg-red-600"
-                  : notif.type === "warning"
-                  ? "bg-yellow-600"
-                  : "bg-green-600"
-              }`}
-            >
-              <span className="mr-2">{notif.message}</span>
-              <button
-                onClick={() =>
-                  setNotifications((prev) =>
-                    prev.filter((n) => n.id !== notif.id)
-                  )
-                }
-                className="text-white hover:text-gray-200"
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
+      <Notification
+        notifications={notifications}
+        setNotifications={setNotifications}
+      />
 
       <Header
         searchTerm={searchTerm}
