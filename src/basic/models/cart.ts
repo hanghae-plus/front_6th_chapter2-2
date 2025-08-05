@@ -143,3 +143,43 @@ export function calculateCartTotal({
     totalAfterDiscount: Math.round(applyCoupon({ price: totalAfterDiscount })),
   };
 }
+
+interface AddItemToCartParams {
+  cart: CartItem[];
+  product: Product;
+}
+
+// 상품 추가
+export function addItemToCart({ cart, product }: AddItemToCartParams) {
+  return [...cart, { product, quantity: 1 }];
+}
+
+interface UpdateCartItemQuantityParams {
+  cart: CartItem[];
+  productId: string;
+  quantity: number;
+}
+
+// 상품 수량 변경
+export function updateCartItemQuantity({
+  cart,
+  productId,
+  quantity,
+}: UpdateCartItemQuantityParams) {
+  return cart.map((item) =>
+    item.product.id === productId ? { ...item, quantity: quantity } : item
+  );
+}
+
+interface RemoveItemFromCartParams {
+  cart: CartItem[];
+  productId: string;
+}
+
+// 상품 제거
+export function removeItemFromCart({
+  cart,
+  productId,
+}: RemoveItemFromCartParams) {
+  return cart.filter((item) => item.product.id !== productId);
+}

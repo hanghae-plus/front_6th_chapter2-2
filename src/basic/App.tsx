@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { CartItem, Coupon, Product } from '../types';
-import { calculateCartTotal, calculateItemTotal } from './models/cart';
+import {
+  addItemToCart,
+  calculateCartTotal,
+  calculateItemTotal,
+  removeItemFromCart,
+  updateCartItemQuantity,
+} from './models/cart';
 import { getCouponApplier } from './models/coupon';
 import { getRemainingStock, isSoldOut } from './models/product';
 import { formatNumberWon, formatPriceKRW } from './utils/formatters';
@@ -196,24 +202,24 @@ const App = () => {
             return prevCart;
           }
 
-          return prevCart.map((item) =>
-            item.product.id === product.id
-              ? { ...item, quantity: newQuantity }
-              : item
-          );
+          return updateCartItemQuantity({
+            cart: prevCart,
+            productId: product.id,
+            quantity: newQuantity,
+          });
         }
 
-        return [...prevCart, { product, quantity: 1 }];
+        return addItemToCart({ cart: prevCart, product });
       });
 
       addNotification('장바구니에 담았습니다', 'success');
     },
-    [addNotification, getRemainingStock]
+    [cart, addNotification]
   );
 
   const removeFromCart = useCallback((productId: string) => {
     setCart((prevCart) =>
-      prevCart.filter((item) => item.product.id !== productId)
+      removeItemFromCart({ cart: prevCart, productId: productId })
     );
   }, []);
 
