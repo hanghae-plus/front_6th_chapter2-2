@@ -1,25 +1,20 @@
 import { useState } from "react";
+import { useAtom } from "jotai";
 import { formatPrice } from "../../utils/formatters";
 import { ProductCreationPayload, ProductWithUI } from "../../types";
+import {
+  addProductAtom,
+  productsAtom,
+  removeProductAtom,
+  updateProductAtom,
+} from "../../store/product";
 
-interface ProductSectionProps {
-  products: ProductWithUI[];
-  onAddProduct: (product: Omit<ProductWithUI, "id">) => void;
-  onUpdateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
-  onDeleteProduct: (productId: string) => void;
-  addNotification: (
-    message: string,
-    type?: "error" | "success" | "warning"
-  ) => void;
-}
+export const ProductSection = () => {
+  const [products] = useAtom(productsAtom);
+  const [, addProduct] = useAtom(addProductAtom);
+  const [, updateProduct] = useAtom(updateProductAtom);
+  const [, removeProduct] = useAtom(removeProductAtom);
 
-export const ProductSection = ({
-  products,
-  onAddProduct,
-  onUpdateProduct,
-  onDeleteProduct,
-  addNotification,
-}: ProductSectionProps) => {
   const [showProductForm, setShowProductForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [productForm, setProductForm] = useState<ProductCreationPayload>({
@@ -34,11 +29,9 @@ export const ProductSection = ({
     e.preventDefault();
 
     if (editingProduct === "new") {
-      onAddProduct(productForm);
-      addNotification("상품이 추가되었습니다.", "success");
+      addProduct(productForm);
     } else if (editingProduct) {
-      onUpdateProduct(editingProduct, productForm);
-      addNotification("상품이 수정되었습니다.", "success");
+      updateProduct(editingProduct, productForm);
     }
 
     setProductForm({
@@ -62,6 +55,10 @@ export const ProductSection = ({
       discounts: product.discounts || [],
     });
     setShowProductForm(true);
+  };
+
+  const handleDeleteProduct = (productId: string) => {
+    removeProduct(productId);
   };
 
   return (
@@ -132,7 +129,7 @@ export const ProductSection = ({
                     수정
                   </button>
                   <button
-                    onClick={() => onDeleteProduct(product.id)}
+                    onClick={() => handleDeleteProduct(product.id)}
                     className="text-red-600 hover:text-red-900"
                   >
                     삭제
