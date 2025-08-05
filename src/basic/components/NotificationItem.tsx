@@ -3,12 +3,12 @@ import { CloseIcon } from "./icon";
 
 interface NotificationItemProps {
   notification: INotification;
-  setNotifications: React.Dispatch<React.SetStateAction<INotification[]>>;
+  removeNotification: (notif: INotification) => void;
 }
 
 const NotificationItem = ({
   notification,
-  setNotifications,
+  removeNotification,
 }: NotificationItemProps) => {
   return (
     <div
@@ -23,11 +23,7 @@ const NotificationItem = ({
     >
       <span className="mr-2">{notification.message}</span>
       <button
-        onClick={() =>
-          setNotifications((prev) =>
-            prev.filter((n) => n.id !== notification.id)
-          )
-        }
+        onClick={() => removeNotification(notification)}
         className="text-white hover:text-gray-200"
       >
         {/* 토스트 모달 x 아이콘 */}

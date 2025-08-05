@@ -1,8 +1,8 @@
-import { useState, useCallback, useEffect } from "react";
-import { INotification } from "./type";
+import { useState, useEffect } from "react";
 import { useProducts } from "./hooks/useProducts";
 import { useCoupons } from "./hooks/useCoupons";
 import { useCart } from "./hooks/useCart";
+import { useNotification } from "./hooks/useNotification";
 import Header from "./components/Header";
 import NotificationItem from "./components/NotificationItem";
 import AdminPage from "./pages/AdminPage";
@@ -25,29 +25,15 @@ const App = () => {
     setSelectedCoupon,
   } = useCart();
 
+  const {notifications, addNotification, removeNotification} = useNotification();
+
   // 관리자 페이지 여부
   const [isAdmin, setIsAdmin] = useState(false);
-  // 토스트 모달 알람 배열
-  const [notifications, setNotifications] = useState<INotification[]>([]);
 
   // 검색창 내 검색어
   const [searchTerm, setSearchTerm] = useState("");
   // 상품 검색어 - 자동으로 검색 반영되며 상품 페이지에 보여지는 값
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-
-  const addNotification = useCallback(
-    (message: string, type: "error" | "success" | "warning" = "success") => {
-      // 알림 구분을 위한 고유 식별자
-      const id = Date.now().toString();
-      setNotifications((prev) => [...prev, { id, message, type }]);
-
-      // 3초 후 해당 알림 제거
-      setTimeout(() => {
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
-      }, 3000);
-    },
-    []
-  );
 
   // 검색창 내 검색어가 바뀔 때 5초마다 바로 검색 반영
   useEffect(() => {
@@ -67,7 +53,7 @@ const App = () => {
             <NotificationItem
               key={notif.id}
               notification={notif}
-              setNotifications={setNotifications}
+              removeNotification={removeNotification}
             />
           ))}
         </div>
