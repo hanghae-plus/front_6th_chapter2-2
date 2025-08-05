@@ -1,20 +1,14 @@
-import { useState, useEffect, useCallback } from "react";
+import { useEffect, useCallback } from "react";
 import { Discount } from "../../types";
 import { initialProducts } from "../data";
 import { ProductWithUI } from "../types";
+import { useLocalStorage } from "./useLocalStorage";
 
 export function useProducts() {
-  const [products, setProducts] = useState<ProductWithUI[]>(() => {
-    const saved = localStorage.getItem("products");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialProducts;
-      }
-    }
-    return initialProducts;
-  });
+  const [products, setProducts] = useLocalStorage<ProductWithUI[]>(
+    "products",
+    initialProducts
+  );
 
   useEffect(() => {
     localStorage.setItem("products", JSON.stringify(products));
