@@ -14,8 +14,10 @@ const ignoresConfig = {
     "build/**",
     ".vite/**",
     "coverage/**",
+    "src/**/__tests__/**",
     "src/origin/",
-    "src/refactoring(hint)/"
+    "src/refactoring(hint)/",
+    "index.origin.html"
   ]
 };
 

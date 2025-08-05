@@ -20,9 +20,15 @@ yarn.lock
 *.ttf
 *.eot
 
+# 테스트 파일들
+src/advanced/__tests__/
+src/basic/__tests__/
+src/origin/__tests__/
+
 # 원본 파일들
 src/origin/
 src/refactoring(hint)/
+index.origin.html
 
 # 기타
 .env*
