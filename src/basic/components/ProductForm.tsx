@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { IProductForm, IProductWithUI } from "../type";
+import { MESSAGES } from "../constants/messages";
 import { CloseIcon } from "./icon";
 import { validator } from "../utils/vaildators";
 
@@ -38,7 +39,7 @@ const ProductForm = ({
         id: `p${Date.now()}`, // 상품 고유 아이디
       };
       addProduct(product);
-      addNotification("상품이 추가되었습니다.", "success");
+      addNotification(MESSAGES.PRODUCT.ADDED, "success");
     },
     [addNotification]
   );
@@ -47,7 +48,7 @@ const ProductForm = ({
   const updateProductItem = useCallback(
     (productId: string, updates: Partial<IProductWithUI>) => {
       updateProduct(productId, updates);
-      addNotification("상품이 수정되었습니다.", "success");
+      addNotification(MESSAGES.PRODUCT.UPDATED, "success");
     },
     [addNotification]
   );

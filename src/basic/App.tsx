@@ -1,13 +1,14 @@
 import { useState } from "react";
+import { SEARCH_DELAY } from "./constants/time";
 import { useProducts } from "./hooks/useProducts";
 import { useCoupons } from "./hooks/useCoupons";
 import { useCart } from "./hooks/useCart";
 import { useNotification } from "./hooks/useNotification";
+import { useDebounce } from "./utils/hooks/useDebounce";
 import Header from "./components/Header";
 import NotificationItem from "./components/NotificationItem";
 import AdminPage from "./pages/AdminPage";
 import CartPage from "./pages/CartPage";
-import { useDebounce } from "./utils/hooks/useDebounce";
 
 const App = () => {
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
@@ -33,7 +34,7 @@ const App = () => {
 
   // 검색창 내 검색어
   const [searchTerm, setSearchTerm] = useState("");
-  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const debouncedSearchTerm = useDebounce(searchTerm, SEARCH_DELAY);
 
   return (
     <div className="min-h-screen bg-gray-50">

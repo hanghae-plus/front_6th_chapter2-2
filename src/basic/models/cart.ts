@@ -1,4 +1,5 @@
 import { ICartItem, ICoupon, IProductWithUI } from "../type";
+import { DISCOUNT } from "../constants/business";
 
 export const cartModel = {
   /**
@@ -16,9 +17,11 @@ export const cartModel = {
     }, 0);
 
     // 10개 이상 구매하는 상품이 있는지 확인 (대량 구매)
-    const hasBulkPurchase = cart.some((cartItem) => cartItem.quantity >= 10);
+    const hasBulkPurchase = cart.some(
+      (cartItem) => cartItem.quantity >= DISCOUNT.BULK_THRESHOLD
+    );
     if (hasBulkPurchase) {
-      return Math.min(baseDiscount + 0.05, 0.5); // 대량 구매 시 추가 5% 할인 (최대 할인율 - 50%)
+      return Math.min(baseDiscount + DISCOUNT.BULK_BONUS, DISCOUNT.MAX_RATE); // 대량 구매 시 추가 5% 할인 (최대 할인율 - 50%)
     }
 
     return baseDiscount;

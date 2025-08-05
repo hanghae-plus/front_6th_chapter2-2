@@ -1,5 +1,6 @@
 import { IProductWithUI } from "../type";
 import { formatPercentage } from "../utils/formatters";
+import { STOCK } from "../constants/business";
 import { ImageIcon } from "./icon";
 
 interface ProductItemProps {
@@ -63,7 +64,7 @@ const ProductItem = ({
 
         {/* 재고 상태 */}
         <div className="mb-3">
-          {remainingStock <= 5 && remainingStock > 0 && (
+          {remainingStock <= STOCK.LOW_THRESHOLD && remainingStock > 0 && (
             <p className="text-xs text-red-600 font-medium">
               품절임박! {remainingStock}개 남음
             </p>

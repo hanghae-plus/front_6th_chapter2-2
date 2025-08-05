@@ -1,3 +1,6 @@
+import { DISCOUNT, STOCK } from "../constants/business";
+import { MESSAGES } from "../constants/messages";
+
 export const validator = {
   /**
    * 문자열 전체가 숫자인 경우만 반환
@@ -18,14 +21,14 @@ export const validator = {
     if (stock <= 0)
       return {
         isValid: false,
-        message: "재고는 0보다 커야 합니다",
+        message: MESSAGES.STOCK.MIN,
         correctedValue: 0,
       };
-    if (stock > 9999)
+    if (stock > STOCK.MAX_QUANTITY)
       return {
         isValid: false,
-        message: "재고는 9999개를 초과할 수 없습니다",
-        correctedValue: 9999,
+        message: MESSAGES.STOCK.MAX,
+        correctedValue: STOCK.MAX_QUANTITY,
       };
 
     return { isValid: true, message: "", correctedValue: stock };
@@ -40,7 +43,7 @@ export const validator = {
     if (price <= 0)
       return {
         isValid: false,
-        message: "가격은 0보다 커야 합니다",
+        message: MESSAGES.PRICE.MIN,
         correctedValue: 0,
       };
 
@@ -56,14 +59,14 @@ export const validator = {
     if (value < 0)
       return {
         isValid: false,
-        message: "할인율은 0% 이상이어야 합니다",
+        message: MESSAGES.DISCOUNT_PERCENTAGE.MIN,
         correctedValue: 0,
       };
-    if (value > 100)
+    if (value > DISCOUNT.MAX_PERCENTAGE)
       return {
         isValid: false,
-        message: "할인율은 100%를 초과할 수 없습니다",
-        correctedValue: 100,
+        message: MESSAGES.DISCOUNT_PERCENTAGE.MAX,
+        correctedValue: DISCOUNT.MAX_PERCENTAGE,
       };
     return { isValid: true, message: "", correctedValue: value };
   },
@@ -77,14 +80,14 @@ export const validator = {
     if (value < 0)
       return {
         isValid: false,
-        message: "할인 금액은 0원 이상이어야 합니다",
+        message: MESSAGES.DISCOUNT_AMOUNT.MIN,
         correctedValue: 0,
       };
-    if (value > 100000)
+    if (value > DISCOUNT.MAX_COUPON_AMOUNT)
       return {
         isValid: false,
-        message: "할인 금액은 100,000원을 초과할 수 없습니다",
-        correctedValue: 100000,
+        message: MESSAGES.DISCOUNT_AMOUNT.MAX,
+        correctedValue: DISCOUNT.MAX_COUPON_AMOUNT,
       };
     return { isValid: true, message: "", correctedValue: value };
   },

@@ -1,9 +1,11 @@
 import { useCallback } from "react";
 import { ICartItem, ICoupon, IProductWithUI } from "../type";
+import { MESSAGES } from "../constants/messages";
 import ProductList from "../components/ProductList";
 import OrderSummary from "../components/OrderSummary";
 import CartList from "../components/CartList";
 import CouponSelector from "../components/CouponSelector";
+import { ORDER } from "../constants/business";
 
 interface CartPageProps {
   // product
@@ -55,12 +57,12 @@ const CartPage = ({
     (product: IProductWithUI) => {
       const remainingStock = getRemainingStock(product);
       if (remainingStock <= 0) {
-        addNotification("재고가 부족합니다!", "error");
+        addNotification(MESSAGES.PRODUCT.OUT_OF_STOCK, "error");
         return;
       }
 
       addToCart(product);
-      addNotification("장바구니에 담았습니다", "success");
+      addNotification(MESSAGES.PRODUCT.ADDED_TO_CART, "success");
     },
     [cart, addNotification, getRemainingStock]
   );
@@ -78,7 +80,7 @@ const CartPage = ({
 
       const maxStock = product.stock;
       if (newQuantity > maxStock) {
-        addNotification(`재고는 ${maxStock}개까지만 있습니다.`, "error");
+        addNotification(MESSAGES.PRODUCT.MAX_STOCK(maxStock));
         return;
       }
 
@@ -99,17 +101,17 @@ const CartPage = ({
       const currentTotal = cartTotalPrice.totalAfterDiscount;
 
       // 총 가격 10000원 이하일 경우 처리
-      if (currentTotal < 10000 && coupon.discountType === "percentage") {
-        addNotification(
-          "percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.",
-          "error"
-        );
+      if (
+        currentTotal < ORDER.MIN_FOR_COUPON &&
+        coupon.discountType === "percentage"
+      ) {
+        addNotification(MESSAGES.COUPON.MIN_PRICE, "error");
         return;
       }
 
       // 쿠폰 적용 후 알림 처리
       setSelectedCoupon(coupon);
-      addNotification("쿠폰이 적용되었습니다.", "success");
+      addNotification(MESSAGES.COUPON.APPLIED, "success");
     },
     [addNotification, cartTotalPrice]
   );
@@ -117,10 +119,7 @@ const CartPage = ({
   // 주문 완료 처리 함수
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
-    addNotification(
-      `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
-      "success"
-    );
+    addNotification(MESSAGES.ORDER.COMPLETED(orderNumber), "success");
     clearCart();
     setSelectedCoupon(null);
   }, [addNotification]);

@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { ICoupon, ICouponForm } from "../type";
+import { MESSAGES } from "../constants/messages";
 import { validator } from "../utils/vaildators";
 
 interface CouponFormProps {
@@ -35,11 +36,11 @@ const CouponForm = ({
       // 이미 존재하는 쿠폰인지 코드로 확인
       const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
       if (existingCoupon) {
-        addNotification("이미 존재하는 쿠폰 코드입니다.", "error");
+        addNotification(MESSAGES.COUPON.ALREADY_EXISTS, "error");
         return;
       }
       addCoupon(newCoupon);
-      addNotification("쿠폰이 추가되었습니다.", "success");
+      addNotification(MESSAGES.COUPON.ADDED, "success");
     },
     [coupons, addNotification]
   );

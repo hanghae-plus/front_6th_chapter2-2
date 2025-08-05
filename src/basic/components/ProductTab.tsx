@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { IProductForm, IProductWithUI } from "../type";
+import { MESSAGES } from "../constants/messages";
 import ProductForm from "./ProductForm";
 import ProductTable from "./ProductTable";
 
@@ -45,7 +46,7 @@ const ProductTab = ({
   const deleteProductItem = useCallback(
     (productId: string) => {
       deleteProduct(productId);
-      addNotification("상품이 삭제되었습니다.", "success");
+      addNotification(MESSAGES.PRODUCT.DELETED, "success");
     },
     [addNotification]
   );

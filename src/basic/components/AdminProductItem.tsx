@@ -1,4 +1,5 @@
 import { IProductWithUI } from "../type";
+import { STOCK } from "../constants/business";
 
 interface AdminProductItemProps {
   product: IProductWithUI;
@@ -24,7 +25,7 @@ const AdminProductItem = ({
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
         <span
           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-            product.stock > 10
+            product.stock > STOCK.MEDIUM_THRESHOLD
               ? "bg-green-100 text-green-800"
               : product.stock > 0
               ? "bg-yellow-100 text-yellow-800"

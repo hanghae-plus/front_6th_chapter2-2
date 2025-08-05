@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { INotification } from "../type";
+import { NOTIFICATION_DURATION } from "../constants/time";
 
 export const useNotification = () => {
   // 토스트 모달 알람 배열
@@ -15,7 +16,7 @@ export const useNotification = () => {
       // 3초 후 해당 알림 제거
       setTimeout(() => {
         setNotifications((prev) => prev.filter((n) => n.id !== id));
-      }, 3000);
+      }, NOTIFICATION_DURATION);
     },
     []
   );
