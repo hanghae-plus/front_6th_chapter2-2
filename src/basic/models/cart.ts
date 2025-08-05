@@ -17,7 +17,7 @@
 
 // TODO: 구현
 
-import type { CartItem } from '../../types';
+import type { CartItem, Product } from '../../types';
 import { applyDiscount } from './discount';
 
 interface GetMaxApplicableDiscountParams {
@@ -45,7 +45,7 @@ interface CreateItemMaxDiscountApplierParams {
 // 개별 아이템의 할인율 계산
 export function createItemMaxDiscountApplier({
   item,
-}: CreateItemMaxDiscountApplierParams) {
+}: CreateItemMaxDiscountApplierParams): DiscountApplier {
   return ({ baseDiscount }: { baseDiscount: number }) => {
     const { quantity, product } = item;
     const { discounts } = product;
@@ -67,7 +67,7 @@ interface CreateBulkPurchaseDiscountApplierParams {
 // 대량 구매 할인율 계산
 export function createBulkPurchaseDiscountApplier({
   cart,
-}: CreateBulkPurchaseDiscountApplierParams) {
+}: CreateBulkPurchaseDiscountApplierParams): DiscountApplier {
   return ({ baseDiscount }: { baseDiscount: number }) => {
     const hasBulkPurchase = cart.some((cartItem) => cartItem.quantity >= 10);
 
@@ -77,11 +77,11 @@ export function createBulkPurchaseDiscountApplier({
   };
 }
 
+type DiscountApplier = ({ baseDiscount }: { baseDiscount: number }) => number;
+
 interface ApplyDiscountsParams {
   baseDiscount?: number;
-  discountAppliers: Array<
-    ({ baseDiscount }: { baseDiscount: number }) => number
-  >;
+  discountAppliers: DiscountApplier[];
 }
 
 // 총 할인율 계산
@@ -94,14 +94,13 @@ export function calculateTotalDiscount({
   }, baseDiscount);
 }
 
-// 개별 아이템의 할인 적용 후 총액 계산
-export function calculateItemTotal({
-  item,
-  cart,
-}: {
+interface CalculateItemTotalParams {
   item: CartItem;
   cart: CartItem[];
-}) {
+}
+
+// 개별 아이템의 할인 적용 후 총액 계산
+export function calculateItemTotal({ item, cart }: CalculateItemTotalParams) {
   const { price } = item.product;
   const { quantity } = item;
 
@@ -110,14 +109,16 @@ export function calculateItemTotal({
   return applyDiscount({ price: price * quantity, discount });
 }
 
+interface CalculateCartTotalParams {
+  cart: CartItem[];
+  applyCoupon: (params: { price: number }) => number;
+}
+
 // 장바구니 총액 계산 (할인 전/후, 할인액)
 export function calculateCartTotal({
   cart,
   applyCoupon,
-}: {
-  cart: CartItem[];
-  applyCoupon: (params: { price: number }) => number;
-}) {
+}: CalculateCartTotalParams) {
   const { totalBeforeDiscount, totalAfterDiscount } = cart.reduce(
     (acc, item) => {
       const { product, quantity } = item;
