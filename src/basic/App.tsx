@@ -11,6 +11,8 @@ import { useNotifications } from './hooks/notifications/useNotifications';
 import { useProductForm } from './hooks/product/useProductForm';
 import { getRemainingStock } from './utils/calculations/stockCalculations';
 import { formatPriceWithSoldOut } from './utils/formatters/priceFormatter';
+import { useCoupons } from './hooks/coupons/useCoupons';
+import { calculateCartTotal, calculateItemTotal } from './utils/calculations/cartCalculations';
 
 const App = () => {
   const { products, deleteProduct, updateProduct, addProduct } = useProducts();
@@ -33,21 +35,27 @@ const App = () => {
     return [];
   });
 
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem('coupons');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialCoupons;
-      }
-    }
-    return initialCoupons;
-  });
+  // coupons---------------------!!
+  // const [coupons, setCoupons] = useState<Coupon[]>(() => {
+  //   const saved = localStorage.getItem('coupons');
+  //   if (saved) {
+  //     try {
+  //       return JSON.parse(saved);
+  //     } catch {
+  //       return initialCoupons;
+  //     }
+  //   }
+  //   return initialCoupons;
+  // });
 
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+  const { coupons, setCoupons, selectedCoupon, setSelectedCoupon, applyCoupon } = useCoupons(
+    (message) => addNotification(message, 'success'),
+    (message) => addNotification(message, 'error'),
+  );
+
+  // const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [showCouponForm, setShowCouponForm] = useState(false);
+  const [showCouponForm, setShowCouponForm] = useState(false); // 쿠폰 ui
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
   const [searchInputValue, setSearchInputValue] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
@@ -61,60 +69,60 @@ const App = () => {
     discountValue: 0,
   });
 
-  const getMaxApplicableDiscount = (item: CartItem): number => {
-    const { discounts } = item.product;
-    const { quantity } = item;
+  // const getMaxApplicableDiscount = (item: CartItem): number => {
+  //   const { discounts } = item.product;
+  //   const { quantity } = item;
 
-    const baseDiscount = discounts.reduce((maxDiscount, discount) => {
-      return quantity >= discount.quantity && discount.rate > maxDiscount
-        ? discount.rate
-        : maxDiscount;
-    }, 0);
+  //   const baseDiscount = discounts.reduce((maxDiscount, discount) => {
+  //     return quantity >= discount.quantity && discount.rate > maxDiscount
+  //       ? discount.rate
+  //       : maxDiscount;
+  //   }, 0);
 
-    const hasBulkPurchase = cart.some((cartItem) => cartItem.quantity >= 10);
-    if (hasBulkPurchase) {
-      return Math.min(baseDiscount + 0.05, 0.5); // 대량 구매 시 추가 5% 할인
-    }
+  //   const hasBulkPurchase = cart.some((cartItem) => cartItem.quantity >= 10);
+  //   if (hasBulkPurchase) {
+  //     return Math.min(baseDiscount + 0.05, 0.5); // 대량 구매 시 추가 5% 할인
+  //   }
 
-    return baseDiscount;
-  };
+  //   return baseDiscount;
+  // };
 
-  const calculateItemTotal = (item: CartItem): number => {
-    const { price } = item.product;
-    const { quantity } = item;
-    const discount = getMaxApplicableDiscount(item);
+  // const calculateItemTotal = (item: CartItem): number => {
+  //   const { price } = item.product;
+  //   const { quantity } = item;
+  //   const discount = getMaxApplicableDiscount(item);
 
-    return Math.round(price * quantity * (1 - discount));
-  };
+  //   return Math.round(price * quantity * (1 - discount));
+  // };
 
-  const calculateCartTotal = (): {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
-  } => {
-    let totalBeforeDiscount = 0;
-    let totalAfterDiscount = 0;
+  // const calculateCartTotal = (): {
+  //   totalBeforeDiscount: number;
+  //   totalAfterDiscount: number;
+  // } => {
+  //   let totalBeforeDiscount = 0;
+  //   let totalAfterDiscount = 0;
 
-    cart.forEach((item) => {
-      const itemPrice = item.product.price * item.quantity;
-      totalBeforeDiscount += itemPrice;
-      totalAfterDiscount += calculateItemTotal(item);
-    });
+  //   cart.forEach((item) => {
+  //     const itemPrice = item.product.price * item.quantity;
+  //     totalBeforeDiscount += itemPrice;
+  //     totalAfterDiscount += calculateItemTotal(item);
+  //   });
 
-    if (selectedCoupon) {
-      if (selectedCoupon.discountType === 'amount') {
-        totalAfterDiscount = Math.max(0, totalAfterDiscount - selectedCoupon.discountValue);
-      } else {
-        totalAfterDiscount = Math.round(
-          totalAfterDiscount * (1 - selectedCoupon.discountValue / 100),
-        );
-      }
-    }
+  //   if (selectedCoupon) {
+  //     if (selectedCoupon.discountType === 'amount') {
+  //       totalAfterDiscount = Math.max(0, totalAfterDiscount - selectedCoupon.discountValue);
+  //     } else {
+  //       totalAfterDiscount = Math.round(
+  //         totalAfterDiscount * (1 - selectedCoupon.discountValue / 100),
+  //       );
+  //     }
+  //   }
 
-    return {
-      totalBeforeDiscount: Math.round(totalBeforeDiscount),
-      totalAfterDiscount: Math.round(totalAfterDiscount),
-    };
-  };
+  //   return {
+  //     totalBeforeDiscount: Math.round(totalBeforeDiscount),
+  //     totalAfterDiscount: Math.round(totalAfterDiscount),
+  //   };
+  // };
 
   const [totalCartItem, setTotalCartItem] = useState(0);
 
@@ -122,10 +130,6 @@ const App = () => {
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);
     setTotalCartItem(count);
   }, [cart]);
-
-  useEffect(() => {
-    localStorage.setItem('coupons', JSON.stringify(coupons));
-  }, [coupons]);
 
   useEffect(() => {
     if (cart.length > 0) {
@@ -203,20 +207,20 @@ const App = () => {
     [products, removeFromCart, addNotification, getRemainingStock],
   );
 
-  const applyCoupon = useCallback(
-    (coupon: Coupon) => {
-      const currentTotal = calculateCartTotal().totalAfterDiscount;
+  // const applyCoupon = useCallback(
+  //   (coupon: Coupon) => {
+  //     const currentTotal = calculateCartTotal().totalAfterDiscount;
 
-      if (currentTotal < 10000 && coupon.discountType === 'percentage') {
-        addNotification('percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.', 'error');
-        return;
-      }
+  //     if (currentTotal < 10000 && coupon.discountType === 'percentage') {
+  //       addNotification('percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.', 'error');
+  //       return;
+  //     }
 
-      setSelectedCoupon(coupon);
-      addNotification('쿠폰이 적용되었습니다.', 'success');
-    },
-    [addNotification, calculateCartTotal],
-  );
+  //     setSelectedCoupon(coupon);
+  //     addNotification('쿠폰이 적용되었습니다.', 'success');
+  //   },
+  //   [addNotification, calculateCartTotal],
+  // );
 
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
@@ -273,7 +277,7 @@ const App = () => {
     setShowProductForm(true);
   };
 
-  const totals = calculateCartTotal();
+  const totals = calculateCartTotal(cart, selectedCoupon);
 
   const filteredProducts = debouncedSearchTerm
     ? products.filter(
@@ -977,7 +981,7 @@ const App = () => {
                   ) : (
                     <div className='space-y-3'>
                       {cart.map((item) => {
-                        const itemTotal = calculateItemTotal(item);
+                        const itemTotal = calculateItemTotal(item, cart);
                         const originalPrice = item.product.price * item.quantity;
                         const hasDiscount = itemTotal < originalPrice;
                         const discountRate = hasDiscount
@@ -1064,7 +1068,7 @@ const App = () => {
                           value={selectedCoupon?.code || ''}
                           onChange={(e) => {
                             const coupon = coupons.find((c) => c.code === e.target.value);
-                            if (coupon) applyCoupon(coupon);
+                            if (coupon) applyCoupon(coupon, cart);
                             else setSelectedCoupon(null);
                           }}
                         >
