@@ -16,6 +16,7 @@ import { useCart } from './hooks/cart/useCart';
 import useCheckout from './hooks/checkout/useCheckout';
 import { filteredProducts } from './utils/calculations/productCalculations';
 import { useSearch } from './hooks/search/useSearch';
+import Input from './components/ui/Input';
 
 const App = () => {
   const { products, deleteProduct, updateProduct, addProduct } = useProducts();
@@ -234,13 +235,12 @@ const App = () => {
                           <label className='block text-sm font-medium text-gray-700 mb-1'>
                             상품명
                           </label>
-                          <input
+                          <Input
                             type='text'
                             value={productForm.name}
                             onChange={(e) =>
                               setProductForm({ ...productForm, name: e.target.value })
                             }
-                            className='w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border'
                             required
                           />
                         </div>
@@ -248,20 +248,19 @@ const App = () => {
                           <label className='block text-sm font-medium text-gray-700 mb-1'>
                             설명
                           </label>
-                          <input
+                          <Input
                             type='text'
                             value={productForm.description}
                             onChange={(e) =>
                               setProductForm({ ...productForm, description: e.target.value })
                             }
-                            className='w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border'
                           />
                         </div>
                         <div>
                           <label className='block text-sm font-medium text-gray-700 mb-1'>
                             가격
                           </label>
-                          <input
+                          <Input
                             type='text'
                             value={productForm.price === 0 ? '' : productForm.price}
                             onChange={(e) => {
@@ -282,7 +281,6 @@ const App = () => {
                                 setProductForm({ ...productForm, price: 0 });
                               }
                             }}
-                            className='w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border'
                             placeholder='숫자만 입력'
                             required
                           />
@@ -291,7 +289,7 @@ const App = () => {
                           <label className='block text-sm font-medium text-gray-700 mb-1'>
                             재고
                           </label>
-                          <input
+                          <Input
                             type='text'
                             value={productForm.stock === 0 ? '' : productForm.stock}
                             onChange={(e) => {
@@ -315,7 +313,6 @@ const App = () => {
                                 setProductForm({ ...productForm, stock: 9999 });
                               }
                             }}
-                            className='w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border'
                             placeholder='숫자만 입력'
                             required
                           />
@@ -331,7 +328,7 @@ const App = () => {
                               key={index}
                               className='flex items-center gap-2 bg-gray-50 p-2 rounded'
                             >
-                              <input
+                              <Input
                                 type='number'
                                 value={discount.quantity}
                                 onChange={(e) => {
@@ -339,12 +336,12 @@ const App = () => {
                                   newDiscounts[index].quantity = parseInt(e.target.value) || 0;
                                   setProductForm({ ...productForm, discounts: newDiscounts });
                                 }}
-                                className='w-20 px-2 py-1 border rounded'
+                                size='sm'
                                 min='1'
                                 placeholder='수량'
                               />
                               <span className='text-sm'>개 이상 구매 시</span>
-                              <input
+                              <Input
                                 type='number'
                                 value={discount.rate * 100}
                                 onChange={(e) => {
@@ -352,7 +349,7 @@ const App = () => {
                                   newDiscounts[index].rate = (parseInt(e.target.value) || 0) / 100;
                                   setProductForm({ ...productForm, discounts: newDiscounts });
                                 }}
-                                className='w-16 px-2 py-1 border rounded'
+                                size='xs'
                                 min='0'
                                 max='100'
                                 placeholder='%'
@@ -510,13 +507,13 @@ const App = () => {
                             <label className='block text-sm font-medium text-gray-700 mb-1'>
                               쿠폰명
                             </label>
-                            <input
+                            <Input
                               type='text'
                               value={couponForm.name}
                               onChange={(e) =>
                                 setCouponForm({ ...couponForm, name: e.target.value })
                               }
-                              className='w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm'
+                              className='text-sm'
                               placeholder='신규 가입 쿠폰'
                               required
                             />
@@ -525,13 +522,13 @@ const App = () => {
                             <label className='block text-sm font-medium text-gray-700 mb-1'>
                               쿠폰 코드
                             </label>
-                            <input
+                            <Input
                               type='text'
                               value={couponForm.code}
                               onChange={(e) =>
                                 setCouponForm({ ...couponForm, code: e.target.value.toUpperCase() })
                               }
-                              className='w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm font-mono'
+                              className='text-sm font-mono'
                               placeholder='WELCOME2024'
                               required
                             />
@@ -558,7 +555,7 @@ const App = () => {
                             <label className='block text-sm font-medium text-gray-700 mb-1'>
                               {couponForm.discountType === 'amount' ? '할인 금액' : '할인율(%)'}
                             </label>
-                            <input
+                            <Input
                               type='text'
                               value={couponForm.discountValue === 0 ? '' : couponForm.discountValue}
                               onChange={(e) => {
@@ -591,7 +588,8 @@ const App = () => {
                                   }
                                 }
                               }}
-                              className='w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm'
+                              size='md'
+                              className='text-sm'
                               placeholder={couponForm.discountType === 'amount' ? '5000' : '10'}
                               required
                             />
