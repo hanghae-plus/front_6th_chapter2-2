@@ -28,7 +28,18 @@ const App = () => {
     const saved = localStorage.getItem('cart');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsedCart = JSON.parse(saved);
+        if (Array.isArray(parsedCart)) {
+          return parsedCart.filter(
+            (item) =>
+              item &&
+              item.product &&
+              typeof item.product.id === 'string' &&
+              typeof item.product.price === 'number' &&
+              typeof item.quantity === 'number',
+          );
+        }
+        return [];
       } catch {
         return [];
       }

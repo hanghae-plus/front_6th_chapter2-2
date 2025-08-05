@@ -11,6 +11,10 @@ export const calculateCartTotal = (
   let totalAfterDiscount = 0;
 
   cart.forEach((item) => {
+    if (!item.product || typeof item.product.price !== 'number') {
+      console.warn('Invalid cart item:', item);
+      return;
+    }
     const itemPrice = item.product.price * item.quantity;
     totalBeforeDiscount += itemPrice;
     totalAfterDiscount += calculateItemTotal(item, cart);
@@ -33,6 +37,10 @@ export const calculateCartTotal = (
 };
 
 export const calculateItemTotal = (item: CartItem, cart: CartItem[]): number => {
+  if (!item.product || typeof item.product.price !== 'number') {
+    console.warn('Invalid cart item in calculateItemTotal:', item);
+    return 0;
+  }
   const { price } = item.product;
   const { quantity } = item;
   const discount = getMaxApplicableDiscount(item, cart);
@@ -41,6 +49,9 @@ export const calculateItemTotal = (item: CartItem, cart: CartItem[]): number => 
 };
 
 export const getMaxApplicableDiscount = (item: CartItem, cart: CartItem[]): number => {
+  if (!item.product || !item.product.discounts) {
+    return 0;
+  }
   const { discounts } = item.product;
   const { quantity } = item;
 
