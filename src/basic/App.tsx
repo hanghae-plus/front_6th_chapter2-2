@@ -21,7 +21,12 @@ import {
   defaultProductForm,
   defaultCouponForm,
 } from './constants';
-import { calculateItemTotal, calculateCartTotal, getRemainingStock } from './models/cart';
+import {
+  calculateItemTotal,
+  calculateCartTotal,
+  getRemainingStock,
+  calculateOriginalPrice,
+} from './models/cart';
 import {
   isCouponApplicable,
   validateCouponCode,
@@ -30,6 +35,14 @@ import {
   getCouponDiscountLabel,
   getCouponDiscountPlaceholder,
 } from './models/coupon';
+import {
+  getMaxDiscountRate,
+  formatDiscountDescription,
+  hasDiscount,
+  calculateDiscountRate,
+  hasTotalDiscount,
+  calculateTotalDiscountAmount,
+} from './models/discount';
 
 const App = () => {
   // ===== 상태 관리 =====
@@ -950,7 +963,8 @@ const App = () => {
                                 rounded='sm'
                                 className='absolute top-2 left-2 bg-orange-500 text-white px-2 py-1'
                               >
-                                ~{Math.max(...product.discounts.map((d) => d.rate)) * 100}%
+                                {/* TODO: src/basic/models/discount.ts로 분리 - getMaxDiscountRate(discounts): number */}
+                                ~{getMaxDiscountRate(product.discounts)}%
                               </Badge>
                             )}
                           </div>
@@ -971,8 +985,7 @@ const App = () => {
                               </p>
                               {product.discounts.length > 0 && (
                                 <p className='text-xs text-gray-500'>
-                                  {product.discounts[0].quantity}개 이상 구매시 할인{' '}
-                                  {product.discounts[0].rate * 100}%
+                                  {formatDiscountDescription(product.discounts)}
                                 </p>
                               )}
                             </div>
@@ -1035,11 +1048,9 @@ const App = () => {
                     <div className='space-y-3'>
                       {cart.map((item) => {
                         const itemTotal = calculateItemTotal(item, cart);
-                        const originalPrice = item.product.price * item.quantity;
-                        const hasDiscount = itemTotal < originalPrice;
-                        const discountRate = hasDiscount
-                          ? Math.round((1 - itemTotal / originalPrice) * 100)
-                          : 0;
+                        const originalPrice = calculateOriginalPrice(item);
+                        const hasDiscountValue = hasDiscount(itemTotal, originalPrice);
+                        const discountRate = calculateDiscountRate(itemTotal, originalPrice);
 
                         return (
                           <div key={item.product.id} className='border-b pb-3 last:border-b-0'>
@@ -1075,7 +1086,7 @@ const App = () => {
                                 </Button>
                               </div>
                               <div className='text-right'>
-                                {hasDiscount && (
+                                {hasDiscountValue && (
                                   <Badge
                                     size='xs'
                                     rounded='none'
@@ -1146,13 +1157,17 @@ const App = () => {
                             {totals.totalBeforeDiscount.toLocaleString()}원
                           </span>
                         </div>
-                        {totals.totalBeforeDiscount - totals.totalAfterDiscount > 0 && (
+                        {hasTotalDiscount(
+                          totals.totalBeforeDiscount,
+                          totals.totalAfterDiscount
+                        ) && (
                           <div className='flex justify-between text-red-500'>
                             <span>할인 금액</span>
                             <span>
                               -
-                              {(
-                                totals.totalBeforeDiscount - totals.totalAfterDiscount
+                              {calculateTotalDiscountAmount(
+                                totals.totalBeforeDiscount,
+                                totals.totalAfterDiscount
                               ).toLocaleString()}
                               원
                             </span>

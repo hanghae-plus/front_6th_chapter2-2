@@ -83,3 +83,8 @@ export const getRemainingStock = (product: Product, cart: CartItem[]): number =>
 
   return remaining;
 };
+
+// 장바구니 아이템의 원래 가격 계산 (순수 함수)
+export const calculateOriginalPrice = (item: CartItem): number => {
+  return item.product.price * item.quantity;
+};
