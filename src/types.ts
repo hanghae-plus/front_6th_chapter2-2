@@ -42,3 +42,6 @@ export interface ProductFormType {
   description: string;
   discounts: Discount[];
 }
+
+// CouponForm은 Coupon과 동일한 구조
+export type CouponForm = Coupon;
