@@ -14,12 +14,11 @@ import { useCoupons } from './hooks/coupons/useCoupons';
 import { calculateCartTotal, calculateItemTotal } from './utils/calculations/cartCalculations';
 import { useCouponsForm } from './hooks/coupons/useCouponsForm';
 import { useCart } from './hooks/cart/useCart';
+import useCheckout from './hooks/checkout/useCheckout';
 
 const App = () => {
   const { products, deleteProduct, updateProduct, addProduct } = useProducts();
   const { notifications, setNotifications, addNotification } = useNotifications();
-
-  const [showProductForm, setShowProductForm] = useState(false);
 
   const { productForm, setProductForm, editingProduct, setEditingProduct, handleProductSubmit } =
     useProductForm(addProduct, updateProduct);
@@ -45,6 +44,7 @@ const App = () => {
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products'); // tab ui
   const [searchInputValue, setSearchInputValue] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+  const [showProductForm, setShowProductForm] = useState(false);
 
   // Admin
 
@@ -55,19 +55,20 @@ const App = () => {
     (message) => addNotification(message, 'error'),
   );
 
+  // checkout -----------------!!
+
+  const { completeOrder } = useCheckout(
+    () => setCart([]),
+    () => setSelectedCoupon(null),
+    (message) => addNotification(message, 'success'),
+  );
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchInputValue);
     }, 500);
     return () => clearTimeout(timer);
   }, [searchInputValue]);
-
-  const completeOrder = useCallback(() => {
-    const orderNumber = `ORD-${Date.now()}`;
-    addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
-    setCart([]);
-    setSelectedCoupon(null);
-  }, [addNotification]);
 
   const startEditProduct = (product: ProductWithUI) => {
     setEditingProduct(product.id);

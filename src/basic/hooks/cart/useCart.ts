@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { CartItem, Product, ProductWithUI } from '../../../types';
+import { CartItem, ProductWithUI } from '../../../types';
 import { getRemainingStock } from '../../utils/calculations/stockCalculations';
 
 export const useCart = (
