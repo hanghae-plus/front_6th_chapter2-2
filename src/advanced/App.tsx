@@ -2,7 +2,6 @@ import { useState } from 'react';
 import Toast from './components/ui/Toast';
 import Header from './components/ui/Header';
 import { useProducts } from './hooks/product/useProducts';
-import { useNotifications } from './hooks/notifications/useNotifications';
 import { useProductForm } from './hooks/product/useProductForm';
 import { useCoupons } from './hooks/coupons/useCoupons';
 import { calculateCartTotal } from './utils/calculations/cartCalculations';
@@ -13,11 +12,20 @@ import { filteredProducts } from './utils/calculations/productCalculations';
 import { useSearch } from './hooks/search/useSearch';
 import AdminDashboard from './components/admin/AdminDashboard';
 import ShopView from './components/user/ShopView';
+import { useAtom, useSetAtom } from 'jotai';
+import {
+  addNotificationAtom,
+  notificationsAtom,
+  removeNotificationAtom,
+} from './atoms/notificationsAtoms';
 
 const App = () => {
   // 기본 데이터 관리
   const { products, deleteProduct, updateProduct, addProduct } = useProducts();
-  const { notifications, setNotifications, addNotification } = useNotifications();
+  // const { notifications, setNotifications, addNotification } = useNotifications();
+  const [notifications] = useAtom(notificationsAtom);
+  const addNotification = useSetAtom(addNotificationAtom);
+  const removeNotification = useSetAtom(removeNotificationAtom);
 
   // UI 상태 관리
   const [isAdmin, setIsAdmin] = useState(false);
@@ -34,8 +42,8 @@ const App = () => {
 
   // 쿠폰 관리 훅
   const { coupons, setCoupons, selectedCoupon, setSelectedCoupon, applyCoupon } = useCoupons(
-    (message) => addNotification(message, 'success'),
-    (message) => addNotification(message, 'error'),
+    (message) => addNotification({ message, type: 'success' }),
+    (message) => addNotification({ message, type: 'error' }),
   );
 
   // 쿠폰 폼 관리 훅
@@ -44,15 +52,15 @@ const App = () => {
     setCoupons,
     selectedCoupon,
     setSelectedCoupon,
-    (message) => addNotification(message, 'success'),
-    (message) => addNotification(message, 'error'),
-    (message) => addNotification(message, 'success'),
+    (message) => addNotification({ message, type: 'success' }),
+    (message) => addNotification({ message, type: 'error' }),
+    (message) => addNotification({ message, type: 'success' }),
   );
 
   // 장바구니 관리 훅
   const { cart, setCart, totalCartItem, addToCart, removeFromCart, updateQuantity } = useCart(
-    (message) => addNotification(message, 'success'),
-    (message) => addNotification(message, 'error'),
+    (message) => addNotification({ message, type: 'success' }),
+    (message) => addNotification({ message, type: 'error' }),
   );
 
   // 검색 기능 훅
@@ -62,7 +70,7 @@ const App = () => {
   const { completeOrder } = useCheckout(
     () => setCart([]),
     () => setSelectedCoupon(null),
-    (message) => addNotification(message, 'success'),
+    (message) => addNotification({ message, type: 'success' }),
   );
 
   // 계산된 데이터
@@ -78,9 +86,7 @@ const App = () => {
               key={notification.id}
               type={notification.type}
               message={notification.message}
-              onClose={() =>
-                setNotifications((prev) => prev.filter((n) => n.id !== notification.id))
-              }
+              onClose={() => removeNotification(notification.id)}
             />
           ))}
         </div>
@@ -112,7 +118,6 @@ const App = () => {
             onCouponDelete={deleteCoupon}
             onCouponSubmit={handleCouponSubmit}
             onCouponFormChange={setCouponForm}
-            onNotify={addNotification}
           />
         ) : (
           <ShopView

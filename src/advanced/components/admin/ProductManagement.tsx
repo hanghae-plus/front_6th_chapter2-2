@@ -16,7 +16,6 @@ interface ProductManagementProps {
   onEditClick: (value: string | null) => void;
   onFormChange: (form: ProductFormType) => void;
   handleProductSubmit: (e: React.FormEvent, callback: () => void) => void;
-  onNotify: (message: string, type: 'error' | 'success' | 'warning') => void;
 }
 
 export default function ProductManagement({
@@ -30,7 +29,6 @@ export default function ProductManagement({
   onEditClick,
   onFormChange,
   onProductDelete,
-  onNotify,
 }: ProductManagementProps) {
   const [showProductForm, setShowProductForm] = useState(false);
 
@@ -142,7 +140,6 @@ export default function ProductManagement({
           handleProductSubmit={handleProductSubmit}
           onToggleForm={setShowProductForm}
           onFormChange={onFormChange}
-          onNotify={onNotify}
           onEditClick={onEditClick}
         />
       )}

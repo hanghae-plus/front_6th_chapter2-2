@@ -1,8 +1,10 @@
+import { useSetAtom } from 'jotai';
 import { ProductFormType } from '../../../../types';
 import Button from '../../ui/Button';
 import IconButton from '../../ui/IconButton';
 import { DeleteIcon } from '../../ui/Icons';
 import Input from '../../ui/Input';
+import { addNotificationAtom } from '../../../atoms/notificationsAtoms';
 
 interface ProductFormProps {
   handleProductSubmit: (e: React.FormEvent, callback: () => void) => void;
@@ -10,7 +12,6 @@ interface ProductFormProps {
   editingProduct: string | null;
   productForm: ProductFormType;
   onFormChange: (form: ProductFormType) => void;
-  onNotify: (message: string, type: 'error' | 'success' | 'warning') => void;
   onEditClick: (value: string | null) => void;
 }
 
@@ -19,10 +20,11 @@ export default function ProductForm({
   productForm,
   handleProductSubmit,
   onFormChange,
-  onNotify,
   onToggleForm,
   onEditClick,
 }: ProductFormProps) {
+  const addNotification = useSetAtom(addNotificationAtom);
+
   return (
     <div className='p-6 border-t border-gray-200 bg-gray-50'>
       <form
@@ -71,7 +73,7 @@ export default function ProductForm({
                 if (value === '') {
                   onFormChange({ ...productForm, price: 0 });
                 } else if (parseInt(value) < 0) {
-                  onNotify('가격은 0보다 커야 합니다', 'error');
+                  addNotification({ message: '가격은 0보다 커야 합니다', type: 'error' });
                   onFormChange({ ...productForm, price: 0 });
                 }
               }}
@@ -98,10 +100,10 @@ export default function ProductForm({
                 if (value === '') {
                   onFormChange({ ...productForm, stock: 0 });
                 } else if (parseInt(value) < 0) {
-                  onNotify('재고는 0보다 커야 합니다', 'error');
+                  addNotification({ message: '재고는 0보다 커야 합니다', type: 'error' });
                   onFormChange({ ...productForm, stock: 0 });
                 } else if (parseInt(value) > 9999) {
-                  onNotify('재고는 9999개를 초과할 수 없습니다', 'error');
+                  addNotification({ message: '재고는 9999개를 초과할 수 없습니다', type: 'error' });
                   onFormChange({ ...productForm, stock: 9999 });
                 }
               }}

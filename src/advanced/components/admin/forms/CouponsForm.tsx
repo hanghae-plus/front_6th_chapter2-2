@@ -1,22 +1,24 @@
+import { useSetAtom } from 'jotai';
 import { CouponForm } from '../../../../types';
 import Button from '../../ui/Button';
 import Input from '../../ui/Input';
+import { addNotificationAtom } from '../../../atoms/notificationsAtoms';
 
 interface CouponsManagementProps {
   couponForm: CouponForm;
   onToggleForm: (show: boolean) => void;
   onCouponSubmit: (e: React.FormEvent) => void;
   onCouponFormChange: (form: CouponForm) => void;
-  onNotify: (message: string, type: 'error' | 'success' | 'warning') => void;
 }
 
 export default function CouponsForm({
   couponForm,
   onCouponSubmit,
   onCouponFormChange,
-  onNotify,
   onToggleForm,
 }: CouponsManagementProps) {
+  const addNotification = useSetAtom(addNotificationAtom);
+
   return (
     <div className='mt-6 p-4 bg-gray-50 rounded-lg'>
       <form onSubmit={onCouponSubmit} className='space-y-4'>
@@ -82,14 +84,20 @@ export default function CouponsForm({
                 const value = parseInt(e.target.value) || 0;
                 if (couponForm.discountType === 'percentage') {
                   if (value > 100) {
-                    onNotify('할인율은 100%를 초과할 수 없습니다', 'error');
+                    addNotification({
+                      message: '할인율은 100%를 초과할 수 없습니다',
+                      type: 'error',
+                    });
                     onCouponFormChange({ ...couponForm, discountValue: 100 });
                   } else if (value < 0) {
                     onCouponFormChange({ ...couponForm, discountValue: 0 });
                   }
                 } else {
                   if (value > 100000) {
-                    onNotify('할인 금액은 100,000원을 초과할 수 없습니다', 'error');
+                    addNotification({
+                      message: '할인 금액은 100,000원을 초과할 수 없습니다',
+                      type: 'error',
+                    });
                     onCouponFormChange({ ...couponForm, discountValue: 100000 });
                   } else if (value < 0) {
                     onCouponFormChange({ ...couponForm, discountValue: 0 });

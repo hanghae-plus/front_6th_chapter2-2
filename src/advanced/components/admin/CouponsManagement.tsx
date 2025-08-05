@@ -11,7 +11,6 @@ interface CouponsManagementProps {
   onCouponDelete: (code: string) => void;
   onCouponSubmit: (e: React.FormEvent) => void;
   onCouponFormChange: (form: CouponForm) => void;
-  onNotify: (message: string, type: 'error' | 'success' | 'warning') => void;
 }
 
 export default function CouponsManagement({
@@ -20,7 +19,6 @@ export default function CouponsManagement({
   onCouponDelete,
   onCouponSubmit,
   onCouponFormChange,
-  onNotify,
 }: CouponsManagementProps) {
   const [showCouponForm, setShowCouponForm] = useState(false);
 
@@ -75,7 +73,6 @@ export default function CouponsManagement({
             couponForm={couponForm}
             onCouponSubmit={onCouponSubmit}
             onCouponFormChange={onCouponFormChange}
-            onNotify={onNotify}
             onToggleForm={setShowCouponForm}
           />
         )}

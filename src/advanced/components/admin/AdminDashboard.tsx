@@ -20,7 +20,6 @@ interface AdminDashboardProps {
   onCouponDelete: (code: string) => void;
   onCouponSubmit: (e: React.FormEvent) => void;
   onCouponFormChange: (form: CouponForm) => void;
-  onNotify: (message: string, type: 'error' | 'success' | 'warning') => void;
 }
 
 export default function AdminDashboard({
@@ -39,7 +38,6 @@ export default function AdminDashboard({
   onCouponDelete,
   onCouponSubmit,
   onCouponFormChange,
-  onNotify,
 }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
 
@@ -72,7 +70,6 @@ export default function AdminDashboard({
           onEditClick={onEditClick}
           onFormChange={onFormChange}
           onProductDelete={onProductDelete}
-          onNotify={onNotify}
         />
       ) : (
         <CouponsManagement
@@ -81,7 +78,6 @@ export default function AdminDashboard({
           onCouponDelete={onCouponDelete}
           onCouponSubmit={onCouponSubmit}
           onCouponFormChange={onCouponFormChange}
-          onNotify={onNotify}
         />
       )}
     </div>
