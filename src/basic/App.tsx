@@ -75,7 +75,7 @@ const App = () => {
   const [couponForm, setCouponForm] = useState<CouponForm>({
     name: "",
     code: "",
-    discountType: "amount" as "amount" | "percentage",
+    discountType: "amount",
     discountValue: 0,
   });
 

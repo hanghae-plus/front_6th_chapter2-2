@@ -1,5 +1,6 @@
 import { CouponForm as CouponFormType } from "@/types/product.type";
 import React, { Dispatch, SetStateAction } from "react";
+
 type Props = {
   couponForm: CouponFormType;
   setCouponForm: Dispatch<SetStateAction<CouponFormType>>;

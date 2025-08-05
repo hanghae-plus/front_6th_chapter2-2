@@ -18,10 +18,12 @@ export type CartItem = {
   quantity: number;
 };
 
+export type DiscountType = "amount" | "percentage";
+
 export type CouponForm = {
   name: string;
   code: string;
-  discountType: "amount" | "percentage";
+  discountType: DiscountType;
   discountValue: number;
 };
 
