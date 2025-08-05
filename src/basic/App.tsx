@@ -19,6 +19,7 @@ import { useSearch } from './hooks/search/useSearch';
 import Input from './components/ui/Input';
 import ProductManagement from './components/admin/ProductManagement';
 import CouponsManagement from './components/admin/CouponsManagement';
+import AdminDashboard from './components/admin/AdminDashboard';
 
 const App = () => {
   const { products, deleteProduct, updateProduct, addProduct } = useProducts();
@@ -50,9 +51,6 @@ const App = () => {
   );
 
   const [isAdmin, setIsAdmin] = useState(false); // admin ui
-  const [showCouponForm, setShowCouponForm] = useState(false); // 쿠폰 ui
-  const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products'); // tab ui
-  const [showProductForm, setShowProductForm] = useState(false);
 
   // Admin
 
@@ -104,51 +102,24 @@ const App = () => {
 
       <main className='max-w-7xl mx-auto px-4 py-8'>
         {isAdmin ? (
-          <div className='max-w-6xl mx-auto'>
-            <div className='mb-8'>
-              <h1 className='text-2xl font-bold text-gray-900'>관리자 대시보드</h1>
-              <p className='text-gray-600 mt-1'>상품과 쿠폰을 관리할 수 있습니다</p>
-            </div>
-            <div className='border-b border-gray-200 mb-6'>
-              <nav className='-mb-px flex space-x-8'>
-                <Tab isActive={activeTab === 'products'} onClick={() => setActiveTab('products')}>
-                  상품 관리
-                </Tab>
-                <Tab isActive={activeTab === 'coupons'} onClick={() => setActiveTab('coupons')}>
-                  쿠폰 관리
-                </Tab>
-              </nav>
-            </div>
-
-            {activeTab === 'products' ? (
-              <ProductManagement
-                products={products}
-                isAdmin={isAdmin}
-                cart={cart}
-                editingProduct={editingProduct}
-                productForm={productForm}
-                showProductForm={showProductForm}
-                handleProductEdit={handleProductEdit}
-                handleProductSubmit={handleProductSubmit}
-                onEditClick={setEditingProduct}
-                onFormChange={setProductForm}
-                onToggleForm={setShowProductForm}
-                onProductDelete={deleteProduct}
-                onNotify={addNotification}
-              />
-            ) : (
-              <CouponsManagement
-                coupons={coupons}
-                showCouponForm={showCouponForm}
-                couponForm={couponForm}
-                onCouponDelete={deleteCoupon}
-                onToggleForm={setShowCouponForm}
-                onCouponSubmit={handleCouponSubmit}
-                onCouponFormChange={setCouponForm}
-                onNotify={addNotification}
-              />
-            )}
-          </div>
+          <AdminDashboard
+            products={products}
+            isAdmin={isAdmin}
+            cart={cart}
+            editingProduct={editingProduct}
+            productForm={productForm}
+            coupons={coupons}
+            couponForm={couponForm}
+            onEditClick={setEditingProduct}
+            onFormChange={setProductForm}
+            handleProductEdit={handleProductEdit}
+            onProductDelete={deleteProduct}
+            handleProductSubmit={handleProductSubmit}
+            onCouponDelete={deleteCoupon}
+            onCouponSubmit={handleCouponSubmit}
+            onCouponFormChange={setCouponForm}
+            onNotify={addNotification}
+          />
         ) : (
           <div className='grid grid-cols-1 lg:grid-cols-4 gap-6'>
             <div className='lg:col-span-3'>

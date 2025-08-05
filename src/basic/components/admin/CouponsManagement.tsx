@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Coupon, CouponForm } from '../../../types';
 import Button from '../ui/Button';
 import IconButton from '../ui/IconButton';
@@ -5,10 +6,8 @@ import CouponsForm from './forms/CouponsForm';
 
 interface CouponsManagementProps {
   coupons: Coupon[];
-  showCouponForm: boolean;
   couponForm: CouponForm;
   onCouponDelete: (code: string) => void;
-  onToggleForm: (show: boolean) => void;
   onCouponSubmit: (e: React.FormEvent) => void;
   onCouponFormChange: (form: CouponForm) => void;
   onNotify: (message: string, type: 'error' | 'success' | 'warning') => void;
@@ -16,14 +15,14 @@ interface CouponsManagementProps {
 
 export default function CouponsManagement({
   coupons,
-  showCouponForm,
   couponForm,
   onCouponDelete,
-  onToggleForm,
   onCouponSubmit,
   onCouponFormChange,
   onNotify,
 }: CouponsManagementProps) {
+  const [showCouponForm, setShowCouponForm] = useState(false);
+
   return (
     <section className='bg-white rounded-lg border border-gray-200'>
       <div className='p-6 border-b border-gray-200'>
@@ -65,7 +64,7 @@ export default function CouponsManagement({
 
           <div className='border-2 border-dashed border-gray-300 rounded-lg p-4 flex items-center justify-center hover:border-gray-400 transition-colors'>
             <Button
-              onClick={() => onToggleForm(!showCouponForm)}
+              onClick={() => setShowCouponForm(!showCouponForm)}
               className='!text-gray-400 hover:text-gray-600 flex flex-col items-center'
               variant='ghost'
             >
@@ -88,7 +87,7 @@ export default function CouponsManagement({
             onCouponSubmit={onCouponSubmit}
             onCouponFormChange={onCouponFormChange}
             onNotify={onNotify}
-            onToggleForm={onToggleForm}
+            onToggleForm={setShowCouponForm}
           />
         )}
       </div>

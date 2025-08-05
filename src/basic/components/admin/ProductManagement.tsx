@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { CartItem, Product, ProductFormType } from '../../../types';
 import { getRemainingStock } from '../../utils/calculations/stockCalculations';
 import { formatPriceWithSoldOut } from '../../utils/formatters/priceFormatter';
@@ -10,12 +11,10 @@ interface ProductManagementProps {
   cart: CartItem[];
   editingProduct: string | null;
   productForm: ProductFormType;
-  showProductForm: boolean;
   handleProductEdit: (product: Product) => void;
   onProductDelete: (id: string) => void;
   onEditClick: (value: string | null) => void;
   onFormChange: (form: ProductFormType) => void;
-  onToggleForm: (show: boolean) => void;
   handleProductSubmit: (e: React.FormEvent, callback: () => void) => void;
   onNotify: (message: string, type: 'error' | 'success' | 'warning') => void;
 }
@@ -26,15 +25,15 @@ export default function ProductManagement({
   cart,
   editingProduct,
   productForm,
-  showProductForm,
   handleProductEdit,
   handleProductSubmit,
   onEditClick,
   onFormChange,
-  onToggleForm,
   onProductDelete,
   onNotify,
 }: ProductManagementProps) {
+  const [showProductForm, setShowProductForm] = useState(false);
+
   return (
     <section className='bg-white rounded-lg border border-gray-200'>
       <div className='p-6 border-b border-gray-200'>
@@ -53,7 +52,7 @@ export default function ProductManagement({
                 description: '',
                 discounts: [],
               });
-              onToggleForm(true);
+              setShowProductForm(true);
             }}
           >
             새 상품 추가
@@ -116,7 +115,7 @@ export default function ProductManagement({
                     variant='link'
                     onClick={() => {
                       handleProductEdit(product);
-                      onToggleForm(true);
+                      setShowProductForm(true);
                     }}
                     className='text-indigo-600 hover:text-indigo-900 mr-3'
                   >
@@ -141,7 +140,7 @@ export default function ProductManagement({
           editingProduct={editingProduct}
           productForm={productForm}
           handleProductSubmit={handleProductSubmit}
-          onToggleForm={onToggleForm}
+          onToggleForm={setShowProductForm}
           onFormChange={onFormChange}
           onNotify={onNotify}
           onEditClick={onEditClick}
