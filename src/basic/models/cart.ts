@@ -145,6 +145,49 @@ export function calculateCartTotal({
   };
 }
 
+interface AddToCartParams {
+  cart: CartItem[];
+  product: Product;
+  checkSoldOut: () => boolean;
+  onFailure: (params: { message: string }) => void;
+  onSuccess: () => void;
+}
+
+// 재고 확인 후 상품 추가
+export function addToCart({
+  cart,
+  product,
+  checkSoldOut,
+  onFailure,
+  onSuccess,
+}: AddToCartParams) {
+  if (checkSoldOut()) {
+    onFailure({ message: '재고가 부족합니다!' });
+    return cart;
+  }
+
+  const existingItem = cart.find((item) => item.product.id === product.id);
+
+  if (existingItem) {
+    const newQuantity = existingItem.quantity + 1;
+
+    if (newQuantity > product.stock) {
+      onFailure({ message: `재고는 ${product.stock}개까지만 있습니다.` });
+      return cart;
+    }
+
+    onSuccess();
+    return updateCartItemQuantity({
+      cart,
+      productId: product.id,
+      quantity: newQuantity,
+    });
+  }
+
+  onSuccess();
+  return addItemToCart({ cart, product });
+}
+
 interface AddItemToCartParams {
   cart: CartItem[];
   product: Product;
