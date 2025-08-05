@@ -15,7 +15,7 @@ interface AdminPageProps {
   // coupons
   coupons: ICoupon[];
   addCoupon: (newCoupon: ICoupon) => void;
-  removeCoupon: (couponCode: string) => void;
+  deleteCoupon: (couponCode: string) => void;
   selectedCoupon: ICoupon | null;
   setSelectedCoupon: React.Dispatch<React.SetStateAction<ICoupon | null>>;
 
@@ -35,7 +35,7 @@ const AdminPage = ({
   updateProduct,
   deleteProduct,
   addCoupon,
-  removeCoupon,
+  deleteCoupon,
   selectedCoupon,
   setSelectedCoupon,
 }: AdminPageProps) => {
@@ -166,7 +166,7 @@ const AdminPage = ({
   // 쿠폰 삭제
   const deleteCouponItem = useCallback(
     (couponCode: string) => {
-      removeCoupon(couponCode);
+      deleteCoupon(couponCode);
       if (selectedCoupon?.code === couponCode) {
         setSelectedCoupon(null);
       }

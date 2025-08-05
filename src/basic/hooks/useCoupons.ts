@@ -20,13 +20,13 @@ export const useCoupons = () => {
   /**
    * 쿠폰 삭제
    */
-  const removeCoupon = (couponCode: string) => {
+  const deleteCoupon = (couponCode: string) => {
     setCoupons((prev) => couponModel.deleteCoupon(prev, couponCode));
   };
 
   return {
     coupons,
     addCoupon,
-    removeCoupon,
+    deleteCoupon,
   };
 };

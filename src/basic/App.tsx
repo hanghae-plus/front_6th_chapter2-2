@@ -10,7 +10,7 @@ import CartPage from "./pages/CartPage";
 
 const App = () => {
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
-  const { coupons, addCoupon, removeCoupon } = useCoupons();
+  const { coupons, addCoupon, deleteCoupon } = useCoupons();
   const {
     cart,
     updateQuantity,
@@ -92,7 +92,7 @@ const App = () => {
             getRemainingStock={getRemainingStock}
             coupons={coupons}
             addCoupon={addCoupon}
-            removeCoupon={removeCoupon}
+            deleteCoupon={deleteCoupon}
             selectedCoupon={selectedCoupon}
             setSelectedCoupon={setSelectedCoupon}
             addNotification={addNotification}
