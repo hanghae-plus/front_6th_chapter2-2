@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 
-import { CartItem, Coupon, Product, ProductWithUI, Notification } from '../types';
+import { CartItem, Coupon, ProductWithUI, Notification } from '../types';
 import {
   CloseIcon,
   CartIcon,
@@ -21,8 +21,10 @@ import {
   defaultProductForm,
   defaultCouponForm,
 } from './constants';
+import { calculateItemTotal, calculateCartTotal, getRemainingStock } from './models/cart';
 
 const App = () => {
+  // ===== 상태 관리 =====
   const [products, setProducts] = useState<ProductWithUI[]>(() => {
     const saved = localStorage.getItem('products');
     if (saved) {
@@ -74,10 +76,12 @@ const App = () => {
 
   const [couponForm, setCouponForm] = useState(defaultCouponForm);
 
+  // ===== UTILS: 유틸리티 함수들 =====
+  // TODO: src/basic/utils/formatters.ts로 분리 - formatPrice(price: number): string
   const formatPrice = (price: number, productId?: string): string => {
     if (productId) {
       const product = products.find((p) => p.id === productId);
-      if (product && getRemainingStock(product) <= 0) {
+      if (product && getRemainingStock(product, cart) <= 0) {
         return 'SOLD OUT';
       }
     }
@@ -89,68 +93,21 @@ const App = () => {
     return `₩${price.toLocaleString()}`;
   };
 
-  const getMaxApplicableDiscount = (item: CartItem): number => {
-    const { discounts } = item.product;
-    const { quantity } = item;
+  // ===== MODELS: 순수 함수들 (UI와 관련된 로직 없음, 외부 상태에 의존하지 않음) =====
+  // TODO: src/basic/models/cart.ts로 분리 - getMaxApplicableDiscount(item)
+  // const getMaxApplicableDiscount = (item: CartItem): number => { ... } // 모듈로 분리됨
 
-    const baseDiscount = discounts.reduce((maxDiscount, discount) => {
-      return quantity >= discount.quantity && discount.rate > maxDiscount
-        ? discount.rate
-        : maxDiscount;
-    }, 0);
+  // TODO: src/basic/models/cart.ts로 분리 - calculateItemTotal(item)
+  // const calculateItemTotal = (item: CartItem): number => { ... } // 모듈로 분리됨
 
-    const hasBulkPurchase = cart.some((cartItem) => cartItem.quantity >= 10);
-    if (hasBulkPurchase) {
-      return Math.min(baseDiscount + 0.05, 0.5); // 대량 구매 시 추가 5% 할인
-    }
+  // TODO: src/basic/models/cart.ts로 분리 - calculateCartTotal(cart, coupon)
+  // const calculateCartTotal = (): { ... } // 모듈로 분리됨
 
-    return baseDiscount;
-  };
+  // TODO: src/basic/models/cart.ts로 분리 - getRemainingStock(product, cart)
+  // const getRemainingStock = (product: Product): number => { ... } // 모듈로 분리됨
 
-  const calculateItemTotal = (item: CartItem): number => {
-    const { price } = item.product;
-    const { quantity } = item;
-    const discount = getMaxApplicableDiscount(item);
-
-    return Math.round(price * quantity * (1 - discount));
-  };
-
-  const calculateCartTotal = (): {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
-  } => {
-    let totalBeforeDiscount = 0;
-    let totalAfterDiscount = 0;
-
-    cart.forEach((item) => {
-      const itemPrice = item.product.price * item.quantity;
-      totalBeforeDiscount += itemPrice;
-      totalAfterDiscount += calculateItemTotal(item);
-    });
-
-    if (selectedCoupon) {
-      if (selectedCoupon.discountType === 'amount') {
-        totalAfterDiscount = Math.max(0, totalAfterDiscount - selectedCoupon.discountValue);
-      } else {
-        totalAfterDiscount = Math.round(
-          totalAfterDiscount * (1 - selectedCoupon.discountValue / 100)
-        );
-      }
-    }
-
-    return {
-      totalBeforeDiscount: Math.round(totalBeforeDiscount),
-      totalAfterDiscount: Math.round(totalAfterDiscount),
-    };
-  };
-
-  const getRemainingStock = (product: Product): number => {
-    const cartItem = cart.find((item) => item.product.id === product.id);
-    const remaining = product.stock - (cartItem?.quantity || 0);
-
-    return remaining;
-  };
-
+  // ===== HOOKS: 상태 관리 및 이벤트 핸들러들 =====
+  // TODO: src/basic/hooks/useCart.ts로 분리 - 장바구니 상태 관리 (localStorage 연동)
   const addNotification = useCallback(
     (message: string, type: 'error' | 'success' | 'warning' = 'success') => {
       const id = Date.now().toString();
@@ -170,6 +127,7 @@ const App = () => {
     setTotalItemCount(count);
   }, [cart]);
 
+  // TODO: src/basic/hooks/useLocalStorage.ts로 분리 - localStorage 관리
   useEffect(() => {
     localStorage.setItem('products', JSON.stringify(products));
   }, [products]);
@@ -193,9 +151,10 @@ const App = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
+  // TODO: src/basic/hooks/useCart.ts로 분리 - addToCart(product)
   const addToCart = useCallback(
     (product: ProductWithUI) => {
-      const remainingStock = getRemainingStock(product);
+      const remainingStock = getRemainingStock(product, cart);
       if (remainingStock <= 0) {
         addNotification('재고가 부족합니다!', 'error');
         return;
@@ -225,10 +184,12 @@ const App = () => {
     [cart, addNotification, getRemainingStock]
   );
 
+  // TODO: src/basic/hooks/useCart.ts로 분리 - removeFromCart(productId)
   const removeFromCart = useCallback((productId: string) => {
     setCart((prevCart) => prevCart.filter((item) => item.product.id !== productId));
   }, []);
 
+  // TODO: src/basic/hooks/useCart.ts로 분리 - updateQuantity(productId, quantity)
   const updateQuantity = useCallback(
     (productId: string, newQuantity: number) => {
       if (newQuantity <= 0) {
@@ -254,9 +215,10 @@ const App = () => {
     [products, removeFromCart, addNotification, getRemainingStock]
   );
 
+  // TODO: src/basic/hooks/useCart.ts로 분리 - applyCoupon(coupon)
   const applyCoupon = useCallback(
     (coupon: Coupon) => {
-      const currentTotal = calculateCartTotal().totalAfterDiscount;
+      const currentTotal = calculateCartTotal(cart, selectedCoupon).totalAfterDiscount;
 
       if (currentTotal < 10000 && coupon.discountType === 'percentage') {
         addNotification('percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.', 'error');
@@ -269,6 +231,7 @@ const App = () => {
     [addNotification, calculateCartTotal]
   );
 
+  // TODO: src/basic/hooks/useCart.ts로 분리 - completeOrder()
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
     addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
@@ -276,6 +239,7 @@ const App = () => {
     setSelectedCoupon(null);
   }, [addNotification]);
 
+  // TODO: src/basic/hooks/useProducts.ts로 분리 - addProduct(product), updateProduct(product), removeProduct(productId)
   const addProduct = useCallback(
     (newProduct: Omit<ProductWithUI, 'id'>) => {
       const product: ProductWithUI = {
@@ -306,6 +270,7 @@ const App = () => {
     [addNotification]
   );
 
+  // TODO: src/basic/hooks/useCoupons.ts로 분리 - addCoupon(coupon), removeCoupon(couponCode)
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {
       const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
@@ -319,6 +284,7 @@ const App = () => {
     [coupons, addNotification]
   );
 
+  // TODO: src/basic/hooks/useCoupons.ts로 분리 - addCoupon(coupon), removeCoupon(couponCode)
   const deleteCoupon = useCallback(
     (couponCode: string) => {
       setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
@@ -365,7 +331,7 @@ const App = () => {
     setShowProductForm(true);
   };
 
-  const totals = calculateCartTotal();
+  const totals = calculateCartTotal(cart, selectedCoupon);
 
   const filteredProducts = debouncedSearchTerm
     ? products.filter(
@@ -378,6 +344,8 @@ const App = () => {
 
   return (
     <div className='min-h-screen bg-gray-50'>
+      {/* ===== ENTITY COMPONENTS: 엔티티 컴포넌트들 ===== */}
+      {/* TODO: src/basic/components/Notification.tsx로 분리 - 알림 시스템 */}
       {notifications.length > 0 && (
         <div className='fixed top-20 right-4 z-50 space-y-2 max-w-sm'>
           {notifications.map((notif) => (
@@ -402,6 +370,7 @@ const App = () => {
           ))}
         </div>
       )}
+      {/* TODO: src/basic/components/Header.tsx로 분리 - 헤더 (네비게이션, 검색) */}
       <header className='bg-white shadow-sm sticky top-0 z-40 border-b'>
         <div className='max-w-7xl mx-auto px-4'>
           <div className='flex justify-between items-center h-16'>
@@ -449,6 +418,7 @@ const App = () => {
 
       <main className='max-w-7xl mx-auto px-4 py-8'>
         {isAdmin ? (
+          /* TODO: src/basic/components/AdminPage.tsx로 분리 - 관리자 페이지 */
           <div className='max-w-6xl mx-auto'>
             <div className='mb-8'>
               <h1 className='text-2xl font-bold text-gray-900'>관리자 대시보드</h1>
@@ -619,6 +589,7 @@ const App = () => {
                             }}
                             onBlur={(e) => {
                               const { value } = e.target;
+                              // TODO: src/basic/utils/validators.ts로 분리 - isValidPrice(price: number)
                               if (value === '') {
                                 setProductForm({ ...productForm, price: 0 });
                               } else if (parseInt(value) < 0) {
@@ -646,6 +617,7 @@ const App = () => {
                             }}
                             onBlur={(e) => {
                               const { value } = e.target;
+                              // TODO: src/basic/utils/validators.ts로 분리 - isValidStock(stock: number)
                               if (value === '') {
                                 setProductForm({ ...productForm, stock: 0 });
                               } else if (parseInt(value) < 0) {
@@ -877,6 +849,7 @@ const App = () => {
                               }}
                               onBlur={(e) => {
                                 const value = parseInt(e.target.value) || 0;
+                                // TODO: src/basic/utils/validators.ts로 분리 - 할인값 검증 로직
                                 if (couponForm.discountType === 'percentage') {
                                   if (value > 100) {
                                     addNotification('할인율은 100%를 초과할 수 없습니다', 'error');
@@ -931,9 +904,10 @@ const App = () => {
             )}
           </div>
         ) : (
+          /* TODO: src/basic/components/CartPage.tsx로 분리 - 장바구니 페이지 (상품목록 + 장바구니) */
           <div className='grid grid-cols-1 lg:grid-cols-4 gap-6'>
             <div className='lg:col-span-3'>
-              {/* 상품 목록 */}
+              {/* TODO: src/basic/components/ProductList.tsx로 분리 - 상품 목록 */}
               <section>
                 <div className='mb-6 flex justify-between items-center'>
                   <h2 className='text-2xl font-semibold text-gray-800'>전체 상품</h2>
@@ -948,9 +922,10 @@ const App = () => {
                 ) : (
                   <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
                     {filteredProducts.map((product) => {
-                      const remainingStock = getRemainingStock(product);
+                      const remainingStock = getRemainingStock(product, cart);
 
                       return (
+                        // TODO: src/basic/components/ProductCard.tsx로 분리 - 개별 상품 카드
                         <Card
                           key={product.id}
                           padding='none'
@@ -1040,6 +1015,7 @@ const App = () => {
             </div>
 
             <div className='lg:col-span-1'>
+              {/* TODO: src/basic/components/Cart.tsx로 분리 - 장바구니 표시 및 결제 */}
               <div className='sticky top-24 space-y-4'>
                 <Card
                   padding='sm'
@@ -1059,7 +1035,7 @@ const App = () => {
                   ) : (
                     <div className='space-y-3'>
                       {cart.map((item) => {
-                        const itemTotal = calculateItemTotal(item);
+                        const itemTotal = calculateItemTotal(item, cart);
                         const originalPrice = item.product.price * item.quantity;
                         const hasDiscount = itemTotal < originalPrice;
                         const discountRate = hasDiscount
