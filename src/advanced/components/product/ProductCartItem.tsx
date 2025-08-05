@@ -1,23 +1,29 @@
+import { useAtom } from "jotai";
 import {
   PRODUCT_LOW_STOCK_THRESHOLD,
   PRODUCT_OUT_OF_STOCK,
 } from "../../constants/product";
 import { ProductWithUI } from "../../types";
 import { formatPrice } from "../../utils/formatters";
+import { isAdminAtom } from "../../store";
+import { addToCartAtom } from "../../store/cart";
 
 interface ProductCartItemProps {
   product: ProductWithUI;
   remainingStock: number;
-  onAddToCart: (product: ProductWithUI) => void;
-  isAdmin: boolean;
 }
 
 export const ProductCartItem = ({
   product,
   remainingStock,
-  onAddToCart,
-  isAdmin,
 }: ProductCartItemProps) => {
+  const [, addToCart] = useAtom(addToCartAtom);
+  const [isAdmin] = useAtom(isAdminAtom);
+
+  const handleAddToCart = () => {
+    addToCart(product);
+  };
+
   return (
     <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
       <div className="relative">
@@ -80,7 +86,7 @@ export const ProductCartItem = ({
         </div>
 
         <button
-          onClick={() => onAddToCart(product)}
+          onClick={handleAddToCart}
           disabled={remainingStock <= PRODUCT_OUT_OF_STOCK}
           className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
             remainingStock <= PRODUCT_OUT_OF_STOCK
