@@ -30,6 +30,7 @@ export function AdminPage({
   updateProduct,
   addProduct,
   addCoupon,
+  getRemainingStock,
 }: {
   isAdmin: boolean
   cart: CartItem[]
@@ -45,6 +46,7 @@ export function AdminPage({
   updateProduct: (productId: string, updates: Partial<ProductWithUI>) => void
   addProduct: (newProduct: Omit<ProductWithUI, 'id'>) => void
   addCoupon: (newCoupon: Coupon) => void
+  getRemainingStock: (product: ProductWithUI) => number
 }) {
   // TODO: 구현
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products')
@@ -87,6 +89,7 @@ export function AdminPage({
     cart,
     startEditProduct,
     deleteProduct,
+    getRemainingStock,
   }
 
   const cuponFormProps = {

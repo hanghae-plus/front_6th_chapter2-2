@@ -1,5 +1,4 @@
 import { CartItem, Coupon } from '../../../types'
-import { calculateItemTotal } from '../../models/cart'
 import { ProductWithUI } from '../../types'
 
 export const Cart = ({
@@ -12,6 +11,7 @@ export const Cart = ({
   totals,
   completeOrder,
   handleSelectCoupon,
+  calculateTotal,
 }: {
   cart: CartItem[]
   coupons: Coupon[]
@@ -32,6 +32,7 @@ export const Cart = ({
     e: React.ChangeEvent<HTMLSelectElement>,
     coupons: Coupon[],
   ) => void
+  calculateTotal: (item: CartItem) => number
 }) => {
   return (
     <div className="lg:col-span-1">
@@ -73,7 +74,7 @@ export const Cart = ({
           ) : (
             <div className="space-y-3">
               {cart.map((item) => {
-                const itemTotal = calculateItemTotal(item, cart)
+                const itemTotal = calculateTotal(item)
                 const originalPrice = item.product.price * item.quantity
                 const hasDiscount = itemTotal < originalPrice
                 const discountRate = hasDiscount

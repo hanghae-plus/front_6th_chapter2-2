@@ -1,21 +1,19 @@
-import { CartItem } from '../../../types'
-import { getRemainingStock } from '../../models/cart'
 import { ProductWithUI } from '../../types'
 import { formatPrice } from '../../utils/formatters'
 
 export function ProductList({
   filteredProducts,
-  cart,
   addToCart,
+  getRemainingStock,
 }: {
   filteredProducts: ProductWithUI[]
-  cart: CartItem[]
   addToCart: (product: ProductWithUI) => void
+  getRemainingStock: (product: ProductWithUI) => number
 }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {filteredProducts.map((product) => {
-        const remainingStock = getRemainingStock(product, cart)
+        const remainingStock = getRemainingStock(product)
 
         return (
           <div
@@ -66,7 +64,7 @@ export function ProductList({
                   {formatPrice(
                     product.price,
                     false,
-                    getRemainingStock(product, cart) <= 0,
+                    getRemainingStock(product) <= 0,
                   )}
                 </p>
                 {product.discounts.length > 0 && (

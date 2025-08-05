@@ -27,7 +27,10 @@
 import { useCallback, useState } from 'react'
 import { CartItem, Coupon } from '../../types'
 import { ProductWithUI } from '../types'
-import { getRemainingStock, calculateItemTotal } from '../models/cart'
+import {
+  getRemainingStock as _getRemainingStock,
+  calculateItemTotal,
+} from '../models/cart'
 import { useLocalStorage } from '../utils/hooks/useLocalStorage'
 
 export function useCart(
@@ -41,9 +44,23 @@ export function useCart(
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null)
   const [cart, setCart] = useLocalStorage<CartItem[]>('cart', [])
 
+  const getRemainingStock = useCallback(
+    (product: ProductWithUI) => {
+      return _getRemainingStock(product, cart)
+    },
+    [cart],
+  )
+
+  const calculateTotal = useCallback(
+    (item: CartItem) => {
+      return calculateItemTotal(item, cart)
+    },
+    [cart],
+  )
+
   const addToCart = useCallback(
     (product: ProductWithUI) => {
-      const remainingStock = getRemainingStock(product, cart)
+      const remainingStock = getRemainingStock(product)
       if (remainingStock <= 0) {
         addNotification('재고가 부족합니다!', 'error')
         return
@@ -79,7 +96,7 @@ export function useCart(
 
       addNotification('장바구니에 담았습니다', 'success')
     },
-    [addNotification, cart, setCart],
+    [addNotification, getRemainingStock, setCart],
   )
 
   const removeFromCart = useCallback(
@@ -196,7 +213,7 @@ export function useCart(
     setSelectedCoupon,
     applyCoupon,
     calculateCartTotal,
-    calculateItemTotal,
+    calculateTotal,
     completeOrder,
     getRemainingStock,
     handleSelectCoupon,

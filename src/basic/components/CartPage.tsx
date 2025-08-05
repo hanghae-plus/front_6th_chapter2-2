@@ -33,6 +33,8 @@ export function CartPage({
   completeOrder,
   handleSelectCoupon,
   getFilteredProducts,
+  getRemainingStock,
+  calculateTotal,
 }: {
   isAdmin: boolean
   setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>
@@ -57,6 +59,8 @@ export function CartPage({
     coupons: Coupon[],
   ) => void
   getFilteredProducts: (searchTerm: string) => ProductWithUI[]
+  getRemainingStock: (product: ProductWithUI) => number
+  calculateTotal: (item: CartItem) => number
 }) {
   // TODO: 구현
   const [searchTerm, setSearchTerm] = useState('')
@@ -89,6 +93,7 @@ export function CartPage({
     totals,
     completeOrder,
     handleSelectCoupon,
+    calculateTotal,
   }
 
   return (
@@ -116,8 +121,8 @@ export function CartPage({
               ) : (
                 <ProductList
                   filteredProducts={filteredProducts}
-                  cart={cart}
                   addToCart={addToCart}
+                  getRemainingStock={getRemainingStock}
                 />
               )}
             </section>

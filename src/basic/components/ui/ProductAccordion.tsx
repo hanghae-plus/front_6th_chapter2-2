@@ -1,18 +1,18 @@
 import { CartItem } from '../../../types'
-import { getRemainingStock } from '../../models/cart'
 import { ProductWithUI } from '../../types'
 import { formatPrice } from '../../utils/formatters'
 
 export const ProductAccordion = ({
   products,
-  cart,
   startEditProduct,
   deleteProduct,
+  getRemainingStock,
 }: {
   products: ProductWithUI[]
   cart: CartItem[]
   startEditProduct: (product: ProductWithUI) => void
   deleteProduct: (productId: string) => void
+  getRemainingStock: (product: ProductWithUI) => number
 }) => {
   return (
     <div className="overflow-x-auto">
@@ -46,7 +46,7 @@ export const ProductAccordion = ({
                 {formatPrice(
                   product.price,
                   true,
-                  getRemainingStock(product, cart) <= 0,
+                  getRemainingStock(product) <= 0,
                 )}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
