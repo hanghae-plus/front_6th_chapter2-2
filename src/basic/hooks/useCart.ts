@@ -1,13 +1,15 @@
-import { useNotifications } from './useNotifications.ts';
 import { useCallback, useEffect, useState } from 'react';
 import { ProductWithUI } from '../App.tsx';
 import { getRemainingStock } from '../utils/formatters.ts';
-import { CartItem } from '../models/entities';
-import { useProducts } from './useProducts.ts';
+import { CartItem, Product } from '../models/entities';
 
-export const useCart = () => {
-  const { addNotification } = useNotifications();
-  const { products } = useProducts();
+export const useCart = (
+  products: Product[],
+  addNotification: (
+    message: string,
+    type?: 'error' | 'success' | 'warning'
+  ) => void
+) => {
   const [cart, setCart] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem('cart');
     if (saved) {

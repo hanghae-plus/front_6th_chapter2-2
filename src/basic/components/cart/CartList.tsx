@@ -1,7 +1,12 @@
+import { useCallback } from 'react';
 import { CartItem, Coupon, Product } from '../../models/entities';
-import { useCallback, useState } from 'react';
-import { useNotifications } from '../../hooks/useNotifications.ts';
 import { calculateCartTotal } from '../../utils/calulator.ts';
+import { BagIcon } from '../icons';
+import Button from '../ui/Button.tsx';
+import CartListItem from './CartItem.tsx';
+import Select from '../ui/Select.tsx';
+import EmptyCart from './EmptyCart.tsx';
+import CartSection from './CartSection.tsx';
 
 interface CartListProps {
   cart: CartItem[];
@@ -10,8 +15,13 @@ interface CartListProps {
   onRemoveFromCart: (productId: string) => void;
   onUpdateQuantity: (productId: string, quantity: number) => void;
   onApplyCoupon: (coupon: Coupon) => void;
-
+  addNotification: (
+    message: string,
+    type?: 'error' | 'success' | 'warning'
+  ) => void;
   onResetCart: () => void;
+  onResetCoupon: () => void;
+  selectedCoupon: Coupon | null;
 }
 const CartList = ({
   cart,
@@ -19,10 +29,11 @@ const CartList = ({
   onRemoveFromCart,
   onUpdateQuantity,
   onApplyCoupon,
+  addNotification,
   onResetCart,
+  onResetCoupon,
+  selectedCoupon,
 }: CartListProps) => {
-  const { addNotification } = useNotifications();
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const getMaxApplicableDiscount = (item: CartItem): number => {
     const { discounts } = item.product;
     const { quantity } = item;
@@ -55,160 +66,69 @@ const CartList = ({
       'success'
     );
     onResetCart();
-    setSelectedCoupon(null);
+    onResetCoupon();
   }, [addNotification]);
   const totals = calculateCartTotal(cart, selectedCoupon);
+  const handleChangeOption = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const coupon = coupons.find(c => c.code === e.target.value);
+    if (coupon) onApplyCoupon(coupon);
+    else onResetCoupon();
+  };
   return (
     <div className="lg:col-span-1">
       <div className="sticky top-24 space-y-4">
-        <section className="bg-white rounded-lg border border-gray-200 p-4">
+        <CartSection>
           <h2 className="text-lg font-semibold mb-4 flex items-center">
-            <svg
-              className="w-5 h-5 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-              />
-            </svg>
+            <BagIcon />
             장바구니
           </h2>
           {cart.length === 0 ? (
-            <div className="text-center py-8">
-              <svg
-                className="w-16 h-16 text-gray-300 mx-auto mb-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1}
-                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                />
-              </svg>
-              <p className="text-gray-500 text-sm">장바구니가 비어있습니다</p>
-            </div>
+            <EmptyCart />
           ) : (
-            <div className="space-y-3">
+            <ul className="space-y-3">
               {cart.map(item => {
                 const itemTotal = calculateItemTotal(item);
-                const originalPrice = item.product.price * item.quantity;
-                const hasDiscount = itemTotal < originalPrice;
-                const discountRate = hasDiscount
-                  ? Math.round((1 - itemTotal / originalPrice) * 100)
-                  : 0;
-
                 return (
-                  <div
-                    key={item.product.id}
-                    className="border-b pb-3 last:border-b-0"
-                  >
-                    <div className="flex justify-between items-start mb-2">
-                      <h4 className="text-sm font-medium text-gray-900 flex-1">
-                        {item.product.name}
-                      </h4>
-                      <button
-                        onClick={() => onRemoveFromCart(item.product.id)}
-                        className="text-gray-400 hover:text-red-500 ml-2"
-                      >
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M6 18L18 6M6 6l12 12"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center">
-                        <button
-                          onClick={() =>
-                            onUpdateQuantity(item.product.id, item.quantity - 1)
-                          }
-                          className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
-                        >
-                          <span className="text-xs">−</span>
-                        </button>
-                        <span className="mx-3 text-sm font-medium w-8 text-center">
-                          {item.quantity}
-                        </span>
-                        <button
-                          onClick={() =>
-                            onUpdateQuantity(item.product.id, item.quantity + 1)
-                          }
-                          className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
-                        >
-                          <span className="text-xs">+</span>
-                        </button>
-                      </div>
-                      <div className="text-right">
-                        {hasDiscount && (
-                          <span className="text-xs text-red-500 font-medium block">
-                            -{discountRate}%
-                          </span>
-                        )}
-                        <p className="text-sm font-medium text-gray-900">
-                          {Math.round(itemTotal).toLocaleString()}원
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+                  <CartListItem
+                    key={`cart-item-${item.product.name}`}
+                    item={item}
+                    itemTotal={itemTotal}
+                    onRemoveFromCart={onRemoveFromCart}
+                    onUpdateQuantity={onUpdateQuantity}
+                  />
                 );
               })}
-            </div>
+            </ul>
           )}
-        </section>
+        </CartSection>
 
         {cart.length > 0 && (
           <>
-            <section className="bg-white rounded-lg border border-gray-200 p-4">
+            <CartSection>
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-sm font-semibold text-gray-700">
                   쿠폰 할인
                 </h3>
-                <button className="text-xs text-blue-600 hover:underline">
+                <Button className="text-xs text-blue-600 hover:underline">
                   쿠폰 등록
-                </button>
+                </Button>
               </div>
               {coupons.length > 0 && (
-                <select
+                <Select
                   className="w-full text-sm border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
                   value={selectedCoupon?.code || ''}
-                  onChange={e => {
-                    const coupon = coupons.find(c => c.code === e.target.value);
-                    if (coupon) onApplyCoupon(coupon);
-                    else setSelectedCoupon(null);
-                  }}
-                >
-                  <option value="">쿠폰 선택</option>
-                  {coupons.map(coupon => (
-                    <option key={coupon.code} value={coupon.code}>
-                      {coupon.name} (
-                      {coupon.discountType === 'amount'
-                        ? `${coupon.discountValue.toLocaleString()}원`
-                        : `${coupon.discountValue}%`}
-                      )
-                    </option>
-                  ))}
-                </select>
+                  items={coupons}
+                  defaultText={'쿠폰 선택'}
+                  getLabel={coupon =>
+                    `${coupon.name} (${coupon.discountValue}${coupon.discountType === 'amount' ? '원' : '%'})`
+                  }
+                  getValue={coupon => `${coupon.code}`}
+                  onChange={handleChangeOption}
+                />
               )}
-            </section>
+            </CartSection>
 
-            <section className="bg-white rounded-lg border border-gray-200 p-4">
+            <CartSection>
               <h3 className="text-lg font-semibold mb-4">결제 정보</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
@@ -237,17 +157,17 @@ const CartList = ({
                 </div>
               </div>
 
-              <button
+              <Button
                 onClick={completeOrder}
                 className="w-full mt-4 py-3 bg-yellow-400 text-gray-900 rounded-md font-medium hover:bg-yellow-500 transition-colors"
               >
                 {totals.totalAfterDiscount.toLocaleString()}원 결제하기
-              </button>
+              </Button>
 
               <div className="mt-3 text-xs text-gray-500 text-center">
                 <p>* 실제 결제는 이루어지지 않습니다</p>
               </div>
-            </section>
+            </CartSection>
           </>
         )}
       </div>

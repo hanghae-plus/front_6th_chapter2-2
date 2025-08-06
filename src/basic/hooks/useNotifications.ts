@@ -10,7 +10,7 @@ export const useNotifications = () => {
 
       setTimeout(() => {
         setNotifications(prev => prev.filter(n => n.id !== id));
-      }, 3000);
+      }, 1000);
     },
     []
   );

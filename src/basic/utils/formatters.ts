@@ -8,5 +8,5 @@ export const getRemainingStock = (
 };
 
 export const formatters = (price: number): string => {
-  return `₩${price.toLocaleString()}`;
+  return `${price.toLocaleString()}원`;
 };

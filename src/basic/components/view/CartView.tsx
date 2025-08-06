@@ -4,26 +4,33 @@ import { CartItem, Coupon, Product } from '../../models/entities';
 
 interface CartViewProps {
   cart: CartItem[];
-  // selectedCoupon: Coupon | null;
   coupons: Coupon[];
+  addNotification: (
+    message: string,
+    type?: 'error' | 'success' | 'warning'
+  ) => void;
   addToCart: (product: Product) => void;
   onRemoveFromCart: (productId: string) => void;
   onUpdateQuantity: (productId: string, quantity: number) => void;
   onApplyCoupon: (coupon: Coupon) => void;
   onResetCart: () => void;
+  selectedCoupon: Coupon | null;
   debouncedSearchTerm: string;
+  onResetCoupon: () => void;
 }
 
 const CartView = ({
   debouncedSearchTerm,
   cart,
+  selectedCoupon,
   addToCart,
-  // selectedCoupon,
+  addNotification,
   onRemoveFromCart,
   onUpdateQuantity,
   onApplyCoupon,
   onResetCart,
   coupons,
+  onResetCoupon,
 }: CartViewProps) => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -37,7 +44,10 @@ const CartView = ({
       </div>
 
       <CartList
+        selectedCoupon={selectedCoupon}
+        onResetCoupon={onResetCoupon}
         cart={cart}
+        addNotification={addNotification}
         onRemoveFromCart={onRemoveFromCart}
         onUpdateQuantity={onUpdateQuantity}
         onApplyCoupon={onApplyCoupon}

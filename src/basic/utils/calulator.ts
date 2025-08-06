@@ -24,7 +24,10 @@ const getMaxApplicableDiscount = (item: CartItem, cart: CartItem[]): number => {
   return baseDiscount;
 };
 
-const calculateItemTotal = (item: CartItem, cart: CartItem[]): number => {
+export const calculateItemTotal = (
+  item: CartItem,
+  cart: CartItem[]
+): number => {
   const { price } = item.product;
   const { quantity } = item;
   const discount = getMaxApplicableDiscount(item, cart);
