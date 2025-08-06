@@ -4,6 +4,12 @@ export interface Product {
   price: number;
   stock: number;
   discounts: Discount[];
+  // description 추가
+  description?: string;
+}
+
+export interface ProductForm extends Omit<Product, 'id'> {
+  description: string;
 }
 
 export interface Discount {
