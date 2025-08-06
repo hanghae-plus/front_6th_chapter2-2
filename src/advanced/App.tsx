@@ -1,5 +1,4 @@
-import { useState, useCallback } from "react";
-import { Notification } from "./types";
+import { useState } from "react";
 import { useCart } from "./hooks/useCart";
 import { useProducts } from "./hooks/useProducts";
 import HeaderLayout from "./components/Header/HeaderLayout";
@@ -8,29 +7,10 @@ import AdminHeaderContent from "./components/Header/AdminHeaderContent";
 import AdminPage from "./components/ui/AdminPage";
 import ShopPage from "./components/ui/ShopPage";
 import Toast from "./components/ui/Toast";
-import { NOTIFICATION_DURATION } from "./constants/system";
 
 const App = () => {
   // =========== 페이지 전환 관리 ===========
   const [isAdmin, setIsAdmin] = useState(false);
-
-  // =========== 알림 관리 ===========
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-
-  const addNotification = useCallback(
-    (message: string, type: "error" | "success" | "warning" = "success") => {
-      const id = `${Date.now()}-${Math.random()}`;
-      setNotifications((prev) => [...prev, { id, message, type }]);
-      setTimeout(() => {
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
-      }, NOTIFICATION_DURATION);
-    },
-    []
-  );
-
-  const removeNotification = useCallback((id: string) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
-  }, []);
 
   // =========== 장바구니 관리 ===========
   const {
@@ -50,7 +30,7 @@ const App = () => {
     addCoupon,
     removeCoupon,
     applyCoupon,
-  } = useCart(addNotification);
+  } = useCart();
 
   // =========== 상품 관리 ===========
   const {
@@ -64,14 +44,11 @@ const App = () => {
     setSearchTerm,
     debouncedSearchTerm,
     filteredProducts,
-  } = useProducts(addNotification);
+  } = useProducts();
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Toast
-        notifications={notifications}
-        onRemoveNotification={removeNotification}
-      />
+      <Toast />
       <HeaderLayout>
         {isAdmin ? (
           <AdminHeaderContent onToggleContent={() => setIsAdmin(!isAdmin)} />
@@ -95,7 +72,6 @@ const App = () => {
             coupons={coupons}
             onAddCoupon={addCoupon}
             onDeleteCoupon={removeCoupon}
-            addNotification={addNotification}
           />
         ) : (
           <ShopPage

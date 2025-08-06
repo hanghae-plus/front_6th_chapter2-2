@@ -1,14 +1,9 @@
-import { Notification } from "../../types";
+import { useAtom, useSetAtom } from "jotai";
+import { notificationsAtom, removeNotificationAtom } from "../../atoms";
 
-interface ToastProps {
-  notifications: Notification[];
-  onRemoveNotification: (id: string) => void;
-}
-
-const NotificationContainer = ({
-  notifications,
-  onRemoveNotification,
-}: ToastProps) => {
+const Toast = () => {
+  const [notifications] = useAtom(notificationsAtom);
+  const removeNotification = useSetAtom(removeNotificationAtom);
   if (notifications.length === 0) {
     return null;
   }
@@ -28,7 +23,7 @@ const NotificationContainer = ({
         >
           <span className="mr-2">{notif.message}</span>
           <button
-            onClick={() => onRemoveNotification(notif.id)}
+            onClick={() => removeNotification(notif.id)}
             className="text-white hover:text-gray-200"
           >
             <svg
@@ -51,4 +46,4 @@ const NotificationContainer = ({
   );
 };
 
-export default NotificationContainer;
+export default Toast;

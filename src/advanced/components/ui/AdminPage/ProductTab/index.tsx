@@ -9,10 +9,6 @@ interface ProductTabProps {
   onUpdateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
   onDeleteProduct: (productId: string) => void;
   getRemainingStock: (product: ProductWithUI) => number;
-  addNotification: (
-    message: string,
-    type?: "error" | "success" | "warning"
-  ) => void;
 }
 
 export function ProductTab({
@@ -21,7 +17,6 @@ export function ProductTab({
   onUpdateProduct,
   onDeleteProduct,
   getRemainingStock,
-  addNotification,
 }: ProductTabProps) {
   const {
     productForm,
@@ -83,7 +78,6 @@ export function ProductTab({
               discounts: [],
             });
           }}
-          addNotification={addNotification}
         />
       )}
     </section>

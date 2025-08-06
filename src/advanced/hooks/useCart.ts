@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback } from "react";
+import { useSetAtom } from "jotai";
 import { CartItem, Product, Coupon } from "../types";
 import * as composedModels from "../models";
 import * as cartModel from "../models/cart";
@@ -11,14 +12,12 @@ import {
   validateCouponAvailable,
   validateCouponCode,
 } from "../utils/validators";
+import { addNotificationAtom } from "../atoms";
 
 // 장바구니 + 쿠폰 통합 관리 훅
-export function useCart(
-  addNotification?: (
-    message: string,
-    type?: "error" | "success" | "warning"
-  ) => void
-) {
+export function useCart() {
+  // ========== 알림 관리 (Jotai) ==========
+  const addNotification = useSetAtom(addNotificationAtom);
   // ========== 장바구니 상태 ==========
   const [cart, setCart] = useLocalStorage<CartItem[]>("cart", []);
 
@@ -56,7 +55,7 @@ export function useCart(
 
       const validation = validateCartStock(product, newQuantity, cart);
       if (validation.errorMessage) {
-        addNotification?.(validation.errorMessage, "error");
+        addNotification(validation.errorMessage, "error");
         return;
       }
 
@@ -64,14 +63,17 @@ export function useCart(
       setCart((prevCart) => cartModel.addItemToCart(prevCart, product));
 
       // 성공 알림
-      addNotification?.("장바구니에 담았습니다", "success");
+      addNotification("장바구니에 담았습니다", "success");
     },
-    [cart, addNotification]
+    [cart, setCart, addNotification]
   );
 
-  const removeFromCart = useCallback((productId: string) => {
-    setCart((prevCart) => cartModel.removeItemFromCart(prevCart, productId));
-  }, []);
+  const removeFromCart = useCallback(
+    (productId: string) => {
+      setCart((prevCart) => cartModel.removeItemFromCart(prevCart, productId));
+    },
+    [setCart]
+  );
 
   const updateQuantity = useCallback(
     (productId: string, newQuantity: number, products?: Product[]) => {
@@ -86,7 +88,7 @@ export function useCart(
       // 재고 검증
       const validation = validateCartStock(product, newQuantity, cart);
       if (validation.errorMessage) {
-        addNotification?.(validation.errorMessage, "error");
+        addNotification(validation.errorMessage, "error");
         return;
       }
 
@@ -94,31 +96,31 @@ export function useCart(
         cartModel.updateCartItemQuantity(prevCart, productId, newQuantity)
       );
     },
-    [removeFromCart, addNotification]
+    [setCart, removeFromCart, addNotification]
   );
 
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
-    addNotification?.(
+    addNotification(
       `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
       "success"
     );
     setCart([]);
     setSelectedCoupon(null);
-  }, [addNotification]);
+  }, [addNotification, setCart]);
 
   // ========== 쿠폰 비즈니스 로직 ==========
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {
       const validation = validateCouponCode(coupons, newCoupon.code);
       if (validation.errorMessage) {
-        addNotification?.(validation.errorMessage, "error");
+        addNotification(validation.errorMessage, "error");
         return;
       }
       setCoupons((prev) => couponModel.addCouponToList(prev, newCoupon));
-      addNotification?.("쿠폰이 추가되었습니다.", "success");
+      addNotification("쿠폰이 추가되었습니다.", "success");
     },
-    [coupons, addNotification]
+    [coupons, setCoupons, addNotification]
   );
 
   const removeCoupon = useCallback(
@@ -127,9 +129,9 @@ export function useCart(
       if (selectedCoupon?.code === couponCode) {
         setSelectedCoupon(null);
       }
-      addNotification?.("쿠폰이 삭제되었습니다.", "success");
+      addNotification("쿠폰이 삭제되었습니다.", "success");
     },
-    [selectedCoupon, addNotification]
+    [setCoupons, selectedCoupon?.code, addNotification]
   );
 
   const applyCoupon = useCallback(
@@ -140,19 +142,22 @@ export function useCart(
       }
 
       // 쿠폰 검증
-      const cartTotalForValidation = composedModels.calculateCartTotal(cart, null);
+      const cartTotalForValidation = composedModels.calculateCartTotal(
+        cart,
+        null
+      );
       const validation = validateCouponAvailable(
         coupon,
         cartTotalForValidation.totalAfterDiscount
       );
 
       if (validation.errorMessage) {
-        addNotification?.(validation.errorMessage, "error");
+        addNotification(validation.errorMessage, "error");
         return;
       }
 
       setSelectedCoupon(coupon);
-      addNotification?.("쿠폰이 적용되었습니다.", "success");
+      addNotification("쿠폰이 적용되었습니다.", "success");
     },
     [cart, addNotification]
   );

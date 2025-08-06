@@ -7,17 +7,12 @@ interface CouponTabProps {
   coupons: Coupon[];
   onAddCoupon: (coupon: Coupon) => void;
   onDeleteCoupon: (couponCode: string) => void;
-  addNotification: (
-    message: string,
-    type?: "error" | "success" | "warning"
-  ) => void;
 }
 
 export function CouponTab({
   coupons,
   onAddCoupon,
   onDeleteCoupon,
-  addNotification,
 }: CouponTabProps) {
   const {
     couponForm,
@@ -45,7 +40,6 @@ export function CouponTab({
             setCouponForm={setCouponForm}
             onSubmit={(e) => handleCouponSubmit(e, onAddCoupon)}
             onCancel={() => setShowCouponForm(false)}
-            addNotification={addNotification}
           />
         )}
       </div>

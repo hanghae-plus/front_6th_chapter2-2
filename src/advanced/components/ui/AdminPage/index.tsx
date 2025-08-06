@@ -16,12 +16,6 @@ interface AdminPageProps {
   coupons: Coupon[];
   onAddCoupon: (coupon: Coupon) => void;
   onDeleteCoupon: (couponCode: string) => void;
-
-  // 알림
-  addNotification: (
-    message: string,
-    type?: "error" | "success" | "warning"
-  ) => void;
 }
 
 export function AdminPage({
@@ -33,7 +27,6 @@ export function AdminPage({
   coupons,
   onAddCoupon,
   onDeleteCoupon,
-  addNotification,
 }: AdminPageProps) {
   // =========== 탭 전환 관리 ===========
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
@@ -57,14 +50,12 @@ export function AdminPage({
           onUpdateProduct={onUpdateProduct}
           onDeleteProduct={onDeleteProduct}
           getRemainingStock={getRemainingStock}
-          addNotification={addNotification}
         />
       ) : (
         <CouponTab
           coupons={coupons}
           onAddCoupon={onAddCoupon}
           onDeleteCoupon={onDeleteCoupon}
-          addNotification={addNotification}
         />
       )}
     </div>

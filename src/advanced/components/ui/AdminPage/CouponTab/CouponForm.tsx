@@ -1,5 +1,10 @@
+import { useSetAtom } from "jotai";
 import { MAX_COUPON_AMOUNT } from "../../../../constants/business";
-import { validateDiscountRate, validateDiscountAmount } from "../../../../utils/validators";
+import {
+  validateDiscountRate,
+  validateDiscountAmount,
+} from "../../../../utils/validators";
+import { addNotificationAtom } from "../../../../atoms";
 
 interface CouponFormData {
   name: string;
@@ -13,7 +18,6 @@ interface CouponFormProps {
   setCouponForm: (form: CouponFormData) => void;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
-  addNotification: (message: string, type?: "error" | "success" | "warning") => void;
 }
 
 export function CouponForm({
@@ -21,8 +25,8 @@ export function CouponForm({
   setCouponForm,
   onSubmit,
   onCancel,
-  addNotification,
 }: CouponFormProps) {
+  const addNotification = useSetAtom(addNotificationAtom);
   return (
     <div className="mt-6 p-4 bg-gray-50 rounded-lg">
       <form onSubmit={onSubmit} className="space-y-4">
@@ -84,16 +88,12 @@ export function CouponForm({
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {couponForm.discountType === "amount"
-                ? "할인 금액"
-                : "할인율(%)"}
+              {couponForm.discountType === "amount" ? "할인 금액" : "할인율(%)"}
             </label>
             <input
               type="text"
               value={
-                couponForm.discountValue === 0
-                  ? ""
-                  : couponForm.discountValue
+                couponForm.discountValue === 0 ? "" : couponForm.discountValue
               }
               onChange={(e) => {
                 const value = e.target.value;
@@ -137,9 +137,7 @@ export function CouponForm({
                 }
               }}
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
-              placeholder={
-                couponForm.discountType === "amount" ? "5000" : "10"
-              }
+              placeholder={couponForm.discountType === "amount" ? "5000" : "10"}
               required
             />
           </div>

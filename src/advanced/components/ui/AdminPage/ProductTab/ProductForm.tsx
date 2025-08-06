@@ -1,6 +1,11 @@
-import { ProductWithUI, Discount } from "../../../../types";
+import { useSetAtom } from "jotai";
+import { Discount } from "../../../../types";
 import { MAX_STOCK_QUANTITY } from "../../../../constants/business";
-import { validateAdminPrice, validateAdminStock } from "../../../../utils/validators";
+import {
+  validateAdminPrice,
+  validateAdminStock,
+} from "../../../../utils/validators";
+import { addNotificationAtom } from "../../../../atoms";
 
 interface ProductFormData {
   name: string;
@@ -16,7 +21,6 @@ interface ProductFormProps {
   editingProduct: string | null;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
-  addNotification: (message: string, type?: "error" | "success" | "warning") => void;
 }
 
 export function ProductForm({
@@ -25,8 +29,8 @@ export function ProductForm({
   editingProduct,
   onSubmit,
   onCancel,
-  addNotification,
 }: ProductFormProps) {
+  const addNotification = useSetAtom(addNotificationAtom);
   return (
     <div className="p-6 border-t border-gray-200 bg-gray-50">
       <form onSubmit={onSubmit} className="space-y-4">

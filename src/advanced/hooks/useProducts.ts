@@ -1,16 +1,15 @@
 import { useCallback, useState, useMemo } from "react";
+import { useSetAtom } from "jotai";
 import { ProductWithUI } from "../types";
 import { INITIAL_PRODUCTS } from "../constants";
 import { SEARCH_DEBOUNCE_DELAY } from "../constants/system";
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 import { useDebounce } from "../utils/hooks/useDebounce";
+import { addNotificationAtom } from "../atoms";
 
-export function useProducts(
-  addNotification?: (
-    message: string,
-    type?: "error" | "success" | "warning"
-  ) => void
-) {
+export function useProducts() {
+  // ========== 알림 관리 (Jotai) ==========
+  const addNotification = useSetAtom(addNotificationAtom);
   const [products, setProducts] = useLocalStorage<ProductWithUI[]>(
     "products",
     INITIAL_PRODUCTS
@@ -28,9 +27,9 @@ export function useProducts(
         id: `p${Date.now()}`,
       };
       setProducts((prev) => [...prev, product]);
-      addNotification?.("상품이 추가되었습니다.", "success");
+      addNotification("상품이 추가되었습니다.", "success");
     },
-    [addNotification]
+    [addNotification, setProducts]
   );
 
   // 상품 정보 수정
@@ -41,18 +40,18 @@ export function useProducts(
           product.id === productId ? { ...product, ...updates } : product
         )
       );
-      addNotification?.("상품이 수정되었습니다.", "success");
+      addNotification("상품이 수정되었습니다.", "success");
     },
-    [addNotification]
+    [addNotification, setProducts]
   );
 
   // 상품 삭제
   const deleteProduct = useCallback(
     (productId: string) => {
       setProducts((prev) => prev.filter((p) => p.id !== productId));
-      addNotification?.("상품이 삭제되었습니다.", "success");
+      addNotification("상품이 삭제되었습니다.", "success");
     },
-    [addNotification]
+    [addNotification, setProducts]
   );
 
   // 검색어로 필터링된 상품 목록 (내부에서 자동 계산)
@@ -61,14 +60,15 @@ export function useProducts(
 
     return products.filter(
       (product) =>
-        product.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+        product.name
+          .toLowerCase()
+          .includes(debouncedSearchTerm.toLowerCase()) ||
         (product.description &&
           product.description
             .toLowerCase()
             .includes(debouncedSearchTerm.toLowerCase()))
     );
   }, [products, debouncedSearchTerm]);
-
 
   return {
     // ========== 상품 관리 ==========
