@@ -1,6 +1,7 @@
 import { useAtom } from "jotai";
-import { filteredProductsAtom, getRemainingStockAtom } from "../../store";
 import { ProductCartItem } from "./ProductCartItem";
+import { filteredProductsAtom } from "../../store/selectors/filteredProductsSelector";
+import { getRemainingStockAtom } from "../../store/selectors/getRemainingStockSelector";
 
 export const ProductCartList = () => {
   const [filteredProducts] = useAtom(filteredProductsAtom);

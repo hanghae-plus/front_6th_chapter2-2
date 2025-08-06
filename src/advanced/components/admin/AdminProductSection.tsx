@@ -2,12 +2,12 @@ import { useState } from "react";
 import { useAtom } from "jotai";
 import { formatPrice } from "../../utils/formatters";
 import { ProductCreationPayload, ProductWithUI } from "../../types";
+import { productsAtom } from "../../store/atoms/productAtoms";
 import {
   addProductAtom,
-  productsAtom,
   removeProductAtom,
   updateProductAtom,
-} from "../../store/product";
+} from "../../store/actions/productActions";
 
 export const ProductSection = () => {
   const [products] = useAtom(productsAtom);

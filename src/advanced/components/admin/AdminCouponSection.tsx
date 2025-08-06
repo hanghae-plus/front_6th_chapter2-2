@@ -2,11 +2,11 @@ import { useState } from "react";
 import { useAtom } from "jotai";
 import { CouponCreationPayload } from "../../types";
 import { Coupon } from "../../../types";
+import { couponsAtom } from "../../store/atoms/couponAtoms";
 import {
   addCouponAtom,
-  couponsAtom,
   removeCouponAtom,
-} from "../../store/coupon";
+} from "../../store/actions/couponActions";
 
 export const CouponSection = () => {
   const [coupons] = useAtom(couponsAtom);

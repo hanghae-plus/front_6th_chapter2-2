@@ -1,13 +1,12 @@
 import { useAtom } from "jotai";
-import { filteredProductsAtom } from "../../store";
 import { ProductCartList } from "./ProductCartList";
-import { productsAtom } from "../../store/product";
+import { productsAtom } from "../../store/atoms/productAtoms";
+import { filteredProductsAtom } from "../../store/selectors/filteredProductsSelector";
 
 // 컴포넌트 정의
 const ProductListSection = () => {
   const [products] = useAtom(productsAtom);
   const [filteredProducts] = useAtom(filteredProductsAtom);
-  console.log(products, filteredProducts);
   return (
     <div className="lg:col-span-3">
       <section>

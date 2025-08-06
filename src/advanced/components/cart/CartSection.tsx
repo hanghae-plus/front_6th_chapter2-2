@@ -1,13 +1,14 @@
 import { useAtom } from "jotai";
-import { selectedCouponAtom, cartTotalAtom } from "../../store";
 import CartItem from "./CartItem";
+import { cartAtom } from "../../store/atoms/cartAtoms";
+import { couponsAtom, selectedCouponAtom } from "../../store/atoms/couponAtoms";
 import {
-  cartAtom,
   completeOrderAtom,
   removeFromCartAtom,
   updateQuantityAtom,
-} from "../../store/cart";
-import { applyCouponAtom, couponsAtom } from "../../store/coupon";
+} from "../../store/actions/cartActions";
+import { cartTotalAtom } from "../../store/selectors/cartTotalSelector";
+import { applyCouponAtom } from "../../store/actions/couponActions";
 
 export const CartSection = () => {
   const [cart] = useAtom(cartAtom);

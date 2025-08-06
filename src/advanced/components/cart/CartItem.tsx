@@ -1,7 +1,7 @@
 import { useAtom } from "jotai";
 import { CartItem as CartItemType } from "../../../types";
 import { calculateItemTotal } from "../../service/cart";
-import { cartAtom } from "../../store/cart";
+import { cartAtom } from "../../store/atoms/cartAtoms";
 
 interface CartItemProps {
   item: CartItemType;

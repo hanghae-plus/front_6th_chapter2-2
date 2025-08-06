@@ -6,7 +6,7 @@ import {
 import { ProductWithUI } from "../../types";
 import { formatPrice } from "../../utils/formatters";
 import { isAdminAtom } from "../../store";
-import { addToCartAtom } from "../../store/cart";
+import { addToCartAtom } from "../../store/actions/cartActions";
 
 interface ProductCartItemProps {
   product: ProductWithUI;
