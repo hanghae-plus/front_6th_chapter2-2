@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { COUPON, DEFAULTS, NOTIFICATION, PRODUCT } from "@/basic/constants";
-import { useLocalStorage } from "@/basic/hooks";
-import { cartModel } from "@/basic/models";
+import { COUPON, DEFAULTS, NOTIFICATION, PRODUCT } from "@basic/constants";
+import { useLocalStorage } from "@basic/hooks";
+import { cartModel } from "@basic/models";
+
 import {
   CartItem,
   Coupon,

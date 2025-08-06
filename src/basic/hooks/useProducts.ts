@@ -1,8 +1,9 @@
 import { useCallback } from "react";
 
-import { NOTIFICATION } from "@/basic/constants";
-import { productData } from "@/basic/data";
-import { useLocalStorage } from "@/basic/hooks";
+import { NOTIFICATION } from "@basic/constants";
+import { productData } from "@basic/data";
+import { useLocalStorage } from "@basic/hooks";
+
 import { NotificationType, ProductWithUI } from "@/types";
 
 interface Props {
