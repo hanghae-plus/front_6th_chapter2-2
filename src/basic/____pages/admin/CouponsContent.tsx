@@ -46,7 +46,7 @@ function CouponsContent({
         });
       }
     }
-  }, []);
+  }, [addCoupon, addNotification]);
 
   const handleDeleteCoupon = useCallback(
     (couponCode: string) => {
@@ -61,7 +61,7 @@ function CouponsContent({
         type: "success",
       });
     },
-    [selectedCoupon, addNotification]
+    [removeCoupon, selectedCoupon, setSelectedCoupon, addNotification]
   );
 
   const handleCouponSubmit = (e: React.FormEvent) => {

@@ -1,9 +1,11 @@
-import { Dispatch, SetStateAction, useCallback, useState } from "react";
+import { Dispatch, SetStateAction, useCallback } from "react";
 import { Coupon, Product } from "../../../types";
 import { useNotification } from "../../___features/notification/use-notification";
 import { useCoupons } from "../../___features/coupon/useCoupons";
 import ProductsContent from "./ProductsContent";
 import CouponsContent from "./CouponsContent";
+import { useTab } from "../../_shared/utility-hooks/use-tab";
+import { cn } from "../../_shared/tw-utility/cn";
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -26,10 +28,6 @@ function AdminPage({
   const { addCoupon, removeCoupon, coupons } = useCoupons();
   const { addNotification } = useNotification();
 
-  const [activeTab, setActiveTab] = useState<"products" | "coupons">(
-    "products"
-  );
-
   const addProduct = useCallback(
     (newProduct: Omit<ProductWithUI, "id">) => {
       const product: ProductWithUI = {
@@ -42,7 +40,7 @@ function AdminPage({
         type: "success",
       });
     },
-    [addNotification]
+    [setProducts, addNotification]
   );
 
   const updateProduct = useCallback(
@@ -57,7 +55,7 @@ function AdminPage({
         type: "success",
       });
     },
-    [addNotification]
+    [setProducts, addNotification]
   );
 
   const deleteProduct = useCallback(
@@ -68,8 +66,40 @@ function AdminPage({
         type: "success",
       });
     },
-    [addNotification]
+    [setProducts, addNotification]
   );
+
+  const adminTabs = useTab({
+    tabs: [
+      {
+        id: "products",
+        label: "상품 관리",
+        content: (
+          <ProductsContent
+            products={products}
+            addProduct={addProduct}
+            updateProduct={updateProduct}
+            deleteProduct={deleteProduct}
+          />
+        ),
+      },
+      {
+        id: "coupons",
+        label: "쿠폰 관리",
+        content: (
+          <CouponsContent
+            coupons={coupons}
+            addCoupon={addCoupon}
+            removeCoupon={removeCoupon}
+            selectedCoupon={selectedCoupon}
+            setSelectedCoupon={setSelectedCoupon}
+          />
+        ),
+      },
+    ],
+    initialTabId: "products",
+    accessor: (tab) => tab.id,
+  });
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-8">
@@ -80,45 +110,26 @@ function AdminPage({
         </div>
         <div className="border-b border-gray-200 mb-6">
           <nav className="-mb-px flex space-x-8">
-            <button
-              onClick={() => setActiveTab("products")}
-              className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
-                activeTab === "products"
-                  ? "border-gray-900 text-gray-900"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-              }`}
-            >
-              상품 관리
-            </button>
-            <button
-              onClick={() => setActiveTab("coupons")}
-              className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
-                activeTab === "coupons"
-                  ? "border-gray-900 text-gray-900"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-              }`}
-            >
-              쿠폰 관리
-            </button>
+            {adminTabs.getTabs().map((tab) => (
+              <button
+                key={tab.data.id}
+                onClick={() => tab.activate()}
+                className={cn(
+                  "py-2 px-1 border-b-2 font-medium text-sm transition-colors",
+                  {
+                    "border-gray-900 text-gray-900": tab.active,
+                    "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300":
+                      !tab.active,
+                  }
+                )}
+              >
+                {tab.data.label}
+              </button>
+            ))}
           </nav>
         </div>
 
-        {activeTab === "products" ? (
-          <ProductsContent
-            products={products}
-            addProduct={addProduct}
-            updateProduct={updateProduct}
-            deleteProduct={deleteProduct}
-          />
-        ) : (
-          <CouponsContent
-            coupons={coupons}
-            addCoupon={addCoupon}
-            removeCoupon={removeCoupon}
-            selectedCoupon={selectedCoupon}
-            setSelectedCoupon={setSelectedCoupon}
-          />
-        )}
+        {adminTabs.getActiveTab()?.content}
       </div>
     </main>
   );
