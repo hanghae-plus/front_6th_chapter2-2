@@ -21,6 +21,7 @@ import {
   validateCouponApplication,
   validateCouponCode,
 } from './utils';
+import { useLocalStorage } from './hooks';
 
 interface Notification {
   id: string;
@@ -30,17 +31,7 @@ interface Notification {
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem('cart');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return [];
-      }
-    }
-    return [];
-  });
+  const [cart, setCart] = useLocalStorage<CartItem[]>('cart', []);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const {
     coupons,
@@ -118,22 +109,6 @@ const App = () => {
   useEffect(() => {
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);
     setTotalItemCount(count);
-  }, [cart]);
-
-  useEffect(() => {
-    localStorage.setItem('products', JSON.stringify(products));
-  }, [products]);
-
-  useEffect(() => {
-    localStorage.setItem('coupons', JSON.stringify(coupons));
-  }, [coupons]);
-
-  useEffect(() => {
-    if (cart.length > 0) {
-      localStorage.setItem('cart', JSON.stringify(cart));
-    } else {
-      localStorage.removeItem('cart');
-    }
   }, [cart]);
 
   useEffect(() => {
