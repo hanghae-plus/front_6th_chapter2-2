@@ -1,14 +1,10 @@
-// 쿠폰 관련 액션
-
+// 쿠폰 관련 액션 atom
 import { atom } from "jotai";
-import { addNotificationHelper, selectedCouponAtom } from ".";
-import { atomWithStorage } from "jotai/utils";
-import { Coupon } from "../../types";
-import { initialCoupons } from "../data";
-import { cartAtom } from "./cart";
-import { calculateCartTotal } from "../service/cart";
-
-export const couponsAtom = atomWithStorage<Coupon[]>("coupons", initialCoupons);
+import { couponsAtom, selectedCouponAtom } from "../atoms/couponAtoms";
+import { Coupon } from "../../../types";
+import { calculateCartTotal } from "../../service/cart";
+import { cartAtom } from "../atoms/cartAtoms";
+import { addNotificationHelper } from "./notificationActions";
 
 export const addCouponAtom = atom(null, (get, set, newCoupon: Coupon) => {
   try {

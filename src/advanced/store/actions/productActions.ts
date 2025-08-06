@@ -1,16 +1,10 @@
-// 상품 관련 액션
-
-import { atomWithStorage } from "jotai/utils";
-import { ProductWithUI } from "../types";
-import { initialProducts } from "../data";
+// 상품 관련 액션 atom
 import { atom } from "jotai";
-import { addNotificationHelper, generateId } from ".";
-import { cartAtom } from "./cart";
-
-export const productsAtom = atomWithStorage<ProductWithUI[]>(
-  "products",
-  initialProducts
-);
+import { generateId } from "../index";
+import { productsAtom } from "../atoms/productAtoms";
+import { ProductWithUI } from "../../types";
+import { cartAtom } from "../atoms/cartAtoms";
+import { addNotificationHelper } from "./notificationActions";
 
 export const addProductAtom = atom(
   null,

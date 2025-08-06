@@ -1,13 +1,11 @@
-// 장바구니 관련 액션
-
-import { atomWithStorage } from "jotai/utils";
-import { CartItem } from "../../types";
-import { ProductWithUI } from "../types";
+// 장바구니 관련 액션 atom
 import { atom } from "jotai";
-import { productsAtom } from "./product";
-import { addNotificationHelper, generateId, selectedCouponAtom } from ".";
-
-export const cartAtom = atomWithStorage<CartItem[]>("cart", []);
+import { cartAtom } from "../atoms/cartAtoms";
+import { productsAtom } from "../atoms/productAtoms";
+import { generateId } from "../index";
+import { ProductWithUI } from "../../types";
+import { selectedCouponAtom } from "../atoms/couponAtoms";
+import { addNotificationHelper } from "./notificationActions";
 
 export const addToCartAtom = atom(null, (get, set, product: ProductWithUI) => {
   try {
@@ -106,7 +104,7 @@ export const updateQuantityAtom = atom(
         addNotificationHelper(
           get,
           set,
-          "재고보다 많은 수량을 담을 수 없습니다.",
+          `재고는 ${product.stock}개까지만 있습니다.`,
           "error"
         );
         return;
@@ -134,7 +132,6 @@ export const clearCartAtom = atom(null, (get, set) => {
   addNotificationHelper(get, set, "장바구니가 비워졌습니다.", "success");
 });
 
-// 주문 완료 액션
 export const completeOrderAtom = atom(null, (get, set) => {
   try {
     const orderNumber = generateId("ORD");
