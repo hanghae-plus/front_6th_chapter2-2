@@ -1,22 +1,24 @@
+import { Notification } from './../../../types';
+import { addNotificationAtom, notificationsAtom } from './../../atoms/notificationsAtoms';
 import { useCallback } from 'react';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { ProductWithUI } from '../../../types';
 import { getRemainingStock } from '../../utils/calculations/stockCalculations';
 import { cartAtom, totalCartItemAtom } from '../../atoms/cartAtoms';
 
-export const useCart = (
-  onSuccess: (message: string) => void,
-  onError: (message: string) => void,
-) => {
+export const useCart = () => {
   const [cart, setCart] = useAtom(cartAtom);
   const totalCartItem = useAtomValue(totalCartItemAtom);
-
+  const addNotification = useSetAtom(addNotificationAtom);
   // 장바구니에 추가
   const addToCart = useCallback(
     (product: ProductWithUI) => {
       const remainingStock = getRemainingStock(product, cart);
       if (remainingStock <= 0) {
-        onError('재고가 부족합니다!');
+        addNotification({
+          message: '재고가 부족합니다!',
+          type: 'error',
+        });
         return;
       }
 
@@ -27,7 +29,10 @@ export const useCart = (
           const newQuantity = existingItem.quantity + 1;
 
           if (newQuantity > product.stock) {
-            onError(`재고는 ${product.stock}개까지만 있습니다.`);
+            addNotification({
+              message: `재고는 ${product.stock}개까지만 있습니다.`,
+              type: 'error',
+            });
             return prevCart;
           }
 
@@ -39,9 +44,9 @@ export const useCart = (
         return [...prevCart, { product, quantity: 1 }];
       });
 
-      onSuccess('장바구니에 담았습니다');
+      addNotification({ message: '장바구니에 담았습니다', type: 'success' });
     },
-    [cart, setCart, onSuccess, onError],
+    [cart, setCart],
   );
 
   // 장바구니에서 지우기
@@ -66,7 +71,10 @@ export const useCart = (
 
       const maxStock = cartItem.product.stock;
       if (newQuantity > maxStock) {
-        onError(`재고는 ${maxStock}개까지만 있습니다.`);
+        addNotification({
+          message: `재고는 ${maxStock}개까지만 있습니다.`,
+          type: 'error',
+        });
         return;
       }
 
@@ -76,7 +84,7 @@ export const useCart = (
         ),
       );
     },
-    [cart, setCart, removeFromCart, onError],
+    [cart, setCart],
   );
 
   return {

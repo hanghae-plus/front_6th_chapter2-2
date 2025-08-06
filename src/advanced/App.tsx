@@ -58,10 +58,7 @@ const App = () => {
   );
 
   // 장바구니 관리 훅
-  const { cart, setCart, totalCartItem, addToCart, removeFromCart, updateQuantity } = useCart(
-    (message) => addNotification({ message, type: 'success' }),
-    (message) => addNotification({ message, type: 'error' }),
-  );
+  const { cart, setCart, totalCartItem, addToCart, removeFromCart, updateQuantity } = useCart();
 
   // 검색 기능 훅
   const { query, setQuery, debouncedQuery } = useSearch();
@@ -81,14 +78,17 @@ const App = () => {
     <div className='min-h-screen bg-gray-50'>
       {notifications.length > 0 && (
         <div className='fixed top-20 right-4 z-50 space-y-2 max-w-sm'>
-          {notifications.map((notification) => (
-            <Toast
-              key={notification.id}
-              type={notification.type}
-              message={notification.message}
-              onClose={() => removeNotification(notification.id)}
-            />
-          ))}
+          {notifications.map((notification) => {
+            console.log(`Rendering Toast for: ${notification.message} (id: ${notification.id})`);
+            return (
+              <Toast
+                key={notification.id}
+                id={notification.id}
+                type={notification.type}
+                message={notification.message}
+              />
+            );
+          })}
         </div>
       )}
       <Header

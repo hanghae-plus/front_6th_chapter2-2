@@ -1,13 +1,18 @@
+import React, { useEffect } from 'react';
 import IconButton from './IconButton';
 import { DeleteIcon } from './Icons';
+import { useSetAtom } from 'jotai';
+import { removeNotificationAtom } from '../../atoms/notificationsAtoms';
 
 interface ToastProps {
+  id: string;
   type: 'success' | 'warning' | 'error';
   message: string;
-  onClose?: () => void;
 }
 
-export default function Toast({ type, message, onClose }: ToastProps) {
+const Toast = React.memo(function Toast({ id, type, message }: ToastProps) {
+  const removeNotification = useSetAtom(removeNotificationAtom);
+
   const baseClasses = 'p-4 rounded-md shadow-md text-white flex justify-between items-center';
 
   const typeClasses = {
@@ -16,11 +21,24 @@ export default function Toast({ type, message, onClose }: ToastProps) {
     error: 'bg-red-600',
   };
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      removeNotification(id);
+    }, 3000);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
+
+  const handleClose = () => removeNotification(id);
+
   return (
     <div className={`${baseClasses} ${typeClasses[type]}`}>
       <span className='mr-2'>{message}</span>
-
-      <IconButton variant='toast' onClick={onClose} icon={<DeleteIcon />} />
+      <IconButton variant='toast' onClick={handleClose} icon={<DeleteIcon />} />
     </div>
   );
-}
+});
+
+export default Toast;
