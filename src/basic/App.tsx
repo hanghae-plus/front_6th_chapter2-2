@@ -42,14 +42,6 @@ const App = () => {
 
   // 로컬 UI 상태
   const [isAdmin, setIsAdmin] = useState(false);
-  const [showCouponForm, setShowCouponForm] = useState(false);
-
-  const [couponForm, setCouponForm] = useState({
-    name: "",
-    code: "",
-    discountType: "amount" as "amount" | "percentage",
-    discountValue: 0,
-  });
 
   const cartTotals = calculateCartTotal();
 
@@ -130,18 +122,6 @@ const App = () => {
     [deleteCoupon, addNotification]
   );
 
-  const handleCouponSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    handleAddCoupon(couponForm);
-    setCouponForm({
-      name: "",
-      code: "",
-      discountType: "amount",
-      discountValue: 0,
-    });
-    setShowCouponForm(false);
-  };
-
   const totals = getFinalTotal();
 
   return (
@@ -170,11 +150,7 @@ const App = () => {
             // 쿠폰 관련 props
             coupons={coupons}
             onDeleteCoupon={handleDeleteCoupon}
-            showCouponForm={showCouponForm}
-            setShowCouponForm={setShowCouponForm}
-            couponForm={couponForm}
-            setCouponForm={setCouponForm}
-            onCouponSubmit={handleCouponSubmit}
+            onAddCoupon={handleAddCoupon}
           />
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">

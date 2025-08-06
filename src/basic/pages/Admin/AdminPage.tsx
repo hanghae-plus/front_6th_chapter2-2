@@ -3,7 +3,8 @@ import CouponManagement from "../../components/admin/CouponManagement";
 import { Tabs } from "../../components/ui/tabs";
 import { ADMIN_TABS } from "../../types/admin";
 import { useProductForm } from "../../hooks/useProductForm";
-import type { Coupon, CouponFormState, NotificationType } from "../../types/admin";
+import { useCouponForm } from "../../hooks/useCouponForm";
+import type { Coupon, NotificationType } from "../../types/admin";
 import type { CartItem, Product } from "../../../types";
 interface AdminPageProps {
   // 상품 관련 - 외부에서 받아야 하는 것들
@@ -17,11 +18,7 @@ interface AdminPageProps {
   // 쿠폰 관련
   coupons: Coupon[];
   onDeleteCoupon: (couponCode: string) => void;
-  showCouponForm: boolean;
-  setShowCouponForm: React.Dispatch<React.SetStateAction<boolean>>;
-  couponForm: CouponFormState;
-  setCouponForm: React.Dispatch<React.SetStateAction<CouponFormState>>;
-  onCouponSubmit: (e: React.FormEvent) => void;
+  onAddCoupon: (coupon: Coupon) => void;
 }
 
 export default function AdminPage({
@@ -36,11 +33,7 @@ export default function AdminPage({
   // 쿠폰 관련 props
   coupons,
   onDeleteCoupon,
-  showCouponForm,
-  setShowCouponForm,
-  couponForm,
-  setCouponForm,
-  onCouponSubmit,
+  onAddCoupon,
 }: AdminPageProps) {
   const {
     editingProduct,
@@ -53,9 +46,17 @@ export default function AdminPage({
     handleProductSubmit,
   } = useProductForm();
 
+  // Coupon Form 훅 사용
+  const { couponForm, showCouponForm, setCouponForm, setShowCouponForm, handleCouponSubmit } = useCouponForm();
+
   // Product Form 제출 처리
   const handleProductFormSubmit = (e: React.FormEvent) => {
     handleProductSubmit(e, onAddProduct, onUpdateProduct);
+  };
+
+  // Coupon Form 제출 처리
+  const handleCouponFormSubmit = (e: React.FormEvent) => {
+    handleCouponSubmit(e, onAddCoupon);
   };
   return (
     <div className="max-w-6xl mx-auto">
@@ -97,7 +98,7 @@ export default function AdminPage({
               setShowCouponForm={setShowCouponForm}
               couponForm={couponForm}
               setCouponForm={setCouponForm}
-              onCouponSubmit={onCouponSubmit}
+              onCouponSubmit={handleCouponFormSubmit}
               addNotification={addNotification}
             />
           </Tabs.Panel>
