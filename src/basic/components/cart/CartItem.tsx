@@ -1,4 +1,3 @@
-import React from "react";
 import { CartItem as CartItemType } from "../../../types";
 import { formatCurrency } from "../../utils/formatters";
 
@@ -11,14 +10,7 @@ interface CartItemProps {
   onUpdateQuantity: (productId: string, quantity: number) => void;
 }
 
-export const CartItem: React.FC<CartItemProps> = ({
-  item,
-  itemTotal,
-  hasDiscount,
-  discountRate,
-  onRemove,
-  onUpdateQuantity,
-}) => {
+export const CartItem = ({ item, itemTotal, hasDiscount, discountRate, onRemove, onUpdateQuantity }: CartItemProps) => {
   return (
     <div className="border-b pb-3 last:border-b-0">
       <div className="flex justify-between items-start mb-2">
