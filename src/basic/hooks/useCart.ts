@@ -4,7 +4,7 @@ import { CartItem, Coupon, ProductWithUI } from '../../types';
 import { calculateItemTotal, getRemainingStock } from '../models/cart';
 
 export function useCart(products: ProductWithUI[] = []) {
-  // cart 상태 관리
+  // localStorage에서 초기값 가져오기 (원본 패턴과 동일)
   const [cart, setCart] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem('cart');
     if (saved) {
@@ -27,15 +27,6 @@ export function useCart(products: ProductWithUI[] = []) {
   useEffect(() => {
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);
     setTotalItemCount(count);
-  }, [cart]);
-
-  // cart localStorage 관리
-  useEffect(() => {
-    if (cart.length > 0) {
-      localStorage.setItem('cart', JSON.stringify(cart));
-    } else {
-      localStorage.removeItem('cart');
-    }
   }, [cart]);
 
   // 총액 계산 (함수명 통일)
@@ -71,13 +62,13 @@ export function useCart(products: ProductWithUI[] = []) {
       product: ProductWithUI,
       onNotification?: (message: string, type: 'success' | 'error' | 'warning') => void
     ) => {
-      const remainingStock = getRemainingStock(product, cart);
-      if (remainingStock <= 0) {
-        onNotification?.('재고가 부족합니다!', 'error');
-        return;
-      }
-
       setCart((prevCart) => {
+        const remainingStock = getRemainingStock(product, prevCart);
+        if (remainingStock <= 0) {
+          onNotification?.('재고가 부족합니다!', 'error');
+          return prevCart;
+        }
+
         const existingItem = prevCart.find((item) => item.product.id === product.id);
 
         if (existingItem) {
@@ -98,7 +89,7 @@ export function useCart(products: ProductWithUI[] = []) {
 
       onNotification?.('장바구니에 담았습니다', 'success');
     },
-    [cart]
+    []
   );
 
   // removeFromCart 함수 (원본 로직과 동일)

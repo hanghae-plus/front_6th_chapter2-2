@@ -1,11 +1,11 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback, useState } from 'react';
 
 import { Coupon } from '../../types';
 import { initialCoupons } from '../constants';
 import { validateCouponCode, calculateCouponDiscount } from '../models/coupon';
 
 export function useCoupons() {
-  // coupons 상태 관리 (localStorage 연동)
+  // localStorage에서 초기값 가져오기 (원본 패턴과 동일)
   const [coupons, setCoupons] = useState<Coupon[]>(() => {
     const saved = localStorage.getItem('coupons');
     if (saved) {
@@ -17,11 +17,6 @@ export function useCoupons() {
     }
     return initialCoupons;
   });
-
-  // coupons localStorage 관리
-  useEffect(() => {
-    localStorage.setItem('coupons', JSON.stringify(coupons));
-  }, [coupons]);
 
   // addCoupon 함수
   const addCoupon = useCallback(

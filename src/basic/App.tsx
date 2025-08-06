@@ -15,9 +15,10 @@ import Button from './components/ui/Button';
 import Card from './components/ui/Card';
 import Input from './components/ui/Input';
 import Select from './components/ui/Selector';
-import { initialProducts, defaultProductForm, defaultCouponForm } from './constants';
+import { defaultProductForm, defaultCouponForm } from './constants';
 import { useCart } from './hooks/useCart';
 import { useCoupons } from './hooks/useCoupons';
+import { useProducts } from './hooks/useProducts';
 import { calculateItemTotal, calculateOriginalPrice } from './models/cart';
 import {
   formatCouponDisplay,
@@ -37,23 +38,14 @@ import { isRecommended } from './models/product';
 
 const App = () => {
   // ===== 상태 관리 =====
-  const [products, setProducts] = useState<ProductWithUI[]>(() => {
-    const saved = localStorage.getItem('products');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialProducts;
-      }
-    }
-    return initialProducts;
-  });
+  // useProducts Hook 사용
+  const { products, addProduct, updateProduct, deleteProduct } = useProducts();
 
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   // 알림 추가 함수
   const addNotification = useCallback(
-    (message: string, type: 'error' | 'success' | 'warning' = 'success') => {
+    (message: string, type: 'success' | 'error' | 'warning' = 'success') => {
       const id = Date.now().toString();
       setNotifications((prev) => [...prev, { id, message, type }]);
 
@@ -131,6 +123,23 @@ const App = () => {
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [productForm, setProductForm] = useState(defaultProductForm);
 
+  // ===== localStorage 동기화 =====
+  useEffect(() => {
+    localStorage.setItem('products', JSON.stringify(products));
+  }, [products]);
+
+  useEffect(() => {
+    localStorage.setItem('coupons', JSON.stringify(coupons));
+  }, [coupons]);
+
+  useEffect(() => {
+    if (cart.length > 0) {
+      localStorage.setItem('cart', JSON.stringify(cart));
+    } else {
+      localStorage.removeItem('cart');
+    }
+  }, [cart]);
+
   // ===== UTILS: 유틸리티 함수들 =====
   // TODO: src/basic/utils/formatters.ts로 분리 - formatPrice(price: number): string
   const formatPrice = (price: number, productId?: string): string => {
@@ -150,19 +159,6 @@ const App = () => {
 
   // ===== MODELS: 순수 함수들 (UI와 관련된 로직 없음, 외부 상태에 의존하지 않음) =====
 
-  // TODO: src/basic/hooks/useLocalStorage.ts로 분리 - localStorage 관리
-  useEffect(() => {
-    localStorage.setItem('products', JSON.stringify(products));
-  }, [products]);
-
-  useEffect(() => {
-    if (cart.length > 0) {
-      localStorage.setItem('cart', JSON.stringify(cart));
-    } else {
-      localStorage.removeItem('cart');
-    }
-  }, [cart]);
-
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
@@ -170,47 +166,19 @@ const App = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  // TODO: src/basic/hooks/useProducts.ts로 분리 - addProduct(product), updateProduct(product), removeProduct(productId)
-  const addProduct = useCallback(
-    (newProduct: Omit<ProductWithUI, 'id'>) => {
-      const product: ProductWithUI = {
-        ...newProduct,
-        id: `p${Date.now()}`,
-      };
-      setProducts((prev) => [...prev, product]);
-      addNotification('상품이 추가되었습니다.', 'success');
-    },
-    [addNotification]
-  );
-
-  const updateProduct = useCallback(
-    (productId: string, updates: Partial<ProductWithUI>) => {
-      setProducts((prev) =>
-        prev.map((product) => (product.id === productId ? { ...product, ...updates } : product))
-      );
-      addNotification('상품이 수정되었습니다.', 'success');
-    },
-    [addNotification]
-  );
-
-  const deleteProduct = useCallback(
-    (productId: string) => {
-      setProducts((prev) => prev.filter((p) => p.id !== productId));
-      addNotification('상품이 삭제되었습니다.', 'success');
-    },
-    [addNotification]
-  );
-
   const handleProductSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (editingProduct && editingProduct !== 'new') {
-      updateProduct(editingProduct, productForm);
+      updateProduct(editingProduct, productForm, addNotification);
       setEditingProduct(null);
     } else {
-      addProduct({
-        ...productForm,
-        discounts: productForm.discounts,
-      });
+      addProduct(
+        {
+          ...productForm,
+          discounts: productForm.discounts,
+        },
+        addNotification
+      );
     }
     setProductForm(defaultProductForm);
     setEditingProduct(null);
@@ -432,7 +400,7 @@ const App = () => {
                               수정
                             </Button>
                             <Button
-                              onClick={() => deleteProduct(product.id)}
+                              onClick={() => deleteProduct(product.id, addNotification)}
                               className='text-red-600 hover:text-red-900'
                             >
                               삭제
