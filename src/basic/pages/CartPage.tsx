@@ -3,6 +3,7 @@ import { CartItem, Coupon } from "../../types";
 import { formatPrice } from "../utils/formatters";
 import { calculateRemainingStock } from "../utils/calculateRemainingStock";
 import { calculateItemTotal } from "../utils/calculateItemTotal";
+import { useCouponHandlers } from "../entities/coupon/useCouponHandlers";
 import { ProductListSection } from "../components/ui/cart/ProductListSection";
 import { CartSection } from "../components/ui/cart/CartSection";
 import { CouponSection } from "../components/ui/cart/CouponSection";

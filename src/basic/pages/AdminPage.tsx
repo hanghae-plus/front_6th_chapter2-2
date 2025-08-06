@@ -1,6 +1,9 @@
+import { useCallback } from "react";
 import { ProductWithUI } from "../entities/products/product.types";
 import { Coupon } from "../../types";
 import { formatPrice } from "../utils/formatters";
+import { useProductHandlers } from "../entities/products/useProductHandlers";
+import { useCouponHandlers } from "../entities/coupon/useCouponHandlers";
 
 interface AdminPageProps {
   activeTab: "products" | "coupons";
@@ -11,8 +14,8 @@ interface AdminPageProps {
   updateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
   deleteProduct: (productId: string) => void;
   coupons: Coupon[];
-  deleteCoupon: (couponCode: string) => void;
   addCoupon: (coupon: Coupon) => void;
+  deleteCoupon: (couponCode: string) => void;
   addNotification: (
     message: string,
     type: "error" | "success" | "warning"
@@ -57,8 +60,8 @@ export const AdminPage = ({
   updateProduct,
   deleteProduct,
   coupons,
-  deleteCoupon,
   addCoupon,
+  deleteCoupon,
   addNotification,
   productForm,
   setProductForm,

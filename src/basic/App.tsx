@@ -1,19 +1,6 @@
-import { useState, useCallback, useEffect } from "react";
-import { CartItem, Coupon } from "../types";
-import { formatPrice } from "./utils/formatters";
-import { ProductWithUI } from "./entities/products/product.types";
+import { useAppCore } from "./hooks/useAppCore";
 
-import { useProducts } from "./entities/products/useProducts";
-import { useNotifications } from "./hooks/useNotifications";
-import { useCart } from "./entities/cart/useCart";
-import { calculateRemainingStock } from "./utils/calculateRemainingStock";
-import { useCoupon } from "./entities/coupon/useCoupon";
-import { useProductForm } from "./entities/products/useProductForm";
-import { calculateCartTotal } from "./utils/calculateCartTotal";
-import { calculateItemTotal } from "./utils/calculateItemTotal";
-import { useDebounce } from "./utils/hooks/useDebounce";
 import { Header } from "./components/layouts/Header";
-import { useSearchProduct } from "./hooks/useSearchProduct";
 import { Layout } from "./components/layouts/Layout";
 import { Body } from "./components/layouts/Body";
 import { AdminPage } from "./pages/AdminPage";
@@ -21,39 +8,35 @@ import { CartPage } from "./pages/CartPage";
 import { NotificationComponent } from "./components/ui/notification/Notification";
 
 const App = () => {
-  const { notifications, setNotifications, addNotification } =
-    useNotifications();
-  const { products, setProducts, addProduct, updateProduct, deleteProduct } =
-    useProducts(addNotification);
-
   const {
+    // 기본 상태
+    notifications,
+    setNotifications,
+    addNotification,
+    isAdmin,
+    setIsAdmin,
+
+    // 도메인 상태
+    products,
+    setProducts,
     cart,
-    setCart,
-    addToCart: addToCartAction,
-    removeFromCart,
-    updateQuantity: updateQuantityAction,
     totalItemCount,
-  } = useCart();
-
-  const {
     coupons,
-    setCoupons,
-    addCoupon,
-    deleteCoupon,
     selectedCoupon,
     setSelectedCoupon,
+
+    // 도메인 핸들러들
+    addProduct,
+    updateProduct,
+    deleteProduct,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+    addCoupon,
+    deleteCoupon,
     applyCoupon,
-    couponForm,
-    setCouponForm,
-  } = useCoupon(addNotification);
 
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  const [showCouponForm, setShowCouponForm] = useState(false);
-  const [activeTab, setActiveTab] = useState<"products" | "coupons">(
-    "products"
-  );
-  const {
+    // 폼 관련
     productForm,
     setProductForm,
     editingProduct,
@@ -61,98 +44,32 @@ const App = () => {
     showProductForm,
     setShowProductForm,
     startEditProduct,
-  } = useProductForm();
 
-  const { searchTerm, handleSearch, debouncedSearchTerm } = useSearchProduct();
+    // 검색 관련
+    searchTerm,
+    handleSearch,
+    debouncedSearchTerm,
+    filteredProducts,
 
-  const checkSoldOutByProductId = (productId: string) => {
-    const product = products.find((p) => p.id === productId);
-    if (product && calculateRemainingStock(product, cart) <= 0) {
-      return true;
-    }
-    return false;
-  };
+    // 관리자 핸들러들
+    activeTab,
+    setActiveTab,
+    showCouponForm,
+    setShowCouponForm,
+    couponForm,
+    setCouponForm,
+    handleProductSubmit,
+    handleCouponSubmit,
 
-  // 장바구니에 상품 추가 핸들러
-  const addToCart = useCallback(
-    (product: ProductWithUI) => {
-      const result = addToCartAction(product);
-      if (result.type) {
-        addNotification(result.message, result.type);
-      }
-    },
-    [addToCartAction, addNotification]
-  );
+    // 주문 핸들러들
+    completeOrder,
 
-  // 수량 변경 핸들러
-  const updateQuantity = useCallback(
-    (productId: string, newQuantity: number) => {
-      const result = updateQuantityAction(productId, newQuantity);
-      if (result.type) {
-        addNotification(result.message, result.type);
-      }
-    },
-    [updateQuantityAction, addNotification]
-  );
+    // 유틸리티
+    checkSoldOutByProductId,
 
-  const completeOrder = useCallback(() => {
-    const orderNumber = `ORD-${Date.now()}`;
-    addNotification(
-      `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
-      "success"
-    );
-    setCart([]);
-    setSelectedCoupon(null);
-  }, [addNotification]);
-
-  const handleProductSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editingProduct && editingProduct !== "new") {
-      updateProduct(editingProduct, productForm);
-      setEditingProduct(null);
-    } else {
-      addProduct({
-        ...productForm,
-        discounts: productForm.discounts,
-      });
-    }
-    setProductForm({
-      name: "",
-      price: 0,
-      stock: 0,
-      description: "",
-      discounts: [],
-    });
-    setEditingProduct(null);
-    setShowProductForm(false);
-  };
-
-  const handleCouponSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    addCoupon(couponForm);
-    setCouponForm({
-      name: "",
-      code: "",
-      discountType: "amount",
-      discountValue: 0,
-    });
-    setShowCouponForm(false);
-  };
-
-  const totals = calculateCartTotal(cart, selectedCoupon);
-
-  const filteredProducts = debouncedSearchTerm
-    ? products.filter(
-        (product) =>
-          product.name
-            .toLowerCase()
-            .includes(debouncedSearchTerm.toLowerCase()) ||
-          (product.description &&
-            product.description
-              .toLowerCase()
-              .includes(debouncedSearchTerm.toLowerCase()))
-      )
-    : products;
+    // 계산된 값들
+    totals,
+  } = useAppCore();
 
   return (
     <Layout>

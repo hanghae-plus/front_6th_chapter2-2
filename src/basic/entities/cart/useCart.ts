@@ -4,19 +4,13 @@ import { ProductWithUI } from "../products/product.types";
 import { calculateRemainingStock } from "../../utils/calculateRemainingStock";
 import { useLocalStorageState } from "../../utils/hooks/useLocalStorageState";
 import { cartModel } from "./cart.model";
-
-// 결과 타입 정의
-interface CartActionResult {
-  success: boolean;
-  message: string;
-  type?: "success" | "error" | "warning";
-}
+import { ActionResult } from "../../types/common";
 
 export const useCart = () => {
   const [cart, setCart] = useLocalStorageState<CartItem[]>("cart", []);
 
   const addToCart = useCallback(
-    (product: ProductWithUI): CartActionResult => {
+    (product: ProductWithUI): ActionResult => {
       const remainingStock = cartModel.getRemainingStock(product, cart);
       if (remainingStock <= 0) {
         return {
@@ -53,7 +47,7 @@ export const useCart = () => {
   }, []);
 
   const updateQuantity = useCallback(
-    (productId: string, newQuantity: number): CartActionResult => {
+    (productId: string, newQuantity: number): ActionResult => {
       if (newQuantity <= 0) {
         removeFromCart(productId);
         return {

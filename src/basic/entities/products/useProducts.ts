@@ -1,43 +1,50 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { ProductWithUI } from "./product.types";
 import { initialProducts } from "./product.constants";
-import { NotificationType } from "../../hooks/useNotifications";
 import { useLocalStorageState } from "../../utils/hooks/useLocalStorageState";
 import { productModel } from "./product.model";
+import { ActionResult } from "../../types/common";
 
-export const useProducts = (
-  addNotification: (message: string, type: NotificationType) => void
-) => {
+export const useProducts = () => {
   const [products, setProducts] = useLocalStorageState<ProductWithUI[]>(
     "products",
     initialProducts
   );
 
   const addProduct = useCallback(
-    (newProduct: Omit<ProductWithUI, "id">) => {
+    (newProduct: Omit<ProductWithUI, "id">): ActionResult => {
       setProducts((prev) => productModel.addProduct(prev, newProduct));
-      addNotification("상품이 추가되었습니다.", "success");
+      return {
+        success: true,
+        message: "상품이 추가되었습니다.",
+        type: "success",
+      };
     },
-    [addNotification]
+    []
   );
 
   const updateProduct = useCallback(
-    (productId: string, updates: Partial<ProductWithUI>) => {
+    (productId: string, updates: Partial<ProductWithUI>): ActionResult => {
       setProducts((prev) =>
         productModel.updateProduct(prev, productId, updates)
       );
-      addNotification("상품이 수정되었습니다.", "success");
+      return {
+        success: true,
+        message: "상품이 수정되었습니다.",
+        type: "success",
+      };
     },
-    [addNotification]
+    []
   );
 
-  const deleteProduct = useCallback(
-    (productId: string) => {
-      setProducts((prev) => productModel.deleteProduct(prev, productId));
-      addNotification("상품이 삭제되었습니다.", "success");
-    },
-    [addNotification]
-  );
+  const deleteProduct = useCallback((productId: string): ActionResult => {
+    setProducts((prev) => productModel.deleteProduct(prev, productId));
+    return {
+      success: true,
+      message: "상품이 삭제되었습니다.",
+      type: "success",
+    };
+  }, []);
 
   return {
     products,
