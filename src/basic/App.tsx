@@ -4,6 +4,7 @@ import { useProducts } from "./hooks/useProducts";
 import { useCart } from "./hooks/useCart";
 import { useCoupons } from "./hooks/useCoupons";
 import { useNotification } from "./hooks/useNotification";
+import { useProductForm } from "./hooks/useProductForm";
 
 // utils
 import { useSearch } from "./utils/hooks/useSearch";
@@ -43,17 +44,18 @@ const App = () => {
   // 로컬 UI 상태
   const [isAdmin, setIsAdmin] = useState(false);
   const [showCouponForm, setShowCouponForm] = useState(false);
-  const [showProductForm, setShowProductForm] = useState(false);
 
-  // Admin
-  const [editingProduct, setEditingProduct] = useState<string | null>(null);
-  const [productForm, setProductForm] = useState({
-    name: "",
-    price: 0,
-    stock: 0,
-    description: "",
-    discounts: [] as Array<{ quantity: number; rate: number }>,
-  });
+  // Product Form 관리
+  const {
+    editingProduct,
+    productForm,
+    showProductForm,
+    setProductForm,
+    startEditProduct,
+    startAddProduct,
+    cancelProductForm,
+    handleProductSubmit: handleProductFormSubmit,
+  } = useProductForm();
 
   const [couponForm, setCouponForm] = useState({
     name: "",
@@ -142,19 +144,7 @@ const App = () => {
   );
 
   const handleProductSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editingProduct && editingProduct !== "new") {
-      handleUpdateProduct(editingProduct, productForm);
-      setEditingProduct(null);
-    } else {
-      handleAddProduct({
-        ...productForm,
-        discounts: productForm.discounts,
-      });
-    }
-    setProductForm({ name: "", price: 0, stock: 0, description: "", discounts: [] });
-    setEditingProduct(null);
-    setShowProductForm(false);
+    handleProductFormSubmit(e, handleAddProduct, handleUpdateProduct);
   };
 
   const handleCouponSubmit = (e: React.FormEvent) => {
@@ -167,18 +157,6 @@ const App = () => {
       discountValue: 0,
     });
     setShowCouponForm(false);
-  };
-
-  const startEditProduct = (product: Product) => {
-    setEditingProduct(product.id);
-    setProductForm({
-      name: product.name,
-      price: product.price,
-      stock: product.stock,
-      description: product.description || "",
-      discounts: product.discounts || [],
-    });
-    setShowProductForm(true);
   };
 
   const totals = getFinalTotal();
@@ -204,21 +182,13 @@ const App = () => {
             cart={cart}
             onEditProduct={startEditProduct}
             onDeleteProduct={handleDeleteProduct}
-            onAddProduct={() => {
-              setEditingProduct("new");
-              setProductForm({ name: "", price: 0, stock: 0, description: "", discounts: [] });
-              setShowProductForm(true);
-            }}
+            onAddProduct={startAddProduct}
             showProductForm={showProductForm}
             productForm={productForm}
             setProductForm={setProductForm}
             editingProduct={editingProduct}
             onProductSubmit={handleProductSubmit}
-            onCancelProductForm={() => {
-              setEditingProduct(null);
-              setProductForm({ name: "", price: 0, stock: 0, description: "", discounts: [] });
-              setShowProductForm(false);
-            }}
+            onCancelProductForm={cancelProductForm}
             addNotification={addNotification}
             // 쿠폰 관련 props
             coupons={coupons}
