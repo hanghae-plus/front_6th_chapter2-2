@@ -18,6 +18,7 @@
 import { useState, type ReactNode } from 'react';
 import type { CartItem, ProductWithUI } from '../../../types';
 import { AdminTabs, type AdminTab } from './AdminTabs';
+import { CouponsTab } from './coupons-tab/CouponsTab';
 import { ProductsTab } from './products-tab/ProductsTab';
 import { PageInfo } from './ui/PageInfo';
 import { PageTitle } from './ui/PageTItle';
@@ -50,7 +51,7 @@ export function AdminPage({
   const [activeTab, setActiveTab] = useState<AdminTab>('products');
 
   const tabContent: Record<AdminTab, ReactNode> = {
-    coupons: <></>,
+    coupons: <CouponsTab />,
     products: (
       <ProductsTab
         cart={cart}

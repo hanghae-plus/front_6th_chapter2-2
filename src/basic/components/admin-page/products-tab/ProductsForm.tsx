@@ -1,8 +1,8 @@
 import type { ChangeEvent, FormEvent } from 'react';
 import { Fragment } from 'react/jsx-runtime';
+import { Label } from '../ui/Label';
 import { FormTitle } from './ui/FormTitle';
 import { InputWithLabel } from './ui/InputWithLabel';
-import { Label } from './ui/Label';
 
 export interface ProductForm {
   name: string;
