@@ -1,21 +1,15 @@
-import { CartItem, Coupon } from '../../../types.ts';
-import {
-  addItemToCart,
-  calculateCartTotal,
-  calculateItemTotalWithBulkPurchase,
-  canAddToCart,
-  removeItemFromCart,
-  updateCartItemQuantity
-} from '../../entities/CartItem.ts';
-import { getRemainingStock } from '../../entities/Product.ts';
+import { CartItem, Coupon } from "../../../types.ts";
+import { calculateCartTotal } from "../../entities/CartItem.ts";
 
-import { ProductWithUI } from '../../entities/ProductWithUI.ts';
-import { useCallback } from 'react';
+import { ProductWithUI } from "../../entities/ProductWithUI.ts";
+import { useCallback } from "react";
+import { ProductView } from "./ProductView.tsx";
+import { CouponOptionView } from "./CouponOptionView.tsx";
+import { CartItemView } from "./CartItemView.tsx";
 
 interface PageCartProps {
   products: ProductWithUI[];
   debouncedSearchTerm: string;
-  formatPrice: (price: number, productId?: string) => string;
   cart: CartItem[];
   setCart: (cart: CartItem[]) => void;
   coupons: Coupon[];
@@ -30,7 +24,6 @@ interface PageCartProps {
 function PageCart({
   products,
   debouncedSearchTerm,
-  formatPrice,
   cart,
   setCart,
   coupons,
@@ -38,58 +31,6 @@ function PageCart({
   setSelectedCoupon,
   handleNotificationAdd,
 }: PageCartProps) {
-  const handleProductAddToCart = useCallback(
-    (product: ProductWithUI) => {
-      if (!canAddToCart(cart, product)) {
-        const remainingStock = getRemainingStock(product, cart);
-        if (remainingStock <= 0) {
-          handleNotificationAdd("재고가 부족합니다!", "error");
-        } else {
-          handleNotificationAdd(
-            `재고는 ${product.stock}개까지만 있습니다.`,
-            "error"
-          );
-        }
-        return;
-      }
-
-      const newCart = addItemToCart(cart, product);
-      setCart(newCart);
-      handleNotificationAdd("장바구니에 담았습니다", "success");
-    },
-    [cart, handleNotificationAdd]
-  );
-
-  const handleProductRemoveFromCart = useCallback(
-    (productId: string) => {
-      const newCart = removeItemFromCart(cart, productId);
-      setCart(newCart);
-    },
-    [cart]
-  );
-
-  const handleProductQuantityUpdate = useCallback(
-    (productId: string, newQuantity: number) => {
-      if (newQuantity <= 0) {
-        handleProductRemoveFromCart(productId);
-        return;
-      }
-
-      const product = products.find((p) => p.id === productId);
-      if (!product) return;
-
-      const maxStock = product.stock;
-      if (newQuantity > maxStock) {
-        handleNotificationAdd(`재고는 ${maxStock}개까지만 있습니다.`, "error");
-        return;
-      }
-
-      const newCart = updateCartItemQuantity(cart, productId, newQuantity);
-      setCart(newCart);
-    },
-    [cart, products, handleProductRemoveFromCart, handleNotificationAdd]
-  );
-
   const handleCouponApply = useCallback(
     (coupon: Coupon) => {
       const currentTotal = calculateCartTotal(
@@ -155,100 +96,16 @@ function PageCart({
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredProducts.map((product) => {
-                const remainingStock = getRemainingStock(product, cart);
-
-                return (
-                  <div
-                    key={product.id}
-                    className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
-                  >
-                    {/* 상품 이미지 영역 (placeholder) */}
-                    <div className="relative">
-                      <div className="aspect-square bg-gray-100 flex items-center justify-center">
-                        <svg
-                          className="w-24 h-24 text-gray-300"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={1}
-                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                          />
-                        </svg>
-                      </div>
-                      {product.isRecommended && (
-                        <span className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
-                          BEST
-                        </span>
-                      )}
-                      {product.discounts.length > 0 && (
-                        <span className="absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded">
-                          ~
-                          {Math.max(...product.discounts.map((d) => d.rate)) *
-                            100}
-                          %
-                        </span>
-                      )}
-                    </div>
-
-                    {/* 상품 정보 */}
-                    <div className="p-4">
-                      <h3 className="font-medium text-gray-900 mb-1">
-                        {product.name}
-                      </h3>
-                      {product.description && (
-                        <p className="text-sm text-gray-500 mb-2 line-clamp-2">
-                          {product.description}
-                        </p>
-                      )}
-
-                      {/* 가격 정보 */}
-                      <div className="mb-3">
-                        <p className="text-lg font-bold text-gray-900">
-                          {formatPrice(product.price, product.id)}
-                        </p>
-                        {product.discounts.length > 0 && (
-                          <p className="text-xs text-gray-500">
-                            {product.discounts[0].quantity}개 이상 구매시 할인{" "}
-                            {product.discounts[0].rate * 100}%
-                          </p>
-                        )}
-                      </div>
-
-                      {/* 재고 상태 */}
-                      <div className="mb-3">
-                        {remainingStock <= 5 && remainingStock > 0 && (
-                          <p className="text-xs text-red-600 font-medium">
-                            품절임박! {remainingStock}개 남음
-                          </p>
-                        )}
-                        {remainingStock > 5 && (
-                          <p className="text-xs text-gray-500">
-                            재고 {remainingStock}개
-                          </p>
-                        )}
-                      </div>
-
-                      {/* 장바구니 버튼 */}
-                      <button
-                        onClick={() => handleProductAddToCart(product)}
-                        disabled={remainingStock <= 0}
-                        className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
-                          remainingStock <= 0
-                            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                            : "bg-gray-900 text-white hover:bg-gray-800"
-                        }`}
-                      >
-                        {remainingStock <= 0 ? "품절" : "장바구니 담기"}
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
+              {filteredProducts.map((product) => (
+                <ProductView
+                  key={product.id}
+                  product={product}
+                  products={products}
+                  cart={cart}
+                  setCart={setCart}
+                  handleNotificationAdd={handleNotificationAdd}
+                />
+              ))}
             </div>
           )}
         </section>
@@ -292,89 +149,16 @@ function PageCart({
               </div>
             ) : (
               <div className="space-y-3">
-                {cart.map((item) => {
-                  const itemTotal = calculateItemTotalWithBulkPurchase(
-                    item,
-                    cart
-                  );
-                  const originalPrice = item.product.price * item.quantity;
-                  const hasDiscount = itemTotal < originalPrice;
-                  const discountRate = hasDiscount
-                    ? Math.round((1 - itemTotal / originalPrice) * 100)
-                    : 0;
-
-                  return (
-                    <div
-                      key={item.product.id}
-                      className="border-b pb-3 last:border-b-0"
-                    >
-                      <div className="flex justify-between items-start mb-2">
-                        <h4 className="text-sm font-medium text-gray-900 flex-1">
-                          {item.product.name}
-                        </h4>
-                        <button
-                          onClick={() =>
-                            handleProductRemoveFromCart(item.product.id)
-                          }
-                          className="text-gray-400 hover:text-red-500 ml-2"
-                        >
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M6 18L18 6M6 6l12 12"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <button
-                            onClick={() =>
-                              handleProductQuantityUpdate(
-                                item.product.id,
-                                item.quantity - 1
-                              )
-                            }
-                            className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
-                          >
-                            <span className="text-xs">−</span>
-                          </button>
-                          <span className="mx-3 text-sm font-medium w-8 text-center">
-                            {item.quantity}
-                          </span>
-                          <button
-                            onClick={() =>
-                              handleProductQuantityUpdate(
-                                item.product.id,
-                                item.quantity + 1
-                              )
-                            }
-                            className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
-                          >
-                            <span className="text-xs">+</span>
-                          </button>
-                        </div>
-                        <div className="text-right">
-                          {hasDiscount && (
-                            <span className="text-xs text-red-500 font-medium block">
-                              -{discountRate}%
-                            </span>
-                          )}
-                          <p className="text-sm font-medium text-gray-900">
-                            {Math.round(itemTotal).toLocaleString()}원
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+                {cart.map((cartItem) => (
+                  <CartItemView
+                    key={cartItem.product.id}
+                    item={cartItem}
+                    cart={cart}
+                    products={products}
+                    setCart={setCart}
+                    handleNotificationAdd={handleNotificationAdd}
+                  />
+                ))}
               </div>
             )}
           </section>
@@ -404,13 +188,7 @@ function PageCart({
                   >
                     <option value="">쿠폰 선택</option>
                     {coupons.map((coupon) => (
-                      <option key={coupon.code} value={coupon.code}>
-                        {coupon.name} (
-                        {coupon.discountType === "amount"
-                          ? `${coupon.discountValue.toLocaleString()}원`
-                          : `${coupon.discountValue}%`}
-                        )
-                      </option>
+                      <CouponOptionView key={coupon.code} coupon={coupon} />
                     ))}
                   </select>
                 )}

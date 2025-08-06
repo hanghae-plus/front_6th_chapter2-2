@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import Header from "./components/Header.tsx";
 import Notifications from "./components/Notifications.tsx";
-import { getRemainingStock } from "./entities/Product";
 import { useCart } from "./hooks/useCart.ts";
 import { useCoupons } from "./hooks/useCoupons.ts";
 import { useNotification } from "./hooks/useNotification.ts";
@@ -21,21 +20,6 @@ const App = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-
-  const formatPrice = (price: number, productId?: string): string => {
-    if (productId) {
-      const product = products.find((p) => p.id === productId);
-      if (product && getRemainingStock(product, cart) <= 0) {
-        return "SOLD OUT";
-      }
-    }
-
-    if (isAdmin) {
-      return `${price.toLocaleString()}원`;
-    }
-
-    return `₩${price.toLocaleString()}`;
-  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -64,7 +48,6 @@ const App = () => {
           <PageAdmin
             products={products}
             setProducts={setProducts}
-            formatPrice={formatPrice}
             handleNotificationAdd={handleNotificationAdd}
             coupons={coupons}
             setCoupons={setCoupons}
@@ -75,7 +58,6 @@ const App = () => {
           <PageCart
             products={products}
             debouncedSearchTerm={debouncedSearchTerm}
-            formatPrice={formatPrice}
             cart={cart}
             coupons={coupons}
             selectedCoupon={selectedCoupon}

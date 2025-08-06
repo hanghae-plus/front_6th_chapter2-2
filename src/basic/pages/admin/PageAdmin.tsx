@@ -1,13 +1,13 @@
 import { Coupon } from "../../../types.ts";
 import { useCallback, useState } from "react";
 import { ProductWithUI } from "../../entities/ProductWithUI.ts";
+import { formatPrice } from "../../utils/formatPrice.ts";
 
 interface PageAdminProps {
   products: ProductWithUI[];
   setProducts: (
     products: ProductWithUI[] | ((prev: ProductWithUI[]) => ProductWithUI[])
   ) => void;
-  formatPrice: (price: number, productId?: string) => string;
   handleNotificationAdd: (
     message: string,
     type: "error" | "success" | "warning"
@@ -21,7 +21,6 @@ interface PageAdminProps {
 function PageAdmin({
   products,
   setProducts,
-  formatPrice,
   handleNotificationAdd,
   coupons,
   setCoupons,
@@ -236,7 +235,13 @@ function PageAdmin({
                         {product.name}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {formatPrice(product.price, product.id)}
+                        {formatPrice(
+                          product.price,
+                          product.id,
+                          products,
+                          [],
+                          true
+                        )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         <span
