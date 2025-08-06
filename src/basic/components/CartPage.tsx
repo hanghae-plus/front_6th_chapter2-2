@@ -31,9 +31,8 @@ export function CartPage({
   removeFromCart,
   updateQuantity,
   applyCoupon,
-  setSelectedCoupon,
-  calculateItemTotal,
-  completeOrder,
+  addNotification,
+  clearCart,
   formatPrice,
 }) {
   return (
@@ -47,15 +46,14 @@ export function CartPage({
       />
       <OrderSummary
         cart={cart}
-        calculateItemTotal={calculateItemTotal}
         removeFromCart={removeFromCart}
         updateQuantity={updateQuantity}
         coupons={coupons}
         selectedCoupon={selectedCoupon}
         applyCoupon={applyCoupon}
-        setSelectedCoupon={setSelectedCoupon}
         totals={totals}
-        completeOrder={completeOrder}
+        addNotification={addNotification}
+        clearCart={clearCart}
       />
     </div>
   );

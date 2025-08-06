@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 import { AdminPage } from './components/AdminPage';
 import { CartPage } from './components/CartPage';
@@ -9,35 +9,26 @@ import { useCoupons } from './hooks/useCoupons';
 import { useNotifications } from './hooks/useNotifications';
 import { useProducts } from './hooks/useProducts';
 
+import * as cartModel from './models/cart';
+
 const App = () => {
-  const { notifications, setNotifications, addNotification } = useNotifications();
-
-  const { products, addProduct, updateProduct, deleteProduct } = useProducts({ addNotification });
-
-  const {
-    cart,
-    selectedCoupon,
-    setSelectedCoupon,
-    addToCart,
-    removeFromCart,
-    updateQuantity,
-    applyCoupon,
-    calculateItemTotal,
-    calculateCartTotal,
-    getRemainingStock,
-    clearCart,
-  } = useCart({ products, addNotification });
-
-  const { coupons, addCoupon, deleteCoupon } = useCoupons({
-    selectedCoupon,
-    setSelectedCoupon,
-    addNotification,
-  });
-
   const [isAdmin, setIsAdmin] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+
+  const { notifications, setNotifications, addNotification } = useNotifications();
+
+  const { products, addProduct, updateProduct, deleteProduct } = useProducts({ addNotification });
+
+  const { cart, addToCart, removeFromCart, updateQuantity, getRemainingStock, clearCart } = useCart(
+    { products, addNotification },
+  );
+  const { coupons, addCoupon, selectedCoupon, applyCoupon, deleteCoupon } = useCoupons({
+    addNotification,
+  });
+
+  const totals = cartModel.calculateCartTotal(cart, selectedCoupon);
 
   const formatPrice = (price: number, productId?: string): string => {
     if (productId) {
@@ -59,14 +50,6 @@ const App = () => {
     }, 500);
     return () => clearTimeout(timer);
   }, [searchTerm]);
-
-  const completeOrder = useCallback(() => {
-    const orderNumber = `ORD-${Date.now()}`;
-    addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
-    clearCart();
-  }, [addNotification]);
-
-  const totals = calculateCartTotal();
 
   return (
     <div className='min-h-screen bg-gray-50'>
@@ -110,14 +93,13 @@ const App = () => {
             addToCart={addToCart}
             removeFromCart={removeFromCart}
             updateQuantity={updateQuantity}
+            getRemainingStock={getRemainingStock}
             // --- 쿠폰 관련 핸들러 ---
             applyCoupon={applyCoupon}
-            setSelectedCoupon={setSelectedCoupon}
             // --- 주문 관련 핸들러 ---
-            completeOrder={completeOrder}
+            addNotification={addNotification}
+            clearCart={clearCart}
             // --- 계산 및 포맷팅 유틸 함수 ---
-            getRemainingStock={getRemainingStock}
-            calculateItemTotal={calculateItemTotal}
             formatPrice={formatPrice}
           />
         )}

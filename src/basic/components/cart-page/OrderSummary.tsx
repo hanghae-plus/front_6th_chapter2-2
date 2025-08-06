@@ -1,15 +1,23 @@
+import { useCallback } from 'react';
+import { calculateItemTotal } from '../../utils/cart';
+
 export const OrderSummary = ({
   cart,
-  calculateItemTotal,
   removeFromCart,
   updateQuantity,
   coupons,
   selectedCoupon,
   applyCoupon,
-  setSelectedCoupon,
   totals,
-  completeOrder,
+  addNotification,
+  clearCart,
 }) => {
+  const completeOrder = useCallback(() => {
+    const orderNumber = `ORD-${Date.now()}`;
+    addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
+    clearCart();
+  }, [addNotification]);
+
   return (
     <div className='lg:col-span-1'>
       <div className='sticky top-24 space-y-4'>
@@ -45,7 +53,7 @@ export const OrderSummary = ({
           ) : (
             <div className='space-y-3'>
               {cart.map((item) => {
-                const itemTotal = calculateItemTotal(item);
+                const itemTotal = calculateItemTotal(item, cart);
                 const originalPrice = item.product.price * item.quantity;
                 const hasDiscount = itemTotal < originalPrice;
                 const discountRate = hasDiscount
@@ -126,8 +134,7 @@ export const OrderSummary = ({
                   value={selectedCoupon?.code || ''}
                   onChange={(e) => {
                     const coupon = coupons.find((c) => c.code === e.target.value);
-                    if (coupon) applyCoupon(coupon);
-                    else setSelectedCoupon(null);
+                    applyCoupon(coupon);
                   }}
                 >
                   <option value=''>쿠폰 선택</option>
