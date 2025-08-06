@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 
 import type { CartItem, Coupon, NotificationVariant } from '../../types';
 import type { ProductWithUI } from '../constants';
@@ -37,20 +37,14 @@ export function CartPage({
 
   onAddNotification,
 }: CartPageProps) {
-  const { cart, handleAddToCart, updateQuantity, removeFromCart, resetCart } = useCartService({
+  const { cart, handleAddToCart, updateQuantity, removeFromCart, completeOrder } = useCartService({
     products,
     onAddNotification,
+    onResetSelectedCoupon,
   });
 
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
-
-  const completeOrder = useCallback(() => {
-    const orderNumber = `ORD-${Date.now()}`;
-    onAddNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
-    resetCart();
-    onResetSelectedCoupon();
-  }, [onAddNotification, resetCart, onResetSelectedCoupon]);
 
   const totals = calculateCartTotal(cart, selectedCoupon);
 

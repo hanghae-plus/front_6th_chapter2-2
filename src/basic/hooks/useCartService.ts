@@ -8,9 +8,14 @@ import { getRemainingStock } from '../models/entity';
 interface UseCartServiceProps {
   products: ProductWithUI[];
   onAddNotification: (message: string, type: NotificationVariant) => void;
+  onResetSelectedCoupon: () => void;
 }
 
-export function useCartService({ products, onAddNotification }: UseCartServiceProps) {
+export function useCartService({
+  products,
+  onAddNotification,
+  onResetSelectedCoupon,
+}: UseCartServiceProps) {
   const { cart, addToCart, updateToCart, removeFromCart, resetCart } = useCartStore();
 
   const handleAddToCart = useCallback(
@@ -62,11 +67,18 @@ export function useCartService({ products, onAddNotification }: UseCartServicePr
     [products, removeFromCart, onAddNotification, updateToCart]
   );
 
+  const completeOrder = useCallback(() => {
+    const orderNumber = `ORD-${Date.now()}`;
+    onAddNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
+    resetCart();
+    onResetSelectedCoupon();
+  }, [onAddNotification, resetCart, onResetSelectedCoupon]);
+
   return {
     cart,
     handleAddToCart,
     updateQuantity,
     removeFromCart,
-    resetCart,
+    completeOrder,
   };
 }
