@@ -1,5 +1,5 @@
-import { IProductWithUI } from "../type";
-import { formatPrice } from "../utils/formatters";
+import { IProductWithUI } from "../../type";
+import { formatPrice } from "../../utils/formatters";
 import ProductItem from "./ProductItem";
 
 interface ProductListProps {

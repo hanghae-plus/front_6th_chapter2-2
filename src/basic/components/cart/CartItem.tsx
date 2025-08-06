@@ -1,6 +1,6 @@
-import { ICartItem } from "../type";
-import { CloseIcon } from "./icon";
-import { formatPercentage } from "../utils/formatters";
+import { ICartItem } from "../../type";
+import { CloseIcon } from "../icon";
+import { formatPercentage } from "../../utils/formatters";
 
 interface CartItemProps {
   item: ICartItem;

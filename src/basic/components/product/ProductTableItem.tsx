@@ -1,19 +1,19 @@
-import { IProductWithUI } from "../type";
-import { STOCK } from "../constants/business";
+import { IProductWithUI } from "../../type";
+import { STOCK } from "../../constants/business";
 
-interface AdminProductItemProps {
+interface ProductTableItemProps {
   product: IProductWithUI;
   priceText: string;
   startEditProduct: (product: IProductWithUI) => void;
   deleteProductItem: (productId: string) => void;
 }
 
-const AdminProductItem = ({
+const ProductTableItem = ({
   product,
   priceText,
   startEditProduct,
   deleteProductItem,
-}: AdminProductItemProps) => {
+}: ProductTableItemProps) => {
   return (
     <tr key={product.id} className="hover:bg-gray-50">
       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -56,4 +56,4 @@ const AdminProductItem = ({
   );
 };
 
-export default AdminProductItem;
+export default ProductTableItem;

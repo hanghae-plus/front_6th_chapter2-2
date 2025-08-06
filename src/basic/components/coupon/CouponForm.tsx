@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
-import { ICoupon, ICouponForm } from "../type";
-import { MESSAGES } from "../constants/messages";
-import { validator } from "../utils/vaildators";
+import { ICoupon, ICouponForm } from "../../type";
+import { MESSAGES } from "../../constants/messages";
+import { validator } from "../../utils/vaildators";
 
 interface CouponFormProps {
   // coupon

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ICoupon, IProductWithUI } from "../type";
-import ProductTab from "../components/ProductTab";
-import CouponTab from "../components/CouponTab";
+import ProductTab from "../components/product/ProductTab";
+import CouponTab from "../components/coupon/CouponTab";
 
 interface AdminPageProps {
   // products

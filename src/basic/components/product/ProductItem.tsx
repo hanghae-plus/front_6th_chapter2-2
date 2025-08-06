@@ -1,7 +1,7 @@
-import { IProductWithUI } from "../type";
-import { formatPercentage } from "../utils/formatters";
-import { STOCK } from "../constants/business";
-import { ImageIcon } from "./icon";
+import { IProductWithUI } from "../../type";
+import { formatPercentage } from "../../utils/formatters";
+import { STOCK } from "../../constants/business";
+import { ImageIcon } from "../icon";
 
 interface ProductItemProps {
   product: IProductWithUI;

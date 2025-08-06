@@ -1,8 +1,8 @@
 import { useCallback } from "react";
-import { IProductForm, IProductWithUI } from "../type";
-import { validator } from "../utils/vaildators";
-import { MESSAGES } from "../constants/messages";
-import { CloseIcon } from "./icon";
+import { IProductForm, IProductWithUI } from "../../type";
+import { validator } from "../../utils/vaildators";
+import { MESSAGES } from "../../constants/messages";
+import { CloseIcon } from "../icon";
 
 interface ProductFormProps {
   // product

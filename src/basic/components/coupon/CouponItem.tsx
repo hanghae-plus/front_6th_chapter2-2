@@ -1,12 +1,12 @@
-import { ICoupon } from "../type";
-import { TrashIcon } from "./icon";
+import { ICoupon } from "../../type";
+import { TrashIcon } from "../icon";
 
-interface AdminCouponItemProps {
+interface CouponItemProps {
   coupon: ICoupon;
   deleteCoupon: (couponCode: string) => void;
 }
 
-const AdminCouponItem = ({ coupon, deleteCoupon }: AdminCouponItemProps) => {
+const CouponItem = ({ coupon, deleteCoupon }: CouponItemProps) => {
   return (
     <div
       key={coupon.code}
@@ -36,4 +36,4 @@ const AdminCouponItem = ({ coupon, deleteCoupon }: AdminCouponItemProps) => {
   );
 };
 
-export default AdminCouponItem;
+export default CouponItem;

@@ -1,5 +1,5 @@
-import { ICartItem } from "../type";
-import { LargeBagIcon, SmallBagIcon } from "./icon";
+import { ICartItem } from "../../type";
+import { LargeBagIcon, SmallBagIcon } from "../icon";
 import CartItem from "./CartItem";
 
 interface CartListProps {

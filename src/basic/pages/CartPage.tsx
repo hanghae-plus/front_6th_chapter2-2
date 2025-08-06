@@ -2,10 +2,10 @@ import { useCallback } from "react";
 import { ICartItem, ICoupon, IProductWithUI } from "../type";
 import { MESSAGES } from "../constants/messages";
 import { ORDER } from "../constants/business";
-import ProductList from "../components/ProductList";
+import ProductList from "../components/product/ProductList";
+import CartList from "../components/cart/CartList";
+import CouponSelector from "../components/coupon/CouponSelector";
 import OrderSummary from "../components/OrderSummary";
-import CartList from "../components/CartList";
-import CouponSelector from "../components/CouponSelector";
 
 interface CartPageProps {
   // product

@@ -1,6 +1,6 @@
-import { IProductWithUI } from "../type";
-import { formatPrice } from "../utils/formatters";
-import AdminProductItem from "./AdminProductItem";
+import { IProductWithUI } from "../../type";
+import { formatPrice } from "../../utils/formatters";
+import ProductTableItem from "./ProductTableItem";
 
 interface ProductTableProps {
   products: IProductWithUI[];
@@ -46,7 +46,7 @@ const ProductTable = ({
         <tbody className="bg-white divide-y divide-gray-200">
           {/* 기존 상품 목록 */}
           {products.map((product) => (
-            <AdminProductItem
+            <ProductTableItem
               key={product.id}
               product={product}
               priceText={getPriceText(product)}

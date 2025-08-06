@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
-import { IProductForm, IProductWithUI } from "../type";
-import { MESSAGES } from "../constants/messages";
+import { IProductForm, IProductWithUI } from "../../type";
+import { MESSAGES } from "../../constants/messages";
 import ProductForm from "./ProductForm";
 import ProductTable from "./ProductTable";
 

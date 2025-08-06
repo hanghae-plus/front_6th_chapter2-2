@@ -1,4 +1,4 @@
-import { ICoupon } from "../type";
+import { ICoupon } from "../../type";
 
 interface CouponSelectorProps {
   coupons: ICoupon[];

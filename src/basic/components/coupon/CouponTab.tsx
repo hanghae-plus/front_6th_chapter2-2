@@ -1,8 +1,8 @@
 import { useState, useCallback } from "react";
-import { ICoupon } from "../type";
-import { MESSAGES } from "../constants/messages";
-import { PlusIcon } from "./icon";
-import AdminCouponItem from "./AdminCouponItem";
+import { ICoupon } from "../../type";
+import { MESSAGES } from "../../constants/messages";
+import { PlusIcon } from "../icon";
+import CouponItem from "./CouponItem";
 import CouponForm from "./CouponForm";
 
 interface CouponTabProps {
@@ -52,7 +52,7 @@ const CouponTab = ({
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {/* 기존 쿠폰 목록 */}
           {coupons.map((coupon) => (
-            <AdminCouponItem
+            <CouponItem
               key={coupon.code}
               coupon={coupon}
               deleteCoupon={deleteCouponItem}
