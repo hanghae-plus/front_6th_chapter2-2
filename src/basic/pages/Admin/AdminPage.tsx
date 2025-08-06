@@ -39,7 +39,7 @@ export default function AdminPage({
     editingProduct,
     productForm,
     showProductForm,
-    setProductForm,
+    updateField: updateProductField,
     startEditProduct,
     startAddProduct,
     cancelProductForm,
@@ -82,7 +82,7 @@ export default function AdminPage({
               onAddProduct={startAddProduct}
               showProductForm={showProductForm}
               productForm={productForm}
-              setProductForm={setProductForm}
+              updateField={updateProductField}
               editingProduct={editingProduct}
               onProductSubmit={handleProductFormSubmit}
               onCancelProductForm={cancelProductForm}

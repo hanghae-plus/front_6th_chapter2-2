@@ -34,6 +34,14 @@ export const useProductForm = () => {
     setShowProductForm(false);
   }, []);
 
+  // 범용 필드 업데이트 함수
+  const updateField = useCallback((field: keyof ProductFormState, value: string | number | any[]) => {
+    setProductForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  }, []);
+
   // 폼 제출 처리 (실제 추가/수정 로직은 외부에서 처리)
   const handleProductSubmit = useCallback(
     (
@@ -67,8 +75,8 @@ export const useProductForm = () => {
     productForm,
     showProductForm,
 
-    // 상태 설정자
-    setProductForm,
+    // 범용 필드 업데이트
+    updateField,
 
     // 액션
     startEditProduct,
