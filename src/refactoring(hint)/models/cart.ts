@@ -2,8 +2,38 @@
 // 힌트: 모든 함수는 순수 함수로 구현 (부작용 없음, 같은 입력에 항상 같은 출력)
 //
 // 구현할 함수들:
+
+import { CartItem } from "../../types/product.type";
+
 // 1. calculateItemTotal(item): 개별 아이템의 할인 적용 후 총액 계산
+export const calculateItemTotal = (item: CartItem): number => {
+  const { price } = item.product;
+  const { quantity } = item;
+  const discount = getMaxApplicableDiscount(item);
+
+  return Math.round(price * quantity * (1 - discount));
+};
+
 // 2. getMaxApplicableDiscount(item): 적용 가능한 최대 할인율 계산
+export const getMaxApplicableDiscount = (
+  item: CartItem,
+  hasBulkPurchase?: boolean
+): number => {
+  const { discounts } = item.product;
+  const { quantity } = item;
+
+  const baseDiscount = discounts.reduce((maxDiscount, discount) => {
+    return quantity >= discount.quantity && discount.rate > maxDiscount
+      ? discount.rate
+      : maxDiscount;
+  }, 0);
+
+  if (hasBulkPurchase) {
+    return Math.min(baseDiscount + 0.05, 0.5); // 대량 구매 시 추가 5% 할인
+  }
+
+  return baseDiscount;
+};
 // 3. calculateCartTotal(cart, coupon): 장바구니 총액 계산 (할인 전/후, 할인액)
 // 4. updateCartItemQuantity(cart, productId, quantity): 수량 변경
 // 5. addItemToCart(cart, product): 상품 추가

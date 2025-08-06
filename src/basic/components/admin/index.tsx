@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { ProductContext } from "@/refactoring(hint)/utils/ProductContext";
 import {
   CartItem,
   Coupon,
@@ -11,13 +11,11 @@ import {
   ProductForm,
   ProductWithUI,
   Tab,
-} from "../types/product.type";
-import AdminDashBoard from "./components/admin/dashboard";
-import Header from "./components/admin/header";
-import Notification from "./components/common/notification";
-import ProductList from "./components/product";
+} from "@/types/product.type";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import AdminDashBoard from "./dashboard";
 
-const App = () => {
+const AdminContent = () => {
   const [products, setProducts] = useState<ProductWithUI[]>(() => {
     const saved = localStorage.getItem("products");
     if (saved) {
@@ -418,70 +416,47 @@ const App = () => {
               .includes(debouncedSearchTerm.toLowerCase()))
       )
     : products;
-
+  const values = useMemo(
+    () => ({
+      products,
+      cart,
+      coupons,
+    }),
+    [products, cart, coupons]
+  );
+  const setValues = useMemo(
+    () => ({
+      setProducts,
+      setCart,
+      setCoupons,
+    }),
+    [setProducts, setCart, setCoupons]
+  );
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Notification
-        notifications={notifications}
-        setNotifications={setNotifications}
+    <ProductContext.Provider value={{ ...values, ...setValues }}>
+      <AdminDashBoard
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        setEditingProduct={setEditingProduct}
+        setProductForm={setProductForm}
+        setShowProductForm={setShowProductForm}
+        setShowCouponForm={setShowCouponForm}
+        showCouponForm={showCouponForm}
+        couponForm={couponForm}
+        setCouponForm={setCouponForm}
+        formatPrice={formatPrice}
+        startEditProduct={startEditProduct}
+        deleteProduct={deleteProduct}
+        handleProductSubmit={handleProductSubmit}
+        handleCouponSubmit={handleCouponSubmit}
+        deleteCoupon={deleteCoupon}
+        showProductForm={showProductForm}
+        editingProduct={editingProduct}
+        productForm={productForm}
+        addNotification={addNotification}
       />
-
-      <Header
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        isAdmin={isAdmin}
-        setIsAdmin={setIsAdmin}
-        totalItemCount={totalItemCount}
-      />
-
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        {isAdmin ? (
-          <AdminDashBoard
-            formatPrice={formatPrice}
-            startEditProduct={startEditProduct}
-            deleteProduct={deleteProduct}
-            handleProductSubmit={handleProductSubmit}
-            handleCouponSubmit={handleCouponSubmit}
-            deleteCoupon={deleteCoupon}
-            showProductForm={showProductForm}
-            editingProduct={editingProduct}
-            productForm={productForm}
-            addNotification={addNotification}
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            setEditingProduct={setEditingProduct}
-            setProductForm={setProductForm}
-            setShowProductForm={setShowProductForm}
-            setShowCouponForm={setShowCouponForm}
-            showCouponForm={showCouponForm}
-            products={products}
-            coupons={coupons}
-            couponForm={couponForm}
-            setCouponForm={setCouponForm}
-          />
-        ) : (
-          <ProductList
-            products={products}
-            filteredProducts={filteredProducts}
-            debouncedSearchTerm={debouncedSearchTerm}
-            getRemainingStock={getRemainingStock}
-            formatPrice={formatPrice}
-            addToCart={addToCart}
-            cart={cart}
-            removeFromCart={removeFromCart}
-            updateQuantity={updateQuantity}
-            coupons={coupons}
-            selectedCoupon={selectedCoupon}
-            applyCoupon={applyCoupon}
-            totals={totals}
-            completeOrder={completeOrder}
-            setSelectedCoupon={setSelectedCoupon}
-            calculateItemTotal={calculateItemTotal}
-          />
-        )}
-      </main>
-    </div>
+    </ProductContext.Provider>
   );
 };
 
-export default App;
+export default AdminContent;
