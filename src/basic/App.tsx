@@ -13,11 +13,17 @@ const App = () => {
   const { notifications, setNotifications, addNotification } =
     useNotification();
   const { products, setProducts, getRemainingStock, isSoldOut } = useProducts();
-  const { cart, addToCart, removeFromCart, updateQuantity, clearCart } =
-    useCart({
-      addNotification,
-      isSoldOut,
-    });
+  const {
+    cart,
+    totalItemCount,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+    clearCart,
+  } = useCart({
+    addNotification,
+    isSoldOut,
+  });
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const { completeOrder } = useOrder({
     addNotification,
@@ -64,13 +70,6 @@ const App = () => {
     discountType: 'amount' as 'amount' | 'percentage',
     discountValue: 0,
   });
-
-  const [totalItemCount, setTotalItemCount] = useState(0);
-
-  useEffect(() => {
-    const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-    setTotalItemCount(count);
-  }, [cart]);
 
   useEffect(() => {
     localStorage.setItem('products', JSON.stringify(products));

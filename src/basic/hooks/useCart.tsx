@@ -37,6 +37,7 @@ interface UseCartParams {
 
 interface UseCartReturn {
   cart: CartItem[];
+  totalItemCount: number;
   addToCart: (params: { product: Product }) => void;
   removeFromCart: (params: { productId: string }) => void;
   updateQuantity: (params: {
@@ -58,6 +59,7 @@ export function useCart({
 
   return {
     cart,
+    totalItemCount: cartModel.calculateTotalItemCount({ cart }),
 
     addToCart: useCallback(
       ({ product }) => {

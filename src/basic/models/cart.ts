@@ -268,3 +268,12 @@ export function removeItemFromCart({
 }: RemoveItemFromCartParams) {
   return cart.filter((item) => item.product.id !== productId);
 }
+
+interface CalculateTotalItemCount {
+  cart: CartItem[];
+}
+
+// 장바구니 총 개수 계산
+export function calculateTotalItemCount({ cart }: CalculateTotalItemCount) {
+  return cart.reduce((sum, item) => sum + item.quantity, 0);
+}
