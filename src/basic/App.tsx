@@ -35,6 +35,9 @@ import {
   calculateTotalDiscountAmount,
 } from './models/discount';
 import { isRecommended } from './models/product';
+import { formatPrice } from './utils/formatters';
+import { useDebounce } from './utils/hooks/useDebounce';
+import { isValidPrice, isValidStock } from './utils/validators';
 
 const App = () => {
   // ===== 상태 관리 =====
@@ -117,7 +120,7 @@ const App = () => {
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
   const [showProductForm, setShowProductForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   // Admin
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
@@ -141,30 +144,9 @@ const App = () => {
   }, [cart]);
 
   // ===== UTILS: 유틸리티 함수들 =====
-  // TODO: src/basic/utils/formatters.ts로 분리 - formatPrice(price: number): string
-  const formatPrice = (price: number, productId?: string): string => {
-    if (productId) {
-      const product = products.find((p) => p.id === productId);
-      if (product && getRemainingStock(product, cart) <= 0) {
-        return 'SOLD OUT';
-      }
-    }
-
-    if (isAdmin) {
-      return `${price.toLocaleString()}원`;
-    }
-
-    return `₩${price.toLocaleString()}`;
-  };
+  // formatPrice 함수는 utils/formatters.ts로 분리됨
 
   // ===== MODELS: 순수 함수들 (UI와 관련된 로직 없음, 외부 상태에 의존하지 않음) =====
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
 
   const handleProductSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -372,7 +354,7 @@ const App = () => {
                             {product.name}
                           </td>
                           <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>
-                            {formatPrice(product.price, product.id)}
+                            {formatPrice(product.price, product.id, isAdmin, products, cart)}
                           </td>
                           <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>
                             <Badge
@@ -455,10 +437,9 @@ const App = () => {
                             }}
                             onBlur={(e) => {
                               const { value } = e.target;
-                              // TODO: src/basic/utils/validators.ts로 분리 - isValidPrice(price: number)
                               if (value === '') {
                                 setProductForm({ ...productForm, price: 0 });
-                              } else if (parseInt(value) < 0) {
+                              } else if (!isValidPrice(parseInt(value))) {
                                 addNotification('가격은 0보다 커야 합니다', 'error');
                                 setProductForm({ ...productForm, price: 0 });
                               }
@@ -483,15 +464,16 @@ const App = () => {
                             }}
                             onBlur={(e) => {
                               const { value } = e.target;
-                              // TODO: src/basic/utils/validators.ts로 분리 - isValidStock(stock: number)
                               if (value === '') {
                                 setProductForm({ ...productForm, stock: 0 });
-                              } else if (parseInt(value) < 0) {
-                                addNotification('재고는 0보다 커야 합니다', 'error');
-                                setProductForm({ ...productForm, stock: 0 });
-                              } else if (parseInt(value) > 9999) {
-                                addNotification('재고는 9999개를 초과할 수 없습니다', 'error');
-                                setProductForm({ ...productForm, stock: 9999 });
+                              } else if (!isValidStock(parseInt(value))) {
+                                if (parseInt(value) < 0) {
+                                  addNotification('재고는 0보다 커야 합니다', 'error');
+                                  setProductForm({ ...productForm, stock: 0 });
+                                } else {
+                                  addNotification('재고는 9999개를 초과할 수 없습니다', 'error');
+                                  setProductForm({ ...productForm, stock: 9999 });
+                                }
                               }
                             }}
                             placeholder='숫자만 입력'
@@ -832,7 +814,7 @@ const App = () => {
                             {/* 가격 정보 */}
                             <div className='mb-3'>
                               <p className='text-lg font-bold text-gray-900'>
-                                {formatPrice(product.price, product.id)}
+                                {formatPrice(product.price, product.id, isAdmin, products, cart)}
                               </p>
                               {product.discounts.length > 0 && (
                                 <p className='text-xs text-gray-500'>

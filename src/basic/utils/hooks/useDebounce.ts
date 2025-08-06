@@ -1,4 +1,6 @@
-// TODO: 디바운스 Hook
+import { useState, useEffect } from 'react';
+
+// 디바운스 Hook
 // 힌트:
 // 1. 값이 변경되어도 지정된 시간 동안 대기
 // 2. 대기 시간 동안 값이 다시 변경되면 타이머 리셋
@@ -7,5 +9,15 @@
 // 사용 예시: 검색어 입력 디바운싱
 
 export function useDebounce<T>(value: T, delay: number): T {
-  // TODO: 구현
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+
+  return debouncedValue;
 }
