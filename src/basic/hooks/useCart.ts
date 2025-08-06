@@ -3,7 +3,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { CartItem, Coupon, ProductWithUI } from '../../types';
 import { calculateItemTotal, getRemainingStock } from '../models/cart';
 
-export function useCart(products: ProductWithUI[]) {
+export function useCart(products: ProductWithUI[] = []) {
   // cart 상태 관리
   const [cart, setCart] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem('cart');
@@ -39,7 +39,7 @@ export function useCart(products: ProductWithUI[]) {
   }, [cart]);
 
   // 총액 계산 (함수명 통일)
-  const calculateCartTotal = (cart: CartItem[], selectedCoupon: Coupon | null) => {
+  const calculateCartTotal = useCallback(() => {
     let totalBeforeDiscount = 0;
     let totalAfterDiscount = 0;
 
@@ -63,7 +63,7 @@ export function useCart(products: ProductWithUI[]) {
       totalBeforeDiscount: Math.round(totalBeforeDiscount),
       totalAfterDiscount: Math.round(totalAfterDiscount),
     };
-  };
+  }, [cart, selectedCoupon]);
 
   // addToCart 함수 (원본 로직과 동일)
   const addToCart = useCallback(
@@ -98,7 +98,7 @@ export function useCart(products: ProductWithUI[]) {
 
       onNotification?.('장바구니에 담았습니다', 'success');
     },
-    [cart, getRemainingStock]
+    [cart]
   );
 
   // removeFromCart 함수 (원본 로직과 동일)
@@ -142,10 +142,24 @@ export function useCart(products: ProductWithUI[]) {
       coupon: Coupon,
       onNotification?: (message: string, type: 'success' | 'error' | 'warning') => void
     ) => {
-      const currentTotal = calculateCartTotal(cart, selectedCoupon).totalAfterDiscount;
+      // calculateCartTotal 로직을 직접 구현
+      let totalAfterDiscount = 0;
+      cart.forEach((item) => {
+        totalAfterDiscount += calculateItemTotal(item, cart);
+      });
+
+      if (selectedCoupon) {
+        if (selectedCoupon.discountType === 'amount') {
+          totalAfterDiscount = Math.max(0, totalAfterDiscount - selectedCoupon.discountValue);
+        } else {
+          totalAfterDiscount = Math.round(
+            totalAfterDiscount * (1 - selectedCoupon.discountValue / 100)
+          );
+        }
+      }
 
       // 쿠폰 적용 가능 여부 확인 (10,000원 이상 구매 시 사용 가능)
-      if (coupon.discountType === 'percentage' && currentTotal < 10000) {
+      if (coupon.discountType === 'percentage' && totalAfterDiscount < 10000) {
         onNotification?.('percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.', 'error');
         return;
       }
@@ -153,7 +167,7 @@ export function useCart(products: ProductWithUI[]) {
       setSelectedCoupon(coupon);
       onNotification?.('쿠폰이 적용되었습니다.', 'success');
     },
-    [cart, selectedCoupon, calculateCartTotal]
+    [cart, selectedCoupon]
   );
 
   // completeOrder 함수

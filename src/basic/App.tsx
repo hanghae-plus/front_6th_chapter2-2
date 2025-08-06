@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 
-import { CartItem, Coupon, ProductWithUI, Notification } from '../types';
+import { Coupon, ProductWithUI, Notification } from '../types';
 import {
   CloseIcon,
   CartIcon,
@@ -15,17 +15,11 @@ import Button from './components/ui/Button';
 import Card from './components/ui/Card';
 import Input from './components/ui/Input';
 import Select from './components/ui/Selector';
-import {
-  initialProducts,
-  initialCoupons,
-  defaultProductForm,
-  defaultCouponForm,
-} from './constants';
-import { calculateItemTotal, getRemainingStock, calculateOriginalPrice } from './models/cart';
+import { initialProducts, defaultProductForm, defaultCouponForm } from './constants';
 import { useCart } from './hooks/useCart';
+import { useCoupons } from './hooks/useCoupons';
+import { calculateItemTotal, calculateOriginalPrice } from './models/cart';
 import {
-  isCouponApplicable,
-  validateCouponCode,
   formatCouponDisplay,
   validateCouponDiscountValue,
   getCouponDiscountLabel,
@@ -82,9 +76,23 @@ const App = () => {
     updateQuantity,
     applyCoupon,
     getRemainingStock,
-    clearCart,
     completeOrder,
   } = useCart(products);
+
+  // useCoupons Hook 사용
+  const { coupons, addCoupon, removeCoupon } = useCoupons();
+
+  // 쿠폰 관련 UI 상태 관리
+  const [showCouponForm, setShowCouponForm] = useState(false);
+  const [couponForm, setCouponForm] = useState(defaultCouponForm);
+
+  // 쿠폰 폼 제출 핸들러
+  const handleCouponSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    addCoupon(couponForm, addNotification);
+    setCouponForm(defaultCouponForm);
+    setShowCouponForm(false);
+  };
 
   // 알림 콜백 함수들
   const handleAddToCart = useCallback(
@@ -112,20 +120,8 @@ const App = () => {
     completeOrder(addNotification);
   }, [completeOrder, addNotification]);
 
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem('coupons');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialCoupons;
-      }
-    }
-    return initialCoupons;
-  });
-
   const [isAdmin, setIsAdmin] = useState(false);
-  const [showCouponForm, setShowCouponForm] = useState(false);
+
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
   const [showProductForm, setShowProductForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -134,8 +130,6 @@ const App = () => {
   // Admin
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [productForm, setProductForm] = useState(defaultProductForm);
-
-  const [couponForm, setCouponForm] = useState(defaultCouponForm);
 
   // ===== UTILS: 유틸리티 함수들 =====
   // TODO: src/basic/utils/formatters.ts로 분리 - formatPrice(price: number): string
@@ -160,10 +154,6 @@ const App = () => {
   useEffect(() => {
     localStorage.setItem('products', JSON.stringify(products));
   }, [products]);
-
-  useEffect(() => {
-    localStorage.setItem('coupons', JSON.stringify(coupons));
-  }, [coupons]);
 
   useEffect(() => {
     if (cart.length > 0) {
@@ -211,31 +201,6 @@ const App = () => {
     [addNotification]
   );
 
-  // TODO: src/basic/hooks/useCoupons.ts로 분리 - addCoupon(coupon), removeCoupon(couponCode)
-  const addCoupon = useCallback(
-    (newCoupon: Coupon) => {
-      if (!validateCouponCode(newCoupon.code, coupons)) {
-        addNotification('이미 존재하는 쿠폰 코드입니다.', 'error');
-        return;
-      }
-      setCoupons((prev) => [...prev, newCoupon]);
-      addNotification('쿠폰이 추가되었습니다.', 'success');
-    },
-    [coupons, addNotification]
-  );
-
-  // TODO: src/basic/hooks/useCoupons.ts로 분리 - addCoupon(coupon), removeCoupon(couponCode)
-  const deleteCoupon = useCallback(
-    (couponCode: string) => {
-      setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
-      if (selectedCoupon?.code === couponCode) {
-        setSelectedCoupon(null);
-      }
-      addNotification('쿠폰이 삭제되었습니다.', 'success');
-    },
-    [selectedCoupon, addNotification]
-  );
-
   const handleProductSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (editingProduct && editingProduct !== 'new') {
@@ -252,13 +217,6 @@ const App = () => {
     setShowProductForm(false);
   };
 
-  const handleCouponSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    addCoupon(couponForm);
-    setCouponForm(defaultCouponForm);
-    setShowCouponForm(false);
-  };
-
   const startEditProduct = (product: ProductWithUI) => {
     setEditingProduct(product.id);
     setProductForm({
@@ -271,7 +229,7 @@ const App = () => {
     setShowProductForm(true);
   };
 
-  const totals = calculateCartTotal(cart, selectedCoupon);
+  const totals = calculateCartTotal();
 
   const filteredProducts = debouncedSearchTerm
     ? products.filter(
@@ -698,7 +656,14 @@ const App = () => {
                             </div>
                           </div>
                           <Button
-                            onClick={() => deleteCoupon(coupon.code)}
+                            onClick={() =>
+                              removeCoupon(
+                                coupon.code,
+                                addNotification,
+                                selectedCoupon,
+                                setSelectedCoupon
+                              )
+                            }
                             hasTransition
                             className='text-gray-400 hover:text-red-600'
                           >

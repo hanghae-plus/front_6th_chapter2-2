@@ -1,4 +1,4 @@
-import { CartItem, Coupon, Product } from '../../types';
+import { CartItem, Product } from '../../types';
 
 // 장바구니 비즈니스 로직 (순수 함수)
 // 모든 함수는 순수 함수로 구현 (부작용 없음, 같은 입력에 항상 같은 출력)
