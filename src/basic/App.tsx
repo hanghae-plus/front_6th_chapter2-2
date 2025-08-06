@@ -6,12 +6,12 @@ import { useCart } from './hooks/useCart';
 import { useNotification } from './hooks/useNotification';
 import { useCoupon } from './hooks/useCoupon';
 import { useProducts } from './hooks/useProducts';
+import { useCouponForm } from './hooks/form/useCouponForm';
 import { formatPrice } from './utils/formatters';
 import { calculateItemTotal } from './models/cart';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
-  const [showCouponForm, setShowCouponForm] = useState(false);
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
   const [showProductForm, setShowProductForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -25,13 +25,6 @@ const App = () => {
     stock: 0,
     description: '',
     discounts: [] as Array<{ quantity: number; rate: number }>,
-  });
-
-  const [couponForm, setCouponForm] = useState({
-    name: '',
-    code: '',
-    discountType: 'amount' as 'amount' | 'percentage',
-    discountValue: 0,
   });
 
   const { addNotification, notifications, removeNotification } = useNotification();
@@ -49,6 +42,13 @@ const App = () => {
     totalItemCount,
   } = useCart(products, addNotification);
   const { coupons, addCoupon, deleteCoupon } = useCoupon(selectedCoupon, addNotification);
+  const {
+    couponForm,
+    showCouponForm,
+    handleCouponFormSubmit,
+    updateCouponForm,
+    updateShowCouponForm,
+  } = useCouponForm();
 
   // UI에 관련된 함수같다!
   const getDisplayPrice = (price: number, productId?: string): string => {
@@ -94,13 +94,7 @@ const App = () => {
   const handleCouponSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     addCoupon(couponForm);
-    setCouponForm({
-      name: '',
-      code: '',
-      discountType: 'amount',
-      discountValue: 0,
-    });
-    setShowCouponForm(false);
+    handleCouponFormSubmit();
   };
 
   const startEditProduct = (product: ProductWithUI) => {
@@ -542,7 +536,7 @@ const App = () => {
 
                     <div className='border-2 border-dashed border-gray-300 rounded-lg p-4 flex items-center justify-center hover:border-gray-400 transition-colors'>
                       <button
-                        onClick={() => setShowCouponForm(!showCouponForm)}
+                        onClick={() => updateShowCouponForm(!showCouponForm)}
                         className='text-gray-400 hover:text-gray-600 flex flex-col items-center'
                       >
                         <svg
@@ -575,9 +569,7 @@ const App = () => {
                             <input
                               type='text'
                               value={couponForm.name}
-                              onChange={(e) =>
-                                setCouponForm({ ...couponForm, name: e.target.value })
-                              }
+                              onChange={(e) => updateCouponForm({ name: e.target.value })}
                               className='w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm'
                               placeholder='신규 가입 쿠폰'
                               required
@@ -591,7 +583,7 @@ const App = () => {
                               type='text'
                               value={couponForm.code}
                               onChange={(e) =>
-                                setCouponForm({ ...couponForm, code: e.target.value.toUpperCase() })
+                                updateCouponForm({ code: e.target.value.toUpperCase() })
                               }
                               className='w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm font-mono'
                               placeholder='WELCOME2024'
@@ -605,7 +597,7 @@ const App = () => {
                             <select
                               value={couponForm.discountType}
                               onChange={(e) =>
-                                setCouponForm({
+                                updateCouponForm({
                                   ...couponForm,
                                   discountType: e.target.value as 'amount' | 'percentage',
                                 })
@@ -626,7 +618,7 @@ const App = () => {
                               onChange={(e) => {
                                 const value = e.target.value;
                                 if (value === '' || /^\d+$/.test(value)) {
-                                  setCouponForm({
+                                  updateCouponForm({
                                     ...couponForm,
                                     discountValue: value === '' ? 0 : parseInt(value),
                                   });
@@ -637,9 +629,9 @@ const App = () => {
                                 if (couponForm.discountType === 'percentage') {
                                   if (value > 100) {
                                     addNotification('할인율은 100%를 초과할 수 없습니다', 'error');
-                                    setCouponForm({ ...couponForm, discountValue: 100 });
+                                    updateCouponForm({ discountValue: 100 });
                                   } else if (value < 0) {
-                                    setCouponForm({ ...couponForm, discountValue: 0 });
+                                    updateCouponForm({ discountValue: 0 });
                                   }
                                 } else {
                                   if (value > 100000) {
@@ -647,9 +639,9 @@ const App = () => {
                                       '할인 금액은 100,000원을 초과할 수 없습니다',
                                       'error',
                                     );
-                                    setCouponForm({ ...couponForm, discountValue: 100000 });
+                                    updateCouponForm({ discountValue: 100000 });
                                   } else if (value < 0) {
-                                    setCouponForm({ ...couponForm, discountValue: 0 });
+                                    updateCouponForm({ discountValue: 0 });
                                   }
                                 }
                               }}
@@ -662,7 +654,7 @@ const App = () => {
                         <div className='flex justify-end gap-3'>
                           <button
                             type='button'
-                            onClick={() => setShowCouponForm(false)}
+                            onClick={() => updateShowCouponForm(false)}
                             className='px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50'
                           >
                             취소
