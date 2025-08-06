@@ -6,7 +6,7 @@ import { BaseHandlerProps } from "../../types/common";
 interface UseCartHandlersProps extends BaseHandlerProps {}
 
 /**
- * 장바구니 관련 핸들러들을 제공하는 훅
+ * 장바구니 관련 핸들러들을 제공하는 훅 (네임스페이스 구조)
  */
 export const useCartHandlers = ({ addNotification }: UseCartHandlersProps) => {
   const {
@@ -21,7 +21,7 @@ export const useCartHandlers = ({ addNotification }: UseCartHandlersProps) => {
   } = useCart();
 
   // 장바구니에 상품 추가 핸들러
-  const addToCart = useCallback(
+  const add = useCallback(
     (product: ProductWithUI) => {
       const result = addToCartAction(product);
       addNotification(result.message, result.type);
@@ -30,7 +30,7 @@ export const useCartHandlers = ({ addNotification }: UseCartHandlersProps) => {
   );
 
   // 장바구니에서 상품 제거 핸들러
-  const removeFromCart = useCallback(
+  const remove = useCallback(
     (productId: string) => {
       const result = removeFromCartAction(productId);
       addNotification(result.message, result.type);
@@ -39,7 +39,7 @@ export const useCartHandlers = ({ addNotification }: UseCartHandlersProps) => {
   );
 
   // 수량 변경 핸들러
-  const updateQuantity = useCallback(
+  const update = useCallback(
     (productId: string, newQuantity: number) => {
       const result = updateQuantityAction(productId, newQuantity);
       addNotification(result.message, result.type);
@@ -48,21 +48,42 @@ export const useCartHandlers = ({ addNotification }: UseCartHandlersProps) => {
   );
 
   // 장바구니 초기화 핸들러
-  const clearCart = useCallback(() => {
+  const clear = useCallback(() => {
     const result = clearCartAction();
     addNotification(result.message, result.type);
   }, [clearCartAction, addNotification]);
 
+  // 장바구니 아이템 찾기
+  const find = useCallback(
+    (productId: string) => {
+      return findCartItem(productId);
+    },
+    [findCartItem]
+  );
+
   return {
-    // 상태
+    // 네임스페이스 구조
+    state: {
+      items: cart,
+      totalItemCount,
+      isEmpty,
+    },
+    actions: {
+      add,
+      remove,
+      update,
+      clear,
+      find,
+    },
+
+    // 하위 호환성을 위해 기존 방식도 유지
     cart,
     totalItemCount,
     isEmpty,
-    // 핸들러들
-    addToCart,
-    removeFromCart,
-    updateQuantity,
-    clearCart,
-    findCartItem,
+    addToCart: add,
+    removeFromCart: remove,
+    updateQuantity: update,
+    clearCart: clear,
+    findCartItem: find,
   };
 };

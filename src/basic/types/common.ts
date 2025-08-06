@@ -8,7 +8,19 @@ export interface ActionResult {
   type?: "success" | "error" | "warning";
 }
 
-export type NotificationType = "success" | "error" | "warning";
+export type NotificationType = "error" | "success" | "warning";
+
+// 새로운 알림 콜백 타입들 추가
+export interface NotificationCallbacks {
+  onSuccess?: (message: string) => void;
+  onError?: (message: string) => void;
+  onWarning?: (message: string) => void;
+}
+
+export interface StandardNotificationCallbacks {
+  onSuccess: (message: string) => void;
+  onError: (message: string) => void;
+}
 
 /**
  * 기본 엔티티 인터페이스

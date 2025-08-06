@@ -16,12 +16,13 @@ const App = () => {
     isAdmin,
     toggleAdminMode,
 
-    // 도메인 상태
-    products,
+    // 네임스페이스 구조
+    product,
     cart,
-    totalItemCount,
+    coupon,
 
-    // 도메인 핸들러들
+    // 하위 호환성 (점진적 마이그레이션을 위해 일부 유지)
+    products,
     addProduct,
     updateProduct,
     deleteProduct,
@@ -29,14 +30,10 @@ const App = () => {
     removeFromCart,
     updateQuantity,
     clearCart,
-
-    // 검색 관련
     searchTerm,
     handleSearch,
     debouncedSearchTerm,
     filteredProducts,
-
-    // 유틸리티
     checkSoldOutByProductId,
   } = useAppCore();
 
@@ -53,8 +50,8 @@ const App = () => {
         isAdmin={isAdmin}
         searchTerm={searchTerm}
         handleSearch={handleSearch}
-        cart={cart}
-        totalItemCount={totalItemCount}
+        cart={cart.items}
+        totalItemCount={cart.totalItemCount}
         onToggleAdminMode={toggleAdminMode}
       />
 
@@ -73,7 +70,7 @@ const App = () => {
             products={products}
             filteredProducts={filteredProducts}
             debouncedSearchTerm={debouncedSearchTerm}
-            cart={cart}
+            cart={cart.items}
             checkSoldOutByProductId={checkSoldOutByProductId}
             addToCart={addToCart}
             removeFromCart={removeFromCart}

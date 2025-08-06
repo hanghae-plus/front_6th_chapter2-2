@@ -20,7 +20,6 @@ interface AdminPageProps {
   updateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
   deleteProduct: (productId: string) => void;
   checkSoldOutByProductId: (productId: string) => boolean;
-
   addNotification: (message: string, type?: NotificationType) => void;
 }
 
@@ -30,52 +29,36 @@ export const AdminPage = ({
   updateProduct,
   deleteProduct,
   checkSoldOutByProductId,
-
   addNotification,
 }: AdminPageProps) => {
-  // Coupon 핸들러들을 내부에서 관리
-  const { coupons, addCoupon, deleteCoupon } = useCouponHandlers({
-    addNotification,
-  });
+  // Coupon 핸들러들을 내부에서 관리 (네임스페이스 구조 활용)
+  const couponHandlers = useCouponHandlers({ addNotification });
 
   // 내부 상태 관리
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
     "products"
   );
 
-  // ProductForm 관련 로직을 내부로 이동
-  const {
-    productForm,
-    editingProduct,
-    showProductForm,
-    setEditingProduct,
-    setShowProductForm,
-    updateField: updateProductField,
-    startEditProduct,
-    showNewProductForm,
-  } = useProductForm();
+  // Form 관련 Hook들
+  const productFormHook = useProductForm();
+  const couponFormHook = useCouponForm();
 
-  // CouponForm 관련 로직
-  const {
-    showCouponForm,
-    couponForm,
-    updateField: updateCouponField,
-    closeCouponForm,
-    openCouponForm,
-  } = useCouponForm();
-
-  // Admin 핸들러들
-  const { handleProductSubmit, handleCouponSubmit } = useAdminHandlers({
-    addProduct,
-    updateProduct,
-    addCoupon,
+  // Admin 핸들러들 (네임스페이스 구조 활용)
+  const adminHandlers = useAdminHandlers({
+    productActions: {
+      add: addProduct,
+      update: updateProduct,
+    },
+    couponActions: {
+      add: couponHandlers.actions.add,
+    },
     addNotification,
-    productForm,
-    editingProduct,
-    setEditingProduct,
-    setShowProductForm,
-    couponForm,
-    closeCouponForm,
+    productForm: productFormHook.productForm,
+    editingProduct: productFormHook.editingProduct,
+    setEditingProduct: productFormHook.setEditingProduct,
+    setShowProductForm: productFormHook.setShowProductForm,
+    couponForm: couponFormHook.couponForm,
+    closeCouponForm: couponFormHook.closeCouponForm,
   });
 
   return (
@@ -92,18 +75,18 @@ export const AdminPage = ({
           <ProductTable
             products={products}
             checkSoldOutByProductId={checkSoldOutByProductId}
-            onEditProduct={startEditProduct}
+            onEditProduct={productFormHook.startEditProduct}
             onDeleteProduct={deleteProduct}
-            onAddProduct={showNewProductForm}
+            onAddProduct={productFormHook.showNewProductForm}
           />
 
-          {showProductForm && (
+          {productFormHook.showProductForm && (
             <ProductForm
-              productForm={productForm}
-              editingProduct={editingProduct}
-              onSubmit={handleProductSubmit}
-              onCancel={() => setShowProductForm(false)}
-              onUpdateField={updateProductField}
+              productForm={productFormHook.productForm}
+              editingProduct={productFormHook.editingProduct}
+              onSubmit={adminHandlers.actions.handleProductSubmit}
+              onCancel={() => productFormHook.setShowProductForm(false)}
+              onUpdateField={productFormHook.updateField}
               addNotification={addNotification}
             />
           )}
@@ -111,17 +94,17 @@ export const AdminPage = ({
       ) : (
         <>
           <CouponGrid
-            coupons={coupons}
-            onDeleteCoupon={deleteCoupon}
-            onAddCoupon={openCouponForm}
+            coupons={couponHandlers.state.items}
+            onDeleteCoupon={couponHandlers.actions.remove}
+            onAddCoupon={couponFormHook.openCouponForm}
           />
 
-          {showCouponForm && (
+          {couponFormHook.showCouponForm && (
             <CouponForm
-              couponForm={couponForm}
-              onSubmit={handleCouponSubmit}
-              onCancel={closeCouponForm}
-              onUpdateField={updateCouponField}
+              couponForm={couponFormHook.couponForm}
+              onSubmit={adminHandlers.actions.handleCouponSubmit}
+              onCancel={couponFormHook.closeCouponForm}
+              onUpdateField={couponFormHook.updateField}
               addNotification={addNotification}
             />
           )}

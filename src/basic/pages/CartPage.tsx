@@ -15,7 +15,6 @@ interface CartPageProps {
   debouncedSearchTerm: string;
   cart: CartItem[];
   checkSoldOutByProductId: (productId: string) => boolean;
-
   addToCart: (product: ProductWithUI) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, newQuantity: number) => void;
@@ -29,26 +28,28 @@ export const CartPage = ({
   debouncedSearchTerm,
   cart,
   checkSoldOutByProductId,
-
   addToCart,
   removeFromCart,
   updateQuantity,
   onClearCart,
   addNotification,
 }: CartPageProps) => {
-  // Coupon 핸들러들을 내부에서 관리
-  const { coupons, selectedCoupon, setSelectedCoupon, applyCoupon } =
-    useCouponHandlers({ addNotification });
+  // Coupon 핸들러들을 내부에서 관리 (네임스페이스 구조 활용)
+  const couponHandlers = useCouponHandlers({ addNotification });
 
-  // Order 핸들러를 내부에서 관리
-  const { completeOrder } = useOrderHandlers({
+  // Order 핸들러를 내부에서 관리 (네임스페이스 구조 활용)
+  const orderHandlers = useOrderHandlers({
     addNotification,
-    onClearCart,
-    onClearCoupon: () => setSelectedCoupon(null),
+    cartActions: {
+      clear: onClearCart,
+    },
+    couponActions: {
+      clearSelected: couponHandlers.actions.clearSelected,
+    },
   });
 
   // totals를 별도로 계산
-  const totals = calculateCartTotal(cart, selectedCoupon);
+  const totals = calculateCartTotal(cart, couponHandlers.state.selected);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -74,16 +75,16 @@ export const CartPage = ({
           {cart.length > 0 && (
             <>
               <CouponSection
-                coupons={coupons}
-                selectedCoupon={selectedCoupon}
-                onCouponSelect={setSelectedCoupon}
-                onCouponApply={applyCoupon}
+                coupons={couponHandlers.state.items}
+                selectedCoupon={couponHandlers.state.selected}
+                onCouponSelect={couponHandlers.actions.setSelected}
+                onCouponApply={couponHandlers.actions.apply}
                 cart={cart}
               />
 
               <PaymentSummarySection
                 totals={totals}
-                completeOrder={completeOrder}
+                completeOrder={orderHandlers.actions.complete}
               />
             </>
           )}
