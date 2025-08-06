@@ -1,5 +1,9 @@
 import { Product, CartItem } from "../../types";
 
+type AddToCartResult =
+  | { success: true; cart: CartItem[] }
+  | { success: false; cart: CartItem[]; reason: string };
+
 // 요구사항
 // - 장바구니
 //     - 장바구니 내 상품 수량 조절 가능
@@ -26,7 +30,54 @@ export const getRemainingStock = (
   return remaining;
 };
 
-export const addToCart = () => {};
+/**
+ * 장바구니에 상품을 추가하는 함수
+ * 1. 재고가 없는 경우 실패
+ * 2. 재고가 부족한 경우 실패
+ */
+export const addToCart = (
+  cart: CartItem[],
+  product: Product
+): AddToCartResult => {
+  const remainingStock = getRemainingStock(cart, product);
+
+  if (remainingStock <= 0) {
+    return {
+      success: false,
+      cart,
+      reason: `재고가 부족합니다!`,
+    };
+  }
+
+  const existingItem = cart.find((item) => item.product.id === product.id);
+
+  if (!existingItem) {
+    return {
+      success: true,
+      cart: [...cart, { product, quantity: 1 }],
+    };
+  }
+
+  const newQuantity = existingItem.quantity + 1;
+
+  if (newQuantity <= product.stock) {
+    return {
+      success: true,
+      cart: cart.map((item) =>
+        item.product.id === product.id
+          ? { ...item, quantity: newQuantity }
+          : item
+      ),
+    };
+  }
+
+  return {
+    success: false,
+    cart,
+    reason: `재고는 ${product.stock}개까지만 있습니다.`,
+  };
+};
+
 export const removeFromCart = () => {};
 export const updateQuantity = () => {};
 export const calculateCartTotal = () => {};

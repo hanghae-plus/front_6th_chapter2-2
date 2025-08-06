@@ -1,7 +1,10 @@
 import { useState, useCallback, useEffect } from "react";
 import { CartItem, Coupon, Product } from "../types";
 import { useLocalStorage, useDebounce } from "./hooks";
-import { getRemainingStock } from "../basic/models/cart";
+import {
+  getRemainingStock,
+  addToCart as _addToCart,
+} from "../basic/models/cart";
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -199,41 +202,19 @@ const App = () => {
 
   const addToCart = useCallback(
     (product: ProductWithUI) => {
-      const remainingStock = getRemainingStock(cart, product);
-      if (remainingStock <= 0) {
-        addNotification("재고가 부족합니다!", "error");
+      const result = _addToCart(cart, product);
+
+      if (!result.success) {
+        addNotification(result.reason, "error");
+
         return;
       }
 
-      setCart((prevCart) => {
-        const existingItem = prevCart.find(
-          (item) => item.product.id === product.id
-        );
-
-        if (existingItem) {
-          const newQuantity = existingItem.quantity + 1;
-
-          if (newQuantity > product.stock) {
-            addNotification(
-              `재고는 ${product.stock}개까지만 있습니다.`,
-              "error"
-            );
-            return prevCart;
-          }
-
-          return prevCart.map((item) =>
-            item.product.id === product.id
-              ? { ...item, quantity: newQuantity }
-              : item
-          );
-        }
-
-        return [...prevCart, { product, quantity: 1 }];
-      });
+      setCart(result.cart);
 
       addNotification("장바구니에 담았습니다", "success");
     },
-    [cart, addNotification, getRemainingStock]
+    [cart, addNotification]
   );
 
   const removeFromCart = useCallback((productId: string) => {
