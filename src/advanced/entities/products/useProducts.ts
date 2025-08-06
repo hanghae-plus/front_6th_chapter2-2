@@ -1,19 +1,16 @@
 import { useCallback } from "react";
+import { useAtom } from "jotai";
 import { ProductWithUI } from "./product.types";
-import { initialProducts } from "./product.constants";
-import { useLocalStorageState } from "../../utils/hooks";
+import { productsAtom } from "../../atoms";
 import { productModel } from "./product.model";
 import { ActionResult } from "../../types/common";
 import { MESSAGES } from "../../constants";
 
 /**
- * 상품 상태 관리 훅
+ * 상품 상태 관리 훅 (내부적으로 Jotai 사용)
  */
 export const useProducts = () => {
-  const [products, setProducts] = useLocalStorageState<ProductWithUI[]>(
-    "products",
-    initialProducts
-  );
+  const [products, setProducts] = useAtom(productsAtom);
 
   const addProduct = useCallback(
     (newProduct: Omit<ProductWithUI, "id">): ActionResult => {
@@ -24,7 +21,7 @@ export const useProducts = () => {
         type: "success",
       };
     },
-    []
+    [setProducts]
   );
 
   const updateProduct = useCallback(
@@ -49,7 +46,7 @@ export const useProducts = () => {
         type: "success",
       };
     },
-    [products]
+    [products, setProducts]
   );
 
   const deleteProduct = useCallback(
@@ -72,7 +69,7 @@ export const useProducts = () => {
         type: "success",
       };
     },
-    [products]
+    [products, setProducts]
   );
 
   const findProduct = useCallback(
@@ -84,7 +81,6 @@ export const useProducts = () => {
 
   return {
     products,
-    setProducts,
     addProduct,
     updateProduct,
     deleteProduct,

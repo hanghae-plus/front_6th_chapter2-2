@@ -1,25 +1,19 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
+import { useAtom } from "jotai";
 import { CartItem } from "../../../types";
 import { CouponWithUI } from "./coupon.types";
-import { initialCoupons } from "./coupon.constants";
+import { couponsAtom, selectedCouponAtom } from "../../atoms";
 import { calculateCartTotal } from "../../utils/calculateCartTotal";
-import { useLocalStorageState } from "../../utils/hooks";
 import { couponModel } from "./coupon.model";
 import { ActionResult } from "../../types/common";
 import { MESSAGES } from "../../constants";
 
 /**
- * 쿠폰 상태 관리 훅
+ * 쿠폰 상태 관리 훅 (내부적으로 Jotai 사용)
  */
 export const useCoupon = () => {
-  const [coupons, setCoupons] = useLocalStorageState<CouponWithUI[]>(
-    "coupons",
-    initialCoupons
-  );
-
-  const [selectedCoupon, setSelectedCoupon] = useState<CouponWithUI | null>(
-    null
-  );
+  const [coupons, setCoupons] = useAtom(couponsAtom);
+  const [selectedCoupon, setSelectedCoupon] = useAtom(selectedCouponAtom);
 
   const addCoupon = useCallback(
     (newCoupon: Omit<CouponWithUI, "id">): ActionResult => {
@@ -38,7 +32,7 @@ export const useCoupon = () => {
         type: "success",
       };
     },
-    [coupons]
+    [coupons, setCoupons]
   );
 
   const deleteCoupon = useCallback(
@@ -64,38 +58,39 @@ export const useCoupon = () => {
         type: "success",
       };
     },
-    [selectedCoupon, coupons]
+    [selectedCoupon, coupons, setCoupons, setSelectedCoupon]
   );
 
   const applyCoupon = useCallback(
     (coupon: CouponWithUI, cart: CartItem[]): ActionResult => {
-      const cartTotals = calculateCartTotal(cart, null);
+      const result = calculateCartTotal(cart, coupon);
 
-      if (!couponModel.canApplyCoupon(coupon, cartTotals.totalBeforeDiscount)) {
+      if (result.discountAmount <= 0) {
         return {
           success: false,
           message: "쿠폰을 적용할 수 없습니다.",
-          type: "error",
+          type: "warning",
         };
       }
 
       setSelectedCoupon(coupon);
+
       return {
         success: true,
         message: "쿠폰이 적용되었습니다.",
         type: "success",
       };
     },
-    []
+    [setSelectedCoupon]
   );
 
   const clearSelectedCoupon = useCallback(() => {
     setSelectedCoupon(null);
-  }, []);
+  }, [setSelectedCoupon]);
 
   const findCoupon = useCallback(
-    (code: string): CouponWithUI | undefined => {
-      return couponModel.findCouponByCode(coupons, code);
+    (couponCode: string): CouponWithUI | undefined => {
+      return couponModel.findCouponByCode(coupons, couponCode);
     },
     [coupons]
   );

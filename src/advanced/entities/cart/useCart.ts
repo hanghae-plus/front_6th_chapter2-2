@@ -1,17 +1,17 @@
 import { useCallback, useMemo } from "react";
+import { useAtom } from "jotai";
 import { CartItem } from "../../../types";
 import { ProductWithUI } from "../products/product.types";
-import { calculateRemainingStock } from "../../utils/calculateRemainingStock";
-import { useLocalStorageState } from "../../utils/hooks";
+import { cartAtom } from "../../atoms";
 import { cartModel } from "./cart.model";
 import { ActionResult } from "../../types/common";
 import { MESSAGES } from "../../constants";
 
 /**
- * 장바구니 상태 관리 훅
+ * 장바구니 상태 관리 훅 (내부적으로 Jotai 사용)
  */
 export const useCart = () => {
-  const [cart, setCart] = useLocalStorageState<CartItem[]>("cart", []);
+  const [cart, setCart] = useAtom(cartAtom);
 
   const addToCart = useCallback(
     (product: ProductWithUI): ActionResult => {
@@ -44,7 +44,7 @@ export const useCart = () => {
         type: "success",
       };
     },
-    [cart]
+    [cart, setCart]
   );
 
   const removeFromCart = useCallback(
@@ -67,7 +67,7 @@ export const useCart = () => {
         type: "success",
       };
     },
-    [cart]
+    [cart, setCart]
   );
 
   const updateQuantity = useCallback(
@@ -86,15 +86,10 @@ export const useCart = () => {
         return removeFromCart(productId);
       }
 
-      const product = existingItem.product;
-      const remainingStock = calculateRemainingStock(product, cart);
-      const currentQuantityInCart = existingItem.quantity;
-      const availableStock = remainingStock + currentQuantityInCart;
-
-      if (newQuantity > availableStock) {
+      if (newQuantity > existingItem.product.stock) {
         return {
           success: false,
-          message: MESSAGES.ERROR.STOCK_EXCEEDED(product.stock),
+          message: MESSAGES.ERROR.STOCK_EXCEEDED(existingItem.product.stock),
           type: "error",
         };
       }
@@ -109,17 +104,17 @@ export const useCart = () => {
         type: "success",
       };
     },
-    [cart, removeFromCart]
+    [cart, setCart, removeFromCart]
   );
 
   const clearCart = useCallback((): ActionResult => {
     setCart([]);
     return {
       success: true,
-      message: "장바구니가 초기화되었습니다.",
+      message: "장바구니가 비워졌습니다.",
       type: "success",
     };
-  }, []);
+  }, [setCart]);
 
   const findCartItem = useCallback(
     (productId: string): CartItem | undefined => {
@@ -132,11 +127,12 @@ export const useCart = () => {
     return cart.reduce((total, item) => total + item.quantity, 0);
   }, [cart]);
 
-  const isEmpty = useMemo(() => cart.length === 0, [cart]);
+  const isEmpty = useMemo(() => {
+    return cart.length === 0;
+  }, [cart]);
 
   return {
     cart,
-    setCart,
     addToCart,
     removeFromCart,
     updateQuantity,

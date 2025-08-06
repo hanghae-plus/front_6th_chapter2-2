@@ -1,11 +1,13 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
+import { useAtom } from "jotai";
+import { isAdminAtom } from "../atoms";
 
 export const useAppState = () => {
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useAtom(isAdminAtom);
 
   const toggleAdminMode = useCallback(() => {
     setIsAdmin((prev) => !prev);
-  }, []);
+  }, [setIsAdmin]);
 
   return {
     isAdmin,
