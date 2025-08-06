@@ -16,14 +16,14 @@ export function numberFormat({
   return Intl.NumberFormat('ko-KR', options).format(price);
 }
 
-export function formatPriceKRW(price: number) {
+export function formatPriceKRW({ price }: { price: number }) {
   return numberFormat({
     options: { style: 'currency', currency: 'KRW' },
     price,
   });
 }
 
-export function formatNumberWon(price: number) {
+export function formatNumberWon({ price }: { price: number }) {
   return `${numberFormat({
     options: { style: 'decimal' },
     price,
