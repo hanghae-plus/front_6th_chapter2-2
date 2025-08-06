@@ -189,6 +189,72 @@ const calculateCartTotal = (
   };
 };
 
+/**
+ * 장바구니에서 특정 상품 제거
+ * @param cart - 현재 장바구니
+ * @param productId - 제거할 상품 ID
+ * @returns 상품이 제거된 새로운 장바구니
+ */
+const removeCartItem = (cart: CartItem[], productId: string): CartItem[] => {
+  return cart.filter(item => item.product.id !== productId);
+};
+
+/**
+ * 장바구니 아이템 수량 업데이트
+ * @param cart - 현재 장바구니
+ * @param productId - 업데이트할 상품 ID
+ * @param newQuantity - 새로운 수량
+ * @returns 수량이 업데이트된 새로운 장바구니
+ */
+const updateCartItemQuantity = (
+  cart: CartItem[],
+  productId: string,
+  newQuantity: number
+): CartItem[] => {
+  return cart.map(item =>
+    item.product.id === productId
+      ? { ...item, quantity: newQuantity }
+      : item
+  );
+};
+
+/**
+ * 수량 업데이트 결과 타입
+ */
+type QuantityUpdateResult = 
+  | { success: true; updatedCart: CartItem[] }
+  | { success: false; error: string; errorType: 'INVALID_QUANTITY' | 'PRODUCT_NOT_FOUND' | 'INSUFFICIENT_STOCK' };
+
+/**
+ * 수량 업데이트 로직
+ * @param cart - 현재 장바구니
+ * @param productId - 업데이트할 상품 ID
+ * @param newQuantity - 새로운 수량
+ * @param availableStock - 사용 가능한 재고
+ * @returns 수량 업데이트 결과
+ */
+const processQuantityUpdate = (
+  cart: CartItem[],
+  productId: string,
+  newQuantity: number,
+  availableStock: number
+): QuantityUpdateResult => {
+
+  if (!Number.isInteger(newQuantity) || newQuantity < 0) {
+    return { success: false, error: '수량은 0 이상의 정수여야 합니다.', errorType: 'INVALID_QUANTITY' };
+  }
+
+  if (newQuantity === 0) {
+    return { success: true, updatedCart: removeCartItem(cart, productId) };
+  }
+ 
+  if (newQuantity > availableStock) {
+    return { success: false, error: `재고는 ${availableStock}개까지만 있습니다.`, errorType: 'INSUFFICIENT_STOCK' };
+  }
+
+  return { success: true, updatedCart: updateCartItemQuantity(cart, productId, newQuantity) };
+};
+
 const App = () => {
   /**
    * 상품 목록
@@ -419,26 +485,23 @@ const App = () => {
    * @param newQuantity - 새로운 수량
    */
   const updateQuantity = useCallback(
-    (productId: string, newQuantity: number) => {
-      if (newQuantity <= 0) {
-        removeFromCart(productId);
-        return;
-      }
+    (productId: string, newQuantity: number, cart: CartItem[]) => {
 
       const product = products.find((p) => p.id === productId);
-      if (!product) return;
-
-      const maxStock = product.stock;
-      if (newQuantity > maxStock) {
-        addNotification(`재고는 ${maxStock}개까지만 있습니다.`, 'error');
+      if (!product) {
+        addNotification('상품을 찾을 수 없습니다.', 'error');
         return;
       }
+  
+      const result = processQuantityUpdate(cart, productId, newQuantity, product.stock);
 
-      setCart((prevCart) =>
-        prevCart.map((item) => (item.product.id === productId ? { ...item, quantity: newQuantity } : item)),
-      );
+      if (result.success) {
+        setCart(result.updatedCart);
+      } else {
+        addNotification(result.error, 'error');
+      }
     },
-    [products, removeFromCart, addNotification, getRemainingStock],
+    [products, cart, addNotification],
   );
 
   /**
@@ -1275,14 +1338,14 @@ const App = () => {
                             <div className="flex items-center justify-between">
                               <div className="flex items-center">
                                 <button
-                                  onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                                  onClick={() => updateQuantity(item.product.id, item.quantity - 1, cart)}
                                   className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                                 >
                                   <span className="text-xs">−</span>
                                 </button>
                                 <span className="mx-3 text-sm font-medium w-8 text-center">{item.quantity}</span>
                                 <button
-                                  onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                                  onClick={() => updateQuantity(item.product.id, item.quantity + 1, cart)}
                                   className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                                 >
                                   <span className="text-xs">+</span>
