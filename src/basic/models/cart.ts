@@ -1,4 +1,5 @@
 import type { CartItem, Coupon } from '../../types';
+import { convertPercentageToRate } from '../utils/formatters';
 
 /**
  * 장바구니 아이템 수량 계산
@@ -52,7 +53,7 @@ function applyCouponDiscount(total: number, coupon: Coupon): number {
     return Math.max(0, total - coupon.discountValue);
   }
 
-  return Math.round(total * (1 - coupon.discountValue / 100));
+  return Math.round(total * (1 - convertPercentageToRate(coupon.discountValue)));
 }
 
 /**

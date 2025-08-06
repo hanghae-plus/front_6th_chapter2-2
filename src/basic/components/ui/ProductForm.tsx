@@ -1,4 +1,5 @@
 import type { NotificationVariant, ProductWithUI } from '../../constants';
+import { convertPercentageToRate, convertRateToPercentage } from '../../utils/formatters';
 import {
   isEmptyValue,
   isNumber,
@@ -131,10 +132,12 @@ export function ProductForm({
                 <span className='text-sm'>개 이상 구매 시</span>
                 <input
                   type='number'
-                  value={discount.rate * 100}
+                  value={convertRateToPercentage(discount.rate)}
                   onChange={(e) => {
                     const newDiscounts = [...form.discounts];
-                    newDiscounts[index].rate = (parseInt(e.target.value) || 0) / 100;
+                    newDiscounts[index].rate = convertPercentageToRate(
+                      parseInt(e.target.value) || 0
+                    );
                     updateForm({ discounts: newDiscounts });
                   }}
                   className='w-16 px-2 py-1 border rounded'
