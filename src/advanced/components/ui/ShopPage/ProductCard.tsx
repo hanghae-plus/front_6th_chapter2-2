@@ -1,18 +1,17 @@
+import { useSetAtom, useAtomValue } from "jotai";
 import { ProductWithUI } from "../../../types";
 import { formatPriceAtCart, formatPercentage } from "../../../utils/formatters";
 import { LOW_STOCK_THRESHOLD } from "../../../constants/business";
+import { addToCartAtom, getRemainingStockAtom } from "../../../atoms";
 
 interface ProductCardProps {
   product: ProductWithUI;
-  remainingStock: number;
-  onAddToCart: (product: ProductWithUI) => void;
 }
 
-const ProductCard = ({
-  product,
-  remainingStock,
-  onAddToCart,
-}: ProductCardProps) => {
+const ProductCard = ({ product }: ProductCardProps) => {
+  const addToCart = useSetAtom(addToCartAtom);
+  const getRemainingStock = useAtomValue(getRemainingStockAtom);
+  const remainingStock = getRemainingStock(product);
   return (
     <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
       {/* 상품 이미지 영역 (placeholder) */}
@@ -83,7 +82,7 @@ const ProductCard = ({
 
         {/* 장바구니 버튼 */}
         <button
-          onClick={() => onAddToCart(product)}
+          onClick={() => addToCart(product)}
           disabled={remainingStock <= 0}
           className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
             remainingStock <= 0

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useCart } from "./hooks/useCart";
+import { useSetAtom, useAtomValue } from "jotai";
 import { useProducts } from "./hooks/useProducts";
 import HeaderLayout from "./components/Header/HeaderLayout";
 import ShopHeaderContent from "./components/Header/ShopHeaderContent";
@@ -7,29 +7,20 @@ import AdminHeaderContent from "./components/Header/AdminHeaderContent";
 import AdminPage from "./components/ui/AdminPage";
 import ShopPage from "./components/ui/ShopPage";
 import Toast from "./components/ui/Toast";
+import {
+  getRemainingStockAtom,
+  addCouponAtom,
+  removeCouponAtom,
+} from "./atoms";
 
 const App = () => {
   // =========== 페이지 전환 관리 ===========
   const [isAdmin, setIsAdmin] = useState(false);
 
-  // =========== 장바구니 관리 ===========
-  const {
-    // 장바구니
-    cart,
-    cartTotal,
-    getRemainingStock,
-    calculateItemTotal,
-    addToCart,
-    removeFromCart,
-    updateQuantity,
-    completeOrder,
-    // 쿠폰
-    coupons,
-    selectedCoupon,
-    addCoupon,
-    removeCoupon,
-    applyCoupon,
-  } = useCart();
+  // ============ 관리자 페이지용 아톰들만 ============
+  const getRemainingStock = useAtomValue(getRemainingStockAtom);
+  const addCoupon = useSetAtom(addCouponAtom);
+  const removeCoupon = useSetAtom(removeCouponAtom);
 
   // =========== 상품 관리 ===========
   const {
@@ -67,7 +58,6 @@ const App = () => {
             onUpdateProduct={updateProduct}
             onDeleteProduct={deleteProduct}
             getRemainingStock={getRemainingStock}
-            coupons={coupons}
             onAddCoupon={addCoupon}
             onDeleteCoupon={removeCoupon}
           />
@@ -76,17 +66,6 @@ const App = () => {
             products={products}
             filteredProducts={filteredProducts}
             debouncedSearchTerm={debouncedSearchTerm}
-            getRemainingStock={getRemainingStock}
-            onAddToCart={addToCart}
-            cart={cart}
-            coupons={coupons}
-            selectedCoupon={selectedCoupon}
-            totals={cartTotal}
-            onRemoveFromCart={removeFromCart}
-            onUpdateQuantity={updateQuantity}
-            onApplyCoupon={applyCoupon}
-            onCompleteOrder={completeOrder}
-            calculateItemTotal={calculateItemTotal}
           />
         )}
       </main>

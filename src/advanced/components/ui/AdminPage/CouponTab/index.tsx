@@ -2,18 +2,15 @@ import { Coupon } from "../../../../types";
 import { useCouponForm } from "../../../../hooks/admin/useCouponForm";
 import { CouponList } from "./CouponList";
 import { CouponForm } from "./CouponForm";
+import { useAtomValue } from "jotai";
+import { couponsAtom } from "../../../../atoms";
 
 interface CouponTabProps {
-  coupons: Coupon[];
   onAddCoupon: (coupon: Coupon) => void;
   onDeleteCoupon: (couponCode: string) => void;
 }
 
-export function CouponTab({
-  coupons,
-  onAddCoupon,
-  onDeleteCoupon,
-}: CouponTabProps) {
+export function CouponTab({ onAddCoupon, onDeleteCoupon }: CouponTabProps) {
   const {
     couponForm,
     setCouponForm,
@@ -21,6 +18,7 @@ export function CouponTab({
     setShowCouponForm,
     handleCouponSubmit,
   } = useCouponForm();
+  const coupons = useAtomValue(couponsAtom);
 
   return (
     <section className="bg-white rounded-lg border border-gray-200">

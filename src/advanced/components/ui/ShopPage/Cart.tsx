@@ -1,35 +1,36 @@
+import { useSetAtom, useAtomValue } from "jotai";
 import { CartItem, Coupon } from "../../../types";
 import {
   formatPriceAtAdmin,
   formatPercentage,
 } from "../../../utils/formatters";
+import {
+  cartAtom,
+  couponsAtom,
+  selectedCouponAtom,
+  cartTotalAtom,
+  removeFromCartAtom,
+  updateQuantityAtom,
+  applyCouponAtom,
+  completeOrderAtom,
+  calculateItemTotalAtom,
+} from "../../../atoms";
 
-interface CartProps {
-  cart: CartItem[];
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  totals: {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
-  };
-  onRemoveFromCart: (productId: string) => void;
-  onUpdateQuantity: (productId: string, newQuantity: number) => void;
-  onApplyCoupon: (coupon: Coupon | null) => void;
-  onCompleteOrder: () => void;
-  calculateItemTotal: (item: CartItem) => number;
-}
+interface CartProps {}
 
-const Cart = ({
-  cart,
-  coupons,
-  selectedCoupon,
-  totals,
-  onRemoveFromCart,
-  onUpdateQuantity,
-  onApplyCoupon,
-  onCompleteOrder,
-  calculateItemTotal,
-}: CartProps) => {
+const Cart = ({}: CartProps) => {
+  // 상태들
+  const cart = useAtomValue(cartAtom);
+  const coupons = useAtomValue(couponsAtom);
+  const selectedCoupon = useAtomValue(selectedCouponAtom);
+  const totals = useAtomValue(cartTotalAtom);
+  const calculateItemTotal = useAtomValue(calculateItemTotalAtom);
+  
+  // 액션들
+  const removeFromCart = useSetAtom(removeFromCartAtom);
+  const updateQuantity = useSetAtom(updateQuantityAtom);
+  const applyCoupon = useSetAtom(applyCouponAtom);
+  const completeOrder = useSetAtom(completeOrderAtom);
   return (
     <div className="sticky top-24 space-y-4">
       <section className="bg-white rounded-lg border border-gray-200 p-4">
@@ -86,7 +87,7 @@ const Cart = ({
                       {item.product.name}
                     </h4>
                     <button
-                      onClick={() => onRemoveFromCart(item.product.id)}
+                      onClick={() => removeFromCart(item.product.id)}
                       className="text-gray-400 hover:text-red-500 ml-2"
                     >
                       <svg
@@ -108,7 +109,7 @@ const Cart = ({
                     <div className="flex items-center">
                       <button
                         onClick={() =>
-                          onUpdateQuantity(item.product.id, item.quantity - 1)
+                          updateQuantity(item.product.id, item.quantity - 1)
                         }
                         className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                       >
@@ -119,7 +120,7 @@ const Cart = ({
                       </span>
                       <button
                         onClick={() =>
-                          onUpdateQuantity(item.product.id, item.quantity + 1)
+                          updateQuantity(item.product.id, item.quantity + 1)
                         }
                         className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                       >
@@ -159,7 +160,7 @@ const Cart = ({
                 value={selectedCoupon?.code || ""}
                 onChange={(e) => {
                   const coupon = coupons.find((c) => c.code === e.target.value);
-                  onApplyCoupon(coupon || null);
+                  applyCoupon(coupon || null);
                 }}
               >
                 <option value="">쿠폰 선택</option>
@@ -205,7 +206,7 @@ const Cart = ({
             </div>
 
             <button
-              onClick={onCompleteOrder}
+              onClick={completeOrder}
               className="w-full mt-4 py-3 bg-yellow-400 text-gray-900 rounded-md font-medium hover:bg-yellow-500 transition-colors"
             >
               {formatPriceAtAdmin(totals.totalAfterDiscount)} 결제하기

@@ -13,7 +13,6 @@ interface AdminPageProps {
   getRemainingStock: (product: ProductWithUI) => number;
 
   // 쿠폰 관련
-  coupons: Coupon[];
   onAddCoupon: (coupon: Coupon) => void;
   onDeleteCoupon: (couponCode: string) => void;
 }
@@ -24,7 +23,6 @@ export function AdminPage({
   onUpdateProduct,
   onDeleteProduct,
   getRemainingStock,
-  coupons,
   onAddCoupon,
   onDeleteCoupon,
 }: AdminPageProps) {
@@ -32,7 +30,6 @@ export function AdminPage({
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
     "products"
   );
-
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -52,11 +49,7 @@ export function AdminPage({
           getRemainingStock={getRemainingStock}
         />
       ) : (
-        <CouponTab
-          coupons={coupons}
-          onAddCoupon={onAddCoupon}
-          onDeleteCoupon={onDeleteCoupon}
-        />
+        <CouponTab onAddCoupon={onAddCoupon} onDeleteCoupon={onDeleteCoupon} />
       )}
     </div>
   );

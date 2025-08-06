@@ -1,4 +1,4 @@
-import { CartItem, Coupon, ProductWithUI } from "../../../types";
+import { ProductWithUI } from "../../../types";
 import Cart from "./Cart";
 import ProductCard from "./ProductCard";
 
@@ -7,39 +7,12 @@ interface CartPageProps {
   products: ProductWithUI[];
   filteredProducts: ProductWithUI[];
   debouncedSearchTerm: string;
-  getRemainingStock: (product: ProductWithUI) => number;
-  onAddToCart: (product: ProductWithUI) => void;
-
-  // 장바구니 관련
-  cart: CartItem[];
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  totals: {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
-  };
-  onRemoveFromCart: (productId: string) => void;
-  onUpdateQuantity: (productId: string, newQuantity: number) => void;
-  onApplyCoupon: (coupon: Coupon | null) => void;
-  onCompleteOrder: () => void;
-  calculateItemTotal: (item: CartItem) => number;
 }
 
 const CartPage = ({
   products,
   filteredProducts,
   debouncedSearchTerm,
-  getRemainingStock,
-  onAddToCart,
-  cart,
-  coupons,
-  selectedCoupon,
-  totals,
-  onRemoveFromCart,
-  onUpdateQuantity,
-  onApplyCoupon,
-  onCompleteOrder,
-  calculateItemTotal,
 }: CartPageProps) => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -64,8 +37,6 @@ const CartPage = ({
                 <ProductCard
                   key={product.id}
                   product={product}
-                  remainingStock={getRemainingStock(product)}
-                  onAddToCart={onAddToCart}
                 />
               ))}
             </div>
@@ -74,17 +45,7 @@ const CartPage = ({
       </div>
 
       <div className="lg:col-span-1">
-        <Cart
-          cart={cart}
-          coupons={coupons}
-          selectedCoupon={selectedCoupon}
-          totals={totals}
-          onRemoveFromCart={onRemoveFromCart}
-          onUpdateQuantity={onUpdateQuantity}
-          onApplyCoupon={onApplyCoupon}
-          onCompleteOrder={onCompleteOrder}
-          calculateItemTotal={calculateItemTotal}
-        />
+        <Cart />
       </div>
     </div>
   );
