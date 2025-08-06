@@ -43,6 +43,7 @@ import {
   hasTotalDiscount,
   calculateTotalDiscountAmount,
 } from './models/discount';
+import { isRecommended } from './models/product';
 
 const App = () => {
   // ===== 상태 관리 =====
@@ -115,17 +116,6 @@ const App = () => {
   };
 
   // ===== MODELS: 순수 함수들 (UI와 관련된 로직 없음, 외부 상태에 의존하지 않음) =====
-  // TODO: src/basic/models/cart.ts로 분리 - getMaxApplicableDiscount(item)
-  // const getMaxApplicableDiscount = (item: CartItem): number => { ... } // 모듈로 분리됨
-
-  // TODO: src/basic/models/cart.ts로 분리 - calculateItemTotal(item)
-  // const calculateItemTotal = (item: CartItem): number => { ... } // 모듈로 분리됨
-
-  // TODO: src/basic/models/cart.ts로 분리 - calculateCartTotal(cart, coupon)
-  // const calculateCartTotal = (): { ... } // 모듈로 분리됨
-
-  // TODO: src/basic/models/cart.ts로 분리 - getRemainingStock(product, cart)
-  // const getRemainingStock = (product: Product): number => { ... } // 모듈로 분리됨
 
   // ===== HOOKS: 상태 관리 및 이벤트 핸들러들 =====
   // TODO: src/basic/hooks/useCart.ts로 분리 - 장바구니 상태 관리 (localStorage 연동)
@@ -241,7 +231,6 @@ const App = () => {
     (coupon: Coupon) => {
       const currentTotal = calculateCartTotal(cart, selectedCoupon).totalAfterDiscount;
 
-      // TODO: src/basic/models/coupon.ts로 분리 - isCouponApplicable(coupon, cartTotal)
       if (!isCouponApplicable(coupon, currentTotal)) {
         addNotification('percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.', 'error');
         return;
@@ -948,7 +937,7 @@ const App = () => {
                             <div className='aspect-square bg-gray-100 flex items-center justify-center'>
                               <ImageIcon />
                             </div>
-                            {product.isRecommended && (
+                            {isRecommended(product) && (
                               <Badge
                                 size='xs'
                                 rounded='sm'
