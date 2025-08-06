@@ -21,7 +21,13 @@ import {
   validateCouponApplication,
   validateCouponCode,
 } from './utils';
-import { useCart, useLocalStorage, useNotifications } from './hooks';
+import {
+  useCart,
+  useDebounceValue,
+  useLocalStorage,
+  useNotifications,
+  useTotalItemCount,
+} from './hooks';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -51,8 +57,10 @@ const App = () => {
     addNotification,
     setSelectedCoupon,
   });
+  const totalItemCount = useTotalItemCount(cart);
   const [searchTerm, setSearchTerm] = useState('');
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+
+  const debouncedSearchTerm = useDebounceValue(searchTerm, 500);
 
   const formatPrice = useCallback(
     (price: number, productId?: string): string => {
@@ -82,20 +90,6 @@ const App = () => {
   } => {
     return calculateCartTotal(cart, selectedCoupon);
   }, [cart, selectedCoupon]);
-
-  const [totalItemCount, setTotalItemCount] = useState(0);
-
-  useEffect(() => {
-    const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-    setTotalItemCount(count);
-  }, [cart]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
 
   const applyCoupon = useCallback(
     (coupon: Coupon) => {
