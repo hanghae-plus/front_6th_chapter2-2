@@ -1,7 +1,8 @@
 import { useCallback, useState } from 'react';
 
 import { useCouponStore } from './useCouponStore';
-import type { CartItem, Coupon, NotificationVariant } from '../../types';
+import type { CartItem, Coupon } from '../../types';
+import { MINIMUM_ORDER_AMOUNT, type NotificationVariant } from '../constants';
 import { calculateCartTotal } from '../models/cart';
 
 interface UseCouponServiceProps {
@@ -44,8 +45,11 @@ export function useCouponService({ onAddNotification }: UseCouponServiceProps) {
     (cart: CartItem[], coupon: Coupon) => {
       const currentTotal = calculateCartTotal(cart, selectedCoupon).totalAfterDiscount;
 
-      if (currentTotal < 10000 && coupon.discountType === 'percentage') {
-        onAddNotification('percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.', 'error');
+      if (currentTotal < MINIMUM_ORDER_AMOUNT && coupon.discountType === 'percentage') {
+        onAddNotification(
+          `percentage 쿠폰은 ${MINIMUM_ORDER_AMOUNT.toLocaleString()}원 이상 구매 시 사용 가능합니다.`,
+          'error'
+        );
         return;
       }
 

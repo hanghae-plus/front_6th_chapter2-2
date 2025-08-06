@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-import type { Coupon, NotificationVariant } from '../../types';
-import type { ProductWithUI } from '../constants';
+import type { Coupon } from '../../types';
+import type { NotificationVariant, ProductWithUI } from '../constants';
 import { AdminHeader } from './ui/AdminHeader';
 import { CouponTab } from './ui/CouponTab';
 import { ProductTab } from './ui/ProductTab';

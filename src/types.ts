@@ -22,11 +22,3 @@ export interface Coupon {
   discountType: 'amount' | 'percentage';
   discountValue: number;
 }
-
-export type NotificationVariant = 'error' | 'success' | 'warning';
-
-export interface Notification {
-  id: string;
-  message: string;
-  variant: NotificationVariant;
-}

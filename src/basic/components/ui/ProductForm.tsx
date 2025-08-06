@@ -1,5 +1,4 @@
-import type { NotificationVariant } from '../../../types';
-import type { ProductWithUI } from '../../constants';
+import type { NotificationVariant, ProductWithUI } from '../../constants';
 import { Icon } from '../icons';
 
 interface ProductFormProps {

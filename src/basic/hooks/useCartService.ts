@@ -1,8 +1,7 @@
 import { useCallback } from 'react';
 
 import { useCartStore } from './useCartStore';
-import type { NotificationVariant } from '../../types';
-import type { ProductWithUI } from '../constants';
+import type { NotificationVariant, ProductWithUI } from '../constants';
 import { getRemainingStock } from '../models/product';
 
 interface UseCartServiceProps {

@@ -1,4 +1,5 @@
-import type { Coupon, NotificationVariant } from '../../../types';
+import type { Coupon } from '../../../types';
+import type { NotificationVariant } from '../../constants';
 
 interface CouponFormProps {
   isOpen: boolean;

@@ -1,7 +1,6 @@
 import { ProductAccordion } from './ProductAccordion';
 import { ProductForm } from './ProductForm';
-import { NotificationVariant } from '../../../types';
-import type { ProductWithUI } from '../../constants';
+import type { NotificationVariant, ProductWithUI } from '../../constants';
 import { useProductForm } from '../../hooks/useProductForm';
 
 interface ProductTabProps {

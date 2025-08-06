@@ -1,8 +1,7 @@
 import { useCallback } from 'react';
 
-import type { ProductWithUI } from '../constants';
+import type { NotificationVariant, ProductWithUI } from '../constants';
 import { useProductStore } from './useProductStore';
-import type { NotificationVariant } from '../../types';
 
 interface useProductServiceProps {
   onAddNotification: (message: string, type: NotificationVariant) => void;

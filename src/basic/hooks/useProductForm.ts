@@ -1,15 +1,7 @@
 import { useState } from 'react';
 
-import type { ProductWithUI } from '../constants';
+import { initialProductForm, type ProductWithUI } from '../constants';
 import { useForm } from '../utils/hooks/useForm';
-
-export const initialProductForm: Omit<ProductWithUI, 'id'> = {
-  name: '',
-  price: 0,
-  stock: 0,
-  description: '',
-  discounts: [],
-};
 
 interface UseProductFormProps {
   onAddProduct: (product: Omit<ProductWithUI, 'id'>) => void;

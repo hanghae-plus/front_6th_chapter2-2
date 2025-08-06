@@ -1,7 +1,8 @@
 import { CouponAddButton } from './CouponAddButton';
 import { CouponForm } from './CouponForm';
 import { CouponList } from './CouponList';
-import type { Coupon, NotificationVariant } from '../../../types';
+import type { Coupon } from '../../../types';
+import type { NotificationVariant } from '../../constants';
 import { useCouponForm } from '../../hooks/useCouponForm';
 
 interface CouponTabProps {

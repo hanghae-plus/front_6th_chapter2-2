@@ -1,6 +1,6 @@
 import { HTMLAttributes, useEffect } from 'react';
 
-import type { Notification as NotificationType, NotificationVariant } from '../../../types';
+import type { Notification as NotificationType, NotificationVariant } from '../../constants';
 import { Icon } from '../icons';
 
 interface NotificationProps {

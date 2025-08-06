@@ -1,5 +1,5 @@
 import { Notification } from './Notification';
-import type { Notification as NotificationType } from '../../../types';
+import type { Notification as NotificationType } from '../../constants';
 
 interface NotificationProps {
   notifications: NotificationType[];
