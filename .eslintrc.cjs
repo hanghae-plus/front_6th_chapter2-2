@@ -1,39 +1,65 @@
 module.exports = {
   root: true,
-  env: { browser: true, es2020: true },
+  env: {
+    browser: true,
+    es2020: true,
+  },
   extends: [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:react-hooks/recommended",
-    "plugin:import/recommended",
-    "plugin:import/typescript",
   ],
-  ignorePatterns: ["dist", ".eslintrc.cjs"],
+  ignorePatterns: ["dist", ".eslintrc.cjs", "node_modules"],
   parser: "@typescript-eslint/parser",
-  plugins: ["react-refresh", "import"],
+  parserOptions: {
+    ecmaVersion: 2020,
+    sourceType: "module",
+    ecmaFeatures: {
+      jsx: true,
+    },
+  },
+  plugins: ["react-refresh", "@typescript-eslint"],
   settings: {
-    "import/resolver": {
-      typescript: {
-        alwaysTryTypes: true,
-        project: ".",
-      },
+    react: {
+      version: "detect",
     },
   },
   rules: {
+    // React Refresh 관련
     "react-refresh/only-export-components": [
       "warn",
       { allowConstantExport: true },
     ],
-    // 상위 디렉토리 상대 경로 import만 금지
-    "import/no-relative-parent-imports": "error",
-    // 사용하지 않는 변수 경고 끄기
-    "@typescript-eslint/no-unused-vars": "off",
-    // 모든 상대 경로를 금지
-    "no-restricted-imports": [
-      "error",
+
+    // TypeScript 관련 규칙
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
       {
-        patterns: ["./", "../"],
+        argsIgnorePattern: "^_",
+        varsIgnorePattern: "^_",
+        caughtErrorsIgnorePattern: "^_",
       },
     ],
+    "@typescript-eslint/no-explicit-any": "warn",
+
+    // React Hooks 관련
+    "react-hooks/exhaustive-deps": "warn",
+    "react-hooks/rules-of-hooks": "error",
+
+    // 기본적인 에러 방지
+    "no-console": "warn",
+    "no-debugger": "error",
+    "no-unused-expressions": "error",
+    "no-unreachable": "error",
   },
+  overrides: [
+    {
+      files: ["*.test.ts", "*.test.tsx", "*.spec.ts", "*.spec.tsx"],
+      rules: {
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/ban-ts-comment": "off",
+        "no-console": "off",
+      },
+    },
+  ],
 };
