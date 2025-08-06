@@ -4,8 +4,9 @@ import { initialProducts, initialCoupons } from './constants';
 import { ProductWithUI, Notification, CartItem, Coupon, Product } from './types';
 import { useCart } from './hooks/useCart';
 import { useNotification } from './hooks/useNotification';
+import { useCoupon } from './hooks/useCoupon';
 import { formatPrice } from './utils/formatters';
-import { calculateItemTotal, calculateCartTotal } from './models/cart';
+import { calculateItemTotal } from './models/cart';
 
 const App = () => {
   const [products, setProducts] = useState<ProductWithUI[]>(() => {
@@ -18,18 +19,6 @@ const App = () => {
       }
     }
     return initialProducts;
-  });
-
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem('coupons');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialCoupons;
-      }
-    }
-    return initialCoupons;
   });
 
   const [isAdmin, setIsAdmin] = useState(false);
@@ -57,18 +46,19 @@ const App = () => {
   });
 
   const { addNotification, notifications, removeNotification } = useNotification();
-
   const {
     getRemainingStock,
     updateQuantity,
-    cart,
     addToCart,
     removeFromCart,
-    totalItemCount,
+    calculateTotal,
     clearCart,
-    selectedCoupon,
     applyCoupon,
+    cart,
+    selectedCoupon,
+    totalItemCount,
   } = useCart(products, addNotification);
+  const { coupons, addCoupon, deleteCoupon } = useCoupon(selectedCoupon, addNotification);
 
   // UI에 관련된 함수같다!
   const getDisplayPrice = (price: number, productId?: string): string => {
@@ -84,10 +74,6 @@ const App = () => {
   useEffect(() => {
     localStorage.setItem('products', JSON.stringify(products));
   }, [products]);
-
-  useEffect(() => {
-    localStorage.setItem('coupons', JSON.stringify(coupons));
-  }, [coupons]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -133,30 +119,6 @@ const App = () => {
     [addNotification],
   );
 
-  const addCoupon = useCallback(
-    (newCoupon: Coupon) => {
-      const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
-      if (existingCoupon) {
-        addNotification('이미 존재하는 쿠폰 코드입니다.', 'error');
-        return;
-      }
-      setCoupons((prev) => [...prev, newCoupon]);
-      addNotification('쿠폰이 추가되었습니다.', 'success');
-    },
-    [coupons, addNotification],
-  );
-
-  const deleteCoupon = useCallback(
-    (couponCode: string) => {
-      setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
-      if (selectedCoupon?.code === couponCode) {
-        applyCoupon(null);
-      }
-      addNotification('쿠폰이 삭제되었습니다.', 'success');
-    },
-    [selectedCoupon, addNotification],
-  );
-
   const handleProductSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (editingProduct && editingProduct !== 'new') {
@@ -197,7 +159,7 @@ const App = () => {
     setShowProductForm(true);
   };
 
-  const totals = calculateCartTotal(cart, selectedCoupon);
+  const totals = calculateTotal();
 
   const filteredProducts = debouncedSearchTerm
     ? products.filter(

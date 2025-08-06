@@ -147,16 +147,22 @@ const useCart = (
     [cart, selectedCoupon, addNotification],
   );
 
+  const calculateTotal = useCallback(
+    () => calculateCartTotal(cart, selectedCoupon),
+    [cart, selectedCoupon],
+  );
+
   return {
     cart,
     getRemainingStock,
     updateQuantity,
     addToCart,
     removeFromCart,
-    totalItemCount,
-    clearCart,
-    selectedCoupon,
     applyCoupon,
+    clearCart,
+    calculateTotal,
+    totalItemCount,
+    selectedCoupon,
   };
 };
 
