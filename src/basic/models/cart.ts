@@ -78,6 +78,12 @@ export const addToCart = (
   };
 };
 
-export const removeFromCart = () => {};
+/**
+ * 장바구니에서 상품을 제거하는 함수
+ */
+export const removeFromCart = (cart: CartItem[], productId: string) => {
+  return cart.filter((item) => item.product.id !== productId);
+};
+
 export const updateQuantity = () => {};
 export const calculateCartTotal = () => {};

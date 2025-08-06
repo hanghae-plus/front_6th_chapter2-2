@@ -4,6 +4,7 @@ import { useLocalStorage, useDebounce } from "./hooks";
 import {
   getRemainingStock,
   addToCart as _addToCart,
+  removeFromCart as _removeFromCart,
 } from "../basic/models/cart";
 
 interface ProductWithUI extends Product {
@@ -218,9 +219,7 @@ const App = () => {
   );
 
   const removeFromCart = useCallback((productId: string) => {
-    setCart((prevCart) =>
-      prevCart.filter((item) => item.product.id !== productId)
-    );
+    setCart((prevCart) => _removeFromCart(prevCart, productId));
   }, []);
 
   const updateQuantity = useCallback(
