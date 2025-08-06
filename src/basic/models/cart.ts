@@ -6,8 +6,8 @@ import { CartItem, Coupon, Product } from '../../types';
 // 구현된 함수들:
 // 1. getMaxApplicableDiscount(item, cart): 적용 가능한 최대 할인율 계산
 // 2. calculateItemTotal(item, cart): 개별 아이템의 할인 적용 후 총액 계산
-// 3. calculateCartTotal(cart, selectedCoupon): 장바구니 총액 계산 (할인 전/후)
-// 4. getRemainingStock(product, cart): 남은 재고 계산
+// 3. getRemainingStock(product, cart): 남은 재고 계산
+// 4. calculateOriginalPrice(item): 장바구니 아이템의 원래 가격 계산
 //
 // 원칙:
 // - UI와 관련된 로직 없음
@@ -41,39 +41,6 @@ export const calculateItemTotal = (item: CartItem, cart: CartItem[]): number => 
   const discount = getMaxApplicableDiscount(item, cart);
 
   return Math.round(price * quantity * (1 - discount));
-};
-
-// 장바구니 총액 계산 (순수 함수)
-export const calculateCartTotal = (
-  cart: CartItem[],
-  selectedCoupon: Coupon | null
-): {
-  totalBeforeDiscount: number;
-  totalAfterDiscount: number;
-} => {
-  let totalBeforeDiscount = 0;
-  let totalAfterDiscount = 0;
-
-  cart.forEach((item) => {
-    const itemPrice = item.product.price * item.quantity;
-    totalBeforeDiscount += itemPrice;
-    totalAfterDiscount += calculateItemTotal(item, cart);
-  });
-
-  if (selectedCoupon) {
-    if (selectedCoupon.discountType === 'amount') {
-      totalAfterDiscount = Math.max(0, totalAfterDiscount - selectedCoupon.discountValue);
-    } else {
-      totalAfterDiscount = Math.round(
-        totalAfterDiscount * (1 - selectedCoupon.discountValue / 100)
-      );
-    }
-  }
-
-  return {
-    totalBeforeDiscount: Math.round(totalBeforeDiscount),
-    totalAfterDiscount: Math.round(totalAfterDiscount),
-  };
 };
 
 // 남은 재고 계산 (순수 함수)
