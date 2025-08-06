@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import type { CartItem, Coupon, NotificationVariant } from '../../types';
 import type { ProductWithUI } from '../constants';
 import { Icon } from './icons';
@@ -10,7 +8,7 @@ import { CouponSelector } from './ui/CouponSelector';
 import { PaymentSummary } from './ui/PaymentSummary';
 import { ProductList } from './ui/ProductList';
 import { useCartService } from '../hooks/useCartService';
-import { useDebounce } from '../utils/hooks/useDebounce';
+import { useDebouncedSearch } from '../hooks/useDebouncedSearch';
 
 interface CartPageProps {
   setIsAdmin: (isAdmin: boolean) => void;
@@ -42,9 +40,7 @@ export function CartPage({
     onAddNotification,
     onResetSelectedCoupon,
   });
-
-  const [searchTerm, setSearchTerm] = useState('');
-  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const { searchTerm, debouncedSearchTerm, handleChangeSearchTerm } = useDebouncedSearch();
 
   const totals = calculateCartTotal(cart, selectedCoupon);
 
@@ -52,7 +48,7 @@ export function CartPage({
     <>
       <CartHeader
         searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
+        onChangeSearchTerm={handleChangeSearchTerm}
         setIsAdmin={setIsAdmin}
         cart={cart}
       />

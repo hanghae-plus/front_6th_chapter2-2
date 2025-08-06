@@ -4,12 +4,12 @@ import { Icon } from '../icons';
 
 interface CartHeaderProps {
   searchTerm: string;
-  setSearchTerm: (searchTerm: string) => void;
+  onChangeSearchTerm: (e: React.ChangeEvent<HTMLInputElement>) => void;
   setIsAdmin: (isAdmin: boolean) => void;
   cart: CartItem[];
 }
 
-export function CartHeader({ searchTerm, setSearchTerm, setIsAdmin, cart }: CartHeaderProps) {
+export function CartHeader({ searchTerm, onChangeSearchTerm, setIsAdmin, cart }: CartHeaderProps) {
   const hasProductsInCart = cart.length > 0;
   const totalItemCount = calculateItemTotalQuantity(cart);
 
@@ -23,7 +23,7 @@ export function CartHeader({ searchTerm, setSearchTerm, setIsAdmin, cart }: Cart
               <input
                 type='text'
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={onChangeSearchTerm}
                 placeholder='상품 검색...'
                 className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500'
               />
