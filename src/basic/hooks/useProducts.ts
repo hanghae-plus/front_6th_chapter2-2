@@ -1,13 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { Product } from "../../types";
 
-interface ProductWithUI extends Product {
-  description?: string;
-  isRecommended?: boolean;
-}
-
 // 초기 데이터
-const initialProducts: ProductWithUI[] = [
+const initialProducts: Product[] = [
   {
     id: "p1",
     name: "상품1",
@@ -42,7 +37,7 @@ const initialProducts: ProductWithUI[] = [
 ];
 
 export const useProducts = () => {
-  const [products, setProducts] = useState<ProductWithUI[]>(() => {
+  const [products, setProducts] = useState<Product[]>(() => {
     const saved = localStorage.getItem("products");
     if (saved) {
       try {
@@ -59,15 +54,15 @@ export const useProducts = () => {
     localStorage.setItem("products", JSON.stringify(products));
   }, [products]);
 
-  const addProduct = useCallback((newProduct: Omit<ProductWithUI, "id">) => {
-    const product: ProductWithUI = {
+  const addProduct = useCallback((newProduct: Omit<Product, "id">) => {
+    const product: Product = {
       ...newProduct,
       id: `p${Date.now()}`,
     };
     setProducts((prev) => [...prev, product]);
   }, []);
 
-  const updateProduct = useCallback((productId: string, updates: Partial<ProductWithUI>) => {
+  const updateProduct = useCallback((productId: string, updates: Partial<Product>) => {
     setProducts((prev) => prev.map((product) => (product.id === productId ? { ...product, ...updates } : product)));
   }, []);
 
@@ -82,5 +77,3 @@ export const useProducts = () => {
     deleteProduct,
   };
 };
-
-export type { ProductWithUI };

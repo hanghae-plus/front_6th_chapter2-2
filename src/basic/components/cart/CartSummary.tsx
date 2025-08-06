@@ -1,4 +1,3 @@
-import React from "react";
 import { formatCurrency } from "../../utils/formatters";
 
 interface CartSummaryProps {
@@ -7,11 +6,7 @@ interface CartSummaryProps {
   onCompleteOrder: () => void;
 }
 
-export const CartSummary: React.FC<CartSummaryProps> = ({
-  totalBeforeDiscount,
-  totalAfterDiscount,
-  onCompleteOrder,
-}) => {
+export const CartSummary = ({ totalBeforeDiscount, totalAfterDiscount, onCompleteOrder }: CartSummaryProps) => {
   return (
     <section className="bg-white rounded-lg border border-gray-200 p-4">
       <h3 className="text-lg font-semibold mb-4">결제 정보</h3>

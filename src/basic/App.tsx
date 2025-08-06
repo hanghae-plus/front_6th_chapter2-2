@@ -1,13 +1,12 @@
 // hooks
 import { useState, useCallback } from "react";
-import { useProducts, ProductWithUI } from "./hooks/useProducts";
+import { useProducts } from "./hooks/useProducts";
 import { useCart } from "./hooks/useCart";
 import { useCoupons } from "./hooks/useCoupons";
 import { useNotification } from "./hooks/useNotification";
 
 // utils
 import { useSearch } from "./utils/hooks/useSearch";
-import { formatPrice } from "./utils/formatters";
 import { calculateFinalTotal } from "./utils/calculations";
 
 // components
@@ -17,6 +16,7 @@ import { Notification } from "./components/ui/notification/Notification";
 import { ProductList } from "./components/product/ProductList";
 
 import AdminPage from "./pages/Admin/AdminPage";
+import { Product } from "../types";
 
 const App = () => {
   // 커스텀 훅 사용
@@ -71,7 +71,7 @@ const App = () => {
 
   // 장바구니에 상품 추가 (에러 처리 포함)
   const addToCart = useCallback(
-    (product: ProductWithUI) => {
+    (product: Product) => {
       try {
         addToCartHook(product);
         addNotification("장바구니에 담았습니다", "success");
@@ -118,7 +118,7 @@ const App = () => {
 
   // 상품 추가 (에러 처리 포함)
   const handleAddProduct = useCallback(
-    (newProduct: Omit<ProductWithUI, "id">) => {
+    (newProduct: Omit<Product, "id">) => {
       try {
         addProduct(newProduct);
         addNotification("상품이 추가되었습니다.", "success");
@@ -131,7 +131,7 @@ const App = () => {
 
   // 상품 수정 (에러 처리 포함)
   const handleUpdateProduct = useCallback(
-    (productId: string, updates: Partial<ProductWithUI>) => {
+    (productId: string, updates: Partial<Product>) => {
       try {
         updateProduct(productId, updates);
         addNotification("상품이 수정되었습니다.", "success");
@@ -209,7 +209,7 @@ const App = () => {
     setShowCouponForm(false);
   };
 
-  const startEditProduct = (product: ProductWithUI) => {
+  const startEditProduct = (product: Product) => {
     setEditingProduct(product.id);
     setProductForm({
       name: product.name,
