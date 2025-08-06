@@ -1,17 +1,16 @@
 import { useState } from 'react';
 
 import type { Coupon, NotificationVariant } from '../../types';
-import { ProductWithUI } from '../constants';
+import type { ProductWithUI } from '../constants';
+import { useCouponForm } from '../hooks/useCouponForm';
+import { useProductForm } from '../hooks/useProductForm';
 import { AdminHeader } from './ui/AdminHeader';
+import { CouponAddButton } from './ui/CouponAddButton';
+import { CouponForm } from './ui/CouponForm';
+import { CouponList } from './ui/CouponList';
 import { ProductAccordion } from './ui/ProductAccordion';
 import { ProductForm } from './ui/ProductForm';
 import { TabNavigation } from './ui/TabNavigation';
-import { initialProductForm, type ProductForm as ProductFormType } from '../models/product';
-import { CouponList } from './ui/CouponList';
-import { initialCouponForm } from '../models/coupon';
-import { CouponAddButton } from './ui/CouponAddButton';
-import { CouponForm } from './ui/CouponForm';
-import { useForm } from '../utils/hooks/useForm';
 
 interface AdminPageProps {
   setIsAdmin: (isAdmin: boolean) => void;
@@ -44,41 +43,30 @@ export function AdminPage({
 }: AdminPageProps) {
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
 
-  const [showProductForm, setShowProductForm] = useState(false);
+  const {
+    showProductForm,
+    editingProduct,
+    productFormData,
+    updateProductFormData,
+    startEditProduct,
+    handleProductSubmit,
+    handleShowProductForm,
+    handleCancelProductForm,
+  } = useProductForm({
+    onAddProduct,
+    onUpdateProduct,
+  });
 
-  const [editingProduct, setEditingProduct] = useState<string | null>(null);
-  const [productFormData, updateProductFormData, resetProductFormData] =
-    useForm<ProductFormType>(initialProductForm);
-
-  const [showCouponForm, setShowCouponForm] = useState(false);
-  const [couponFormData, updateCouponFormData, resetCouponFormData] =
-    useForm<Coupon>(initialCouponForm);
-
-  const startEditProduct = (product: ProductWithUI) => {
-    setEditingProduct(product.id);
-    updateProductFormData(product);
-    setShowProductForm(true);
-  };
-
-  const handleProductSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editingProduct && editingProduct !== 'new') {
-      onUpdateProduct(editingProduct, productFormData);
-      setEditingProduct(null);
-    } else {
-      onAddProduct(productFormData);
-    }
-    resetProductFormData();
-    setEditingProduct(null);
-    setShowProductForm(false);
-  };
-
-  const handleCouponSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onAddCoupon(couponFormData);
-    resetCouponFormData();
-    setShowCouponForm(false);
-  };
+  const {
+    showCouponForm,
+    couponFormData,
+    updateCouponFormData,
+    handleCouponSubmit,
+    handleShowCouponForm,
+    handleHideCouponForm,
+  } = useCouponForm({
+    onAddCoupon,
+  });
 
   return (
     <>
@@ -98,11 +86,7 @@ export function AdminPage({
                 <div className='flex justify-between items-center'>
                   <h2 className='text-lg font-semibold'>상품 목록</h2>
                   <button
-                    onClick={() => {
-                      setEditingProduct('new');
-                      resetProductFormData();
-                      setShowProductForm(true);
-                    }}
+                    onClick={handleShowProductForm}
                     className='px-4 py-2 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800'
                   >
                     새 상품 추가
@@ -122,11 +106,7 @@ export function AdminPage({
                 form={productFormData}
                 updateForm={updateProductFormData}
                 onSubmit={handleProductSubmit}
-                onCancel={() => {
-                  setEditingProduct(null);
-                  resetProductFormData();
-                  setShowProductForm(false);
-                }}
+                onCancel={handleCancelProductForm}
                 onAddNotification={onAddNotification}
               />
             </section>
@@ -139,7 +119,7 @@ export function AdminPage({
                 <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
                   <CouponList coupons={coupons} onDelete={onDeleteCoupon} />
 
-                  <CouponAddButton onAddNew={() => setShowCouponForm(true)} />
+                  <CouponAddButton onAddNew={handleShowCouponForm} />
                 </div>
 
                 <CouponForm
@@ -147,7 +127,7 @@ export function AdminPage({
                   form={couponFormData}
                   updateForm={updateCouponFormData}
                   onSubmit={handleCouponSubmit}
-                  onCancel={() => setShowCouponForm(false)}
+                  onCancel={handleHideCouponForm}
                   onAddNotification={onAddNotification}
                 />
               </div>
