@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { CartItem, Coupon, Product } from '../types';
 import { initialProducts, initialCoupons } from './shared/constants';
 import { ProductWithUI, Notification } from './shared/types';
+import { useLocalStorage } from './shared/hooks';
 
 /**
  * 수량 기반 할인 계산
@@ -176,56 +177,9 @@ const processQuantityUpdate = (
 };
 
 const App = () => {
-  /**
-   * 상품 목록
-   * 로컬 스토리지에 저장된 상품 목록을 사용하거나, 초기 데이터를 사용
-   * @TODO 상태 초기값 로직에서 localStorage를 확인하는 로직이 있는데, 이 부분을 분리하여 사용하는 것이 좋을 듯.
-   */
-  const [products, setProducts] = useState<ProductWithUI[]>(() => {
-    const saved = localStorage.getItem('products');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialProducts;
-      }
-    }
-    return initialProducts;
-  });
-
-  /**
-   * 장바구니
-   * 로컬 스토리지에 저장된 장바구니 목록을 사용하거나, 빈 배열을 사용
-   * @TODO 상태 초기값 로직에서 localStorage를 확인하는 로직이 있는데, 이 부분을 분리하여 사용하는 것이 좋을 듯.
-   */
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem('cart');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return [];
-      }
-    }
-    return [];
-  });
-
-  /**
-   * 쿠폰 목록
-   * 로컬 스토리지에 저장된 쿠폰 목록을 사용하거나, 초기 데이터를 사용
-   * @TODO 상태 초기값 로직에서 localStorage를 확인하는 로직이 있는데, 이 부분을 분리하여 사용하는 것이 좋을 듯.
-   */
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem('coupons');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialCoupons;
-      }
-    }
-    return initialCoupons;
-  });
+  const [products, setProducts] = useLocalStorage('products', initialProducts);
+  const [cart, setCart] = useLocalStorage<CartItem[]>('cart', []);
+  const [coupons, setCoupons] = useLocalStorage('coupons', initialCoupons);
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
