@@ -2,6 +2,8 @@ import { Header } from './components/Header';
 import { useState, useCallback, useEffect } from 'react';
 import { initialProducts, initialCoupons } from './constants';
 import { ProductWithUI, Notification, CartItem, Coupon, Product } from './types';
+import { useCart } from './hooks/useCart';
+import { formatPrice } from './utils/formatters';
 
 const App = () => {
   const [products, setProducts] = useState<ProductWithUI[]>(() => {
@@ -66,19 +68,17 @@ const App = () => {
     discountValue: 0,
   });
 
-  const formatPrice = (price: number, productId?: string): string => {
+  const { getRemainingStock } = useCart();
+
+  // UI에 관련된 함수같다!
+  const getDisplayPrice = (price: number, productId?: string): string => {
     if (productId) {
       const product = products.find((p) => p.id === productId);
-      if (product && getRemainingStock(product) <= 0) {
+      if (product && getRemainingStock(product, cart) <= 0) {
         return 'SOLD OUT';
       }
     }
-
-    if (isAdmin) {
-      return `${price.toLocaleString()}원`;
-    }
-
-    return `₩${price.toLocaleString()}`;
+    return formatPrice(price, isAdmin);
   };
 
   const getMaxApplicableDiscount = (item: CartItem): number => {
@@ -136,12 +136,12 @@ const App = () => {
     };
   };
 
-  const getRemainingStock = (product: Product): number => {
-    const cartItem = cart.find((item) => item.product.id === product.id);
-    const remaining = product.stock - (cartItem?.quantity || 0);
+  // const getRemainingStock = (product: Product): number => {
+  //   const cartItem = cart.find((item) => item.product.id === product.id);
+  //   const remaining = product.stock - (cartItem?.quantity || 0);
 
-    return remaining;
-  };
+  //   return remaining;
+  // };
 
   const addNotification = useCallback(
     (message: string, type: 'error' | 'success' | 'warning' = 'success') => {
@@ -187,7 +187,7 @@ const App = () => {
 
   const addToCart = useCallback(
     (product: ProductWithUI) => {
-      const remainingStock = getRemainingStock(product);
+      const remainingStock = getRemainingStock(product, cart);
       if (remainingStock <= 0) {
         addNotification('재고가 부족합니다!', 'error');
         return;
@@ -499,7 +499,7 @@ const App = () => {
                             {product.name}
                           </td>
                           <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>
-                            {formatPrice(product.price, product.id)}
+                            {getDisplayPrice(product.price, product.id)}
                           </td>
                           <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>
                             <span
@@ -946,7 +946,7 @@ const App = () => {
                 ) : (
                   <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
                     {filteredProducts.map((product) => {
-                      const remainingStock = getRemainingStock(product);
+                      const remainingStock = getRemainingStock(product, cart);
 
                       return (
                         <div
@@ -994,7 +994,7 @@ const App = () => {
                             {/* 가격 정보 */}
                             <div className='mb-3'>
                               <p className='text-lg font-bold text-gray-900'>
-                                {formatPrice(product.price, product.id)}
+                                {getDisplayPrice(product.price, product.id)}
                               </p>
                               {product.discounts.length > 0 && (
                                 <p className='text-xs text-gray-500'>
