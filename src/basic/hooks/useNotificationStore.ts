@@ -13,10 +13,8 @@ export function useNotificationStore() {
     (message: string, variant: NotificationVariant = 'success') => {
       const id = Date.now().toString();
       setNotifications((prev) => [...prev, { id, message, variant }]);
-
-      setTimeout(() => removeNotification(id), 3000);
     },
-    [removeNotification]
+    []
   );
 
   return { notifications, addNotification, removeNotification };
