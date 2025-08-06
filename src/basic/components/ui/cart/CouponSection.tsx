@@ -1,20 +1,30 @@
-import { CartItem, Coupon } from "../../../../types";
+import { CartItem } from "../../../../types";
+import { CouponWithUI } from "../../../entities/coupon/coupon.types";
 
 interface CouponSectionProps {
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
-  applyCoupon: (coupon: Coupon, cart: CartItem[]) => void;
+  coupons: CouponWithUI[];
+  selectedCoupon: CouponWithUI | null;
+  onCouponSelect: (coupon: CouponWithUI | null) => void;
+  onCouponApply: (coupon: CouponWithUI, cart: CartItem[]) => void;
   cart: CartItem[];
 }
 
 export const CouponSection = ({
   coupons,
   selectedCoupon,
-  setSelectedCoupon,
-  applyCoupon,
+  onCouponSelect,
+  onCouponApply,
   cart,
 }: CouponSectionProps) => {
+  const handleCouponChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const coupon = coupons.find((c) => c.code === e.target.value);
+    if (coupon) {
+      onCouponApply(coupon, cart);
+    } else {
+      onCouponSelect(null);
+    }
+  };
+
   return (
     <section className="bg-white rounded-lg border border-gray-200 p-4">
       <div className="flex items-center justify-between mb-3">
@@ -27,11 +37,7 @@ export const CouponSection = ({
         <select
           className="w-full text-sm border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
           value={selectedCoupon?.code || ""}
-          onChange={(e) => {
-            const coupon = coupons.find((c) => c.code === e.target.value);
-            if (coupon) applyCoupon(coupon, cart);
-            else setSelectedCoupon(null);
-          }}
+          onChange={handleCouponChange}
         >
           <option value="">쿠폰 선택</option>
           {coupons.map((coupon) => (

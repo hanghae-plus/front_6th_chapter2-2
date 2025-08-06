@@ -1,25 +1,23 @@
 import { ProductWithUI } from "../entities/products/product.types";
-import { CartItem, Coupon } from "../../types";
-import { formatPrice } from "../utils/formatters";
-import { calculateRemainingStock } from "../utils/calculateRemainingStock";
-import { calculateItemTotal } from "../utils/calculateItemTotal";
+import { CartItem } from "../../types";
 import { calculateCartTotal } from "../utils/calculateCartTotal";
 import { useCouponHandlers } from "../entities/coupon/useCouponHandlers";
 import { useOrderHandlers } from "../hooks/useOrderHandlers";
-import { ProductListSection } from "../components/ui/cart/ProductListSection";
-import { CartSection } from "../components/ui/cart/CartSection";
-import { CouponSection } from "../components/ui/cart/CouponSection";
-import { PaymentSummarySection } from "../components/ui/cart/PaymentSummarySection";
+import {
+  ProductListSection,
+  CartSection,
+  CouponSection,
+  PaymentSummarySection,
+} from "../components/ui/cart";
 
 interface CartPageProps {
   products: ProductWithUI[];
   filteredProducts: ProductWithUI[];
   debouncedSearchTerm: string;
   cart: CartItem[];
-  setCart: (cart: CartItem[]) => void;
+  setCart: React.Dispatch<React.SetStateAction<CartItem[]>>;
   checkSoldOutByProductId: (productId: string) => boolean;
   isAdmin: boolean;
-  // Cart 핸들러들은 전역에서 받음
   addToCart: (product: ProductWithUI) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, newQuantity: number) => void;
@@ -82,8 +80,8 @@ export const CartPage = ({
               <CouponSection
                 coupons={coupons}
                 selectedCoupon={selectedCoupon}
-                setSelectedCoupon={setSelectedCoupon}
-                applyCoupon={applyCoupon}
+                onCouponSelect={setSelectedCoupon}
+                onCouponApply={applyCoupon}
                 cart={cart}
               />
 

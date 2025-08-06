@@ -1,5 +1,8 @@
 import { CouponWithUI } from "./coupon.types";
 
+// 고유 ID 생성을 위한 카운터
+let idCounter = 0;
+
 export const couponModel = {
   /**
    * 쿠폰 추가
@@ -13,10 +16,10 @@ export const couponModel = {
     // 이미 존재하면 그대로 반환
     if (exists) return coupons;
 
-    // 새로운 쿠폰이면 추가 (id 생성)
+    // 새로운 쿠폰이면 추가 (고유 id 생성)
     const coupon: CouponWithUI = {
       ...newCoupon,
-      id: `c${Date.now()}`, // 쿠폰 고유 아이디
+      id: `c${Date.now()}-${++idCounter}`, // 쿠폰 고유 아이디 (시간 + 카운터)
     };
 
     return [...coupons, coupon];
