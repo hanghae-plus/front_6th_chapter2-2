@@ -1,7 +1,7 @@
 import { useAtom, useAtomValue } from 'jotai';
 import { notificationsAtom } from '../atoms/notificationsAtoms';
 import { isAdminAtom } from '../atoms/uiAtoms';
-import Toast from '../../basic/components/ui/Toast';
+import Toast from './ui/Toast';
 import Header from './ui/Header';
 import AdminDashboard from './admin/AdminDashboard';
 import ShopView from './user/ShopView';
@@ -21,6 +21,7 @@ export default function AppContent() {
             return (
               <Toast
                 key={notification.id}
+                id={notification.id}
                 type={notification.type}
                 message={notification.message}
               />

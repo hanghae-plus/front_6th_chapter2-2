@@ -13,7 +13,7 @@ export const useProductForm = () => {
     discounts: [],
   });
 
-  const [editingProduct, setEditingProduct] = useState<string | null>(null);
+  const [editingProduct, setEditingProduct] = useState<string | null>('new');
 
   const handleProductSubmit = (e: React.FormEvent, onSuccess?: () => void) => {
     e.preventDefault();

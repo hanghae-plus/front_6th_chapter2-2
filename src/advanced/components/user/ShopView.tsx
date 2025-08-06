@@ -5,15 +5,17 @@ import ProductCard from '../ui/ProductCard';
 import Cart from './Cart';
 import { productsAtom } from '../../atoms/productsAtom';
 import { cartAtom } from '../../atoms/cartAtoms';
-import { debouncedSearchQueryAtom } from '../../atoms/searchAtom';
 import { useCart } from '../../hooks/cart/useCart';
+import { useSearch } from '../../hooks/search/useSearch';
 import useCheckout from '../../hooks/checkout/useCheckout';
 
 export default function ShopView() {
   // atom에서 직접 가져오기
   const products = useAtomValue(productsAtom);
   const cart = useAtomValue(cartAtom);
-  const debouncedQuery = useAtomValue(debouncedSearchQueryAtom);
+
+  // 검색 훅 사용
+  const { debouncedQuery } = useSearch();
 
   // 커스텀 훅에서 함수들 가져오기
   const { addToCart } = useCart();
