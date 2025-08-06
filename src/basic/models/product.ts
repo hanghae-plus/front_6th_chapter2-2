@@ -18,6 +18,18 @@ export const getMaxDiscountRate = (product: ProductWithUI) => {
   return Math.max(...rates)
 }
 
+export const isRemainingRange = (
+  min: number,
+  max: number,
+  remainingStock: number,
+) => {
+  return remainingStock <= max && remainingStock > min
+}
+
+export const isOutOfStock = (remainingStock: number) => {
+  return remainingStock <= 0
+}
+
 export const getFilteredProducts = (
   searchTerm: string,
   products: ProductWithUI[],

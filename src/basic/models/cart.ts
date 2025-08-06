@@ -16,6 +16,7 @@
 
 import { CartItem, Coupon, Product } from '../../types'
 import { ProductWithUI } from '../types'
+import { calculateDiscountedTotal } from './coupon'
 // TODO: 구현
 
 export const getRemainingStock = (
@@ -73,16 +74,7 @@ export const calculateCartTotal = (
   })
 
   if (coupon) {
-    if (coupon.discountType === 'amount') {
-      totalAfterDiscount = Math.max(
-        0,
-        totalAfterDiscount - coupon.discountValue,
-      )
-    } else {
-      totalAfterDiscount = Math.round(
-        totalAfterDiscount * (1 - coupon.discountValue / 100),
-      )
-    }
+    totalAfterDiscount = calculateDiscountedTotal(totalAfterDiscount, coupon)
   }
 
   return {
