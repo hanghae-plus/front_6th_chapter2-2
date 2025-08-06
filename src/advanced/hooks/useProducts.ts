@@ -1,19 +1,16 @@
 import { useCallback, useState, useMemo } from "react";
-import { useSetAtom } from "jotai";
+import { useSetAtom, useAtom } from "jotai";
 import { ProductWithUI } from "../types";
-import { INITIAL_PRODUCTS } from "../constants";
 import { SEARCH_DEBOUNCE_DELAY } from "../constants/system";
-import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 import { useDebounce } from "../utils/hooks/useDebounce";
-import { addNotificationAtom } from "../atoms";
+import { addNotificationAtom, productsAtom } from "../atoms";
 
 export function useProducts() {
   // ========== 알림 관리 (Jotai) ==========
   const addNotification = useSetAtom(addNotificationAtom);
-  const [products, setProducts] = useLocalStorage<ProductWithUI[]>(
-    "products",
-    INITIAL_PRODUCTS
-  );
+  
+  // ========== 상품 상태 (Jotai) ==========
+  const [products, setProducts] = useAtom(productsAtom);
 
   // ========== 검색 상태 ==========
   const [searchTerm, setSearchTerm] = useState("");

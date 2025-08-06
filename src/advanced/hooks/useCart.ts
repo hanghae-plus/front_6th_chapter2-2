@@ -16,6 +16,7 @@ import {
   couponsAtom,
   selectedCouponAtom,
   totalItemCountAtom,
+  productsAtom,
 } from "../atoms";
 
 // 장바구니 + 쿠폰 통합 관리 훅
@@ -29,6 +30,9 @@ export function useCart() {
   // ========== 쿠폰 상태 (Jotai) ==========
   const [coupons, setCoupons] = useAtom(couponsAtom);
   const [selectedCoupon, setSelectedCoupon] = useAtom(selectedCouponAtom);
+  
+  // ========== 상품 상태 (Jotai) ==========
+  const products = useAtomValue(productsAtom);
 
   // ========== 계산된 값들 (useMemo로 최적화) ==========
   const cartTotal = useMemo(() => {
@@ -79,22 +83,25 @@ export function useCart() {
   );
 
   const updateQuantity = useCallback(
-    (productId: string, newQuantity: number, products?: Product[]) => {
-      if (newQuantity <= 0) {
-        removeFromCart(productId);
-        return;
-      }
-
-      const product = products?.find((p) => p.id === productId);
-      if (!product) return;
-
+    (productId: string, newQuantity: number) => {
       setCart((prevCart) => {
-        // prevCart로 검증
+        // 수량이 0 이하면 아이템 제거
+        if (newQuantity <= 0) {
+          return cartModel.removeItemFromCart(prevCart, productId);
+        }
+
+        // 상품 찾기
+        const product = products.find((p) => p.id === productId);
+        if (!product) return prevCart;
+
+        // 재고 검증
         const validation = validateCartStock(product, newQuantity, prevCart);
         if (validation.errorMessage) {
           addNotification(validation.errorMessage, "error");
           return prevCart; // 기존 상태 유지
         }
+        
+        // 수량 업데이트
         return cartModel.updateCartItemQuantity(
           prevCart,
           productId,
@@ -102,7 +109,7 @@ export function useCart() {
         );
       });
     },
-    [setCart, removeFromCart, addNotification]
+    [products, setCart, addNotification]
   );
 
   const completeOrder = useCallback(() => {

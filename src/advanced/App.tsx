@@ -83,9 +83,7 @@ const App = () => {
             selectedCoupon={selectedCoupon}
             totals={cartTotal}
             onRemoveFromCart={removeFromCart}
-            onUpdateQuantity={(productId: string, newQuantity: number) =>
-              updateQuantity(productId, newQuantity, products)
-            }
+            onUpdateQuantity={updateQuantity}
             onApplyCoupon={applyCoupon}
             onCompleteOrder={completeOrder}
             calculateItemTotal={calculateItemTotal}
