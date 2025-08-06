@@ -1,9 +1,9 @@
-import { useState } from "react";
 import { ProductWithUI } from "../../hooks/useProducts";
 import ProductManagement from "../../components/admin/ProductManagement";
 import CouponManagement from "../../components/admin/CouponManagement";
+import { Tabs } from "../../components/ui/tabs";
 import { ADMIN_TABS } from "../../types/admin";
-import type { AdminTab, Coupon, CouponFormState, ProductFormState, NotificationType } from "../../types/admin";
+import type { Coupon, CouponFormState, ProductFormState, NotificationType } from "../../types/admin";
 
 interface AdminPageProps {
   // 상품 관련
@@ -54,76 +54,52 @@ export default function AdminPage({
   setCouponForm,
   onCouponSubmit,
 }: AdminPageProps) {
-  const [activeTab, setActiveTab] = useState<AdminTab>(ADMIN_TABS.PRODUCTS);
-
   return (
     <div className="max-w-6xl mx-auto">
       {/* 대시보드 헤더 */}
-      <AdminDashboardHeader title="관리자 대시보드" description="상품과 쿠폰을 관리할 수 있습니다" />
-
-      {/* 탭 네비게이션 */}
-      <div className="border-b border-gray-200 mb-6">
-        <nav className="-mb-px flex space-x-8">
-          <button
-            onClick={() => setActiveTab(ADMIN_TABS.PRODUCTS)}
-            className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === ADMIN_TABS.PRODUCTS
-                ? "border-gray-900 text-gray-900"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-            }`}
-          >
-            상품 관리
-          </button>
-          <button
-            onClick={() => setActiveTab(ADMIN_TABS.COUPONS)}
-            className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === ADMIN_TABS.COUPONS
-                ? "border-gray-900 text-gray-900"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-            }`}
-          >
-            쿠폰 관리
-          </button>
-        </nav>
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-gray-900">관리자 대시보드</h1>
+        <p className="text-gray-600 mt-1">상품과 쿠폰을 관리할 수 있습니다</p>
       </div>
 
-      {/* 탭 콘텐츠 */}
-      {activeTab === ADMIN_TABS.PRODUCTS ? (
-        <ProductManagement
-          products={products}
-          formatPriceWithAdmin={formatPriceWithAdmin}
-          onEditProduct={onEditProduct}
-          onDeleteProduct={onDeleteProduct}
-          onAddProduct={onAddProduct}
-          showProductForm={showProductForm}
-          productForm={productForm}
-          setProductForm={setProductForm}
-          editingProduct={editingProduct}
-          onProductSubmit={onProductSubmit}
-          onCancelProductForm={onCancelProductForm}
-          addNotification={addNotification}
-        />
-      ) : (
-        <CouponManagement
-          coupons={coupons}
-          onDeleteCoupon={onDeleteCoupon}
-          showCouponForm={showCouponForm}
-          setShowCouponForm={setShowCouponForm}
-          couponForm={couponForm}
-          setCouponForm={setCouponForm}
-          onCouponSubmit={onCouponSubmit}
-          addNotification={addNotification}
-        />
-      )}
+      <Tabs defaultValue={ADMIN_TABS.PRODUCTS}>
+        <Tabs.List>
+          <Tabs.Trigger value={ADMIN_TABS.PRODUCTS}>상품 관리</Tabs.Trigger>
+          <Tabs.Trigger value={ADMIN_TABS.COUPONS}>쿠폰 관리</Tabs.Trigger>
+        </Tabs.List>
+
+        <Tabs.Content>
+          <Tabs.Panel value={ADMIN_TABS.PRODUCTS}>
+            <ProductManagement
+              products={products}
+              formatPriceWithAdmin={formatPriceWithAdmin}
+              onEditProduct={onEditProduct}
+              onDeleteProduct={onDeleteProduct}
+              onAddProduct={onAddProduct}
+              showProductForm={showProductForm}
+              productForm={productForm}
+              setProductForm={setProductForm}
+              editingProduct={editingProduct}
+              onProductSubmit={onProductSubmit}
+              onCancelProductForm={onCancelProductForm}
+              addNotification={addNotification}
+            />
+          </Tabs.Panel>
+
+          <Tabs.Panel value={ADMIN_TABS.COUPONS}>
+            <CouponManagement
+              coupons={coupons}
+              onDeleteCoupon={onDeleteCoupon}
+              showCouponForm={showCouponForm}
+              setShowCouponForm={setShowCouponForm}
+              couponForm={couponForm}
+              setCouponForm={setCouponForm}
+              onCouponSubmit={onCouponSubmit}
+              addNotification={addNotification}
+            />
+          </Tabs.Panel>
+        </Tabs.Content>
+      </Tabs>
     </div>
   );
 }
-
-const AdminDashboardHeader = ({ title, description }: { title: string; description: string }) => {
-  return (
-    <div className="mb-8">
-      <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
-      <p className="text-gray-600 mt-1">{description}</p>
-    </div>
-  );
-};
