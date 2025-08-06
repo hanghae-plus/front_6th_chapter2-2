@@ -1,4 +1,4 @@
-import { formatPrice } from '../../utils/product';
+import { formatPrice } from '../../utils/formatters';
 
 export const ProductItem = ({ product, remainingStock, addToCart }) => {
   return (

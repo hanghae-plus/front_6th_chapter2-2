@@ -17,7 +17,7 @@
 
 import { useState } from 'react';
 import { Product } from '../../types';
-import { formatPrice } from '../utils/product';
+import { formatPrice } from '../utils/formatters';
 
 interface ProductWithUI extends Product {
   description?: string;
