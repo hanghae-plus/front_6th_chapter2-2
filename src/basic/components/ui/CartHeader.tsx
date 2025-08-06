@@ -4,12 +4,17 @@ import { Icon } from '../icons';
 
 interface CartHeaderProps {
   searchTerm: string;
-  onChangeSearchTerm: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  setIsAdmin: (isAdmin: boolean) => void;
   cart: CartItem[];
+  onChangeSearchTerm: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChangeAdminPage: () => void;
 }
 
-export function CartHeader({ searchTerm, onChangeSearchTerm, setIsAdmin, cart }: CartHeaderProps) {
+export function CartHeader({
+  searchTerm,
+  cart,
+  onChangeSearchTerm,
+  onChangeAdminPage,
+}: CartHeaderProps) {
   const hasProductsInCart = cart.length > 0;
   const totalItemCount = calculateItemTotalQuantity(cart);
 
@@ -31,7 +36,7 @@ export function CartHeader({ searchTerm, onChangeSearchTerm, setIsAdmin, cart }:
           </div>
           <nav className='flex items-center space-x-4'>
             <button
-              onClick={() => setIsAdmin(true)}
+              onClick={onChangeAdminPage}
               className='px-3 py-1.5 text-sm rounded transition-colors text-gray-600 hover:text-gray-900'
             >
               관리자 페이지로

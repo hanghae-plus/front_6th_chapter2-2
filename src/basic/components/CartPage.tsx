@@ -11,7 +11,7 @@ import { useCartService } from '../hooks/useCartService';
 import { useDebouncedSearch } from '../hooks/useDebouncedSearch';
 
 interface CartPageProps {
-  setIsAdmin: (isAdmin: boolean) => void;
+  onChangeAdminPage: () => void;
 
   products: ProductWithUI[];
 
@@ -24,7 +24,7 @@ interface CartPageProps {
 }
 
 export function CartPage({
-  setIsAdmin,
+  onChangeAdminPage,
 
   products,
 
@@ -48,9 +48,9 @@ export function CartPage({
     <>
       <CartHeader
         searchTerm={searchTerm}
-        onChangeSearchTerm={handleChangeSearchTerm}
-        setIsAdmin={setIsAdmin}
         cart={cart}
+        onChangeSearchTerm={handleChangeSearchTerm}
+        onChangeAdminPage={onChangeAdminPage}
       />
 
       <main className='max-w-7xl mx-auto px-4 py-8'>

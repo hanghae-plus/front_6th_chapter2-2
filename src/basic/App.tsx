@@ -32,7 +32,7 @@ const App = () => {
 
       {isAdmin ? (
         <AdminPage
-          setIsAdmin={setIsAdmin}
+          onChangeCartPage={() => setIsAdmin(false)}
           // products
           products={products}
           onAddProduct={onAddProduct}
@@ -47,7 +47,7 @@ const App = () => {
         />
       ) : (
         <CartPage
-          setIsAdmin={setIsAdmin}
+          onChangeAdminPage={() => setIsAdmin(true)}
           // products
           products={products}
           // coupons

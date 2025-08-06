@@ -8,7 +8,7 @@ import { ProductTab } from './ui/ProductTab';
 import { TabNavigation } from './ui/TabNavigation';
 
 interface AdminPageProps {
-  setIsAdmin: (isAdmin: boolean) => void;
+  onChangeCartPage: () => void;
 
   products: ProductWithUI[];
   onAddProduct: (newProduct: Omit<ProductWithUI, 'id'>) => void;
@@ -23,7 +23,7 @@ interface AdminPageProps {
 }
 
 export function AdminPage({
-  setIsAdmin,
+  onChangeCartPage,
 
   products,
   onAddProduct,
@@ -40,7 +40,7 @@ export function AdminPage({
 
   return (
     <>
-      <AdminHeader onBackShop={() => setIsAdmin(false)} />
+      <AdminHeader onBackShop={onChangeCartPage} />
 
       <main className='max-w-7xl mx-auto px-4 py-8'>
         <div className='max-w-6xl mx-auto'>
