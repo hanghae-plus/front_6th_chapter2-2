@@ -6,8 +6,8 @@ import { useCart } from "./hooks/useCart.ts";
 import { useCoupons } from "./hooks/useCoupons.ts";
 import { useNotification } from "./hooks/useNotification.ts";
 import { useProducts } from "./hooks/useProducts.ts";
-import PageAdmin from "./PageAdmin.tsx";
-import PageCart from "./PageCart.tsx";
+import PageAdmin from "./pages/admin/PageAdmin.tsx";
+import PageCart from "./pages/cart/PageCart.tsx";
 
 const App = () => {
   const { products, setProducts } = useProducts();

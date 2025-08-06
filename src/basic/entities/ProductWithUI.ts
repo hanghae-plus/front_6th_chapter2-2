@@ -1,4 +1,4 @@
-import { Product } from '../types.ts';
+import { Product } from '../../types.ts';
 
 export interface ProductWithUI extends Product {
   description?: string;

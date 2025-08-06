@@ -1,5 +1,5 @@
 import { initialProducts } from "../data/products";
-import type { ProductWithUI } from "../ProductWithUI";
+import type { ProductWithUI } from "../entities/ProductWithUI.ts";
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 
 export function useProducts() {

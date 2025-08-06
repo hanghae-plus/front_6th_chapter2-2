@@ -1,16 +1,16 @@
-import { CartItem, Coupon, Product } from "../types.ts";
+import { CartItem, Coupon } from '../../../types.ts';
 import {
   addItemToCart,
   calculateCartTotal,
   calculateItemTotalWithBulkPurchase,
   canAddToCart,
   removeItemFromCart,
-  updateCartItemQuantity,
-} from "./entities/CartItem.ts";
-import { getRemainingStock } from "./entities/Product.ts";
+  updateCartItemQuantity
+} from '../../entities/CartItem.ts';
+import { getRemainingStock } from '../../entities/Product.ts';
 
-import { ProductWithUI } from "./ProductWithUI.tsx";
-import { useCallback } from "react";
+import { ProductWithUI } from '../../entities/ProductWithUI.ts';
+import { useCallback } from 'react';
 
 interface PageCartProps {
   products: ProductWithUI[];

@@ -1,6 +1,6 @@
-import { Coupon } from "../types.ts";
+import { Coupon } from "../../../types.ts";
 import { useCallback, useState } from "react";
-import { ProductWithUI } from "./ProductWithUI.tsx";
+import { ProductWithUI } from "../../entities/ProductWithUI.ts";
 
 interface PageAdminProps {
   products: ProductWithUI[];
