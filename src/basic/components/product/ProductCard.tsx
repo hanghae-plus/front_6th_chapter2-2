@@ -1,10 +1,10 @@
-import { ProductWithUI } from "../../hooks/useProducts";
+import { Product } from "../../../types";
 import { formatPrice } from "../../utils/formatters";
 
 interface ProductCardProps {
-  product: ProductWithUI;
-  getRemainingStock: (product: ProductWithUI) => number;
-  addToCart: (product: ProductWithUI) => void;
+  product: Product;
+  getRemainingStock: (product: Product) => number;
+  addToCart: (product: Product) => void;
 }
 
 export const ProductCard = ({ product, getRemainingStock, addToCart }: ProductCardProps) => {
@@ -19,7 +19,7 @@ export const ProductCard = ({ product, getRemainingStock, addToCart }: ProductCa
 };
 
 // 상품 이미지 컴포넌트
-const ProductImage = ({ product }: { product: ProductWithUI }) => (
+const ProductImage = ({ product }: { product: Product }) => (
   <div className="relative">
     <div className="aspect-square bg-gray-100 flex items-center justify-center">
       <svg className="w-24 h-24 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -36,7 +36,7 @@ const ProductImage = ({ product }: { product: ProductWithUI }) => (
 );
 
 // 상품 배지 컴포넌트
-const ProductBadges = ({ product }: { product: ProductWithUI }) => (
+const ProductBadges = ({ product }: { product: Product }) => (
   <>
     {product.isRecommended && (
       <span className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">BEST</span>
@@ -55,9 +55,9 @@ const ProductInfo = ({
   remainingStock,
   addToCart,
 }: {
-  product: ProductWithUI;
+  product: Product;
   remainingStock: number;
-  addToCart: (product: ProductWithUI) => void;
+  addToCart: (product: Product) => void;
 }) => (
   <div className="p-4">
     <ProductHeader product={product} />
@@ -68,7 +68,7 @@ const ProductInfo = ({
 );
 
 // 상품 헤더 (이름, 설명)
-const ProductHeader = ({ product }: { product: ProductWithUI }) => (
+const ProductHeader = ({ product }: { product: Product }) => (
   <>
     <h3 className="font-medium text-gray-900 mb-1">{product.name}</h3>
     {product.description && <p className="text-sm text-gray-500 mb-2 line-clamp-2">{product.description}</p>}
@@ -76,7 +76,7 @@ const ProductHeader = ({ product }: { product: ProductWithUI }) => (
 );
 
 // 상품 가격 정보
-const ProductPrice = ({ product }: { product: ProductWithUI }) => (
+const ProductPrice = ({ product }: { product: Product }) => (
   <div className="mb-3">
     <p className="text-lg font-bold text-gray-900">{formatPrice(product.price)}</p>
     {product.discounts.length > 0 && (
@@ -103,9 +103,9 @@ const ProductAction = ({
   remainingStock,
   addToCart,
 }: {
-  product: ProductWithUI;
+  product: Product;
   remainingStock: number;
-  addToCart: (product: ProductWithUI) => void;
+  addToCart: (product: Product) => void;
 }) => (
   <button
     onClick={() => addToCart(product)}

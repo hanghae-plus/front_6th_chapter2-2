@@ -1,14 +1,14 @@
-import { ProductWithUI } from "../../hooks/useProducts";
+import { Product } from "../../../types";
 import { ProductCard } from "./ProductCard";
 
 interface ProductListProps {
-  products: ProductWithUI[];
+  products: Product[];
   searchInfo: {
     isSearching: boolean;
     searchTerm: string;
   };
-  getRemainingStock: (product: ProductWithUI) => number;
-  addToCart: (product: ProductWithUI) => void;
+  getRemainingStock: (product: Product) => number;
+  addToCart: (product: Product) => void;
 }
 
 export const ProductList = ({ products, searchInfo, getRemainingStock, addToCart }: ProductListProps) => {

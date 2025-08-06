@@ -15,7 +15,10 @@ import { Header } from "./components/ui/header/Header";
 import { Notification } from "./components/ui/notification/Notification";
 import { ProductList } from "./components/product/ProductList";
 
+// pages
 import AdminPage from "./pages/Admin/AdminPage";
+
+// type
 import { Product } from "../types";
 
 const App = () => {
