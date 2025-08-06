@@ -21,24 +21,11 @@ import {
   validateCouponApplication,
   validateCouponCode,
 } from './utils';
-import { useLocalStorage, useNotifications } from './hooks';
+import { useCart, useLocalStorage, useNotifications } from './hooks';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
-  const [cart, setCart] = useLocalStorage<CartItem[]>('cart', []);
   const { notifications, addNotification, removeNotification } = useNotifications();
-  const {
-    coupons,
-    setCoupons,
-    selectedCoupon,
-    setSelectedCoupon,
-    showCouponForm,
-    setShowCouponForm,
-    couponForm,
-    setCouponForm,
-  } = useCoupons();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const {
     products,
     setProducts,
@@ -49,6 +36,23 @@ const App = () => {
     setEditingProduct,
     setProductForm,
   } = useProducts();
+  const {
+    coupons,
+    setCoupons,
+    selectedCoupon,
+    setSelectedCoupon,
+    showCouponForm,
+    setShowCouponForm,
+    couponForm,
+    setCouponForm,
+  } = useCoupons();
+  const { cart, addToCart, removeFromCart, updateQuantity, completeOrder, getStock } = useCart({
+    products,
+    addNotification,
+    setSelectedCoupon,
+  });
+  const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
   const formatPrice = useCallback(
     (price: number, productId?: string): string => {
@@ -79,13 +83,6 @@ const App = () => {
     return calculateCartTotal(cart, selectedCoupon);
   }, [cart, selectedCoupon]);
 
-  const getStock = useCallback(
-    (product: Product): number => {
-      return getRemainingStock(product, cart);
-    },
-    [cart]
-  );
-
   const [totalItemCount, setTotalItemCount] = useState(0);
 
   useEffect(() => {
@@ -99,67 +96,6 @@ const App = () => {
     }, 500);
     return () => clearTimeout(timer);
   }, [searchTerm]);
-
-  const addToCart = useCallback(
-    (product: ProductWithUI) => {
-      const remainingStock = getStock(product);
-      if (remainingStock <= 0) {
-        addNotification('재고가 부족합니다!', 'error');
-        return;
-      }
-
-      setCart((prevCart) => {
-        const existingItem = prevCart.find((item) => item.product.id === product.id);
-
-        if (existingItem) {
-          const newQuantity = existingItem.quantity + 1;
-
-          if (newQuantity > product.stock) {
-            addNotification(`재고는 ${product.stock}개까지만 있습니다.`, 'error');
-            return prevCart;
-          }
-
-          return prevCart.map((item) =>
-            item.product.id === product.id ? { ...item, quantity: newQuantity } : item
-          );
-        }
-
-        return [...prevCart, { product, quantity: 1 }];
-      });
-
-      addNotification('장바구니에 담았습니다', 'success');
-    },
-    [getStock, addNotification]
-  );
-
-  const removeFromCart = useCallback((productId: string) => {
-    setCart((prevCart) => prevCart.filter((item) => item.product.id !== productId));
-  }, []);
-
-  const updateQuantity = useCallback(
-    (productId: string, newQuantity: number) => {
-      if (newQuantity <= 0) {
-        removeFromCart(productId);
-        return;
-      }
-
-      const product = products.find((p) => p.id === productId);
-      if (!product) return;
-
-      const maxStock = product.stock;
-      if (newQuantity > maxStock) {
-        addNotification(`재고는 ${maxStock}개까지만 있습니다.`, 'error');
-        return;
-      }
-
-      setCart((prevCart) =>
-        prevCart.map((item) =>
-          item.product.id === productId ? { ...item, quantity: newQuantity } : item
-        )
-      );
-    },
-    [products, removeFromCart, addNotification]
-  );
 
   const applyCoupon = useCallback(
     (coupon: Coupon) => {
@@ -176,13 +112,6 @@ const App = () => {
     },
     [addNotification, getCartTotal]
   );
-
-  const completeOrder = useCallback(() => {
-    const orderNumber = `ORD-${Date.now()}`;
-    addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
-    setCart([]);
-    setSelectedCoupon(null);
-  }, [addNotification]);
 
   const addProduct = useCallback(
     (newProduct: Omit<ProductWithUI, 'id'>) => {
