@@ -35,11 +35,9 @@ export function useProductForm({ onAddProduct, onUpdateProduct }: UseProductForm
   };
 
   const handleShowProductForm = () => {
-    () => {
-      setEditingProduct('new');
-      resetProductFormData();
-      setShowProductForm(true);
-    };
+    setEditingProduct('new');
+    resetProductFormData();
+    setShowProductForm(true);
   };
 
   const handleCancelProductForm = () => {
