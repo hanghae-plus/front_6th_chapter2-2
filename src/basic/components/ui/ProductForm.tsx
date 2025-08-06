@@ -1,4 +1,11 @@
 import type { NotificationVariant, ProductWithUI } from '../../constants';
+import {
+  isEmptyValue,
+  isNumber,
+  isValidMaximumStock,
+  isValidMinimumStock,
+  isValidPrice,
+} from '../../utils/validators';
 import { Icon } from '../icons';
 
 interface ProductFormProps {
@@ -57,15 +64,15 @@ export function ProductForm({
               value={form.price === 0 ? '' : form.price}
               onChange={(e) => {
                 const { value } = e.target;
-                if (value === '' || /^\d+$/.test(value)) {
-                  updateForm({ price: value === '' ? 0 : parseInt(value) });
+                if (isEmptyValue(value) || isNumber(value)) {
+                  updateForm({ price: isEmptyValue(value) ? 0 : parseInt(value) });
                 }
               }}
               onBlur={(e) => {
                 const { value } = e.target;
-                if (value === '') {
+                if (isEmptyValue(value)) {
                   updateForm({ price: 0 });
-                } else if (parseInt(value) < 0) {
+                } else if (!isValidPrice(parseInt(value))) {
                   onAddNotification('가격은 0보다 커야 합니다', 'error');
                   updateForm({ price: 0 });
                 }
@@ -82,18 +89,18 @@ export function ProductForm({
               value={form.stock === 0 ? '' : form.stock}
               onChange={(e) => {
                 const { value } = e.target;
-                if (value === '' || /^\d+$/.test(value)) {
-                  updateForm({ stock: value === '' ? 0 : parseInt(value) });
+                if (isEmptyValue(value) || isNumber(value)) {
+                  updateForm({ stock: isEmptyValue(value) ? 0 : parseInt(value) });
                 }
               }}
               onBlur={(e) => {
                 const { value } = e.target;
-                if (value === '') {
+                if (isEmptyValue(value)) {
                   updateForm({ stock: 0 });
-                } else if (parseInt(value) < 0) {
+                } else if (!isValidMinimumStock(parseInt(value))) {
                   onAddNotification('재고는 0보다 커야 합니다', 'error');
                   updateForm({ stock: 0 });
-                } else if (parseInt(value) > 9999) {
+                } else if (!isValidMaximumStock(parseInt(value))) {
                   onAddNotification('재고는 9999개를 초과할 수 없습니다', 'error');
                   updateForm({ stock: 9999 });
                 }

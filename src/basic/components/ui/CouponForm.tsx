@@ -1,5 +1,6 @@
 import type { Coupon } from '../../../types';
 import type { NotificationVariant } from '../../constants';
+import { isEmptyValue, isNumber } from '../../utils/validators';
 
 interface CouponFormProps {
   isOpen: boolean;
@@ -69,8 +70,8 @@ export function CouponForm({
               value={form.discountValue === 0 ? '' : form.discountValue}
               onChange={(e) => {
                 const { value } = e.target;
-                if (value === '' || /^\d+$/.test(value)) {
-                  updateForm({ discountValue: value === '' ? 0 : parseInt(value) });
+                if (isEmptyValue(value) || isNumber(value)) {
+                  updateForm({ discountValue: isEmptyValue(value) ? 0 : parseInt(value) });
                 }
               }}
               onBlur={(e) => {

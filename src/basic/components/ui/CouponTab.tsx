@@ -27,6 +27,7 @@ export function CouponTab({
     handleHideCouponForm,
   } = useCouponForm({
     onAddCoupon,
+    onAddNotification,
   });
 
   return (
