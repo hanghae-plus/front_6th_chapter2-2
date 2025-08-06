@@ -1,0 +1,3 @@
+const AdminPage = () => {};
+
+export { AdminPage };
