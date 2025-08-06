@@ -8,7 +8,7 @@ import { ProductForm } from './ui/ProductForm';
 import { TabNavigation } from './ui/TabNavigation';
 import { initialProductForm, type ProductForm as ProductFormType } from '../models/product';
 import { CouponList } from './ui/CouponList';
-import { type CouponForm as CouponFormType, initialCouponForm } from '../models/coupon';
+import { initialCouponForm } from '../models/coupon';
 import { CouponAddButton } from './ui/CouponAddButton';
 import { CouponForm } from './ui/CouponForm';
 import { useForm } from '../utils/hooks/useForm';
@@ -22,7 +22,9 @@ interface AdminPageProps {
   onDeleteProduct: (productId: string) => void;
 
   coupons: Coupon[];
-  setCoupons: React.Dispatch<React.SetStateAction<Coupon[]>>;
+  onAddCoupon: (newCoupon: Coupon) => void;
+  onDeleteCoupon: (couponCode: string) => void;
+
   selectedCoupon: Coupon | null;
   setSelectedCoupon: (coupon: Coupon | null) => void;
 
@@ -38,7 +40,9 @@ export function AdminPage({
   onDeleteProduct,
 
   coupons,
-  setCoupons,
+  onAddCoupon,
+  onDeleteCoupon,
+
   selectedCoupon,
   setSelectedCoupon,
 
@@ -54,7 +58,7 @@ export function AdminPage({
 
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [couponFormData, updateCouponFormData, resetCouponFormData] =
-    useForm<CouponFormType>(initialCouponForm);
+    useForm<Coupon>(initialCouponForm);
 
   const startEditProduct = (product: ProductWithUI) => {
     setEditingProduct(product.id);
@@ -113,21 +117,21 @@ export function AdminPage({
         onAddNotification('이미 존재하는 쿠폰 코드입니다.', 'error');
         return;
       }
-      setCoupons((prev) => [...prev, newCoupon]);
+      onAddCoupon(newCoupon);
       onAddNotification('쿠폰이 추가되었습니다.', 'success');
     },
-    [coupons, onAddNotification]
+    [coupons, onAddCoupon, onAddNotification]
   );
 
   const deleteCoupon = useCallback(
     (couponCode: string) => {
-      setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
+      onDeleteCoupon(couponCode);
       if (selectedCoupon?.code === couponCode) {
         setSelectedCoupon(null);
       }
       onAddNotification('쿠폰이 삭제되었습니다.', 'success');
     },
-    [selectedCoupon, onAddNotification]
+    [selectedCoupon, onAddNotification, onDeleteCoupon]
   );
 
   return (

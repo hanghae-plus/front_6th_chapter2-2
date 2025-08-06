@@ -4,16 +4,14 @@ import type { Coupon } from '../types';
 import { AdminPage } from './components/AdminPage';
 import { CartPage } from './components/CartPage';
 import { Notifications } from './components/ui/Notifications';
-import { initialCoupons } from './constants';
+import { useCouponStore } from './hooks/useCouponStore';
 import { useNotificationStore } from './hooks/useNotificationStore';
 import { useProductStore } from './hooks/useProductStore';
-import { useLocalStorage } from './utils/hooks/useLocalStorage';
 
 const App = () => {
   const { products, addProduct, updateProduct, deleteProduct } = useProductStore();
+  const { coupons, addCoupon, deleteCoupon } = useCouponStore();
   const { notifications, addNotification, removeNotification } = useNotificationStore();
-
-  const [coupons, setCoupons] = useLocalStorage<Coupon[]>('coupons', initialCoupons);
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
@@ -32,7 +30,8 @@ const App = () => {
           onDeleteProduct={deleteProduct}
           // coupons
           coupons={coupons}
-          setCoupons={setCoupons}
+          onAddCoupon={addCoupon}
+          onDeleteCoupon={deleteCoupon}
           // selectedCoupon
           selectedCoupon={selectedCoupon}
           setSelectedCoupon={setSelectedCoupon}
