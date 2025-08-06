@@ -1,25 +1,14 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
+import { useAtom, useSetAtom } from 'jotai';
 import { CartItem, Coupon } from '../../../types';
-import { initialCoupons } from '../../data/mockCoupons';
 import { calculateCartTotal } from '../../utils/calculations/cartCalculations';
+import { couponsAtom, selectedCouponAtom } from '../../atoms/couponsAtom';
+import { addNotificationAtom } from '../../atoms/notificationsAtoms';
 
-export const useCoupons = (
-  onSuccess?: (message: string) => void,
-  onError?: (message: string) => void,
-) => {
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem('coupons');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialCoupons;
-      }
-    }
-    return initialCoupons;
-  });
-
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+export const useCoupons = () => {
+  const [coupons, setCoupons] = useAtom(couponsAtom);
+  const [selectedCoupon, setSelectedCoupon] = useAtom(selectedCouponAtom);
+  const addNotification = useSetAtom(addNotificationAtom);
 
   // 쿠폰 사용하기
   const applyCoupon = useCallback(
@@ -27,20 +16,21 @@ export const useCoupons = (
       const currentTotal = calculateCartTotal(cart, selectedCoupon).totalAfterDiscount;
 
       if (currentTotal < 10000 && coupon.discountType === 'percentage') {
-        onError?.('percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.');
+        addNotification({
+          message: 'percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.',
+          type: 'error',
+        });
         return;
       }
 
       setSelectedCoupon(coupon);
-      onSuccess?.('쿠폰이 적용되었습니다.');
+      addNotification({
+        message: '쿠폰이 적용되었습니다.',
+        type: 'success',
+      });
     },
-    [onSuccess, onError],
+    [selectedCoupon, setSelectedCoupon, addNotification],
   );
-
-  // 쿠폰 변화 감지하여 로컬 스토리지 업데이트
-  useEffect(() => {
-    localStorage.setItem('coupons', JSON.stringify(coupons));
-  }, [coupons]);
 
   return {
     coupons,

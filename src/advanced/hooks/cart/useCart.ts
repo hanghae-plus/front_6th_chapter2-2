@@ -1,5 +1,4 @@
-import { Notification } from './../../../types';
-import { addNotificationAtom, notificationsAtom } from './../../atoms/notificationsAtoms';
+import { addNotificationAtom } from './../../atoms/notificationsAtoms';
 import { useCallback } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { ProductWithUI } from '../../../types';
