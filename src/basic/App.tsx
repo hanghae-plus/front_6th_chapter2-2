@@ -1,78 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { CartItem, Coupon, Product } from '../types';
-
-/**
- * @interface ProductWithUI
- * @extends {Product}
- * @property {string} description - 상품 설명
- * @property {boolean} isRecommended - 추천 상품 여부
- */
-interface ProductWithUI extends Product {
-  description?: string;
-  isRecommended?: boolean;
-}
-
-/**
- * @interface Notification
- * @property {string} id - 알림 메시지 ID
- * @property {string} message - 알림 메시지 내용
- * @property {'error' | 'success' | 'warning'} type - 알림 메시지 타입
- */
-interface Notification {
-  id: string;
-  message: string;
-  type: 'error' | 'success' | 'warning';
-}
-
-// 초기 데이터
-const initialProducts: ProductWithUI[] = [
-  {
-    id: 'p1',
-    name: '상품1',
-    price: 10000,
-    stock: 20,
-    discounts: [
-      { quantity: 10, rate: 0.1 },
-      { quantity: 20, rate: 0.2 },
-    ],
-    description: '최고급 품질의 프리미엄 상품입니다.',
-  },
-  {
-    id: 'p2',
-    name: '상품2',
-    price: 20000,
-    stock: 20,
-    discounts: [{ quantity: 10, rate: 0.15 }],
-    description: '다양한 기능을 갖춘 실용적인 상품입니다.',
-    isRecommended: true,
-  },
-  {
-    id: 'p3',
-    name: '상품3',
-    price: 30000,
-    stock: 20,
-    discounts: [
-      { quantity: 10, rate: 0.2 },
-      { quantity: 30, rate: 0.25 },
-    ],
-    description: '대용량과 고성능을 자랑하는 상품입니다.',
-  },
-];
-
-const initialCoupons: Coupon[] = [
-  {
-    name: '5000원 할인',
-    code: 'AMOUNT5000',
-    discountType: 'amount',
-    discountValue: 5000,
-  },
-  {
-    name: '10% 할인',
-    code: 'PERCENT10',
-    discountType: 'percentage',
-    discountValue: 10,
-  },
-];
+import { initialProducts, initialCoupons } from './shared/constants';
+import { ProductWithUI, Notification } from './shared/types';
 
 /**
  * 수량 기반 할인 계산
@@ -196,7 +125,7 @@ const calculateCartTotal = (
  * @returns 상품이 제거된 새로운 장바구니
  */
 const removeCartItem = (cart: CartItem[], productId: string): CartItem[] => {
-  return cart.filter(item => item.product.id !== productId);
+  return cart.filter((item) => item.product.id !== productId);
 };
 
 /**
@@ -206,22 +135,14 @@ const removeCartItem = (cart: CartItem[], productId: string): CartItem[] => {
  * @param newQuantity - 새로운 수량
  * @returns 수량이 업데이트된 새로운 장바구니
  */
-const updateCartItemQuantity = (
-  cart: CartItem[],
-  productId: string,
-  newQuantity: number
-): CartItem[] => {
-  return cart.map(item =>
-    item.product.id === productId
-      ? { ...item, quantity: newQuantity }
-      : item
-  );
+const updateCartItemQuantity = (cart: CartItem[], productId: string, newQuantity: number): CartItem[] => {
+  return cart.map((item) => (item.product.id === productId ? { ...item, quantity: newQuantity } : item));
 };
 
 /**
  * 수량 업데이트 결과 타입
  */
-type QuantityUpdateResult = 
+type QuantityUpdateResult =
   | { success: true; updatedCart: CartItem[] }
   | { success: false; error: string; errorType: 'INVALID_QUANTITY' | 'PRODUCT_NOT_FOUND' | 'INSUFFICIENT_STOCK' };
 
@@ -237,9 +158,8 @@ const processQuantityUpdate = (
   cart: CartItem[],
   productId: string,
   newQuantity: number,
-  availableStock: number
+  availableStock: number,
 ): QuantityUpdateResult => {
-
   if (!Number.isInteger(newQuantity) || newQuantity < 0) {
     return { success: false, error: '수량은 0 이상의 정수여야 합니다.', errorType: 'INVALID_QUANTITY' };
   }
@@ -247,7 +167,7 @@ const processQuantityUpdate = (
   if (newQuantity === 0) {
     return { success: true, updatedCart: removeCartItem(cart, productId) };
   }
- 
+
   if (newQuantity > availableStock) {
     return { success: false, error: `재고는 ${availableStock}개까지만 있습니다.`, errorType: 'INSUFFICIENT_STOCK' };
   }
@@ -486,13 +406,12 @@ const App = () => {
    */
   const updateQuantity = useCallback(
     (productId: string, newQuantity: number, cart: CartItem[]) => {
-
       const product = products.find((p) => p.id === productId);
       if (!product) {
         addNotification('상품을 찾을 수 없습니다.', 'error');
         return;
       }
-  
+
       const result = processQuantityUpdate(cart, productId, newQuantity, product.stock);
 
       if (result.success) {
