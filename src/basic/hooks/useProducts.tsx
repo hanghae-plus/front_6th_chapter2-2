@@ -13,24 +13,35 @@
 // - addProductDiscount: 할인 규칙 추가
 // - removeProductDiscount: 할인 규칙 삭제
 
-import { useCallback } from 'react';
+import { useCallback, type Dispatch, type SetStateAction } from 'react';
+import type { CartItem, Product, ProductWithUI } from '../../types';
 import { initialProducts } from '../constants';
 import * as productModel from '../models/product';
 import { useLocalStorage } from '../utils/hooks/useLocalStorage';
 
-export function useProducts() {
+interface UseProductsReturn {
+  products: ProductWithUI[];
+  setProducts: Dispatch<SetStateAction<Product[]>>;
+  getRemainingStock: (params: { cart: CartItem[]; product: Product }) => number;
+  isSoldOut: (params: { cart: CartItem[]; product: Product }) => boolean;
+}
+
+export function useProducts(): UseProductsReturn {
   const [products, setProducts] = useLocalStorage({
     key: 'products',
     initialValue: initialProducts,
   });
 
-  const isSoldOut = useCallback((params: productModel.IsSoldOutParams) => {
-    return productModel.isSoldOut(params);
-  }, []);
-
   return {
     products,
     setProducts,
-    isSoldOut,
+
+    getRemainingStock: useCallback((params) => {
+      return productModel.getRemainingStock(params);
+    }, []),
+
+    isSoldOut: useCallback((params) => {
+      return productModel.getRemainingStock(params) <= 0;
+    }, []),
   };
 }

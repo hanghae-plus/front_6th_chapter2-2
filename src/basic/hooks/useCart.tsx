@@ -25,51 +25,96 @@
 // - clearCart: 장바구니 비우기 함수
 
 import { useCallback } from 'react';
-import type { CartItem, ProductWithUI } from '../../types';
+import type { CartItem, Product } from '../../types';
 import * as cartModel from '../models/cart';
-import type { IsSoldOutParams } from '../models/product';
 import { useLocalStorage } from '../utils/hooks/useLocalStorage';
 import type { AddNotificationParams } from './useNotification';
 
-export function useCart({
-  isSoldOut,
-  addNotification,
-}: {
-  isSoldOut: (params: IsSoldOutParams) => boolean;
+interface UseCartParams {
   addNotification: (params: AddNotificationParams) => void;
-}) {
+  isSoldOut: (params: { cart: CartItem[]; product: Product }) => boolean;
+}
+
+interface UseCartReturn {
+  cart: CartItem[];
+  addToCart: (params: { product: Product }) => void;
+  removeFromCart: (params: { productId: string }) => void;
+  updateQuantity: (params: {
+    productId: string;
+    newQuantity: number;
+    products: Product[];
+  }) => void;
+  clearCart: () => void;
+}
+
+export function useCart({
+  addNotification,
+  isSoldOut,
+}: UseCartParams): UseCartReturn {
   const [cart, setCart] = useLocalStorage<CartItem[]>({
     key: 'cart',
     initialValue: [],
   });
 
-  const addToCart = useCallback(
-    (product: ProductWithUI) => {
-      setCart((prevCart) => {
-        return cartModel.addToCart({
-          cart: prevCart,
-          product,
-          checkSoldOut: () => {
-            return isSoldOut({ cart: prevCart, product });
-          },
-          onFailure: ({ message }) => {
-            addNotification({ message, type: 'error' });
-          },
-          onSuccess: () => {
-            addNotification({
-              message: '장바구니에 담았습니다',
-              type: 'success',
-            });
-          },
-        });
-      });
-    },
-    [setCart, isSoldOut, addNotification]
-  );
-
   return {
     cart,
-    setCart,
-    addToCart,
+
+    addToCart: useCallback(
+      ({ product }) => {
+        setCart((prevCart) => {
+          return cartModel.addToCart({
+            cart: prevCart,
+            product,
+            checkSoldOut: () => {
+              return isSoldOut({ cart: prevCart, product });
+            },
+            onFailure: ({ message }) => {
+              addNotification({ message, type: 'error' });
+            },
+            onSuccess: () => {
+              addNotification({
+                message: '장바구니에 담았습니다',
+                type: 'success',
+              });
+            },
+          });
+        });
+      },
+      [setCart, addNotification, isSoldOut]
+    ),
+
+    removeFromCart: useCallback(
+      ({ productId }) => {
+        setCart((prevCart) => {
+          return cartModel.removeItemFromCart({
+            cart: prevCart,
+            productId: productId,
+          });
+        });
+      },
+      [setCart]
+    ),
+
+    updateQuantity: useCallback(
+      ({ productId, newQuantity, products }) => {
+        setCart((prevCart) => {
+          return cartModel.updateCartQuantity({
+            cart: prevCart,
+            newQuantity,
+            productId,
+            products,
+            onFailure: ({ message }) => {
+              addNotification({ message, type: 'error' });
+            },
+            onSuccess: () => {},
+          });
+        });
+      },
+      [setCart, addNotification]
+    ),
+
+    clearCart: useCallback(() => {
+      setCart([]);
+    }, [setCart]),
   };
 }

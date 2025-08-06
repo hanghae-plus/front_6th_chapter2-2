@@ -3,21 +3,29 @@ import { Coupon, ProductWithUI } from '../types';
 import { initialCoupons } from './constants';
 import { useCart } from './hooks/useCart';
 import { useNotification } from './hooks/useNotification';
+import { useOrder } from './hooks/useOrder';
 import { useProducts } from './hooks/useProducts';
-import {
-  calculateCartTotal,
-  calculateItemTotal,
-  removeItemFromCart,
-} from './models/cart';
+import { calculateCartTotal, calculateItemTotal } from './models/cart';
 import { getCouponApplier } from './models/coupon';
-import { getRemainingStock } from './models/product';
 import { formatNumberWon, formatPriceKRW } from './utils/formatters';
 
 const App = () => {
   const { notifications, setNotifications, addNotification } =
     useNotification();
-  const { products, setProducts, isSoldOut } = useProducts();
-  const { cart, setCart, addToCart } = useCart({ isSoldOut, addNotification });
+  const { products, setProducts, getRemainingStock, isSoldOut } = useProducts();
+  const { cart, addToCart, removeFromCart, updateQuantity, clearCart } =
+    useCart({
+      addNotification,
+      isSoldOut,
+    });
+  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+  const { completeOrder } = useOrder({
+    addNotification,
+    clearCart,
+    clearSelectedCoupon: useCallback(() => {
+      setSelectedCoupon(null);
+    }, []),
+  });
 
   const [coupons, setCoupons] = useState<Coupon[]>(() => {
     const saved = localStorage.getItem('coupons');
@@ -31,7 +39,6 @@ const App = () => {
     return initialCoupons;
   });
 
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>(
@@ -88,42 +95,6 @@ const App = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  const removeFromCart = useCallback((productId: string) => {
-    setCart((prevCart) =>
-      removeItemFromCart({ cart: prevCart, productId: productId })
-    );
-  }, []);
-
-  const updateQuantity = useCallback(
-    (productId: string, newQuantity: number) => {
-      if (newQuantity <= 0) {
-        removeFromCart(productId);
-        return;
-      }
-
-      const product = products.find((p) => p.id === productId);
-      if (!product) return;
-
-      const maxStock = product.stock;
-      if (newQuantity > maxStock) {
-        addNotification({
-          message: `재고는 ${maxStock}개까지만 있습니다.`,
-          type: 'error',
-        });
-        return;
-      }
-
-      setCart((prevCart) =>
-        prevCart.map((item) =>
-          item.product.id === productId
-            ? { ...item, quantity: newQuantity }
-            : item
-        )
-      );
-    },
-    [products, removeFromCart, addNotification]
-  );
-
   const applyCoupon = useCallback(
     (coupon: Coupon) => {
       const currentTotal = calculateCartTotal({
@@ -147,16 +118,6 @@ const App = () => {
     },
     [cart, addNotification]
   );
-
-  const completeOrder = useCallback(() => {
-    const orderNumber = `ORD-${Date.now()}`;
-    addNotification({
-      message: `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
-      type: 'success',
-    });
-    setCart([]);
-    setSelectedCoupon(null);
-  }, [addNotification]);
 
   const addProduct = useCallback(
     (newProduct: Omit<ProductWithUI, 'id'>) => {
@@ -1105,7 +1066,7 @@ const App = () => {
                             {/* 장바구니 버튼 */}
                             <button
                               onClick={() => {
-                                addToCart(product);
+                                addToCart({ product });
                               }}
                               disabled={remainingStock <= 0}
                               className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
@@ -1184,7 +1145,9 @@ const App = () => {
                                 {item.product.name}
                               </h4>
                               <button
-                                onClick={() => removeFromCart(item.product.id)}
+                                onClick={() =>
+                                  removeFromCart({ productId: item.product.id })
+                                }
                                 className="text-gray-400 hover:text-red-500 ml-2"
                               >
                                 <svg
@@ -1206,10 +1169,11 @@ const App = () => {
                               <div className="flex items-center">
                                 <button
                                   onClick={() =>
-                                    updateQuantity(
-                                      item.product.id,
-                                      item.quantity - 1
-                                    )
+                                    updateQuantity({
+                                      productId: item.product.id,
+                                      newQuantity: item.quantity - 1,
+                                      products,
+                                    })
                                   }
                                   className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                                 >
@@ -1220,10 +1184,11 @@ const App = () => {
                                 </span>
                                 <button
                                   onClick={() =>
-                                    updateQuantity(
-                                      item.product.id,
-                                      item.quantity + 1
-                                    )
+                                    updateQuantity({
+                                      productId: item.product.id,
+                                      newQuantity: item.quantity + 1,
+                                      products,
+                                    })
                                   }
                                   className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                                 >
