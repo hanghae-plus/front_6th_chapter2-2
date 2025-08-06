@@ -63,6 +63,7 @@ export function useProducts({
       (params) => {
         setProducts((prevProducts) => {
           return productModel.addProduct({
+            id: `p${Date.now()}`,
             newProduct: params.newProduct,
             products: prevProducts,
             onSuccess: () => {

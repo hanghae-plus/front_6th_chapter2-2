@@ -14,6 +14,7 @@ export function getRemainingStock({ cart, product }: GetRemainingStockParams) {
 }
 
 interface AddProductParams {
+  id: string;
   newProduct: Omit<ProductWithUI, 'id'>;
   products: ProductWithUI[];
   onSuccess: () => void;
@@ -21,6 +22,7 @@ interface AddProductParams {
 
 // 상품 추가
 export function addProduct({
+  id,
   newProduct,
   products,
   onSuccess,
@@ -30,7 +32,7 @@ export function addProduct({
     ...products,
     {
       ...newProduct,
-      id: `p${Date.now()}`,
+      id,
     },
   ];
 }
