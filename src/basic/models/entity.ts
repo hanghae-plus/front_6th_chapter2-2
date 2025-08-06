@@ -1,5 +1,4 @@
-import type { CartItem, Coupon, Product } from '../../types';
-import type { ProductWithUI } from '../constants';
+import type { CartItem, Coupon } from '../../types';
 
 /**
  * 개별 아이템의 할인 적용 후 총액 계산
@@ -73,19 +72,6 @@ export function calculateCartTotal(
 }
 
 /**
- * 남은 재고 계산
- * @param product 상품
- * @param cart 장바구니
- * @returns 남은 재고
- */
-export function getRemainingStock(product: Product, cart: CartItem[]): number {
-  const cartItem = cart.find((item) => item.product.id === product.id);
-  const remaining = product.stock - (cartItem?.quantity || 0);
-
-  return remaining;
-}
-
-/**
  * 적용 가능한 최대 할인율 계산
  * @param item 아이템
  * @param cart 장바구니
@@ -116,22 +102,4 @@ function getMaxApplicableDiscount(item: CartItem, cart: CartItem[]): number {
  */
 export function calculateItemTotalQuantity(cart: CartItem[]): number {
   return cart.reduce((sum, item) => sum + item.quantity, 0);
-}
-
-/**
- * 상품 검색
- * @param products 상품 목록
- * @param searchTerm 검색어
- * @returns 검색 결과
- */
-export function filterProducts(products: ProductWithUI[], searchTerm: string): ProductWithUI[] {
-  return products.filter((product) => {
-    const isIncludedSearchTermInName = product.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const isIncludedSearchTermInDescription =
-      product.description && product.description.toLowerCase().includes(searchTerm.toLowerCase());
-
-    return isIncludedSearchTermInName || isIncludedSearchTermInDescription;
-  });
 }

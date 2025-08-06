@@ -1,6 +1,6 @@
 import type { CartItem } from '../../../types';
 import type { ProductWithUI } from '../../constants';
-import { filterProducts, getRemainingStock } from '../../models/entity';
+import { filterProducts, getRemainingStock } from '../../models/product';
 import { formatKRWPrice } from '../../utils/formatters';
 import { Icon } from '../icons';
 
