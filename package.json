@@ -14,9 +14,12 @@
     "test:ui": "vitest --ui",
     "build": "tsc -b && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json}\""
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json}\"",
+    "deploy:advanced": "pnpm run build:advanced && gh-pages -d dist",
+    "build:advanced": "tsc --noEmit --skipLibCheck && vite build --config vite.config.advanced.ts && cp dist/index.advanced.html dist/index.html"
   },
   "dependencies": {
+    "gh-pages": "^6.3.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
