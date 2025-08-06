@@ -5,7 +5,6 @@ import { useCart } from './hooks/useCart';
 import { useNotification } from './hooks/useNotification';
 import { useOrder } from './hooks/useOrder';
 import { useProducts } from './hooks/useProducts';
-import { calculateCartTotal, calculateItemTotal } from './models/cart';
 import { getCouponApplier } from './models/coupon';
 import { formatNumberWon, formatPriceKRW } from './utils/formatters';
 
@@ -20,9 +19,12 @@ const App = () => {
     removeFromCart,
     updateQuantity,
     clearCart,
+    calculateCartTotal,
+    calculateItemTotal,
   } = useCart({
     addNotification,
     isSoldOut,
+    getCouponApplier,
   });
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const { completeOrder } = useOrder({
@@ -84,10 +86,7 @@ const App = () => {
 
   const applyCoupon = useCallback(
     (coupon: Coupon) => {
-      const currentTotal = calculateCartTotal({
-        cart,
-        applyCoupon: getCouponApplier({ coupon }),
-      }).totalAfterDiscount;
+      const currentTotal = calculateCartTotal({ coupon }).totalAfterDiscount;
 
       if (currentTotal < 10000 && coupon.discountType === 'percentage') {
         addNotification({
@@ -227,8 +226,7 @@ const App = () => {
   };
 
   const totals = calculateCartTotal({
-    cart,
-    applyCoupon: getCouponApplier({ coupon: selectedCoupon }),
+    coupon: selectedCoupon,
   });
 
   const filteredProducts = debouncedSearchTerm
@@ -1114,7 +1112,7 @@ const App = () => {
                   ) : (
                     <div className="space-y-3">
                       {cart.map((item) => {
-                        const itemTotal = calculateItemTotal({ item, cart });
+                        const itemTotal = calculateItemTotal({ item });
                         const originalPrice =
                           item.product.price * item.quantity;
                         const hasDiscount = itemTotal < originalPrice;

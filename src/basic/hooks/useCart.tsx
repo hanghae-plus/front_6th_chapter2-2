@@ -25,7 +25,7 @@
 // - clearCart: 장바구니 비우기 함수
 
 import { useCallback, useEffect } from 'react';
-import type { CartItem, Product } from '../../types';
+import type { CartItem, Coupon, Product } from '../../types';
 import * as cartModel from '../models/cart';
 import { useLocalStorage } from '../utils/hooks/useLocalStorage';
 import type { AddNotificationParams } from './useNotification';
@@ -33,6 +33,9 @@ import type { AddNotificationParams } from './useNotification';
 interface UseCartParams {
   addNotification: (params: AddNotificationParams) => void;
   isSoldOut: (params: { cart: CartItem[]; product: Product }) => boolean;
+  getCouponApplier: (params: {
+    coupon: Coupon | null;
+  }) => (params: { price: number }) => number;
 }
 
 interface UseCartReturn {
@@ -46,11 +49,17 @@ interface UseCartReturn {
     products: Product[];
   }) => void;
   clearCart: () => void;
+  calculateCartTotal: (params: { coupon: Coupon | null }) => {
+    totalBeforeDiscount: number;
+    totalAfterDiscount: number;
+  };
+  calculateItemTotal: (params: { item: CartItem }) => number;
 }
 
 export function useCart({
   addNotification,
   isSoldOut,
+  getCouponApplier,
 }: UseCartParams): UseCartReturn {
   const LOCAL_STORAGE_KEY = 'cart';
   const [cart, setCart] = useLocalStorage<CartItem[]>({
@@ -125,5 +134,22 @@ export function useCart({
     clearCart: useCallback(() => {
       setCart([]);
     }, [setCart]),
+
+    calculateCartTotal: useCallback(
+      ({ coupon }) => {
+        return cartModel.calculateCartTotal({
+          cart,
+          applyCoupon: getCouponApplier({ coupon }),
+        });
+      },
+      [cart, getCouponApplier]
+    ),
+
+    calculateItemTotal: useCallback(
+      ({ item }) => {
+        return cartModel.calculateItemTotal({ item, cart });
+      },
+      [cart]
+    ),
   };
 }
