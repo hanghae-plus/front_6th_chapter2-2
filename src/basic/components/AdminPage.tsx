@@ -2,14 +2,9 @@ import { useState } from 'react';
 
 import type { Coupon, NotificationVariant } from '../../types';
 import type { ProductWithUI } from '../constants';
-import { useCouponForm } from '../hooks/useCouponForm';
-import { useProductForm } from '../hooks/useProductForm';
 import { AdminHeader } from './ui/AdminHeader';
-import { CouponAddButton } from './ui/CouponAddButton';
-import { CouponForm } from './ui/CouponForm';
-import { CouponList } from './ui/CouponList';
-import { ProductAccordion } from './ui/ProductAccordion';
-import { ProductForm } from './ui/ProductForm';
+import { CouponTab } from './ui/CouponTab';
+import { ProductTab } from './ui/ProductTab';
 import { TabNavigation } from './ui/TabNavigation';
 
 interface AdminPageProps {
@@ -43,31 +38,6 @@ export function AdminPage({
 }: AdminPageProps) {
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
 
-  const {
-    showProductForm,
-    editingProduct,
-    productFormData,
-    updateProductFormData,
-    startEditProduct,
-    handleProductSubmit,
-    handleShowProductForm,
-    handleCancelProductForm,
-  } = useProductForm({
-    onAddProduct,
-    onUpdateProduct,
-  });
-
-  const {
-    showCouponForm,
-    couponFormData,
-    updateCouponFormData,
-    handleCouponSubmit,
-    handleShowCouponForm,
-    handleHideCouponForm,
-  } = useCouponForm({
-    onAddCoupon,
-  });
-
   return (
     <>
       <AdminHeader onBackShop={() => setIsAdmin(false)} />
@@ -80,59 +50,28 @@ export function AdminPage({
           </div>
           <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
 
-          {activeTab === 'products' ? (
-            <section className='bg-white rounded-lg border border-gray-200'>
-              <div className='p-6 border-b border-gray-200'>
-                <div className='flex justify-between items-center'>
-                  <h2 className='text-lg font-semibold'>상품 목록</h2>
-                  <button
-                    onClick={handleShowProductForm}
-                    className='px-4 py-2 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800'
-                  >
-                    새 상품 추가
-                  </button>
-                </div>
-              </div>
-
-              <ProductAccordion
-                products={products}
-                onEdit={startEditProduct}
-                onDelete={onDeleteProduct}
-              />
-
-              <ProductForm
-                isOpen={showProductForm}
-                editingProduct={editingProduct}
-                form={productFormData}
-                updateForm={updateProductFormData}
-                onSubmit={handleProductSubmit}
-                onCancel={handleCancelProductForm}
-                onAddNotification={onAddNotification}
-              />
-            </section>
-          ) : (
-            <section className='bg-white rounded-lg border border-gray-200'>
-              <div className='p-6 border-b border-gray-200'>
-                <h2 className='text-lg font-semibold'>쿠폰 관리</h2>
-              </div>
-              <div className='p-6'>
-                <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
-                  <CouponList coupons={coupons} onDelete={onDeleteCoupon} />
-
-                  <CouponAddButton onAddNew={handleShowCouponForm} />
-                </div>
-
-                <CouponForm
-                  isOpen={showCouponForm}
-                  form={couponFormData}
-                  updateForm={updateCouponFormData}
-                  onSubmit={handleCouponSubmit}
-                  onCancel={handleHideCouponForm}
+          {(() => {
+            if (activeTab === 'products') {
+              return (
+                <ProductTab
+                  products={products}
+                  onAddProduct={onAddProduct}
+                  onUpdateProduct={onUpdateProduct}
+                  onDeleteProduct={onDeleteProduct}
                   onAddNotification={onAddNotification}
                 />
-              </div>
-            </section>
-          )}
+              );
+            }
+
+            return (
+              <CouponTab
+                coupons={coupons}
+                onAddCoupon={onAddCoupon}
+                onDeleteCoupon={onDeleteCoupon}
+                onAddNotification={onAddNotification}
+              />
+            );
+          })()}
         </div>
       </main>
     </>
