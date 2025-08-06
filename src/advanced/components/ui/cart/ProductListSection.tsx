@@ -1,5 +1,3 @@
-import { CartItem } from "../../../../types";
-import { ProductWithUI } from "../../../entities/products/product.types";
 import { useProductHandlers } from "../../../entities/products/useProductHandlers";
 import { useCartHandlers } from "../../../entities/cart/useCartHandlers";
 import { useSearchProduct } from "../../../entities/products/useSearchProduct";

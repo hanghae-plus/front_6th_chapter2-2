@@ -1,41 +1,59 @@
-import { CouponFormData } from "../../../entities/coupon/useCouponForm";
 import { useNotifications } from "../../../hooks/useNotifications";
+import { useCouponForm } from "../../../entities/coupon/useCouponForm";
+import { useCouponHandlers } from "../../../entities/coupon/useCouponHandlers";
+import { useAdminHandlers } from "../../../hooks/useAdminHandlers";
+import { useProductHandlers } from "../../../entities/products/useProductHandlers";
 import { DISCOUNT, COUPON, MESSAGES } from "../../../constants";
 
-interface CouponFormProps {
-  couponForm: CouponFormData;
-  onSubmit: (e: React.FormEvent) => void;
-  onCancel: () => void;
-  onUpdateField: (field: keyof CouponFormData, value: any) => void;
-}
-
-export const CouponForm = ({
-  couponForm,
-  onSubmit,
-  onCancel,
-  onUpdateField,
-}: CouponFormProps) => {
-  // Hook을 직접 사용
+export const CouponForm = () => {
+  // Hook들을 직접 사용
   const { addNotification } = useNotifications();
+  const couponHandlers = useCouponHandlers({ addNotification });
+  const productHandlers = useProductHandlers({ addNotification });
+  const couponFormHook = useCouponForm();
+
+  const adminHandlers = useAdminHandlers({
+    addNotification,
+    productActions: productHandlers.actions,
+    couponActions: couponHandlers.actions,
+    productForm: {
+      name: "",
+      price: 0,
+      stock: 0,
+      description: "",
+      discounts: [],
+    },
+    editingProduct: null,
+    setEditingProduct: () => {},
+    setShowProductForm: () => {},
+    couponForm: couponFormHook.couponForm,
+    closeCouponForm: couponFormHook.closeCouponForm,
+  });
 
   const handleDiscountValueChange = (value: string) => {
     if (value === "" || /^\d+$/.test(value)) {
-      onUpdateField("discountValue", value === "" ? 0 : parseInt(value));
+      couponFormHook.updateField(
+        "discountValue",
+        value === "" ? 0 : parseInt(value)
+      );
     }
   };
 
   const handleDiscountValueBlur = (value: string) => {
     const numValue = parseInt(value) || 0;
 
-    if (couponForm.discountType === "percentage") {
+    if (couponFormHook.couponForm.discountType === "percentage") {
       if (numValue > DISCOUNT.MAX_PERCENTAGE_RATE) {
         addNotification(
           MESSAGES.ERROR.DISCOUNT_RATE_MAX(DISCOUNT.MAX_PERCENTAGE_RATE),
           "error"
         );
-        onUpdateField("discountValue", DISCOUNT.MAX_PERCENTAGE_RATE);
+        couponFormHook.updateField(
+          "discountValue",
+          DISCOUNT.MAX_PERCENTAGE_RATE
+        );
       } else if (numValue < 0) {
-        onUpdateField("discountValue", 0);
+        couponFormHook.updateField("discountValue", 0);
       }
     } else {
       if (numValue > COUPON.MAX_DISCOUNT_AMOUNT) {
@@ -43,31 +61,43 @@ export const CouponForm = ({
           MESSAGES.ERROR.DISCOUNT_AMOUNT_MAX(COUPON.MAX_DISCOUNT_AMOUNT),
           "error"
         );
-        onUpdateField("discountValue", COUPON.MAX_DISCOUNT_AMOUNT);
+        couponFormHook.updateField("discountValue", COUPON.MAX_DISCOUNT_AMOUNT);
       } else if (numValue < 0) {
-        onUpdateField("discountValue", 0);
+        couponFormHook.updateField("discountValue", 0);
       }
     }
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    adminHandlers.actions.handleCouponSubmit(e);
+  };
+
+  const handleCancel = () => {
+    couponFormHook.closeCouponForm();
+  };
+
   const discountLabel =
-    couponForm.discountType === "amount" ? "할인 금액" : "할인율(%)";
+    couponFormHook.couponForm.discountType === "amount"
+      ? "할인 금액"
+      : "할인율(%)";
   const discountPlaceholder =
-    couponForm.discountType === "amount" ? "5000" : "10";
+    couponFormHook.couponForm.discountType === "amount" ? "5000" : "10";
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-md">
         <h3 className="text-lg font-semibold mb-4">새 쿠폰 추가</h3>
-        <form onSubmit={onSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               쿠폰명
             </label>
             <input
               type="text"
-              value={couponForm.name}
-              onChange={(e) => onUpdateField("name", e.target.value)}
+              value={couponFormHook.couponForm.name}
+              onChange={(e) =>
+                couponFormHook.updateField("name", e.target.value)
+              }
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
               placeholder="신규 가입 쿠폰"
               required
@@ -79,9 +109,9 @@ export const CouponForm = ({
             </label>
             <input
               type="text"
-              value={couponForm.code}
+              value={couponFormHook.couponForm.code}
               onChange={(e) =>
-                onUpdateField("code", e.target.value.toUpperCase())
+                couponFormHook.updateField("code", e.target.value.toUpperCase())
               }
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm font-mono"
               placeholder="WELCOME2024"
@@ -94,9 +124,9 @@ export const CouponForm = ({
                 할인 타입
               </label>
               <select
-                value={couponForm.discountType}
+                value={couponFormHook.couponForm.discountType}
                 onChange={(e) =>
-                  onUpdateField(
+                  couponFormHook.updateField(
                     "discountType",
                     e.target.value as "amount" | "percentage"
                   )
@@ -114,7 +144,9 @@ export const CouponForm = ({
               <input
                 type="text"
                 value={
-                  couponForm.discountValue === 0 ? "" : couponForm.discountValue
+                  couponFormHook.couponForm.discountValue === 0
+                    ? ""
+                    : couponFormHook.couponForm.discountValue
                 }
                 onChange={(e) => handleDiscountValueChange(e.target.value)}
                 onBlur={(e) => handleDiscountValueBlur(e.target.value)}
@@ -127,7 +159,7 @@ export const CouponForm = ({
           <div className="flex justify-end gap-3 pt-4">
             <button
               type="button"
-              onClick={onCancel}
+              onClick={handleCancel}
               className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
             >
               취소

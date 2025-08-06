@@ -1,4 +1,4 @@
-import { CartItem, Coupon } from "../../../types";
+import { CartItem } from "../../../types";
 import { ProductWithUI } from "../products/product.types";
 import { calculateItemTotal } from "../../utils/calculateItemTotal";
 import { calculateCartTotal } from "../../utils/calculateCartTotal";

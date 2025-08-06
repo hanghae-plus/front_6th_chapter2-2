@@ -30,3 +30,34 @@ export const selectedCouponAtom = atom<CouponWithUI | null>(null);
 export const isAdminAtom = atom<boolean>(false);
 export const notificationsAtom = atom<Notification[]>([]);
 export const searchTermAtom = atom<string>("");
+
+// ============= 폼 관련 상태들 =============
+export const showProductFormAtom = atom<boolean>(false);
+export const showCouponFormAtom = atom<boolean>(false);
+export const editingProductAtom = atom<string | null>(null);
+
+export const productFormAtom = atom<{
+  name: string;
+  price: number;
+  stock: number;
+  description: string;
+  discounts: Array<{ quantity: number; rate: number }>;
+}>({
+  name: "",
+  price: 0,
+  stock: 0,
+  description: "",
+  discounts: [],
+});
+
+export const couponFormAtom = atom<{
+  name: string;
+  code: string;
+  discountType: "amount" | "percentage";
+  discountValue: number;
+}>({
+  name: "",
+  code: "",
+  discountType: "amount",
+  discountValue: 0,
+});

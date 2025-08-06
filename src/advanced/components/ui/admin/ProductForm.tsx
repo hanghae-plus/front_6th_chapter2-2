@@ -1,47 +1,44 @@
-import { ProductWithUI } from "../../../entities/products/product.types";
 import { useNotifications } from "../../../hooks/useNotifications";
+import { useProductForm } from "../../../entities/products/useProductForm";
+import { useProductHandlers } from "../../../entities/products/useProductHandlers";
+import { useAdminHandlers } from "../../../hooks/useAdminHandlers";
+import { useCouponHandlers } from "../../../entities/coupon/useCouponHandlers";
 import { CloseIcon } from "../../icons";
 import { PRICE, MESSAGES } from "../../../constants";
 
-interface ProductFormProps {
-  productForm: {
-    name: string;
-    price: number;
-    stock: number;
-    description: string;
-    discounts: Array<{ quantity: number; rate: number }>;
-  };
-  editingProduct: string | null;
-  onSubmit: (e: React.FormEvent) => void;
-  onCancel: () => void;
-  onUpdateField: (field: string, value: any) => void;
-}
-
-export const ProductForm = ({
-  productForm,
-  editingProduct,
-  onSubmit,
-  onCancel,
-  onUpdateField,
-}: ProductFormProps) => {
-  // Hook을 직접 사용
+export const ProductForm = () => {
+  // Hook들을 직접 사용
   const { addNotification } = useNotifications();
+  const productHandlers = useProductHandlers({ addNotification });
+  const couponHandlers = useCouponHandlers({ addNotification });
+  const productFormHook = useProductForm();
 
-  const isNewProduct = editingProduct === "new";
+  const adminHandlers = useAdminHandlers({
+    addNotification,
+    productActions: productHandlers.actions,
+    couponActions: couponHandlers.actions,
+    productForm: productFormHook.productForm,
+    editingProduct: productFormHook.editingProduct,
+    setEditingProduct: productFormHook.setEditingProduct,
+    setShowProductForm: productFormHook.setShowProductForm,
+    couponForm: {
+      name: "",
+      code: "",
+      discountType: "amount" as const,
+      discountValue: 0,
+    },
+    closeCouponForm: () => {},
+  });
+
+  const isNewProduct = productFormHook.editingProduct === "new";
 
   const handleFieldChange = (field: string, value: any) => {
-    onUpdateField(field, value);
+    productFormHook.updateField(field, value);
   };
 
   const handlePriceChange = (value: string) => {
     if (value === "" || /^\d+$/.test(value)) {
       handleFieldChange("price", value === "" ? 0 : parseInt(value));
-    }
-  };
-
-  const handleStockChange = (value: string) => {
-    if (value === "" || /^\d+$/.test(value)) {
-      handleFieldChange("stock", value === "" ? 0 : parseInt(value));
     }
   };
 
@@ -52,6 +49,12 @@ export const ProductForm = ({
       return;
     }
     handlePriceChange(value);
+  };
+
+  const handleStockChange = (value: string) => {
+    if (value === "" || /^\d+$/.test(value)) {
+      handleFieldChange("stock", value === "" ? 0 : parseInt(value));
+    }
   };
 
   const handleStockInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,7 +79,7 @@ export const ProductForm = ({
     value: string
   ) => {
     const numValue = parseInt(value) || 0;
-    const newDiscounts = [...productForm.discounts];
+    const newDiscounts = [...productFormHook.productForm.discounts];
     newDiscounts[index] = {
       ...newDiscounts[index],
       [field]: field === "rate" ? numValue / 100 : numValue,
@@ -86,14 +89,24 @@ export const ProductForm = ({
 
   const addDiscount = () => {
     handleFieldChange("discounts", [
-      ...productForm.discounts,
+      ...productFormHook.productForm.discounts,
       { quantity: 0, rate: 0 },
     ]);
   };
 
   const removeDiscount = (index: number) => {
-    const newDiscounts = productForm.discounts.filter((_, i) => i !== index);
+    const newDiscounts = productFormHook.productForm.discounts.filter(
+      (_, i) => i !== index
+    );
     handleFieldChange("discounts", newDiscounts);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    adminHandlers.actions.handleProductSubmit(e);
+  };
+
+  const handleCancel = () => {
+    productFormHook.setShowProductForm(false);
   };
 
   return (
@@ -104,21 +117,21 @@ export const ProductForm = ({
             {isNewProduct ? "새 상품 추가" : "상품 수정"}
           </h2>
           <button
-            onClick={onCancel}
+            onClick={handleCancel}
             className="text-gray-400 hover:text-gray-600"
           >
             <CloseIcon />
           </button>
         </div>
 
-        <form onSubmit={onSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               상품명
             </label>
             <input
               type="text"
-              value={productForm.name}
+              value={productFormHook.productForm.name}
               onChange={(e) => handleFieldChange("name", e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
@@ -131,7 +144,7 @@ export const ProductForm = ({
             </label>
             <input
               type="text"
-              value={productForm.price || ""}
+              value={productFormHook.productForm.price || ""}
               onChange={handlePriceInput}
               placeholder="숫자만 입력"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -145,7 +158,7 @@ export const ProductForm = ({
             </label>
             <input
               type="text"
-              value={productForm.stock || ""}
+              value={productFormHook.productForm.stock || ""}
               onChange={handleStockInput}
               placeholder="숫자만 입력"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -159,7 +172,7 @@ export const ProductForm = ({
             </label>
             <input
               type="text"
-              value={productForm.description}
+              value={productFormHook.productForm.description}
               onChange={(e) => handleFieldChange("description", e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -178,7 +191,7 @@ export const ProductForm = ({
                 + 할인 추가
               </button>
             </div>
-            {productForm.discounts.map((discount, index) => (
+            {productFormHook.productForm.discounts.map((discount, index) => (
               <div key={index} className="flex items-center space-x-2 mb-2">
                 <input
                   type="number"
@@ -217,7 +230,7 @@ export const ProductForm = ({
           <div className="flex justify-end space-x-3 pt-4">
             <button
               type="button"
-              onClick={onCancel}
+              onClick={handleCancel}
               className="px-4 py-2 text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200"
             >
               취소

@@ -1,6 +1,11 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
+import { useAtom } from "jotai";
 import { ProductWithUI } from "./product.types";
-import { useForm } from "../../utils/hooks";
+import {
+  showProductFormAtom,
+  editingProductAtom,
+  productFormAtom,
+} from "../../atoms";
 
 export interface ProductFormData {
   name: string;
@@ -19,25 +24,18 @@ const initialProductForm: ProductFormData = {
 };
 
 export const useProductForm = () => {
-  const [editingProduct, setEditingProduct] = useState<string | null>(null);
-  const [showProductForm, setShowProductForm] = useState(false);
-
-  const {
-    values: productForm,
-    setValue,
-    setAllValues: setProductForm,
-    reset,
-    show,
-    hide,
-  } = useForm({
-    initialValues: initialProductForm,
-  });
+  const [editingProduct, setEditingProduct] = useAtom(editingProductAtom);
+  const [showProductForm, setShowProductForm] = useAtom(showProductFormAtom);
+  const [productForm, setProductForm] = useAtom(productFormAtom);
 
   const updateField = useCallback(
     (field: string, value: any) => {
-      setValue(field as keyof ProductFormData, value);
+      setProductForm((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
     },
-    [setValue]
+    [setProductForm]
   );
 
   const startEditProduct = useCallback(
@@ -52,25 +50,24 @@ export const useProductForm = () => {
       });
       setShowProductForm(true);
     },
-    [setProductForm]
+    [setProductForm, setEditingProduct, setShowProductForm]
   );
 
   const resetProductForm = useCallback(() => {
-    reset();
+    setProductForm(initialProductForm);
     setEditingProduct(null);
-  }, [reset]);
+  }, [setProductForm, setEditingProduct]);
 
   const hideProductForm = useCallback(() => {
-    hide();
     setShowProductForm(false);
     resetProductForm();
-  }, [hide, resetProductForm]);
+  }, [setShowProductForm, resetProductForm]);
 
   const showNewProductForm = useCallback(() => {
     setEditingProduct("new");
-    reset();
+    setProductForm(initialProductForm);
     setShowProductForm(true);
-  }, [reset]);
+  }, [setEditingProduct, setProductForm, setShowProductForm]);
 
   return {
     // 상태

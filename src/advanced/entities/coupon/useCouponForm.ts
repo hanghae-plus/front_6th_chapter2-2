@@ -1,5 +1,7 @@
-import { useState, useCallback } from "react";
-import { CouponWithUI } from "./coupon.types";
+import { useCallback } from "react";
+import { useAtom } from "jotai";
+
+import { showCouponFormAtom, couponFormAtom } from "../../atoms";
 
 export interface CouponFormData {
   name: string;
@@ -16,26 +18,28 @@ const initialCouponForm: CouponFormData = {
 };
 
 export const useCouponForm = () => {
-  const [showCouponForm, setShowCouponForm] = useState(false);
-  const [couponForm, setCouponForm] =
-    useState<CouponFormData>(initialCouponForm);
+  const [showCouponForm, setShowCouponForm] = useAtom(showCouponFormAtom);
+  const [couponForm, setCouponForm] = useAtom(couponFormAtom);
 
-  const updateField = useCallback((field: keyof CouponFormData, value: any) => {
-    setCouponForm((prev) => ({ ...prev, [field]: value }));
-  }, []);
+  const updateField = useCallback(
+    (field: keyof CouponFormData, value: any) => {
+      setCouponForm((prev) => ({ ...prev, [field]: value }));
+    },
+    [setCouponForm]
+  );
 
   const resetCouponForm = useCallback(() => {
     setCouponForm(initialCouponForm);
-  }, []);
+  }, [setCouponForm]);
 
   const closeCouponForm = useCallback(() => {
     setShowCouponForm(false);
     resetCouponForm();
-  }, [resetCouponForm]);
+  }, [setShowCouponForm, resetCouponForm]);
 
   const openCouponForm = useCallback(() => {
     setShowCouponForm(true);
-  }, []);
+  }, [setShowCouponForm]);
 
   return {
     showCouponForm,

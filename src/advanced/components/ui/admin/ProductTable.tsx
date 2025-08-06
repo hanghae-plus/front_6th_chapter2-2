@@ -2,23 +2,17 @@ import { ProductWithUI } from "../../../entities/products/product.types";
 import { useProductHandlers } from "../../../entities/products/useProductHandlers";
 import { useCartHandlers } from "../../../entities/cart/useCartHandlers";
 import { useProductUtils } from "../../../entities/products/useProductUtils";
+import { useProductForm } from "../../../entities/products/useProductForm";
 import { useNotifications } from "../../../hooks/useNotifications";
 import { formatPrice } from "../../../utils/formatters";
 import { STOCK } from "../../../constants";
 
-interface ProductTableProps {
-  onEditProduct: (product: ProductWithUI) => void;
-  onAddProduct: () => void;
-}
-
-export const ProductTable = ({
-  onEditProduct,
-  onAddProduct,
-}: ProductTableProps) => {
+export const ProductTable = () => {
   // Hooks를 직접 사용
   const { addNotification } = useNotifications();
   const productHandlers = useProductHandlers({ addNotification });
   const cartHandlers = useCartHandlers({ addNotification });
+  const productFormHook = useProductForm();
 
   const productUtils = useProductUtils({
     products: productHandlers.state.items,
@@ -29,12 +23,20 @@ export const ProductTable = ({
     productHandlers.actions.remove(productId);
   };
 
+  const handleEditProduct = (product: ProductWithUI) => {
+    productFormHook.startEditProduct(product);
+  };
+
+  const handleAddProduct = () => {
+    productFormHook.showNewProductForm();
+  };
+
   return (
     <section className="bg-white rounded-lg border border-gray-200">
       <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
         <h2 className="text-lg font-semibold">상품 관리</h2>
         <button
-          onClick={onAddProduct}
+          onClick={handleAddProduct}
           className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700"
         >
           새 상품 추가
@@ -132,7 +134,7 @@ export const ProductTable = ({
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex justify-end space-x-2">
                       <button
-                        onClick={() => onEditProduct(product)}
+                        onClick={() => handleEditProduct(product)}
                         className="text-indigo-600 hover:text-indigo-900 text-sm"
                       >
                         수정
@@ -155,7 +157,7 @@ export const ProductTable = ({
           <div className="text-center py-12">
             <p className="text-gray-500">등록된 상품이 없습니다.</p>
             <button
-              onClick={onAddProduct}
+              onClick={handleAddProduct}
               className="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700"
             >
               첫 상품 추가하기

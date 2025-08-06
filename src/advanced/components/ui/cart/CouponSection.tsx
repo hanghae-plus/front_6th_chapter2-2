@@ -1,5 +1,3 @@
-import { CartItem } from "../../../../types";
-import { CouponWithUI } from "../../../entities/coupon/coupon.types";
 import { useCouponHandlers } from "../../../entities/coupon/useCouponHandlers";
 import { useCartHandlers } from "../../../entities/cart/useCartHandlers";
 import { useNotifications } from "../../../hooks/useNotifications";

@@ -1,19 +1,20 @@
-import { CouponWithUI } from "../../../entities/coupon/coupon.types";
 import { useCouponHandlers } from "../../../entities/coupon/useCouponHandlers";
+import { useCouponForm } from "../../../entities/coupon/useCouponForm";
 import { useNotifications } from "../../../hooks/useNotifications";
 import { TrashIcon, PlusIcon } from "../../icons";
 
-interface CouponGridProps {
-  onAddCoupon: () => void;
-}
-
-export const CouponGrid = ({ onAddCoupon }: CouponGridProps) => {
+export const CouponGrid = () => {
   // Hooks를 직접 사용
   const { addNotification } = useNotifications();
   const couponHandlers = useCouponHandlers({ addNotification });
+  const couponFormHook = useCouponForm();
 
   const handleDeleteCoupon = (code: string) => {
     couponHandlers.actions.remove(code);
+  };
+
+  const handleAddCoupon = () => {
+    couponFormHook.openCouponForm();
   };
 
   return (
@@ -54,7 +55,7 @@ export const CouponGrid = ({ onAddCoupon }: CouponGridProps) => {
 
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 flex items-center justify-center hover:border-gray-400 transition-colors">
             <button
-              onClick={onAddCoupon}
+              onClick={handleAddCoupon}
               className="text-gray-400 hover:text-gray-600 flex flex-col items-center"
             >
               <PlusIcon />

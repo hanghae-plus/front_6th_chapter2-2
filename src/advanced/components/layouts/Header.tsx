@@ -1,7 +1,6 @@
-import { useAtom, useAtomValue } from "jotai";
-import { isAdminAtom, searchTermAtom } from "../../atoms";
+import { useAtomValue } from "jotai";
+import { isAdminAtom } from "../../atoms";
 import { useAppState } from "../../hooks/useAppState";
-import { useSearchProduct } from "../../entities/products/useSearchProduct";
 import { useCart } from "../../entities/cart/useCart";
 import { CartIcon } from "../icons";
 import { SearchInput } from "../ui/SearchInput";

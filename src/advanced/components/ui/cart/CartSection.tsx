@@ -1,4 +1,3 @@
-import { CartItem } from "../../../../types";
 import { useCartHandlers } from "../../../entities/cart/useCartHandlers";
 import { useNotifications } from "../../../hooks/useNotifications";
 import { calculateItemTotal } from "../../../utils/calculateItemTotal";
