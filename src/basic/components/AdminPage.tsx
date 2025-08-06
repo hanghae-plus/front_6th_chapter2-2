@@ -15,7 +15,6 @@ import { useForm } from '../utils/hooks/useForm';
 
 interface AdminPageProps {
   setIsAdmin: (isAdmin: boolean) => void;
-  addNotification: (message: string, type: NotificationVariant) => void;
 
   products: ProductWithUI[];
   onAddProduct: (newProduct: Omit<ProductWithUI, 'id'>) => void;
@@ -24,14 +23,14 @@ interface AdminPageProps {
 
   coupons: Coupon[];
   setCoupons: React.Dispatch<React.SetStateAction<Coupon[]>>;
-
   selectedCoupon: Coupon | null;
   setSelectedCoupon: (coupon: Coupon | null) => void;
+
+  onAddNotification: (message: string, type: NotificationVariant) => void;
 }
 
 export function AdminPage({
   setIsAdmin,
-  addNotification,
 
   products,
   onAddProduct,
@@ -40,9 +39,10 @@ export function AdminPage({
 
   coupons,
   setCoupons,
-
   selectedCoupon,
   setSelectedCoupon,
+
+  onAddNotification,
 }: AdminPageProps) {
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
 
@@ -85,38 +85,38 @@ export function AdminPage({
   const addProduct = useCallback(
     (newProduct: Omit<ProductWithUI, 'id'>) => {
       onAddProduct(newProduct);
-      addNotification('상품이 추가되었습니다.', 'success');
+      onAddNotification('상품이 추가되었습니다.', 'success');
     },
-    [addNotification]
+    [onAddNotification]
   );
 
   const updateProduct = useCallback(
     (productId: string, updates: Partial<ProductWithUI>) => {
       onUpdateProduct(productId, updates);
-      addNotification('상품이 수정되었습니다.', 'success');
+      onAddNotification('상품이 수정되었습니다.', 'success');
     },
-    [addNotification]
+    [onAddNotification]
   );
 
   const deleteProduct = useCallback(
     (productId: string) => {
       onDeleteProduct(productId);
-      addNotification('상품이 삭제되었습니다.', 'success');
+      onAddNotification('상품이 삭제되었습니다.', 'success');
     },
-    [addNotification]
+    [onAddNotification]
   );
 
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {
       const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
       if (existingCoupon) {
-        addNotification('이미 존재하는 쿠폰 코드입니다.', 'error');
+        onAddNotification('이미 존재하는 쿠폰 코드입니다.', 'error');
         return;
       }
       setCoupons((prev) => [...prev, newCoupon]);
-      addNotification('쿠폰이 추가되었습니다.', 'success');
+      onAddNotification('쿠폰이 추가되었습니다.', 'success');
     },
-    [coupons, addNotification]
+    [coupons, onAddNotification]
   );
 
   const deleteCoupon = useCallback(
@@ -125,9 +125,9 @@ export function AdminPage({
       if (selectedCoupon?.code === couponCode) {
         setSelectedCoupon(null);
       }
-      addNotification('쿠폰이 삭제되었습니다.', 'success');
+      onAddNotification('쿠폰이 삭제되었습니다.', 'success');
     },
-    [selectedCoupon, addNotification]
+    [selectedCoupon, onAddNotification]
   );
 
   return (
@@ -177,7 +177,7 @@ export function AdminPage({
                   resetProductFormData();
                   setShowProductForm(false);
                 }}
-                addNotification={addNotification}
+                onAddNotification={onAddNotification}
               />
             </section>
           ) : (
@@ -198,7 +198,7 @@ export function AdminPage({
                   updateForm={updateCouponFormData}
                   onSubmit={handleCouponSubmit}
                   onCancel={() => setShowCouponForm(false)}
-                  addNotification={addNotification}
+                  onAddNotification={onAddNotification}
                 />
               </div>
             </section>

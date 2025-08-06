@@ -5,10 +5,10 @@ import { Icon } from '../icons';
 
 interface NotificationProps {
   notifications: Notification[];
-  setNotifications: React.Dispatch<React.SetStateAction<Notification[]>>;
+  onRemoveNotification: (id: string) => void;
 }
 
-export function Notifications({ notifications, setNotifications }: NotificationProps) {
+export function Notifications({ notifications, onRemoveNotification }: NotificationProps) {
   if (notifications.length === 0) return null;
 
   return (
@@ -23,7 +23,7 @@ export function Notifications({ notifications, setNotifications }: NotificationP
           >
             <span className='mr-2'>{message}</span>
             <button
-              onClick={() => setNotifications((prev) => prev.filter((n) => n.id !== id))}
+              onClick={() => onRemoveNotification(id)}
               className='text-white hover:text-gray-200'
             >
               <Icon name='x' width={16} height={16} />

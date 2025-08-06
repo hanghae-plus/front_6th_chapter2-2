@@ -1,41 +1,30 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 
-import type { Coupon, Notification as NotificationType, NotificationVariant } from '../types';
+import type { Coupon } from '../types';
 import { AdminPage } from './components/AdminPage';
 import { CartPage } from './components/CartPage';
 import { Notifications } from './components/ui/Notifications';
 import { initialCoupons } from './constants';
+import { useNotificationStore } from './hooks/useNotificationStore';
 import { useProductStore } from './hooks/useProductStore';
 import { useLocalStorage } from './utils/hooks/useLocalStorage';
 
 const App = () => {
   const { products, addProduct, updateProduct, deleteProduct } = useProductStore();
+  const { notifications, addNotification, removeNotification } = useNotificationStore();
+
   const [coupons, setCoupons] = useLocalStorage<Coupon[]>('coupons', initialCoupons);
 
   const [isAdmin, setIsAdmin] = useState(false);
-  const [notifications, setNotifications] = useState<NotificationType[]>([]);
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
-
-  const addNotification = useCallback(
-    (message: string, variant: NotificationVariant = 'success') => {
-      const id = Date.now().toString();
-      setNotifications((prev) => [...prev, { id, message, variant }]);
-
-      setTimeout(() => {
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
-      }, 3000);
-    },
-    []
-  );
 
   return (
     <div className='min-h-screen bg-gray-50'>
-      <Notifications notifications={notifications} setNotifications={setNotifications} />
+      <Notifications notifications={notifications} onRemoveNotification={removeNotification} />
 
       {isAdmin ? (
         <AdminPage
           setIsAdmin={setIsAdmin}
-          addNotification={addNotification}
           // products
           products={products}
           onAddProduct={addProduct}
@@ -47,17 +36,20 @@ const App = () => {
           // selectedCoupon
           selectedCoupon={selectedCoupon}
           setSelectedCoupon={setSelectedCoupon}
+          // notifications
+          onAddNotification={addNotification}
         />
       ) : (
         <CartPage
           setIsAdmin={setIsAdmin}
-          addNotification={addNotification}
           // products
           products={products}
           // coupons
           coupons={coupons}
           selectedCoupon={selectedCoupon}
           setSelectedCoupon={setSelectedCoupon}
+          // notifications
+          onAddNotification={addNotification}
         />
       )}
     </div>

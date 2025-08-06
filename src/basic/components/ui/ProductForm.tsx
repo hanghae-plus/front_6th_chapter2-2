@@ -9,7 +9,7 @@ interface ProductFormProps {
   editingProduct: string | null;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
-  addNotification: (message: string, type: Exclude<NotificationVariant, 'warning'>) => void;
+  onAddNotification: (message: string, type: Exclude<NotificationVariant, 'warning'>) => void;
 }
 
 export function ProductForm({
@@ -19,7 +19,7 @@ export function ProductForm({
   editingProduct,
   onSubmit,
   onCancel,
-  addNotification,
+  onAddNotification,
 }: ProductFormProps) {
   if (!isOpen) return null;
 
@@ -65,7 +65,7 @@ export function ProductForm({
                 if (value === '') {
                   updateForm({ price: 0 });
                 } else if (parseInt(value) < 0) {
-                  addNotification('가격은 0보다 커야 합니다', 'error');
+                  onAddNotification('가격은 0보다 커야 합니다', 'error');
                   updateForm({ price: 0 });
                 }
               }}
@@ -90,10 +90,10 @@ export function ProductForm({
                 if (value === '') {
                   updateForm({ stock: 0 });
                 } else if (parseInt(value) < 0) {
-                  addNotification('재고는 0보다 커야 합니다', 'error');
+                  onAddNotification('재고는 0보다 커야 합니다', 'error');
                   updateForm({ stock: 0 });
                 } else if (parseInt(value) > 9999) {
-                  addNotification('재고는 9999개를 초과할 수 없습니다', 'error');
+                  onAddNotification('재고는 9999개를 초과할 수 없습니다', 'error');
                   updateForm({ stock: 9999 });
                 }
               }}

@@ -34,22 +34,26 @@ import { useLocalStorage } from '../utils/hooks/useLocalStorage';
 
 interface CartPageProps {
   setIsAdmin: (isAdmin: boolean) => void;
-  addNotification: (message: string, type: NotificationVariant) => void;
 
   products: ProductWithUI[];
+
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
   setSelectedCoupon: (coupon: Coupon | null) => void;
+
+  onAddNotification: (message: string, type: NotificationVariant) => void;
 }
 
 export function CartPage({
   setIsAdmin,
-  addNotification,
 
   products,
+
   coupons,
   selectedCoupon,
   setSelectedCoupon,
+
+  onAddNotification,
 }: CartPageProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
@@ -71,28 +75,28 @@ export function CartPage({
       const currentTotal = calculateCartTotal(cart, selectedCoupon).totalAfterDiscount;
 
       if (currentTotal < 10000 && coupon.discountType === 'percentage') {
-        addNotification('percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.', 'error');
+        onAddNotification('percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.', 'error');
         return;
       }
 
       setSelectedCoupon(coupon);
-      addNotification('쿠폰이 적용되었습니다.', 'success');
+      onAddNotification('쿠폰이 적용되었습니다.', 'success');
     },
-    [addNotification, calculateCartTotal]
+    [onAddNotification, calculateCartTotal]
   );
 
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
-    addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
+    onAddNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
     setCart([]);
     setSelectedCoupon(null);
-  }, [addNotification]);
+  }, [onAddNotification]);
 
   const addToCart = useCallback(
     (product: ProductWithUI) => {
       const remainingStock = getRemainingStock(product, cart);
       if (remainingStock <= 0) {
-        addNotification('재고가 부족합니다!', 'error');
+        onAddNotification('재고가 부족합니다!', 'error');
         return;
       }
 
@@ -103,7 +107,7 @@ export function CartPage({
           const newQuantity = existingItem.quantity + 1;
 
           if (newQuantity > product.stock) {
-            addNotification(`재고는 ${product.stock}개까지만 있습니다.`, 'error');
+            onAddNotification(`재고는 ${product.stock}개까지만 있습니다.`, 'error');
             return prevCart;
           }
 
@@ -115,9 +119,9 @@ export function CartPage({
         return [...prevCart, { product, quantity: 1 }];
       });
 
-      addNotification('장바구니에 담았습니다', 'success');
+      onAddNotification('장바구니에 담았습니다', 'success');
     },
-    [cart, addNotification]
+    [cart, onAddNotification]
   );
 
   const removeFromCart = useCallback((productId: string) => {
@@ -136,7 +140,7 @@ export function CartPage({
 
       const maxStock = product.stock;
       if (newQuantity > maxStock) {
-        addNotification(`재고는 ${maxStock}개까지만 있습니다.`, 'error');
+        onAddNotification(`재고는 ${maxStock}개까지만 있습니다.`, 'error');
         return;
       }
 
@@ -146,7 +150,7 @@ export function CartPage({
         )
       );
     },
-    [products, removeFromCart, addNotification, getRemainingStock]
+    [products, removeFromCart, onAddNotification, getRemainingStock]
   );
 
   const totals = calculateCartTotal(cart, selectedCoupon);

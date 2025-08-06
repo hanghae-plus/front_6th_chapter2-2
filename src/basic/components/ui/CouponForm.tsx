@@ -7,7 +7,7 @@ interface CouponFormProps {
   updateForm: (updates: Partial<CouponFormType>) => void;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
-  addNotification: (message: string, type: Exclude<NotificationVariant, 'warning'>) => void;
+  onAddNotification: (message: string, type: Exclude<NotificationVariant, 'warning'>) => void;
 }
 
 export function CouponForm({
@@ -16,7 +16,7 @@ export function CouponForm({
   updateForm,
   onSubmit,
   onCancel,
-  addNotification,
+  onAddNotification,
 }: CouponFormProps) {
   if (!isOpen) return null;
 
@@ -77,14 +77,14 @@ export function CouponForm({
                 const value = parseInt(e.target.value) || 0;
                 if (form.discountType === 'percentage') {
                   if (value > 100) {
-                    addNotification('할인율은 100%를 초과할 수 없습니다', 'error');
+                    onAddNotification('할인율은 100%를 초과할 수 없습니다', 'error');
                     updateForm({ discountValue: 100 });
                   } else if (value < 0) {
                     updateForm({ discountValue: 0 });
                   }
                 } else {
                   if (value > 100000) {
-                    addNotification('할인 금액은 100,000원을 초과할 수 없습니다', 'error');
+                    onAddNotification('할인 금액은 100,000원을 초과할 수 없습니다', 'error');
                     updateForm({ discountValue: 100000 });
                   } else if (value < 0) {
                     updateForm({ discountValue: 0 });
