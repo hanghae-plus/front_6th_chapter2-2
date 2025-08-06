@@ -1,3 +1,5 @@
+import { NOTIFICATION_TYPES } from "@/basic/constants/notification";
+
 export interface Product {
   id: string;
   name: string;
@@ -24,12 +26,20 @@ export interface CartItem {
 export interface Coupon {
   name: string;
   code: string;
-  discountType: "amount" | "percentage";
+  discountType: DiscountType;
   discountValue: number;
+}
+
+export enum DiscountType {
+  AMOUNT = "amount",
+  PERCENTAGE = "percentage",
 }
 
 export interface Notification {
   id: string;
   message: string;
-  type: "error" | "success" | "warning";
+  type: NotificationType;
 }
+
+export type NotificationType =
+  (typeof NOTIFICATION_TYPES)[keyof typeof NOTIFICATION_TYPES];

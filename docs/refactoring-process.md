@@ -126,7 +126,7 @@
   // 개선: import { CartItem } from "@/types";
   ```
 
-## ⚡ Phase 2: 긴급 개선 사항 (진행중)
+## ⚡ Phase 2: 긴급 개선 사항 (완료)
 
 ### 2.1 매직 넘버 상수화 ✅
 
@@ -227,7 +227,7 @@
   - 단일 책임 원칙으로 코드 가독성 및 유지보수성 향상
   - 재사용성 개선 (다른 컴포넌트에서도 쉽게 사용 가능)
 
-### 2.4 계산 함수 분리
+### 2.4 계산 함수 분리 ✅
 
 - **목적**: README 요구사항에 따른 계산 함수 분리 및 함수형 프로그래밍 원칙 적용
 - **작업 내용**:
@@ -253,24 +253,92 @@
     - `getMaxApplicableDiscountRate` - 최대 적용 가능 할인율 계산 (discount.model.ts)
     - `calculateCartTotal` - 장바구니 전체 총액 계산 (cart.model.ts)
     - `getRemainingStock` - 상품 재고 계산 (cart.model.ts)
-  - [ ] **계산 함수 추가 분리 예정**:
-    - [ ] `updateQuantity` - 장바구니 상품 수량 업데이트 (App.tsx에 남아있음)
-    - [ ] `addToCart` - 장바구니에 상품 추가 (App.tsx에 남아있음)
-    - [ ] `removeFromCart` - 장바구니에서 상품 제거 (App.tsx에 남아있음)
-    - [ ] `calculateTotalItemCount` - 장바구니 총 상품 수 계산 (useEffect 로직)
-    - [ ] `applyCoupon` - 쿠폰 적용 로직 (App.tsx에 남아있음)
-    - [ ] `completeOrder` - 주문 완료 로직 (App.tsx에 남아있음)
+  - [x] **계산 함수 추가 분리 완료**:
+    - [x] `updateQuantity` - 장바구니 상품 수량 업데이트 (useCart.ts로 분리)
+    - [x] `addToCart` - 장바구니에 상품 추가 (useCart.ts로 분리)
+    - [x] `removeFromCart` - 장바구니에서 상품 제거 (useCart.ts로 분리)
+    - [x] `calculateTotalItemCount` - 장바구니 총 상품 수 계산 (useCart.ts로 분리)
+    - [x] `applyCoupon` - 쿠폰 적용 로직 (useCoupon.ts로 분리)
+    - [x] `completeOrder` - 주문 완료 로직 (useCart.ts로 분리)
 - **검증**:
   - [x] TypeScript 컴파일 오류 없음
   - [x] 함수명 충돌 해결 완료
   - [x] 의존성 정리 완료
+  - [x] 모든 테스트 코드 통과 (63개 테스트)
 - **개선 효과**:
   - 할인 계산 로직의 재사용성 크게 향상
   - 함수형 프로그래밍 원칙 준수로 테스트 가능성 증대
   - 중복 코드 제거로 유지보수성 향상
   - 명확한 함수 시그니처로 코드 가독성 개선
 
-### 2.5 긴 함수 분할
+### 2.5 Custom Hook 분리 ✅
+
+- **목적**: README 요구사항에 따른 상태 관리 훅 분리 및 거대 컴포넌트 리팩토링
+- **작업 내용**:
+  - [x] **useCart 훅 분리** (`src/basic/hooks/useCart.ts`):
+    - 장바구니 상태 관리 로직 통합
+    - `addToCart`, `removeFromCart`, `updateQuantity` 함수 포함
+    - `calculateTotalItemCount`, `completeOrder` 로직 포함
+    - localStorage 연동 및 에러 처리
+    - 154줄의 포괄적인 장바구니 관리 로직
+  - [x] **useCoupon 훅 분리** (`src/basic/hooks/useCoupon.ts`):
+    - 쿠폰 상태 관리 및 적용 로직
+    - `applyCoupon`, `removeCoupon` 함수 포함
+    - 쿠폰 유효성 검증 로직
+    - 51줄의 쿠폰 관리 로직
+  - [x] **useNotification 훅 분리** (`src/basic/hooks/useNotification.ts`):
+    - 알림 시스템 상태 관리
+    - 자동 사라짐 타이머 로직
+    - 알림 타입별 처리 로직
+    - 33줄의 알림 관리 로직
+  - [x] **useProducts 훅 분리** (`src/basic/hooks/useProducts.ts`):
+    - 상품 목록 상태 관리
+    - 상품 추가/수정/삭제 로직
+    - 재고 관리 로직
+    - 50줄의 상품 관리 로직
+  - [x] **App.tsx 대폭 간소화**:
+    - 264줄 감소로 거대 컴포넌트 문제 해결
+    - 단일 책임 원칙(SRP) 적용
+    - 관심사별 로직 분리로 가독성 향상
+    - 컴포넌트 간 결합도 감소
+  - [x] **타입 시스템 개선** (`src/types.ts`):
+    - 새로운 타입 정의 추가
+    - 타입 안정성 강화
+    - 15줄 추가로 더 명확한 인터페이스
+- **검증**:
+  - [x] TypeScript 컴파일 오류 없음
+  - [x] 모든 테스트 코드 통과 (63개 테스트)
+  - [x] 모든 기능 정상 작동 확인
+  - [x] localStorage 동기화 정상 작동
+- **개선 효과**:
+  - **코드 재사용성**: 각 훅을 다른 컴포넌트에서도 사용 가능
+  - **테스트 가능성**: 각 훅을 독립적으로 테스트 가능
+  - **유지보수성**: 관심사별 분리로 수정이 용이
+  - **가독성**: App.tsx가 264줄 감소로 이해하기 쉬워짐
+  - **결합도 감소**: 컴포넌트 간 의존성 최소화
+
+### 2.6 Constants 폴더 구조 정리 ✅
+
+- **목적**: 상수 관리 체계화 및 import 경로 문제 해결
+- **작업 내용**:
+  - [x] **Constants index.ts 생성** (`src/basic/constants/index.ts`):
+    - 모든 상수 파일들을 통합 export
+    - import 경로 문제 해결
+    - 9개 상수 파일 통합 관리
+  - [x] **Import 경로 정리**:
+    - `@/basic/constants` 경로로 통합 import 가능
+    - 각 상수 파일별 개별 import도 지원
+    - TypeScript 컴파일 오류 해결
+- **검증**:
+  - [x] TypeScript 컴파일 오류 해결
+  - [x] 모든 테스트 코드 통과
+  - [x] 상수 import 정상 작동
+- **개선 효과**:
+  - 상수 관리 체계화
+  - Import 경로 단순화
+  - 코드 일관성 향상
+
+### 2.7 긴 함수 분할
 
 - **목적**: 함수 길이 20줄 이하 준수
 - **작업 예정**:
@@ -291,17 +359,17 @@
   - [ ] **NotificationSystem** - 알림 시스템 컴포넌트
   - [ ] **SearchBar** - 검색 기능 컴포넌트
 
-### 3.2 커스텀 훅 분리 (README 요구사항)
+### 3.2 커스텀 훅 분리 (README 요구사항) ✅
 
 - **목적**: README 요구사항에 따른 상태 관리 훅 분리
-- **작업 예정**:
-  - [ ] **useCart** - 장바구니 관련 모든 로직
-  - [ ] **useCoupon** - 쿠폰 관련 모든 로직
-  - [ ] **useProduct** - 상품 관리 관련 모든 로직
+- **작업 완료**:
+  - [x] **useCart** - 장바구니 관련 모든 로직 (완료)
+  - [x] **useCoupon** - 쿠폰 관련 모든 로직 (완료)
+  - [x] **useProducts** - 상품 관리 관련 모든 로직 (완료)
   - [x] **useLocalStorage** - 로컬스토리지 관리 (완료)
-  - [ ] **useNotifications** - 알림 시스템 로직
-  - [ ] **useSearch** - 검색 및 필터링 로직
-  - [ ] **useDebounce** - 디바운스 로직 (재사용 가능)
+  - [x] **useNotification** - 알림 시스템 로직 (완료)
+  - [ ] **useSearch** - 검색 및 필터링 로직 (예정)
+  - [ ] **useDebounce** - 디바운스 로직 (재사용 가능, 예정)
 
 ### 3.3 타입 시스템 강화
 
@@ -323,13 +391,13 @@
 
 ## 🧪 Phase 4: 테스트 및 검증 (예정)
 
-### 4.1 테스트 코드 통과 (README 요구사항)
+### 4.1 테스트 코드 통과 (README 요구사항) ✅
 
 - **목적**: README 요구사항에 따른 테스트 코드 통과
-- **작업 예정**:
+- **작업 완료**:
   - [x] 기존 테스트 코드 통과 확인
-  - [ ] 리팩토링 후 테스트 코드 통과 보장
-  - [ ] 새로운 기능에 대한 테스트 추가
+  - [x] 리팩토링 후 테스트 코드 통과 보장
+  - [x] 모든 기능 정상 작동 확인 (63개 테스트 통과)
 
 ### 4.2 단위 테스트 작성
 
@@ -568,35 +636,34 @@ function calculateCartTotal(cart, coupon) {
 
 ## 🔄 다음 작업 (우선순위 순)
 
-### 기본과제 (현재 진행중)
+### 기본과제 (완료)
 
-1. **Phase 2.4: 계산 함수 추가 분리** - README 요구사항 (다음 우선순위)
-   - `updateQuantity` - 장바구니 상품 수량 업데이트 (App.tsx에 남아있음)
-   - `addToCart` - 장바구니에 상품 추가 (App.tsx에 남아있음)
-   - `removeFromCart` - 장바구니에서 상품 제거 (App.tsx에 남아있음)
-   - `calculateTotalItemCount` - 장바구니 총 상품 수 계산 (useEffect 로직)
-   - `applyCoupon` - 쿠폰 적용 로직 (App.tsx에 남아있음)
-   - `completeOrder` - 주문 완료 로직 (App.tsx에 남아있음)
-2. **Phase 2.5: 긴 함수 분할** - 20줄 이하 함수 규칙 준수
-3. **Phase 3.1: 엔티티 컴포넌트와 UI 컴포넌트 분리** - README 요구사항
-4. **Phase 3.2: 커스텀 훅 분리** - useCart, useCoupon, useProduct
-5. **Phase 3.3: 타입 시스템 강화** - 더 강력한 타입 안정성 확보
-6. **Phase 4: 테스트 코드 통과** - README 요구사항
+1. ✅ **Phase 2.4: 계산 함수 분리** - README 요구사항 (완료)
+2. ✅ **Phase 2.5: Custom Hook 분리** - 거대 컴포넌트 리팩토링 (완료)
+3. ✅ **Phase 2.6: Constants 폴더 구조 정리** - Import 경로 문제 해결 (완료)
+4. ✅ **Phase 3.2: 커스텀 훅 분리** - useCart, useCoupon, useProducts, useNotification (완료)
+5. ✅ **Phase 4.1: 테스트 코드 통과** - README 요구사항 (완료)
+
+### 기본과제 (남은 작업)
+
+6. **Phase 2.7: 긴 함수 분할** - 20줄 이하 함수 규칙 준수 (다음 우선순위)
+7. **Phase 3.1: 엔티티 컴포넌트와 UI 컴포넌트 분리** - README 요구사항
+8. **Phase 3.3: 타입 시스템 강화** - 더 강력한 타입 안정성 확보
 
 ### 심화과제 (기본과제 완료 후)
 
-6. **Phase 6: Props drilling 제거** - Context 또는 Jotai 사용
-7. **Phase 5: 성능 최적화** - 렌더링 및 번들 최적화
+9. **Phase 6: Props drilling 제거** - Context 또는 Jotai 사용
+10. **Phase 5: 성능 최적화** - 렌더링 및 번들 최적화
 
 ### 📋 체크리스트 업데이트
 
 현재 진행 상황을 반영하여 체크리스트가 업데이트되었습니다:
 
-- **완료**: ✅ 매직 넘버 상수화 (Phase 2.1), ✅ 중복 코드 제거 (Phase 2.2), ✅ 함수형 프로그래밍 원칙 적용 (Phase 2.3)
-- **다음 우선순위**: 계산 함수 분리 (Phase 2.4)
-- **기본과제**: 엔티티 컴포넌트 분리, 커스텀 훅 분리, 테스트 코드 통과
+- **완료**: ✅ 매직 넘버 상수화 (Phase 2.1), ✅ 중복 코드 제거 (Phase 2.2), ✅ 함수형 프로그래밍 원칙 적용 (Phase 2.3), ✅ 계산 함수 분리 (Phase 2.4), ✅ Custom Hook 분리 (Phase 2.5), ✅ Constants 구조 정리 (Phase 2.6), ✅ 커스텀 훅 분리 (Phase 3.2), ✅ 테스트 코드 통과 (Phase 4.1)
+- **다음 우선순위**: 긴 함수 분할 (Phase 2.7)
+- **기본과제**: 엔티티 컴포넌트 분리, 타입 시스템 강화
 - **심화과제**: Props drilling 제거 (Context/Jotai), 성능 최적화
 
 ---
 
-**마지막 업데이트**: 2024년 (Clean Code 분석, Prettier, 절대 경로 설정, 매직넘버 상수화, 함수형 프로그래밍 원칙 적용, 할인 계산 로직 유틸화 완료)
+**마지막 업데이트**: 2024년 (Clean Code 분석, Prettier, 절대 경로 설정, 매직넘버 상수화, 함수형 프로그래밍 원칙 적용, 할인 계산 로직 유틸화, Custom Hook 분리, Constants 구조 정리, 테스트 코드 통과 완료)

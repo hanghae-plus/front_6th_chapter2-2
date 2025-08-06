@@ -1,6 +1,7 @@
 /**
  * 기본값 상수들
  */
+import { DiscountType } from "@/types";
 
 /** 상품 폼 기본값 */
 export const DEFAULT_PRODUCT_FORM = {
@@ -15,7 +16,7 @@ export const DEFAULT_PRODUCT_FORM = {
 export const DEFAULT_COUPON_FORM = {
   name: "",
   code: "",
-  discountType: "amount" as "amount" | "percentage",
+  discountType: DiscountType.AMOUNT,
   discountValue: 0,
 };
 

@@ -1,42 +1,51 @@
+import { STOCK } from "./constants/product";
+import { COUPON_LIMITS, PRODUCT_LIMITS } from "./constants/validation";
+
 import { useCallback, useEffect, useState } from "react";
 
 import {
-  COUPON,
-  COUPON_LIMITS,
   DEFAULT_COUPON_FORM,
   DEFAULT_PRODUCT_FORM,
-  DEFAULT_QUANTITY,
-  DEFAULT_TOTAL,
-  NOTIFICATION_TIMEOUT_MS,
-  PRODUCT_LIMITS,
-  SEARCH_DEBOUNCE_DELAY_MS,
-  STOCK,
-} from "@/basic/constants";
-import { initialCoupons } from "@/basic/data/coupon.data";
-import { initialProducts } from "@/basic/data/product.data";
-import { useLocalStorage } from "@/basic/hooks";
+} from "@/basic/constants/defaults";
+import { SEARCH_DEBOUNCE_DELAY_MS } from "@/basic/constants/search";
+import { useCart, useProducts } from "@/basic/hooks";
+import { useCoupon } from "@/basic/hooks/useCoupon";
+import { useNotification } from "@/basic/hooks/useNotification";
 import {
   calculateCartTotal,
   calculateItemTotal,
   getRemainingStock,
 } from "@/basic/models/cart.model";
 import { getFormattedProductPrice } from "@/basic/models/product.model";
-import { CartItem, Coupon, Notification, ProductWithUI } from "@/types";
+import { DiscountType, NotificationType, ProductWithUI } from "@/types";
 
 const App = () => {
-  const [products, setProducts] = useLocalStorage<ProductWithUI[]>(
-    "products",
-    initialProducts
-  );
-  const [cart, setCart] = useLocalStorage<CartItem[]>("cart", []);
-  const [coupons, setCoupons] = useLocalStorage<Coupon[]>(
-    "coupons",
-    initialCoupons
-  );
+  const { notifications, addNotification, removeNotification } =
+    useNotification();
+  const { products, addProduct, updateProduct, deleteProduct } = useProducts({
+    addNotification,
+  });
+  const {
+    cart,
+    setCart,
+    totalItemCount,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+    selectedCoupon,
+    resetCoupon,
+    applyCoupon,
+  } = useCart({
+    addNotification,
+    products,
+  });
+  const { coupons, addCoupon, deleteCoupon } = useCoupon({
+    addNotification,
+    resetCoupon,
+    selectedCoupon,
+  });
 
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
     "products"
@@ -51,28 +60,6 @@ const App = () => {
 
   const [couponForm, setCouponForm] = useState(DEFAULT_COUPON_FORM);
 
-  const addNotification = useCallback(
-    (message: string, type: "error" | "success" | "warning" = "success") => {
-      const id = Date.now().toString();
-      setNotifications((prev) => [...prev, { id, message, type }]);
-
-      setTimeout(() => {
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
-      }, NOTIFICATION_TIMEOUT_MS);
-    },
-    []
-  );
-
-  const [totalItemCount, setTotalItemCount] = useState(DEFAULT_TOTAL);
-
-  useEffect(() => {
-    const count = cart.reduce(
-      (sum, item) => sum + item.quantity,
-      DEFAULT_TOTAL
-    );
-    setTotalItemCount(count);
-  }, [cart]);
-
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
@@ -80,168 +67,15 @@ const App = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  const addToCart = useCallback(
-    (product: ProductWithUI) => {
-      const remainingStock = getRemainingStock(product, cart);
-      if (remainingStock <= STOCK.OUT_OF_STOCK_THRESHOLD) {
-        addNotification("재고가 부족합니다!", "error");
-        return;
-      }
-
-      setCart((prevCart) => {
-        const existingItem = prevCart.find(
-          (item) => item.product.id === product.id
-        );
-
-        if (existingItem) {
-          const newQuantity = existingItem.quantity + DEFAULT_QUANTITY;
-
-          if (newQuantity > product.stock) {
-            addNotification(
-              `재고는 ${product.stock}개까지만 있습니다.`,
-              "error"
-            );
-            return prevCart;
-          }
-
-          return prevCart.map((item) =>
-            item.product.id === product.id
-              ? { ...item, quantity: newQuantity }
-              : item
-          );
-        }
-
-        return [...prevCart, { product, quantity: DEFAULT_QUANTITY }];
-      });
-
-      addNotification("장바구니에 담았습니다", "success");
-    },
-    [cart, addNotification, getRemainingStock]
-  );
-
-  const removeFromCart = useCallback((productId: string) => {
-    setCart((prevCart) => {
-      const newCart = prevCart.filter((item) => item.product.id !== productId);
-      return newCart;
-    });
-  }, []);
-
-  const updateQuantity = useCallback(
-    (productId: string, newQuantity: number) => {
-      if (newQuantity <= STOCK.OUT_OF_STOCK_THRESHOLD) {
-        removeFromCart(productId);
-        return;
-      }
-
-      const product = products.find((p) => p.id === productId);
-      if (!product) return;
-
-      const maxStock = product.stock;
-      if (newQuantity > maxStock) {
-        addNotification(`재고는 ${maxStock}개까지만 있습니다.`, "error");
-        return;
-      }
-
-      setCart((prevCart) =>
-        prevCart.map((item) =>
-          item.product.id === productId
-            ? { ...item, quantity: newQuantity }
-            : item
-        )
-      );
-    },
-    [products, removeFromCart, addNotification, getRemainingStock]
-  );
-
-  const applyCoupon = useCallback(
-    (coupon: Coupon) => {
-      const currentTotal = calculateCartTotal(
-        cart,
-        selectedCoupon
-      ).totalAfterDiscount;
-
-      if (
-        currentTotal < COUPON.MINIMUM_AMOUNT_FOR_PERCENTAGE &&
-        coupon.discountType === "percentage"
-      ) {
-        addNotification(
-          `percentage 쿠폰은 ${COUPON.MINIMUM_AMOUNT_FOR_PERCENTAGE.toLocaleString()}원 이상 구매 시 사용 가능합니다.`,
-          "error"
-        );
-        return;
-      }
-
-      setSelectedCoupon(coupon);
-      addNotification("쿠폰이 적용되었습니다.", "success");
-    },
-    [addNotification, calculateCartTotal]
-  );
-
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
     addNotification(
       `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
-      "success"
+      NotificationType.SUCCESS
     );
     setCart([]);
-    setSelectedCoupon(null);
+    resetCoupon();
   }, [addNotification]);
-
-  const addProduct = useCallback(
-    (newProduct: Omit<ProductWithUI, "id">) => {
-      const product: ProductWithUI = {
-        ...newProduct,
-        id: `p${Date.now()}`,
-      };
-      setProducts((prev) => [...prev, product]);
-      addNotification("상품이 추가되었습니다.", "success");
-    },
-    [addNotification]
-  );
-
-  const updateProduct = useCallback(
-    (productId: string, updates: Partial<ProductWithUI>) => {
-      setProducts((prev) =>
-        prev.map((product) =>
-          product.id === productId ? { ...product, ...updates } : product
-        )
-      );
-      addNotification("상품이 수정되었습니다.", "success");
-    },
-    [addNotification]
-  );
-
-  const deleteProduct = useCallback(
-    (productId: string) => {
-      setProducts((prev) => prev.filter((p) => p.id !== productId));
-      addNotification("상품이 삭제되었습니다.", "success");
-    },
-    [addNotification]
-  );
-
-  const addCoupon = useCallback(
-    (newCoupon: Coupon) => {
-      const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
-      if (existingCoupon) {
-        addNotification("이미 존재하는 쿠폰 코드입니다.", "error");
-        return;
-      }
-      setCoupons((prev) => [...prev, newCoupon]);
-      addNotification("쿠폰이 추가되었습니다.", "success");
-    },
-    [coupons, addNotification]
-  );
-
-  const deleteCoupon = useCallback(
-    (couponCode: string) => {
-      setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
-      if (selectedCoupon?.code === couponCode) {
-        setSelectedCoupon(null);
-      }
-      addNotification("쿠폰이 삭제되었습니다.", "success");
-    },
-    [selectedCoupon, addNotification]
-  );
 
   const handleProductSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -309,12 +143,14 @@ const App = () => {
               }`}
             >
               <span className="mr-2">{notif.message}</span>
+              {/* 
+                이 버튼은 알림(notification) 우측 상단의 '닫기(X)' 버튼입니다.
+                클릭 시 setNotifications 함수를 호출하여,
+                현재 알림(notifications) 배열에서 해당 알림(notif.id와 일치하는)을 제거합니다.
+                즉, 사용자가 알림을 수동으로 닫을 수 있게 해주는 역할을 합니다.
+              */}
               <button
-                onClick={() =>
-                  setNotifications((prev) =>
-                    prev.filter((n) => n.id !== notif.id)
-                  )
-                }
+                onClick={() => removeNotification(notif.id)}
                 className="text-white hover:text-gray-200"
               >
                 <svg
@@ -592,7 +428,7 @@ const App = () => {
                               ) {
                                 addNotification(
                                   `가격은 ${PRODUCT_LIMITS.MIN_PRICE}보다 커야 합니다`,
-                                  "error"
+                                  NotificationType.ERROR
                                 );
                                 setProductForm({
                                   ...productForm,
@@ -638,7 +474,7 @@ const App = () => {
                               ) {
                                 addNotification(
                                   `재고는 ${PRODUCT_LIMITS.MIN_STOCK}보다 커야 합니다`,
-                                  "error"
+                                  NotificationType.ERROR
                                 );
                                 setProductForm({
                                   ...productForm,
@@ -649,7 +485,7 @@ const App = () => {
                               ) {
                                 addNotification(
                                   `재고는 ${PRODUCT_LIMITS.MAX_STOCK}개를 초과할 수 없습니다`,
-                                  "error"
+                                  NotificationType.ERROR
                                 );
                                 setProductForm({
                                   ...productForm,
@@ -908,9 +744,7 @@ const App = () => {
                               onChange={(e) =>
                                 setCouponForm({
                                   ...couponForm,
-                                  discountType: e.target.value as
-                                    | "amount"
-                                    | "percentage",
+                                  discountType: e.target.value as DiscountType,
                                 })
                               }
                               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
@@ -953,7 +787,7 @@ const App = () => {
                                   ) {
                                     addNotification(
                                       `할인율은 ${COUPON_LIMITS.MAX_DISCOUNT_PERCENTAGE}%를 초과할 수 없습니다`,
-                                      "error"
+                                      NotificationType.ERROR
                                     );
                                     setCouponForm({
                                       ...couponForm,
@@ -975,7 +809,7 @@ const App = () => {
                                   ) {
                                     addNotification(
                                       `할인 금액은 ${COUPON_LIMITS.MAX_DISCOUNT_AMOUNT.toLocaleString()}원을 초과할 수 없습니다`,
-                                      "error"
+                                      NotificationType.ERROR
                                     );
                                     setCouponForm({
                                       ...couponForm,
@@ -1298,7 +1132,7 @@ const App = () => {
                               (c) => c.code === e.target.value
                             );
                             if (coupon) applyCoupon(coupon);
-                            else setSelectedCoupon(null);
+                            else resetCoupon();
                           }}
                         >
                           <option value="">쿠폰 선택</option>
