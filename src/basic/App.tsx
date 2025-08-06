@@ -1,15 +1,20 @@
+import { productModel } from "./features/product/models/product.model";
+
 import { useCallback, useState } from "react";
 
-import Header from "@/basic/components/layout/Header";
-import NotificationItem from "@/basic/components/notification/NotificationItem";
-import { DEFAULTS, NOTIFICATION, PRODUCT, VALIDATION } from "@/basic/constants";
-import { useCart, useProducts } from "@/basic/hooks";
-import { useCoupon } from "@/basic/hooks/useCoupon";
-import { useNotification } from "@/basic/hooks/useNotification";
-import { useSearch } from "@/basic/hooks/useSearch";
-import { productModel } from "@/basic/models";
-import { cartModel } from "@/basic/models/cart.model";
-import { DiscountType, ProductWithUI } from "@/types";
+import { useCart } from "@/basic/features/cart/hooks/useCart";
+import { cartModel } from "@/basic/features/cart/models/cart.model";
+import { useCoupon } from "@/basic/features/coupon/hooks/useCoupon";
+import NotificationItem from "@/basic/features/notification/components/NotificationItem";
+import { useNotification } from "@/basic/features/notification/hooks/useNotification";
+import { useProducts } from "@/basic/features/product/hooks/useProducts";
+import { useSearch } from "@/basic/features/search/hooks/useSearch";
+import Header from "@/basic/shared/components/layout/Header";
+import { DEFAULTS } from "@/basic/shared/constants/defaults";
+import { NOTIFICATION } from "@/basic/shared/constants/notification";
+import { PRODUCT } from "@/basic/shared/constants/product";
+import { VALIDATION } from "@/basic/shared/constants/validation";
+import { Coupon, DiscountType, ProductWithUI } from "@/types";
 
 const App = () => {
   const { notifications, addNotification, removeNotification } =
@@ -100,7 +105,7 @@ const App = () => {
 
   const filteredProducts = debouncedSearchTerm
     ? products.filter(
-        (product) =>
+        (product: ProductWithUI) =>
           product.name
             .toLowerCase()
             .includes(debouncedSearchTerm.toLowerCase()) ||
@@ -126,11 +131,11 @@ const App = () => {
       )}
 
       <Header
-        cartItemCount={totalItemCount}
         isAdmin={isAdmin}
         onAdminToggle={() => setIsAdmin(!isAdmin)}
         searchTerm={searchTerm}
         handleInputChange={handleInputChange}
+        totalItemCount={totalItemCount}
       />
 
       <main className="max-w-7xl mx-auto px-4 py-8">
@@ -210,7 +215,7 @@ const App = () => {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                       {(activeTab === "products" ? products : products).map(
-                        (product) => (
+                        (product: ProductWithUI) => (
                           <tr key={product.id} className="hover:bg-gray-50">
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                               {product.name}
@@ -535,7 +540,7 @@ const App = () => {
                 </div>
                 <div className="p-6">
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {coupons.map((coupon) => (
+                    {coupons.map((coupon: Coupon) => (
                       <div
                         key={coupon.code}
                         className="relative bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200"
@@ -798,7 +803,7 @@ const App = () => {
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {filteredProducts.map((product) => {
+                    {filteredProducts.map((product: ProductWithUI) => {
                       const remainingStock = cartModel.getRemainingStock(
                         product,
                         cart
@@ -1060,14 +1065,14 @@ const App = () => {
                           value={selectedCoupon?.code || ""}
                           onChange={(e) => {
                             const coupon = coupons.find(
-                              (c) => c.code === e.target.value
+                              (c: Coupon) => c.code === e.target.value
                             );
                             if (coupon) applyCoupon(coupon);
                             else resetCoupon();
                           }}
                         >
                           <option value="">쿠폰 선택</option>
-                          {coupons.map((coupon) => (
+                          {coupons.map((coupon: Coupon) => (
                             <option key={coupon.code} value={coupon.code}>
                               {coupon.name} (
                               {coupon.discountType === "amount"
