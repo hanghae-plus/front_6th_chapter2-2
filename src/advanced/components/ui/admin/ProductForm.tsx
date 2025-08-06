@@ -1,4 +1,5 @@
 import { ProductWithUI } from "../../../entities/products/product.types";
+import { useNotifications } from "../../../hooks/useNotifications";
 import { CloseIcon } from "../../icons";
 import { PRICE, MESSAGES } from "../../../constants";
 
@@ -14,10 +15,6 @@ interface ProductFormProps {
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
   onUpdateField: (field: string, value: any) => void;
-  addNotification: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
 }
 
 export const ProductForm = ({
@@ -26,8 +23,12 @@ export const ProductForm = ({
   onSubmit,
   onCancel,
   onUpdateField,
-  addNotification,
 }: ProductFormProps) => {
+  // Hook을 직접 사용
+  const { addNotification } = useNotifications();
+
+  const isNewProduct = editingProduct === "new";
+
   const handleFieldChange = (field: string, value: any) => {
     onUpdateField(field, value);
   };
@@ -38,70 +39,79 @@ export const ProductForm = ({
     }
   };
 
-  const handlePriceBlur = (value: string) => {
-    if (value === "") {
-      handleFieldChange("price", 0);
-    } else if (parseInt(value) < 0) {
-      addNotification(MESSAGES.ERROR.PRICE_INVALID, "error");
-      handleFieldChange("price", 0);
-    }
-  };
-
   const handleStockChange = (value: string) => {
     if (value === "" || /^\d+$/.test(value)) {
       handleFieldChange("stock", value === "" ? 0 : parseInt(value));
     }
   };
 
-  const handleStockBlur = (value: string) => {
-    const numValue = parseInt(value) || 0;
-
-    if (value === "") {
-      handleFieldChange("stock", 0);
-    } else if (numValue < 0) {
-      addNotification(MESSAGES.ERROR.STOCK_INVALID, "error");
-      handleFieldChange("stock", 0);
-    } else if (numValue > PRICE.MAX_STOCK) {
-      addNotification(
-        MESSAGES.ERROR.STOCK_MAX_EXCEEDED(PRICE.MAX_STOCK),
-        "error"
-      );
-      handleFieldChange("stock", PRICE.MAX_STOCK);
+  const handlePriceInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (!/^\d*$/.test(value)) {
+      addNotification(MESSAGES.ERROR.PRICE_INVALID, "error");
+      return;
     }
+    handlePriceChange(value);
+  };
+
+  const handleStockInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (!/^\d*$/.test(value)) {
+      addNotification(MESSAGES.ERROR.STOCK_INVALID, "error");
+      return;
+    }
+    if (parseInt(value) > PRICE.MAX_STOCK) {
+      addNotification(
+        `재고는 최대 ${PRICE.MAX_STOCK}개까지 입력 가능합니다.`,
+        "warning"
+      );
+      return;
+    }
+    handleStockChange(value);
   };
 
   const handleDiscountChange = (
     index: number,
     field: "quantity" | "rate",
-    value: number
+    value: string
   ) => {
+    const numValue = parseInt(value) || 0;
     const newDiscounts = [...productForm.discounts];
-    newDiscounts[index][field] = value;
-    onUpdateField("discounts", newDiscounts);
+    newDiscounts[index] = {
+      ...newDiscounts[index],
+      [field]: field === "rate" ? numValue / 100 : numValue,
+    };
+    handleFieldChange("discounts", newDiscounts);
   };
 
-  const handleAddDiscount = () => {
-    const newDiscounts = [
+  const addDiscount = () => {
+    handleFieldChange("discounts", [
       ...productForm.discounts,
-      { quantity: 10, rate: 0.1 },
-    ];
-    onUpdateField("discounts", newDiscounts);
+      { quantity: 0, rate: 0 },
+    ]);
   };
 
-  const handleRemoveDiscount = (index: number) => {
+  const removeDiscount = (index: number) => {
     const newDiscounts = productForm.discounts.filter((_, i) => i !== index);
-    onUpdateField("discounts", newDiscounts);
+    handleFieldChange("discounts", newDiscounts);
   };
-
-  const isNewProduct = editingProduct === "new";
 
   return (
-    <div className="p-6 border-t border-gray-200 bg-gray-50">
-      <form onSubmit={onSubmit} className="space-y-4">
-        <h3 className="text-lg font-medium text-gray-900">
-          {isNewProduct ? "새 상품 추가" : "상품 수정"}
-        </h3>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-bold">
+            {isNewProduct ? "새 상품 추가" : "상품 수정"}
+          </h2>
+          <button
+            onClick={onCancel}
+            className="text-gray-400 hover:text-gray-600"
+          >
+            <CloseIcon />
+          </button>
+        </div>
+
+        <form onSubmit={onSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               상품명
@@ -110,10 +120,39 @@ export const ProductForm = ({
               type="text"
               value={productForm.name}
               onChange={(e) => handleFieldChange("name", e.target.value)}
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              가격
+            </label>
+            <input
+              type="text"
+              value={productForm.price || ""}
+              onChange={handlePriceInput}
+              placeholder="숫자만 입력"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              재고
+            </label>
+            <input
+              type="text"
+              value={productForm.stock || ""}
+              onChange={handleStockInput}
+              placeholder="숫자만 입력"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               설명
@@ -122,114 +161,76 @@ export const ProductForm = ({
               type="text"
               value={productForm.description}
               onChange={(e) => handleFieldChange("description", e.target.value)}
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
+
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              가격
-            </label>
-            <input
-              type="text"
-              value={productForm.price === 0 ? "" : productForm.price}
-              onChange={(e) => handlePriceChange(e.target.value)}
-              onBlur={(e) => handlePriceBlur(e.target.value)}
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
-              placeholder="숫자만 입력"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              재고
-            </label>
-            <input
-              type="text"
-              value={productForm.stock === 0 ? "" : productForm.stock}
-              onChange={(e) => handleStockChange(e.target.value)}
-              onBlur={(e) => handleStockBlur(e.target.value)}
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
-              placeholder="숫자만 입력"
-              required
-            />
-          </div>
-        </div>
-        <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            할인 정책
-          </label>
-          <div className="space-y-2">
-            {productForm.discounts.map((discount, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-2 bg-gray-50 p-2 rounded"
+            <div className="flex justify-between items-center mb-2">
+              <label className="block text-sm font-medium text-gray-700">
+                할인 정보
+              </label>
+              <button
+                type="button"
+                onClick={addDiscount}
+                className="text-blue-600 hover:text-blue-800 text-sm"
               >
+                + 할인 추가
+              </button>
+            </div>
+            {productForm.discounts.map((discount, index) => (
+              <div key={index} className="flex items-center space-x-2 mb-2">
                 <input
                   type="number"
-                  value={discount.quantity}
-                  onChange={(e) =>
-                    handleDiscountChange(
-                      index,
-                      "quantity",
-                      parseInt(e.target.value) || 0
-                    )
-                  }
-                  className="w-20 px-2 py-1 border rounded"
-                  min="1"
                   placeholder="수량"
+                  value={discount.quantity || ""}
+                  onChange={(e) =>
+                    handleDiscountChange(index, "quantity", e.target.value)
+                  }
+                  className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
+                  min="1"
                 />
-                <span className="text-sm">개 이상 구매 시</span>
+                <span className="text-sm">개 이상</span>
                 <input
                   type="number"
-                  value={discount.rate * 100}
+                  placeholder="할인율"
+                  value={Math.round((discount.rate || 0) * 100)}
                   onChange={(e) =>
-                    handleDiscountChange(
-                      index,
-                      "rate",
-                      (parseInt(e.target.value) || 0) / 100
-                    )
+                    handleDiscountChange(index, "rate", e.target.value)
                   }
-                  className="w-16 px-2 py-1 border rounded"
+                  className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
                   min="0"
-                  max="100"
-                  placeholder="%"
+                  max="50"
                 />
                 <span className="text-sm">% 할인</span>
                 <button
                   type="button"
-                  onClick={() => handleRemoveDiscount(index)}
-                  className="text-red-600 hover:text-red-800"
+                  onClick={() => removeDiscount(index)}
+                  className="text-red-600 hover:text-red-800 text-sm"
                 >
-                  <CloseIcon />
+                  삭제
                 </button>
               </div>
             ))}
+          </div>
+
+          <div className="flex justify-end space-x-3 pt-4">
             <button
               type="button"
-              onClick={handleAddDiscount}
-              className="text-sm text-indigo-600 hover:text-indigo-800"
+              onClick={onCancel}
+              className="px-4 py-2 text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200"
             >
-              + 할인 추가
+              취소
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            >
+              {isNewProduct ? "추가" : "수정"}
             </button>
           </div>
-        </div>
-
-        <div className="flex justify-end gap-3">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
-          >
-            취소
-          </button>
-          <button
-            type="submit"
-            className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700"
-          >
-            {isNewProduct ? "추가" : "수정"}
-          </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 };

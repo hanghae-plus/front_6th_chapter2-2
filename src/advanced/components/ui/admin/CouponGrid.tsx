@@ -1,17 +1,21 @@
 import { CouponWithUI } from "../../../entities/coupon/coupon.types";
+import { useCouponHandlers } from "../../../entities/coupon/useCouponHandlers";
+import { useNotifications } from "../../../hooks/useNotifications";
 import { TrashIcon, PlusIcon } from "../../icons";
 
 interface CouponGridProps {
-  coupons: CouponWithUI[];
-  onDeleteCoupon: (code: string) => void;
   onAddCoupon: () => void;
 }
 
-export const CouponGrid = ({
-  coupons,
-  onDeleteCoupon,
-  onAddCoupon,
-}: CouponGridProps) => {
+export const CouponGrid = ({ onAddCoupon }: CouponGridProps) => {
+  // Hooks를 직접 사용
+  const { addNotification } = useNotifications();
+  const couponHandlers = useCouponHandlers({ addNotification });
+
+  const handleDeleteCoupon = (code: string) => {
+    couponHandlers.actions.remove(code);
+  };
+
   return (
     <section className="bg-white rounded-lg border border-gray-200">
       <div className="p-6 border-b border-gray-200">
@@ -19,7 +23,7 @@ export const CouponGrid = ({
       </div>
       <div className="p-6">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {coupons.map((coupon) => (
+          {couponHandlers.state.items.map((coupon) => (
             <div
               key={coupon.id}
               className="relative bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200"
@@ -39,7 +43,7 @@ export const CouponGrid = ({
                   </div>
                 </div>
                 <button
-                  onClick={() => onDeleteCoupon(coupon.code)}
+                  onClick={() => handleDeleteCoupon(coupon.code)}
                   className="text-gray-400 hover:text-red-600 transition-colors"
                 >
                   <TrashIcon />

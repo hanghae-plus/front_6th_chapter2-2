@@ -1,23 +1,16 @@
-import { CartItem } from "../../../types";
+import { useAtom, useAtomValue } from "jotai";
+import { isAdminAtom, searchTermAtom } from "../../atoms";
+import { useAppState } from "../../hooks/useAppState";
+import { useSearchProduct } from "../../entities/products/useSearchProduct";
+import { useCart } from "../../entities/cart/useCart";
 import { CartIcon } from "../icons";
+import { SearchInput } from "../ui/SearchInput";
 
-interface HeaderProps {
-  isAdmin: boolean;
-  searchTerm: string;
-  handleSearch: (term: string) => void;
-  cart: CartItem[];
-  totalItemCount: number;
-  onToggleAdminMode: () => void;
-}
+export const Header = () => {
+  const isAdmin = useAtomValue(isAdminAtom);
+  const { toggleAdminMode } = useAppState();
+  const { totalItemCount } = useCart();
 
-export const Header = ({
-  isAdmin,
-  searchTerm,
-  handleSearch,
-  cart,
-  totalItemCount,
-  onToggleAdminMode,
-}: HeaderProps) => {
   return (
     <header className="bg-white shadow-sm sticky top-0 z-40 border-b">
       <div className="max-w-7xl mx-auto px-4">
@@ -26,13 +19,7 @@ export const Header = ({
             <h1 className="text-xl font-semibold text-gray-800">SHOP</h1>
             {!isAdmin && (
               <div className="ml-8 flex-1 max-w-lg">
-                <input
-                  type="text"
-                  placeholder="상품 검색..."
-                  value={searchTerm}
-                  onChange={(e) => handleSearch(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
+                <SearchInput />
               </div>
             )}
           </div>
@@ -48,7 +35,7 @@ export const Header = ({
               </div>
             )}
             <button
-              onClick={onToggleAdminMode}
+              onClick={toggleAdminMode}
               className={`px-3 py-1.5 text-sm rounded transition-colors ${
                 isAdmin
                   ? "bg-gray-800 text-white"

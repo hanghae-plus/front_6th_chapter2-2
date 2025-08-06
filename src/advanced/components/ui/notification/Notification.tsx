@@ -1,15 +1,11 @@
-import { Notification } from "../../../hooks/useNotifications";
+import { useNotifications } from "../../../hooks/useNotifications";
 import { CloseIcon } from "../../icons";
 
-interface NotificationProps {
-  notifications: Notification[];
-  onRemoveNotification: (id: string) => void;
-}
+export const NotificationComponent = () => {
+  const { notifications, removeNotification } = useNotifications();
 
-export const NotificationComponent = ({
-  notifications,
-  onRemoveNotification,
-}: NotificationProps) => {
+  if (notifications.length === 0) return null;
+
   return (
     <div className="fixed top-4 right-4 z-50 space-y-2">
       {notifications.map((notification) => (
@@ -25,7 +21,7 @@ export const NotificationComponent = ({
         >
           <span className="text-sm font-medium">{notification.message}</span>
           <button
-            onClick={() => onRemoveNotification(notification.id)}
+            onClick={() => removeNotification(notification.id)}
             className="ml-3 text-gray-400 hover:text-gray-600"
           >
             <CloseIcon />

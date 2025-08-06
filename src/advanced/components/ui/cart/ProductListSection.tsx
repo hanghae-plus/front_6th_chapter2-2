@@ -1,43 +1,56 @@
 import { CartItem } from "../../../../types";
 import { ProductWithUI } from "../../../entities/products/product.types";
+import { useProductHandlers } from "../../../entities/products/useProductHandlers";
+import { useCartHandlers } from "../../../entities/cart/useCartHandlers";
+import { useSearchProduct } from "../../../entities/products/useSearchProduct";
+import { useProductUtils } from "../../../entities/products/useProductUtils";
+import { useNotifications } from "../../../hooks/useNotifications";
+import { productModel } from "../../../entities/products/product.model";
 import { calculateRemainingStock } from "../../../utils/calculateRemainingStock";
 import { formatPrice } from "../../../utils/formatters";
 import { PhotoIcon } from "../../icons/PhotoIcon";
 import { STOCK, DISCOUNT } from "../../../constants";
 
-interface ProductListSectionProps {
-  products: ProductWithUI[];
-  filteredProducts: ProductWithUI[];
-  debouncedSearchTerm: string;
-  cart: CartItem[];
-  checkSoldOutByProductId: (productId: string) => boolean;
-  addToCart: (product: ProductWithUI) => void;
-}
+export const ProductListSection = () => {
+  // Hooks를 직접 사용
+  const { addNotification } = useNotifications();
+  const productHandlers = useProductHandlers({ addNotification });
+  const cartHandlers = useCartHandlers({ addNotification });
+  const searchProduct = useSearchProduct();
 
-export const ProductListSection = ({
-  products,
-  filteredProducts,
-  debouncedSearchTerm,
-  cart,
-  checkSoldOutByProductId,
-  addToCart,
-}: ProductListSectionProps) => {
+  const productUtils = useProductUtils({
+    products: productHandlers.state.items,
+    cart: cartHandlers.state.items,
+  });
+
+  // 필터링된 상품 계산
+  const filteredProducts = productModel.searchProducts(
+    productHandlers.state.items,
+    searchProduct.debouncedSearchTerm
+  );
+
   return (
     <section>
       <div className="mb-6 flex justify-between items-center">
         <h2 className="text-2xl font-semibold text-gray-800">전체 상품</h2>
-        <div className="text-sm text-gray-600">총 {products.length}개 상품</div>
+        <div className="text-sm text-gray-600">
+          총 {productHandlers.state.items.length}개 상품
+        </div>
       </div>
+
       {filteredProducts.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-gray-500">
-            "{debouncedSearchTerm}"에 대한 검색 결과가 없습니다.
+            "{searchProduct.debouncedSearchTerm}"에 대한 검색 결과가 없습니다.
           </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {filteredProducts.map((product) => {
-            const remainingStock = calculateRemainingStock(product, cart);
+            const remainingStock = calculateRemainingStock(
+              product,
+              cartHandlers.state.items
+            );
 
             return (
               <div
@@ -80,7 +93,7 @@ export const ProductListSection = ({
                     <p className="text-lg font-bold text-gray-900">
                       {formatPrice(
                         product.price,
-                        checkSoldOutByProductId(product.id)
+                        productUtils.checkSoldOutByProductId(product.id)
                       )}
                     </p>
                     {product.discounts.length > 0 && (
@@ -108,15 +121,15 @@ export const ProductListSection = ({
 
                   {/* 장바구니 버튼 */}
                   <button
-                    onClick={() => addToCart(product)}
-                    disabled={checkSoldOutByProductId(product.id)}
+                    onClick={() => cartHandlers.actions.add(product)}
+                    disabled={productUtils.checkSoldOutByProductId(product.id)}
                     className={`w-full py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                      checkSoldOutByProductId(product.id)
+                      productUtils.checkSoldOutByProductId(product.id)
                         ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                         : "bg-blue-600 text-white hover:bg-blue-700"
                     }`}
                   >
-                    {checkSoldOutByProductId(product.id)
+                    {productUtils.checkSoldOutByProductId(product.id)
                       ? "품절"
                       : "장바구니 담기"}
                   </button>

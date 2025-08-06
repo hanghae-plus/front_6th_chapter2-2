@@ -1,33 +1,32 @@
 import { CartItem } from "../../../../types";
+import { useCartHandlers } from "../../../entities/cart/useCartHandlers";
+import { useNotifications } from "../../../hooks/useNotifications";
 import { calculateItemTotal } from "../../../utils/calculateItemTotal";
 import { ShoppingBagIcon, CloseIcon } from "../../icons";
 
-interface CartSectionProps {
-  cart: CartItem[];
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, newQuantity: number) => void;
-}
+export const CartSection = () => {
+  // Hooks를 직접 사용
+  const { addNotification } = useNotifications();
+  const cartHandlers = useCartHandlers({ addNotification });
 
-export const CartSection = ({
-  cart,
-  removeFromCart,
-  updateQuantity,
-}: CartSectionProps) => {
   return (
     <section className="bg-white rounded-lg border border-gray-200 p-4">
       <h2 className="text-lg font-semibold mb-4 flex items-center">
         <ShoppingBagIcon className="w-5 h-5 mr-2" />
         장바구니
       </h2>
-      {cart.length === 0 ? (
+      {cartHandlers.state.items.length === 0 ? (
         <div className="text-center py-8">
           <ShoppingBagIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
           <p className="text-gray-500 text-sm">장바구니가 비어있습니다</p>
         </div>
       ) : (
         <div className="space-y-3">
-          {cart.map((item) => {
-            const itemTotal = calculateItemTotal(item, cart);
+          {cartHandlers.state.items.map((item) => {
+            const itemTotal = calculateItemTotal(
+              item,
+              cartHandlers.state.items
+            );
             const originalPrice = item.product.price * item.quantity;
             const hasDiscount = itemTotal < originalPrice;
             const discountRate = hasDiscount
@@ -44,7 +43,7 @@ export const CartSection = ({
                     {item.product.name}
                   </h4>
                   <button
-                    onClick={() => removeFromCart(item.product.id)}
+                    onClick={() => cartHandlers.actions.remove(item.product.id)}
                     className="text-gray-400 hover:text-red-500 ml-2"
                   >
                     <CloseIcon />
@@ -54,7 +53,10 @@ export const CartSection = ({
                   <div className="flex items-center">
                     <button
                       onClick={() =>
-                        updateQuantity(item.product.id, item.quantity - 1)
+                        cartHandlers.actions.update(
+                          item.product.id,
+                          item.quantity - 1
+                        )
                       }
                       className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                     >
@@ -65,7 +67,10 @@ export const CartSection = ({
                     </span>
                     <button
                       onClick={() =>
-                        updateQuantity(item.product.id, item.quantity + 1)
+                        cartHandlers.actions.update(
+                          item.product.id,
+                          item.quantity + 1
+                        )
                       }
                       className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                     >

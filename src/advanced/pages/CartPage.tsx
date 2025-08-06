@@ -1,47 +1,37 @@
 import { ProductWithUI } from "../entities/products/product.types";
 import { CartItem } from "../../types";
 import { calculateCartTotal } from "../utils/calculateCartTotal";
+import { useProductHandlers } from "../entities/products/useProductHandlers";
+import { useCartHandlers } from "../entities/cart/useCartHandlers";
 import { useCouponHandlers } from "../entities/coupon/useCouponHandlers";
+import { useSearchProduct } from "../entities/products/useSearchProduct";
+import { useProductUtils } from "../entities/products/useProductUtils";
 import { useOrderHandlers } from "../hooks/useOrderHandlers";
+import { useNotifications } from "../hooks/useNotifications";
+import { productModel } from "../entities/products/product.model";
 import { ProductListSection } from "../components/ui/cart/ProductListSection";
 import { CartSection } from "../components/ui/cart/CartSection";
 import { CouponSection } from "../components/ui/cart/CouponSection";
 import { PaymentSummarySection } from "../components/ui/cart/PaymentSummarySection";
-import { NotificationType } from "../types/common";
 
-interface CartPageProps {
-  products: ProductWithUI[];
-  filteredProducts: ProductWithUI[];
-  debouncedSearchTerm: string;
-  cart: CartItem[];
-  checkSoldOutByProductId: (productId: string) => boolean;
-  addToCart: (product: ProductWithUI) => void;
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, newQuantity: number) => void;
-  onClearCart: () => void;
-  addNotification: (message: string, type?: NotificationType) => void;
-}
-
-export const CartPage = ({
-  products,
-  filteredProducts,
-  debouncedSearchTerm,
-  cart,
-  checkSoldOutByProductId,
-  addToCart,
-  removeFromCart,
-  updateQuantity,
-  onClearCart,
-  addNotification,
-}: CartPageProps) => {
-  // Coupon 핸들러들을 내부에서 관리 (네임스페이스 구조 활용)
+export const CartPage = () => {
+  // Hooks를 직접 사용
+  const { addNotification } = useNotifications();
+  const productHandlers = useProductHandlers({ addNotification });
+  const cartHandlers = useCartHandlers({ addNotification });
   const couponHandlers = useCouponHandlers({ addNotification });
+  const searchProduct = useSearchProduct();
+
+  const productUtils = useProductUtils({
+    products: productHandlers.state.items,
+    cart: cartHandlers.state.items,
+  });
 
   // Order 핸들러를 내부에서 관리 (네임스페이스 구조 활용)
   const orderHandlers = useOrderHandlers({
     addNotification,
     cartActions: {
-      clear: onClearCart,
+      clear: cartHandlers.actions.clear,
     },
     couponActions: {
       clearSelected: couponHandlers.actions.clearSelected,
@@ -49,43 +39,26 @@ export const CartPage = ({
   });
 
   // totals를 별도로 계산
-  const totals = calculateCartTotal(cart, couponHandlers.state.selected);
+  const totals = calculateCartTotal(
+    cartHandlers.state.items,
+    couponHandlers.state.selected
+  );
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
       <div className="lg:col-span-3">
-        <ProductListSection
-          products={products}
-          filteredProducts={filteredProducts}
-          debouncedSearchTerm={debouncedSearchTerm}
-          cart={cart}
-          checkSoldOutByProductId={checkSoldOutByProductId}
-          addToCart={addToCart}
-        />
+        <ProductListSection />
       </div>
 
       <div className="lg:col-span-1">
         <div className="sticky top-24 space-y-4">
-          <CartSection
-            cart={cart}
-            removeFromCart={removeFromCart}
-            updateQuantity={updateQuantity}
-          />
+          <CartSection />
 
-          {cart.length > 0 && (
+          {cartHandlers.state.items.length > 0 && (
             <>
-              <CouponSection
-                coupons={couponHandlers.state.items}
-                selectedCoupon={couponHandlers.state.selected}
-                onCouponSelect={couponHandlers.actions.setSelected}
-                onCouponApply={couponHandlers.actions.apply}
-                cart={cart}
-              />
+              <CouponSection />
 
-              <PaymentSummarySection
-                totals={totals}
-                completeOrder={orderHandlers.actions.complete}
-              />
+              <PaymentSummarySection />
             </>
           )}
         </div>

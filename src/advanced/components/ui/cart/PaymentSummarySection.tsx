@@ -1,15 +1,26 @@
-interface PaymentSummarySectionProps {
-  totals: {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
-  };
-  completeOrder: () => void;
-}
+import { useCartHandlers } from "../../../entities/cart/useCartHandlers";
+import { useCouponHandlers } from "../../../entities/coupon/useCouponHandlers";
+import { useOrderHandlers } from "../../../hooks/useOrderHandlers";
+import { useNotifications } from "../../../hooks/useNotifications";
+import { calculateCartTotal } from "../../../utils/calculateCartTotal";
 
-export const PaymentSummarySection = ({
-  totals,
-  completeOrder,
-}: PaymentSummarySectionProps) => {
+export const PaymentSummarySection = () => {
+  // Hooks를 직접 사용
+  const { addNotification } = useNotifications();
+  const cartHandlers = useCartHandlers({ addNotification });
+  const couponHandlers = useCouponHandlers({ addNotification });
+  const orderHandlers = useOrderHandlers({
+    addNotification,
+    cartActions: cartHandlers.actions,
+    couponActions: couponHandlers.actions,
+  });
+
+  // 총액 계산
+  const totals = calculateCartTotal(
+    cartHandlers.state.items,
+    couponHandlers.state.selected
+  );
+
   return (
     <section className="bg-white rounded-lg border border-gray-200 p-4">
       <h3 className="text-lg font-semibold mb-4">결제 정보</h3>
@@ -41,7 +52,7 @@ export const PaymentSummarySection = ({
       </div>
 
       <button
-        onClick={completeOrder}
+        onClick={orderHandlers.actions.complete}
         className="w-full mt-4 py-3 bg-yellow-400 text-gray-900 rounded-md font-medium hover:bg-yellow-500 transition-colors"
       >
         {totals.totalAfterDiscount.toLocaleString()}원 결제하기

@@ -1,4 +1,5 @@
 import { CouponFormData } from "../../../entities/coupon/useCouponForm";
+import { useNotifications } from "../../../hooks/useNotifications";
 import { DISCOUNT, COUPON, MESSAGES } from "../../../constants";
 
 interface CouponFormProps {
@@ -6,10 +7,6 @@ interface CouponFormProps {
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
   onUpdateField: (field: keyof CouponFormData, value: any) => void;
-  addNotification: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
 }
 
 export const CouponForm = ({
@@ -17,8 +14,10 @@ export const CouponForm = ({
   onSubmit,
   onCancel,
   onUpdateField,
-  addNotification,
 }: CouponFormProps) => {
+  // Hook을 직접 사용
+  const { addNotification } = useNotifications();
+
   const handleDiscountValueChange = (value: string) => {
     if (value === "" || /^\d+$/.test(value)) {
       onUpdateField("discountValue", value === "" ? 0 : parseInt(value));
