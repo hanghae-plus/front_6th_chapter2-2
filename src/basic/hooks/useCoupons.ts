@@ -1,48 +1,34 @@
 import { useState, useCallback, useEffect } from 'react';
 
 import { Coupon } from '../../types';
-import { initialCoupons } from '../constants';
+import * as couponModel from '../models/coupon';
 
 interface UseCouponsProps {
   addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
 }
 
 export function useCoupons({ addNotification }: UseCouponsProps) {
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem('coupons');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialCoupons;
-      }
-    }
-    return initialCoupons;
-  });
-
+  const [coupons, setCoupons] = useState<Coupon[]>(couponModel.loadCouponsFromStorage);
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
   useEffect(() => {
-    localStorage.setItem('coupons', JSON.stringify(coupons));
+    couponModel.saveCouponsToStorage(coupons);
   }, [coupons]);
 
-  const applyCoupon = (coupon: Coupon) => {
-    if (coupon) {
+  const applyCoupon = useCallback(
+    (coupon: Coupon | null) => {
       setSelectedCoupon(coupon);
-      addNotification(`${coupon.name} 쿠폰이 적용되었습니다.`);
-    } else {
-      setSelectedCoupon(null);
-    }
-  };
+      if (coupon) {
+        addNotification(`${coupon.name} 쿠폰이 적용되었습니다.`);
+      }
+    },
+    [addNotification],
+  );
 
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {
-      const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
-      if (existingCoupon) {
-        addNotification('이미 존재하는 쿠폰 코드입니다.', 'error');
-        return;
-      }
-      setCoupons((prev) => [...prev, newCoupon]);
+      const newCoupons = couponModel.addNewCoupon(coupons, newCoupon);
+      setCoupons(newCoupons);
       addNotification('쿠폰이 추가되었습니다.', 'success');
     },
     [coupons, addNotification],
@@ -50,20 +36,22 @@ export function useCoupons({ addNotification }: UseCouponsProps) {
 
   const deleteCoupon = useCallback(
     (couponCode: string) => {
-      setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
+      const newCoupons = couponModel.removeCouponByCode(coupons, couponCode);
+      setCoupons(newCoupons);
+
       if (selectedCoupon?.code === couponCode) {
         setSelectedCoupon(null);
       }
       addNotification('쿠폰이 삭제되었습니다.', 'success');
     },
-    [selectedCoupon, addNotification],
+    [coupons, selectedCoupon, addNotification],
   );
 
   return {
     coupons,
-    addCoupon,
-    deleteCoupon,
     selectedCoupon,
     applyCoupon,
+    addCoupon,
+    deleteCoupon,
   };
 }
