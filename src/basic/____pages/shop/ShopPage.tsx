@@ -19,8 +19,6 @@ interface ShopPageProps {
   cart: CartItem[];
   setCart: Dispatch<SetStateAction<CartItem[]>>;
   searchTerm: string;
-  getRemainingStock: (product: Product) => number;
-  formatPrice: (price: number, productId?: string) => string;
   selectedCoupon: Coupon | null;
   setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
 }
@@ -30,8 +28,6 @@ function ShopPage({
   cart,
   setCart,
   searchTerm,
-  getRemainingStock,
-  formatPrice,
   selectedCoupon,
   setSelectedCoupon,
 }: ShopPageProps) {
@@ -52,6 +48,13 @@ function ShopPage({
               .includes(debouncedSearchTerm.toLowerCase()))
       )
     : products;
+
+  const getRemainingStock = (product: Product): number => {
+    const cartItem = cart.find((item) => item.product.id === product.id);
+    const remaining = product.stock - (cartItem?.quantity || 0);
+
+    return remaining;
+  };
 
   const addToCart = useCallback(
     (product: ProductWithUI) => {
@@ -157,7 +160,7 @@ function ShopPage({
         )
       );
     },
-    [products, removeFromCart, addNotification, getRemainingStock]
+    [products, removeFromCart, addNotification]
   );
 
   const calculateCartTotal = (): {
@@ -233,6 +236,17 @@ function ShopPage({
     }, 500);
     return () => clearTimeout(timer);
   }, [searchTerm]);
+
+  const formatPrice = (price: number, productId?: string): string => {
+    if (productId) {
+      const product = products.find((p) => p.id === productId);
+      if (product && getRemainingStock(product) <= 0) {
+        return "SOLD OUT";
+      }
+    }
+
+    return `₩${price.toLocaleString()}`;
+  };
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-8">

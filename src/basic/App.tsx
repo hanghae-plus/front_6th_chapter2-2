@@ -68,28 +68,6 @@ const App = () => {
     }
   }, [cart, removeCart]);
 
-  const getRemainingStock = (product: Product): number => {
-    const cartItem = cart.find((item) => item.product.id === product.id);
-    const remaining = product.stock - (cartItem?.quantity || 0);
-
-    return remaining;
-  };
-
-  const formatPrice = (price: number, productId?: string): string => {
-    if (productId) {
-      const product = products.find((p) => p.id === productId);
-      if (product && getRemainingStock(product) <= 0) {
-        return "SOLD OUT";
-      }
-    }
-
-    if (isAdmin) {
-      return `${price.toLocaleString()}원`;
-    }
-
-    return `₩${price.toLocaleString()}`;
-  };
-
   return (
     <NotificationProvider>
       <Layout
@@ -104,7 +82,6 @@ const App = () => {
           <AdminPage
             products={products}
             setProducts={(value) => setProducts(value)}
-            formatPrice={formatPrice}
             selectedCoupon={selectedCoupon}
             setSelectedCoupon={setSelectedCoupon}
           />
@@ -114,8 +91,6 @@ const App = () => {
             products={products}
             cart={cart}
             setCart={setCart}
-            getRemainingStock={getRemainingStock}
-            formatPrice={formatPrice}
             selectedCoupon={selectedCoupon}
             setSelectedCoupon={setSelectedCoupon}
           />
