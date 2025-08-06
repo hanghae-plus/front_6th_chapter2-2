@@ -26,7 +26,6 @@ const App = () => {
   const {
     cart,
     totalItemCount,
-    getRemainingStock,
     calculateItemTotal,
     calculateCartTotal,
     addToCart: addToCartHook,

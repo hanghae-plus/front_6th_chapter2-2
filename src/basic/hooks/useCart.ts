@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { CartItem, Product } from "../../types";
+import { getMaxApplicableDiscount, calculateItemTotalWithDiscount } from "../utils/discounts";
 
 const initCart = () => {
   const saved = localStorage.getItem("cart");
@@ -38,34 +39,18 @@ export const useCart = () => {
     [cart]
   );
 
-  const getMaxApplicableDiscount = useCallback(
+  const getMaxApplicableDiscountWrapper = useCallback(
     (item: CartItem): number => {
-      const { discounts } = item.product;
-      const { quantity } = item;
-
-      const baseDiscount = discounts.reduce((maxDiscount, discount) => {
-        return quantity >= discount.quantity && discount.rate > maxDiscount ? discount.rate : maxDiscount;
-      }, 0);
-
-      const hasBulkPurchase = cart.some((cartItem) => cartItem.quantity >= 10);
-      if (hasBulkPurchase) {
-        return Math.min(baseDiscount + 0.05, 0.5); // 대량 구매 시 추가 5% 할인
-      }
-
-      return baseDiscount;
+      return getMaxApplicableDiscount(item, cart);
     },
     [cart]
   );
 
   const calculateItemTotal = useCallback(
     (item: CartItem): number => {
-      const { price } = item.product;
-      const { quantity } = item;
-      const discount = getMaxApplicableDiscount(item);
-
-      return Math.round(price * quantity * (1 - discount));
+      return calculateItemTotalWithDiscount(item, cart);
     },
-    [getMaxApplicableDiscount]
+    [cart]
   );
 
   const calculateCartTotal = useCallback((): {
@@ -148,7 +133,7 @@ export const useCart = () => {
     cart,
     totalItemCount,
     getRemainingStock,
-    getMaxApplicableDiscount,
+    getMaxApplicableDiscount: getMaxApplicableDiscountWrapper,
     calculateItemTotal,
     calculateCartTotal,
     addToCart,
