@@ -85,5 +85,36 @@ export const removeFromCart = (cart: CartItem[], productId: string) => {
   return cart.filter((item) => item.product.id !== productId);
 };
 
-export const updateQuantity = () => {};
+/**
+ * 장바구니 상품 개수를 업데이트하는 함수
+ * 업데이트 수량이 재고보다 많은 경우 실패
+ */
+export const updateQuantity = (
+  cart: CartItem[],
+  product: Product,
+  newQuantity: number
+): AddToCartResult => {
+  if (newQuantity <= 0) {
+    return {
+      success: true,
+      cart: removeFromCart(cart, product.id),
+    };
+  }
+
+  if (newQuantity > product.stock) {
+    return {
+      success: false,
+      cart: removeFromCart(cart, product.id),
+      reason: `재고는 ${product.stock}개까지만 있습니다.`,
+    };
+  }
+
+  return {
+    success: true,
+    cart: cart.map((item) =>
+      item.product.id === product.id ? { ...item, quantity: newQuantity } : item
+    ),
+  };
+};
+
 export const calculateCartTotal = () => {};

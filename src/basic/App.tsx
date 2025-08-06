@@ -5,6 +5,7 @@ import {
   getRemainingStock,
   addToCart as _addToCart,
   removeFromCart as _removeFromCart,
+  updateQuantity as _updateQuantity,
 } from "../basic/models/cart";
 
 interface ProductWithUI extends Product {
@@ -223,30 +224,16 @@ const App = () => {
   }, []);
 
   const updateQuantity = useCallback(
-    (productId: string, newQuantity: number) => {
-      if (newQuantity <= 0) {
-        removeFromCart(productId);
-        return;
+    (product: Product, newQuantity: number) => {
+      const result = _updateQuantity(cart, product, newQuantity);
+
+      if (!result.success) {
+        return addNotification(result.reason, "error");
       }
 
-      const product = products.find((p) => p.id === productId);
-      if (!product) return;
-
-      const maxStock = product.stock;
-      if (newQuantity > maxStock) {
-        addNotification(`재고는 ${maxStock}개까지만 있습니다.`, "error");
-        return;
-      }
-
-      setCart((prevCart) =>
-        prevCart.map((item) =>
-          item.product.id === productId
-            ? { ...item, quantity: newQuantity }
-            : item
-        )
-      );
+      setCart(result.cart);
     },
-    [products, removeFromCart, addNotification, getRemainingStock]
+    [addNotification, cart]
   );
 
   const applyCoupon = useCallback(
@@ -1261,7 +1248,7 @@ const App = () => {
                                 <button
                                   onClick={() =>
                                     updateQuantity(
-                                      item.product.id,
+                                      item.product,
                                       item.quantity - 1
                                     )
                                   }
@@ -1274,7 +1261,7 @@ const App = () => {
                                 <button
                                   onClick={() =>
                                     updateQuantity(
-                                      item.product.id,
+                                      item.product,
                                       item.quantity + 1
                                     )
                                   }
