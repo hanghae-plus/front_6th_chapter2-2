@@ -1,43 +1,103 @@
-import { useCallback, useMemo, useState } from "react";
-import { CartItem, Product } from "../../../types";
+import { useCallback, useMemo } from "react";
+import { CartItem } from "../../../types";
 import { ProductWithUI } from "../products/product.types";
-import { NotificationType } from "../../hooks/useNotifications";
 import { calculateRemainingStock } from "../../utils/calculateRemainingStock";
 import { useLocalStorageState } from "../../utils/hooks/useLocalStorageState";
 import { cartModel } from "./cart.model";
 
-//TODO : 카트에서 노티피케이션 제거하기!
-export const useCart = (
-  addNotification: (message: string, type: NotificationType) => void
-) => {
+// 결과 타입 정의
+interface CartActionResult {
+  success: boolean;
+  message: string;
+  type?: "success" | "error" | "warning";
+}
+
+export const useCart = () => {
   const [cart, setCart] = useLocalStorageState<CartItem[]>("cart", []);
 
   const addToCart = useCallback(
-    (product: ProductWithUI) => {
+    (product: ProductWithUI): CartActionResult => {
       const remainingStock = cartModel.getRemainingStock(product, cart);
       if (remainingStock <= 0) {
-        addNotification("재고가 부족합니다!", "error");
-        return;
+        return {
+          success: false,
+          message: "재고가 부족합니다!",
+          type: "error",
+        };
       }
 
       const newCart = cartModel.addToCart(cart, product);
       const addFailed = newCart === cart; // 장바구니에 담기지 않은 경우
 
       if (addFailed) {
-        addNotification(`재고는 ${product.stock}개까지만 있습니다.`, "error");
-        return;
+        return {
+          success: false,
+          message: `재고는 ${product.stock}개까지만 있습니다.`,
+          type: "error",
+        };
       }
 
       setCart(newCart);
 
-      addNotification("장바구니에 담았습니다", "success");
+      return {
+        success: true,
+        message: "장바구니에 담았습니다",
+        type: "success",
+      };
     },
-    [cart, addNotification, calculateRemainingStock]
+    [cart]
   );
 
   const removeFromCart = useCallback((productId: string) => {
     setCart((prevCart) => cartModel.removeFromCart(prevCart, productId));
   }, []);
+
+  const updateQuantity = useCallback(
+    (productId: string, newQuantity: number): CartActionResult => {
+      if (newQuantity <= 0) {
+        removeFromCart(productId);
+        return {
+          success: true,
+          message: "상품이 장바구니에서 제거되었습니다",
+          type: "success",
+        };
+      }
+
+      // 상품 찾기 (cart에서)
+      const cartItem = cart.find((item) => item.product.id === productId);
+      if (!cartItem) {
+        return {
+          success: false,
+          message: "상품을 찾을 수 없습니다",
+          type: "error",
+        };
+      }
+
+      const maxStock = cartItem.product.stock;
+      if (newQuantity > maxStock) {
+        return {
+          success: false,
+          message: `재고는 ${maxStock}개까지만 있습니다.`,
+          type: "error",
+        };
+      }
+
+      setCart((prevCart) =>
+        prevCart.map((item) =>
+          item.product.id === productId
+            ? { ...item, quantity: newQuantity }
+            : item
+        )
+      );
+
+      return {
+        success: true,
+        message: "수량이 변경되었습니다",
+        type: "success",
+      };
+    },
+    [cart, removeFromCart]
+  );
 
   const totalItemCount = useMemo(() => {
     return cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -47,7 +107,8 @@ export const useCart = (
     cart,
     setCart,
     addToCart,
-    totalItemCount,
     removeFromCart,
+    updateQuantity,
+    totalItemCount,
   };
 };

@@ -1,5 +1,7 @@
 import { ProductWithUI } from "../entities/products/product.types";
 import { CartItem, Coupon } from "../../types";
+import { formatPrice } from "../utils/formatters";
+import { calculateRemainingStock } from "../utils/calculateRemainingStock";
 import { calculateItemTotal } from "../utils/calculateItemTotal";
 import { ProductListSection } from "../components/ui/cart/ProductListSection";
 import { CartSection } from "../components/ui/cart/CartSection";
@@ -13,7 +15,7 @@ interface CartPageProps {
   cart: CartItem[];
   checkSoldOutByProductId: (productId: string) => boolean;
   isAdmin: boolean;
-  // Cart 관련 props
+  // Cart 관련 props - 핸들러 함수들
   addToCart: (product: ProductWithUI) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, newQuantity: number) => void;
