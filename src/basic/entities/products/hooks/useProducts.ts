@@ -1,5 +1,5 @@
+import { initialProducts, ProductWithUI } from '@/basic/constants/mocks';
 import { useState } from 'react';
-import { initialProducts, ProductWithUI } from '../../../constants/mocks';
 
 export function useProducts() {
   const [products, setProducts] = useState<ProductWithUI[]>(() => {

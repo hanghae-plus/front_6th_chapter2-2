@@ -1,6 +1,6 @@
+import { initialCoupons } from '@/basic/constants/mocks';
+import { Coupon } from '@/types';
 import { useState } from 'react';
-import { Coupon } from '../../../../types';
-import { initialCoupons } from '../../../constants/mocks';
 
 export function useCoupons() {
   const [coupons, setCoupons] = useState<Coupon[]>(() => {
