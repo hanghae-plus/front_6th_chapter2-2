@@ -17,7 +17,7 @@ import ShopView from './components/user/ShopView';
 const App = () => {
   // 기본 데이터 관리
   const { products, deleteProduct, updateProduct, addProduct } = useProducts();
-  const { notifications, setNotifications, addNotification } = useNotifications();
+  const { notifications, removeNotificationAtom, addNotification } = useNotifications();
 
   // UI 상태 관리
   const [isAdmin, setIsAdmin] = useState(false);
@@ -79,9 +79,7 @@ const App = () => {
               key={notification.id}
               type={notification.type}
               message={notification.message}
-              onClose={() =>
-                setNotifications((prev) => prev.filter((n) => n.id !== notification.id))
-              }
+              onClose={() => removeNotificationAtom(notification)}
             />
           ))}
         </div>

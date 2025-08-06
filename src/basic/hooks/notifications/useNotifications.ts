@@ -1,8 +1,8 @@
+import { removeNotificationAtom } from './../../../advanced/atoms/notificationsAtoms';
 import { useCallback, useState } from 'react';
 import { Notification } from '../../../types';
 
 export const useNotifications = () => {
-
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   const addNotification = useCallback(
@@ -17,9 +17,13 @@ export const useNotifications = () => {
     [],
   );
 
+  const removeNotificationAtom = useCallback((notification: Notification) => {
+    setNotifications((prev) => prev.filter((n) => n.id !== notification.id));
+  }, []);
+
   return {
     notifications,
-    setNotifications,
-    addNotification
-  }
-}
+    removeNotificationAtom,
+    addNotification,
+  };
+};
