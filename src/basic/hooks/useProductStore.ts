@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
 
-import { type ProductWithUI } from '../constants';
+import { type ProductWithUI, initialProducts } from '../constants';
 import { useLocalStorage } from '../utils/hooks/useLocalStorage';
 
 export function useProductStore() {
-  const [products, setProducts] = useLocalStorage<ProductWithUI[]>('products', []);
+  const [products, setProducts] = useLocalStorage<ProductWithUI[]>('products', initialProducts);
 
   const addProduct = useCallback((newProduct: Omit<ProductWithUI, 'id'>) => {
     const product: ProductWithUI = {
