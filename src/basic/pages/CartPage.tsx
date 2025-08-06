@@ -3,7 +3,9 @@ import { CartItem, Coupon } from "../../types";
 import { formatPrice } from "../utils/formatters";
 import { calculateRemainingStock } from "../utils/calculateRemainingStock";
 import { calculateItemTotal } from "../utils/calculateItemTotal";
+import { calculateCartTotal } from "../utils/calculateCartTotal";
 import { useCouponHandlers } from "../entities/coupon/useCouponHandlers";
+import { useOrderHandlers } from "../hooks/useOrderHandlers";
 import { ProductListSection } from "../components/ui/cart/ProductListSection";
 import { CartSection } from "../components/ui/cart/CartSection";
 import { CouponSection } from "../components/ui/cart/CouponSection";
@@ -14,23 +16,17 @@ interface CartPageProps {
   filteredProducts: ProductWithUI[];
   debouncedSearchTerm: string;
   cart: CartItem[];
+  setCart: (cart: CartItem[]) => void;
   checkSoldOutByProductId: (productId: string) => boolean;
   isAdmin: boolean;
-  // Cart 관련 props - 핸들러 함수들
+  // Cart 핸들러들은 전역에서 받음
   addToCart: (product: ProductWithUI) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, newQuantity: number) => void;
-  // Coupon 관련 props
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
-  applyCoupon: (coupon: Coupon, cart: CartItem[]) => void;
-  // Order 관련 props
-  completeOrder: () => void;
-  totals: {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
-  };
+  addNotification: (
+    message: string,
+    type: "error" | "success" | "warning"
+  ) => void;
 }
 
 export const CartPage = ({
@@ -38,18 +34,28 @@ export const CartPage = ({
   filteredProducts,
   debouncedSearchTerm,
   cart,
+  setCart,
   checkSoldOutByProductId,
   isAdmin,
   addToCart,
   removeFromCart,
   updateQuantity,
-  coupons,
-  selectedCoupon,
-  setSelectedCoupon,
-  applyCoupon,
-  completeOrder,
-  totals,
+  addNotification,
 }: CartPageProps) => {
+  // Coupon 핸들러들을 내부에서 관리
+  const { coupons, selectedCoupon, setSelectedCoupon, applyCoupon } =
+    useCouponHandlers({ addNotification });
+
+  // Order 핸들러를 내부에서 관리
+  const { completeOrder } = useOrderHandlers({
+    addNotification,
+    setCart,
+    setSelectedCoupon,
+  });
+
+  // totals를 별도로 계산
+  const totals = calculateCartTotal(cart, selectedCoupon);
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
       <div className="lg:col-span-3">

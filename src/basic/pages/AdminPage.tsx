@@ -1,84 +1,127 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { ProductWithUI } from "../entities/products/product.types";
 import { Coupon } from "../../types";
 import { formatPrice } from "../utils/formatters";
 import { useProductHandlers } from "../entities/products/useProductHandlers";
 import { useCouponHandlers } from "../entities/coupon/useCouponHandlers";
+import { useProductForm } from "../entities/products/useProductForm";
 
 interface AdminPageProps {
-  activeTab: "products" | "coupons";
-  setActiveTab: (tab: "products" | "coupons") => void;
   products: ProductWithUI[];
   setProducts: (products: ProductWithUI[]) => void;
   addProduct: (product: Omit<ProductWithUI, "id">) => void;
   updateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
   deleteProduct: (productId: string) => void;
-  coupons: Coupon[];
-  addCoupon: (coupon: Coupon) => void;
-  deleteCoupon: (couponCode: string) => void;
+  checkSoldOutByProductId: (productId: string) => boolean;
+  isAdmin: boolean;
   addNotification: (
     message: string,
     type: "error" | "success" | "warning"
   ) => void;
-  // Product form 관련 props
-  productForm: {
-    name: string;
-    price: number;
-    stock: number;
-    description: string;
-    discounts: Array<{ quantity: number; rate: number }>;
-  };
-  setProductForm: (form: any) => void;
-  editingProduct: string | null;
-  setEditingProduct: (id: string | null) => void;
-  showProductForm: boolean;
-  setShowProductForm: (show: boolean) => void;
-  startEditProduct: (product: ProductWithUI) => void;
-  handleProductSubmit: (e: React.FormEvent) => void;
-  // Coupon form 관련 props
-  couponForm: {
-    name: string;
-    code: string;
-    discountType: "amount" | "percentage";
-    discountValue: number;
-  };
-  setCouponForm: (form: any) => void;
-  showCouponForm: boolean;
-  setShowCouponForm: (show: boolean) => void;
-  handleCouponSubmit: (e: React.FormEvent) => void;
-  // Utility functions
-  checkSoldOutByProductId: (productId: string) => boolean;
-  isAdmin: boolean;
 }
 
 export const AdminPage = ({
-  activeTab,
-  setActiveTab,
   products,
   setProducts,
   addProduct,
   updateProduct,
   deleteProduct,
-  coupons,
-  addCoupon,
-  deleteCoupon,
-  addNotification,
-  productForm,
-  setProductForm,
-  editingProduct,
-  setEditingProduct,
-  showProductForm,
-  setShowProductForm,
-  startEditProduct,
-  handleProductSubmit,
-  couponForm,
-  setCouponForm,
-  showCouponForm,
-  setShowCouponForm,
-  handleCouponSubmit,
   checkSoldOutByProductId,
   isAdmin,
+  addNotification,
 }: AdminPageProps) => {
+  // Coupon 핸들러들을 내부에서 관리
+  const { coupons, addCoupon, deleteCoupon } = useCouponHandlers({
+    addNotification,
+  });
+
+  // 내부 상태 관리
+  const [activeTab, setActiveTab] = useState<"products" | "coupons">(
+    "products"
+  );
+  const [showCouponForm, setShowCouponForm] = useState(false);
+  const [couponForm, setCouponForm] = useState({
+    name: "",
+    code: "",
+    discountType: "amount" as "amount" | "percentage",
+    discountValue: 0,
+  });
+
+  // ProductForm 관련 로직을 내부로 이동
+  const {
+    productForm,
+    setProductForm,
+    editingProduct,
+    setEditingProduct,
+    showProductForm,
+    setShowProductForm,
+    startEditProduct,
+  } = useProductForm();
+
+  // handleProductSubmit을 내부에서 정의
+  const handleProductSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+
+      if (editingProduct === "new") {
+        addProduct({
+          name: productForm.name,
+          price: productForm.price,
+          stock: productForm.stock,
+          description: productForm.description,
+          discounts: productForm.discounts,
+        });
+        addNotification("상품이 추가되었습니다", "success");
+      } else if (editingProduct) {
+        updateProduct(editingProduct, {
+          name: productForm.name,
+          price: productForm.price,
+          stock: productForm.stock,
+          description: productForm.description,
+          discounts: productForm.discounts,
+        });
+        addNotification("상품이 수정되었습니다", "success");
+      }
+
+      setEditingProduct(null);
+      setShowProductForm(false);
+    },
+    [
+      editingProduct,
+      productForm,
+      addProduct,
+      updateProduct,
+      addNotification,
+      setEditingProduct,
+      setShowProductForm,
+    ]
+  );
+
+  // handleCouponSubmit을 내부에서 정의
+  const handleCouponSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+
+      addCoupon({
+        name: couponForm.name,
+        code: couponForm.code,
+        discountType: couponForm.discountType,
+        discountValue: couponForm.discountValue,
+      });
+
+      addNotification("쿠폰이 추가되었습니다", "success");
+
+      setCouponForm({
+        name: "",
+        code: "",
+        discountType: "amount",
+        discountValue: 0,
+      });
+      setShowCouponForm(false);
+    },
+    [couponForm, addCoupon, addNotification]
+  );
+
   return (
     <div className="max-w-6xl mx-auto">
       <div className="mb-8">

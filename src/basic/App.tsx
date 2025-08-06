@@ -20,10 +20,8 @@ const App = () => {
     products,
     setProducts,
     cart,
+    setCart,
     totalItemCount,
-    coupons,
-    selectedCoupon,
-    setSelectedCoupon,
 
     // 도메인 핸들러들
     addProduct,
@@ -32,18 +30,6 @@ const App = () => {
     addToCart,
     removeFromCart,
     updateQuantity,
-    addCoupon,
-    deleteCoupon,
-    applyCoupon,
-
-    // 폼 관련
-    productForm,
-    setProductForm,
-    editingProduct,
-    setEditingProduct,
-    showProductForm,
-    setShowProductForm,
-    startEditProduct,
 
     // 검색 관련
     searchTerm,
@@ -51,24 +37,8 @@ const App = () => {
     debouncedSearchTerm,
     filteredProducts,
 
-    // 관리자 핸들러들
-    activeTab,
-    setActiveTab,
-    showCouponForm,
-    setShowCouponForm,
-    couponForm,
-    setCouponForm,
-    handleProductSubmit,
-    handleCouponSubmit,
-
-    // 주문 핸들러들
-    completeOrder,
-
     // 유틸리티
     checkSoldOutByProductId,
-
-    // 계산된 값들
-    totals,
   } = useAppCore();
 
   return (
@@ -92,32 +62,14 @@ const App = () => {
       <Body>
         {isAdmin ? (
           <AdminPage
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
             products={products}
             setProducts={setProducts}
             addProduct={addProduct}
             updateProduct={updateProduct}
             deleteProduct={deleteProduct}
-            coupons={coupons}
-            deleteCoupon={deleteCoupon}
-            addCoupon={addCoupon}
-            addNotification={addNotification}
-            productForm={productForm}
-            setProductForm={setProductForm}
-            editingProduct={editingProduct}
-            setEditingProduct={setEditingProduct}
-            showProductForm={showProductForm}
-            setShowProductForm={setShowProductForm}
-            startEditProduct={startEditProduct}
-            handleProductSubmit={handleProductSubmit}
-            couponForm={couponForm}
-            setCouponForm={setCouponForm}
-            showCouponForm={showCouponForm}
-            setShowCouponForm={setShowCouponForm}
-            handleCouponSubmit={handleCouponSubmit}
             checkSoldOutByProductId={checkSoldOutByProductId}
             isAdmin={isAdmin}
+            addNotification={addNotification}
           />
         ) : (
           <CartPage
@@ -125,17 +77,13 @@ const App = () => {
             filteredProducts={filteredProducts}
             debouncedSearchTerm={debouncedSearchTerm}
             cart={cart}
+            setCart={setCart}
             checkSoldOutByProductId={checkSoldOutByProductId}
             isAdmin={isAdmin}
             addToCart={addToCart}
             removeFromCart={removeFromCart}
             updateQuantity={updateQuantity}
-            coupons={coupons}
-            selectedCoupon={selectedCoupon}
-            setSelectedCoupon={setSelectedCoupon}
-            applyCoupon={applyCoupon}
-            completeOrder={completeOrder}
-            totals={totals}
+            addNotification={addNotification}
           />
         )}
       </Body>
