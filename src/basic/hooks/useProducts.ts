@@ -17,6 +17,7 @@ import { useCallback } from 'react'
 import { initialProducts } from '../constants'
 import { ProductWithUI } from '../types'
 import { useLocalStorage } from '../utils/hooks/useLocalStorage'
+import { getFilteredProducts as _getFilteredProducts } from '../models/product'
 
 export function useProducts(
   addNotification: (
@@ -65,13 +66,7 @@ export function useProducts(
 
   const getFilteredProducts = useCallback(
     (searchTerm: string) => {
-      if (!searchTerm) return products
-
-      return products.filter(
-        (product) =>
-          product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          product.description?.toLowerCase().includes(searchTerm.toLowerCase()),
-      )
+      return _getFilteredProducts(searchTerm, products)
     },
     [products],
   )

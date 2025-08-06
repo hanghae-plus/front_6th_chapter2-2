@@ -7,8 +7,7 @@
 // 3. calculateCartTotal(cart, coupon): 장바구니 총액 계산 (할인 전/후, 할인액)
 // 4. updateCartItemQuantity(cart, productId, quantity): 수량 변경
 // 5. addItemToCart(cart, product): 상품 추가
-// 6. removeItemFromCart(cart, productId): 상품 제거
-// 7. getRemainingStock(product, cart): 남은 재고 계산
+// 6. getRemainingStock(product, cart): 남은 재고 계산
 //
 // 원칙:
 // - UI와 관련된 로직 없음
@@ -16,6 +15,7 @@
 // - 모든 필요한 데이터는 파라미터로 전달받음
 
 import { CartItem, Coupon, Product } from '../../types'
+import { ProductWithUI } from '../types'
 // TODO: 구현
 
 export const getRemainingStock = (
@@ -28,7 +28,7 @@ export const getRemainingStock = (
   return remaining
 }
 
-const getBasicDiscont = (item: CartItem) => {
+const getBasicDiscount = (item: CartItem) => {
   const { discounts } = item.product
   const { quantity } = item
 
@@ -43,7 +43,7 @@ export const getMaxApplicableDiscount = (
   item: CartItem,
   cart: CartItem[],
 ): number => {
-  const baseDiscount = getBasicDiscont(item)
+  const baseDiscount = getBasicDiscount(item)
   const hasBulkPurchase = cart.some((cartItem) => cartItem.quantity >= 10)
   return hasBulkPurchase ? Math.min(baseDiscount + 0.05, 0.5) : baseDiscount
 }
@@ -61,7 +61,7 @@ export const calculateItemTotal = (
 
 export const calculateCartTotal = (
   cart: CartItem[],
-  coupon: Coupon,
+  coupon: Coupon | null,
 ): { totalBeforeDiscount: number; totalAfterDiscount: number } => {
   let totalBeforeDiscount = 0
   let totalAfterDiscount = 0
@@ -88,5 +88,44 @@ export const calculateCartTotal = (
   return {
     totalBeforeDiscount: Math.round(totalBeforeDiscount),
     totalAfterDiscount: Math.round(totalAfterDiscount),
+  }
+}
+
+export const addItemToCart = (
+  carts: CartItem[],
+  product: ProductWithUI,
+): {
+  carts: CartItem[]
+  message: string
+  type: 'error' | 'success' // 명확한 타입
+} => {
+  const existingItem = carts.find((item) => item.product.id === product.id)
+
+  if (existingItem) {
+    const newQuantity = existingItem.quantity + 1
+
+    if (newQuantity > product.stock) {
+      return {
+        carts: carts,
+        message: `재고는 ${product.stock}개까지만 있습니다.`,
+        type: 'error',
+      }
+    }
+
+    return {
+      carts: carts.map((item) =>
+        item.product.id === product.id
+          ? { ...item, quantity: newQuantity }
+          : item,
+      ),
+      message: '장바구니에 담았습니다',
+      type: 'success',
+    }
+  }
+
+  return {
+    carts: [...carts, { product, quantity: 1 }],
+    message: '장바구니에 담았습니다',
+    type: 'success',
   }
 }
