@@ -24,7 +24,7 @@ export function CartPage({
   cart,
   coupons,
   totals,
-  debouncedSearchTerm,
+  searchTerm,
   selectedCoupon,
   applyCoupon,
   addToCart,
@@ -38,7 +38,7 @@ export function CartPage({
     <div className='grid grid-cols-1 lg:grid-cols-4 gap-6'>
       <ProductList
         products={products}
-        debouncedSearchTerm={debouncedSearchTerm}
+        searchTerm={searchTerm}
         getRemainingStock={getRemainingStock}
         addToCart={addToCart}
       />

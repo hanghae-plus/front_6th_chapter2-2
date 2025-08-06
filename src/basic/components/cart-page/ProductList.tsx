@@ -1,12 +1,12 @@
 import { ProductItem } from './ProductItem';
 
-export const ProductList = ({ products, debouncedSearchTerm, getRemainingStock, addToCart }) => {
-  const filteredProducts = debouncedSearchTerm
+export const ProductList = ({ products, searchTerm, getRemainingStock, addToCart }) => {
+  const filteredProducts = searchTerm
     ? products.filter(
         (product) =>
-          product.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+          product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           (product.description &&
-            product.description.toLowerCase().includes(debouncedSearchTerm.toLowerCase())),
+            product.description.toLowerCase().includes(searchTerm.toLowerCase())),
       )
     : products;
 
@@ -20,7 +20,7 @@ export const ProductList = ({ products, debouncedSearchTerm, getRemainingStock, 
         </div>
         {filteredProducts.length === 0 ? (
           <div className='text-center py-12'>
-            <p className='text-gray-500'>"{debouncedSearchTerm}"에 대한 검색 결과가 없습니다.</p>
+            <p className='text-gray-500'>"{searchTerm}"에 대한 검색 결과가 없습니다.</p>
           </div>
         ) : (
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>

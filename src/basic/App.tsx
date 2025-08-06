@@ -10,7 +10,6 @@ const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
   const {
     notifications,
@@ -32,13 +31,6 @@ const App = () => {
     deleteCoupon,
     totals,
   } = useStore();
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
 
   return (
     <div className='min-h-screen bg-gray-50'>
@@ -68,7 +60,7 @@ const App = () => {
             cart={cart}
             coupons={coupons}
             totals={totals}
-            debouncedSearchTerm={debouncedSearchTerm}
+            searchTerm={searchTerm}
             selectedCoupon={selectedCoupon}
             applyCoupon={applyCoupon}
             addToCart={addToCart}
