@@ -1,14 +1,14 @@
 import { useCallback } from "react";
-import { ProductWithUI } from "../entities/products/product.types";
-import { CartItem } from "../../types";
-import { calculateRemainingStock } from "../utils/calculateRemainingStock";
+import { ProductWithUI } from "./product.types";
+import { CartItem } from "../../../types";
+import { calculateRemainingStock } from "../../utils/calculateRemainingStock";
 
-interface UseAppUtilsProps {
+interface UseProductUtilsProps {
   products: ProductWithUI[];
   cart: CartItem[];
 }
 
-export const useAppUtils = ({ products, cart }: UseAppUtilsProps) => {
+export const useProductUtils = ({ products, cart }: UseProductUtilsProps) => {
   const checkSoldOutByProductId = useCallback(
     (productId: string) => {
       const product = products.find((p) => p.id === productId);

@@ -1,9 +1,11 @@
 import { useNotifications } from "./useNotifications";
-import { useCartHandlers } from "../entities/cart/useCartHandlers";
-import { useProductHandlers } from "../entities/products/useProductHandlers";
-import { useAppUtils } from "./useAppUtils";
+import { useCartHandlers } from "../entities/cart";
+import {
+  useProductHandlers,
+  useProductUtils,
+  useSearchProduct,
+} from "../entities/products";
 import { useAppState } from "./useAppState";
-import { useSearchProduct } from "./useSearchProduct";
 
 export const useAppCore = () => {
   // 기본 상태들
@@ -27,8 +29,8 @@ export const useAppCore = () => {
   // 검색 관리
   const searchHook = useSearchProduct();
 
-  // 유틸리티 함수들
-  const utils = useAppUtils({ products, cart });
+  // 상품 유틸리티 함수들
+  const productUtils = useProductUtils({ products, cart });
 
   // 계산된 값들
   const filteredProducts = searchHook.debouncedSearchTerm
@@ -71,7 +73,7 @@ export const useAppCore = () => {
     ...searchHook,
     filteredProducts,
 
-    // 유틸리티
-    ...utils,
+    // 상품 유틸리티
+    ...productUtils,
   };
 };

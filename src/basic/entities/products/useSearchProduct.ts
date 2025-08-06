@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useDebounce } from "../utils/hooks/useDebounce";
+import { useDebounce } from "../../utils/hooks";
 
 export const useSearchProduct = () => {
   const [searchTerm, setSearchTerm] = useState("");

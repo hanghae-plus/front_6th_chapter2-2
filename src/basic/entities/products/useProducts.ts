@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { ProductWithUI } from "./product.types";
 import { initialProducts } from "./product.constants";
-import { useLocalStorageState } from "../../utils/hooks/useLocalStorageState";
+import { useLocalStorageState } from "../../utils/hooks";
 import { productModel } from "./product.model";
 import { ActionResult } from "../../types/common";
 

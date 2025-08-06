@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import { CartItem } from "../../../types";
 import { ProductWithUI } from "../products/product.types";
 import { calculateRemainingStock } from "../../utils/calculateRemainingStock";
-import { useLocalStorageState } from "../../utils/hooks/useLocalStorageState";
+import { useLocalStorageState } from "../../utils/hooks";
 import { cartModel } from "./cart.model";
 import { ActionResult } from "../../types/common";
 

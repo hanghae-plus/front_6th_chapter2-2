@@ -3,7 +3,7 @@ import { CartItem } from "../../../types";
 import { CouponWithUI } from "./coupon.types";
 import { initialCoupons } from "./constants";
 import { calculateCartTotal } from "../../utils/calculateCartTotal";
-import { useLocalStorageState } from "../../utils/hooks/useLocalStorageState";
+import { useLocalStorageState } from "../../utils/hooks";
 import { couponModel } from "./coupon.model";
 import { ActionResult } from "../../types/common";
 
