@@ -76,6 +76,63 @@ const initialCoupons: Coupon[] = [
   }
 ];
 
+
+  /**
+   * 수량 기반 할인 계산
+   * @param item - 장바구니 상품
+   * @returns 수량 기반 할인
+   */
+  const calculateQuantityDiscount = (item: CartItem): number => {
+    const { discounts } = item.product;
+    const { quantity } = item;
+    
+    return discounts.reduce((maxDiscount, discount) => {
+      return quantity >= discount.quantity && discount.rate > maxDiscount 
+        ? discount.rate 
+        : maxDiscount;
+    }, 0);
+  };
+
+  /**
+   * 대량 구매 여부 확인
+   * @param cart - 장바구니 상품
+   * @param bulkPurchaseQuantity - 대량 구매 수량, 기본값 10
+   * @returns 대량 구매 여부
+   */
+  const hasBulkPurchase = (cart: CartItem[], bulkPurchaseQuantity: number = 10): boolean => {
+    return cart.some(cartItem => cartItem.quantity >= bulkPurchaseQuantity);
+  };
+
+  /**
+   * 최종 할인율 계산
+   * @param item - 장바구니에 담긴 상품
+   * @param cart - 장바구니 상품 목록
+   * @returns 최종 할인율
+   */
+  const getMaxApplicableDiscount = (item: CartItem, cart: CartItem[]): number => {
+    const baseDiscount = calculateQuantityDiscount(item);
+    
+    if (hasBulkPurchase(cart)) {
+      return Math.min(baseDiscount + 0.05, 0.5);
+    }
+    
+    return baseDiscount;
+  };
+
+  /**
+   * 아이템 총액 계산
+   * @param item - 장바구니에 담긴 상품
+   * @param cart - 장바구니 상품 목록
+   * @returns 아이템 총액
+   */
+  const calculateItemTotal = (item: CartItem, cart: CartItem[]): number => {
+    const { price } = item.product;
+    const { quantity } = item;
+    const discount = getMaxApplicableDiscount(item, cart);
+    
+    return Math.round(price * quantity * (1 - discount));
+  };
+
 const App = () => {
 
   /**
@@ -177,42 +234,6 @@ const App = () => {
   };
 
   /**
-   * 장바구니에 담긴 상품의 최대 적용 가능 할인을 계산
-   * @param item - 장바구니 상품
-   * @returns 최대 적용 가능 할인
-   */
-  const getMaxApplicableDiscount = (item: CartItem): number => {
-    const { discounts } = item.product;
-    const { quantity } = item;
-    
-    const baseDiscount = discounts.reduce((maxDiscount, discount) => {
-      return quantity >= discount.quantity && discount.rate > maxDiscount 
-        ? discount.rate 
-        : maxDiscount;
-    }, 0);
-    
-    const hasBulkPurchase = cart.some(cartItem => cartItem.quantity >= 10);
-    if (hasBulkPurchase) {
-      return Math.min(baseDiscount + 0.05, 0.5); // 대량 구매 시 추가 5% 할인
-    }
-    
-    return baseDiscount;
-  };
-
-  /**
-   * 장바구니에 담긴 상품의 총 가격을 계산
-   * @param item - 장바구니 상품
-   * @returns 총 가격
-   */
-  const calculateItemTotal = (item: CartItem): number => {
-    const { price } = item.product;
-    const { quantity } = item;
-    const discount = getMaxApplicableDiscount(item);
-    
-    return Math.round(price * quantity * (1 - discount));
-  };
-
-  /**
    * 결제 총 가격 계산
    * @returns 할인 전 총 가격, 할인 후 총 가격
    */
@@ -226,7 +247,7 @@ const App = () => {
     cart.forEach(item => {
       const itemPrice = item.product.price * item.quantity;
       totalBeforeDiscount += itemPrice;
-      totalAfterDiscount += calculateItemTotal(item);
+      totalAfterDiscount += calculateItemTotal(item, cart);
     });
 
     if (selectedCoupon) {
@@ -1115,7 +1136,7 @@ const App = () => {
                   ) : (
                     <div className="space-y-3">
                       {cart.map(item => {
-                        const itemTotal = calculateItemTotal(item);
+                        const itemTotal = calculateItemTotal(item, cart);
                         const originalPrice = item.product.price * item.quantity;
                         const hasDiscount = itemTotal < originalPrice;
                         const discountRate = hasDiscount ? Math.round((1 - itemTotal / originalPrice) * 100) : 0;
