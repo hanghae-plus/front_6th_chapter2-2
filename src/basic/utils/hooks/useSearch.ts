@@ -1,11 +1,11 @@
 import { useState, useCallback } from "react";
-import { ProductWithUI } from "../../hooks/useProducts";
+import { Product } from "../../../types";
 import { useDebounce } from "./useDebounce";
 import { useFilter } from "./useFilter";
 
 interface UseSearchOptions {
   debounceMs?: number;
-  searchFields?: (keyof ProductWithUI)[];
+  searchFields?: (keyof Product)[];
 }
 
 /**
@@ -13,7 +13,7 @@ interface UseSearchOptions {
  * @param products - 검색할 상품 배열
  * @param options - 검색 옵션 (debounce 시간, 검색 필드)
  */
-export const useSearch = (products: ProductWithUI[], options: UseSearchOptions = {}) => {
+export const useSearch = (products: Product[], options: UseSearchOptions = {}) => {
   const { debounceMs = 500, searchFields = ["name", "description"] } = options;
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -29,7 +29,7 @@ export const useSearch = (products: ProductWithUI[], options: UseSearchOptions =
 
       // 검색어가 있으면 실제 검색하는 필터 함수 반환
       const lowercaseSearch = term.toLowerCase();
-      return (product: ProductWithUI) => {
+      return (product: Product) => {
         return searchFields.some((field) => {
           const value = product[field];
           if (typeof value === "string") {

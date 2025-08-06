@@ -10,13 +10,12 @@ import { useSearch } from "./utils/hooks/useSearch";
 import { calculateFinalTotal } from "./utils/calculations";
 
 // components
-import { CartContainer } from "./components/cart/CartContainer";
 import { Header } from "./components/ui/header/Header";
 import { Notification } from "./components/ui/notification/Notification";
-import { ProductList } from "./components/product/ProductList";
 
 // pages
 import AdminPage from "./pages/Admin/AdminPage";
+import ShopPage from "./pages/Main/ShopPage/ShopPage";
 
 // type
 import { Product } from "../types";
@@ -63,14 +62,13 @@ const App = () => {
     discountValue: 0,
   });
 
+  const cartTotals = calculateCartTotal();
+
   // 쿠폰 적용된 총합 계산
-  const getFinalTotal = (): {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
-  } => {
-    const cartTotals = calculateCartTotal();
-    return calculateFinalTotal(cartTotals, selectedCoupon);
-  };
+  const getFinalTotal = useCallback(
+    () => calculateFinalTotal(cartTotals, selectedCoupon),
+    [cartTotals, selectedCoupon]
+  );
 
   // 장바구니에 상품 추가 (에러 처리 포함)
   const addToCart = useCallback(
@@ -274,34 +272,21 @@ const App = () => {
           />
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <div className="lg:col-span-3">
-              <section>
-                <ProductList
-                  products={filteredProducts}
-                  searchInfo={searchInfo}
-                  getRemainingStock={getRemainingStock}
-                  addToCart={addToCart}
-                />
-              </section>
-            </div>
-
-            <div className="lg:col-span-1">
-              <div className="sticky top-24">
-                <CartContainer
-                  cart={cart}
-                  coupons={coupons}
-                  selectedCoupon={selectedCoupon}
-                  totalBeforeDiscount={totals.totalBeforeDiscount}
-                  totalAfterDiscount={totals.totalAfterDiscount}
-                  calculateItemTotal={calculateItemTotal}
-                  onRemoveFromCart={removeFromCart}
-                  onUpdateQuantity={handleUpdateQuantity}
-                  onApplyCoupon={handleApplyCoupon}
-                  onRemoveCoupon={() => setSelectedCoupon(null)}
-                  onCompleteOrder={completeOrder}
-                />
-              </div>
-            </div>
+            <ShopPage
+              products={filteredProducts}
+              cart={cart}
+              coupons={coupons}
+              selectedCoupon={selectedCoupon}
+              totals={totals}
+              searchInfo={searchInfo}
+              calculateItemTotal={calculateItemTotal}
+              onRemoveFromCart={removeFromCart}
+              onUpdateQuantity={handleUpdateQuantity}
+              onApplyCoupon={handleApplyCoupon}
+              onRemoveCoupon={() => setSelectedCoupon(null)}
+              onCompleteOrder={completeOrder}
+              onAddToCart={addToCart}
+            />
           </div>
         )}
       </main>

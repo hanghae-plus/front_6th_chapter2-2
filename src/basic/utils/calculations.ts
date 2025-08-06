@@ -1,8 +1,6 @@
 import { CartItem, Coupon } from "../../types";
 
-/**
- * 쿠폰이 적용된 최종 총액 계산
- */
+// 쿠폰이 적용된 최종 총액 계산
 export const calculateFinalTotal = (
   cartTotal: { totalBeforeDiscount: number; totalAfterDiscount: number },
   selectedCoupon: Coupon | null
@@ -25,9 +23,16 @@ export const calculateFinalTotal = (
   return cartTotal;
 };
 
-/**
- * 아이템별 할인 정보 계산
- */
+// 장바구니 총액과 쿠폰을 조합한 최종 총액 계산
+export const getFinalTotalWithCoupon = (
+  calculateCartTotal: () => { totalBeforeDiscount: number; totalAfterDiscount: number },
+  selectedCoupon: Coupon | null
+): { totalBeforeDiscount: number; totalAfterDiscount: number } => {
+  const cartTotals = calculateCartTotal();
+  return calculateFinalTotal(cartTotals, selectedCoupon);
+};
+
+// 아이템별 할인 정보 계산
 export const calculateItemDiscount = (
   item: CartItem,
   itemTotal: number

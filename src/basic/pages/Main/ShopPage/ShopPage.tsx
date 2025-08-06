@@ -9,6 +9,10 @@ interface ShopPageProps {
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
   totals: { totalBeforeDiscount: number; totalAfterDiscount: number };
+  searchInfo: {
+    isSearching: boolean;
+    searchTerm: string;
+  };
   calculateItemTotal: (item: CartItem) => number;
   onRemoveFromCart: (productId: string) => void;
   onUpdateQuantity: (productId: string, quantity: number) => void;
@@ -24,6 +28,7 @@ export default function ShopPage({
   coupons,
   selectedCoupon,
   totals,
+  searchInfo,
   calculateItemTotal,
   onRemoveFromCart,
   onUpdateQuantity,
@@ -38,7 +43,7 @@ export default function ShopPage({
         <section>
           <ProductList
             products={products}
-            searchInfo={{ isSearching: false, searchTerm: "" }}
+            searchInfo={searchInfo}
             getRemainingStock={(product) => getRemainingStock(product, cart)}
             addToCart={onAddToCart}
           />
