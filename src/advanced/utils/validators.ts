@@ -7,7 +7,15 @@ export function validateCartStock(
   requestedQuantity: number,
   cart: CartItem[]
 ) {
-  // 1. 남은 재고 확인
+  // 1. 요청 수량이 총 재고를 넘는지 확인
+  if (requestedQuantity > product.stock) {
+    return {
+      isValid: false,
+      errorMessage: `재고는 ${product.stock}개까지만 있습니다.`,
+    };
+  }
+
+  // 2. 남은 재고 확인
   const remainingStock =
     product.stock -
     (cart.find((item) => item.product.id === product.id)?.quantity || 0);
@@ -15,14 +23,6 @@ export function validateCartStock(
     return {
       isValid: false,
       errorMessage: "재고가 부족합니다!",
-    };
-  }
-
-  // 2. 요청 수량이 총 재고를 넘는지 확인
-  if (requestedQuantity > product.stock) {
-    return {
-      isValid: false,
-      errorMessage: `재고는 ${product.stock}개까지만 있습니다.`,
     };
   }
 

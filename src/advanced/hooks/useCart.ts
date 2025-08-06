@@ -1,33 +1,34 @@
-import { useState, useMemo, useCallback } from "react";
-import { useSetAtom } from "jotai";
+import { useMemo, useCallback } from "react";
+import { useAtom, useSetAtom, useAtomValue } from "jotai";
 import { CartItem, Product, Coupon } from "../types";
 import * as composedModels from "../models";
 import * as cartModel from "../models/cart";
 import * as productModel from "../models/product";
 import * as couponModel from "../models/coupon";
-import { INITIAL_COUPONS } from "../constants";
-import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 import {
   validateCartStock,
   validateCouponAvailable,
   validateCouponCode,
 } from "../utils/validators";
-import { addNotificationAtom } from "../atoms";
+import {
+  addNotificationAtom,
+  cartAtom,
+  couponsAtom,
+  selectedCouponAtom,
+  totalItemCountAtom,
+} from "../atoms";
 
 // 장바구니 + 쿠폰 통합 관리 훅
 export function useCart() {
   // ========== 알림 관리 (Jotai) ==========
   const addNotification = useSetAtom(addNotificationAtom);
-  // ========== 장바구니 상태 ==========
-  const [cart, setCart] = useLocalStorage<CartItem[]>("cart", []);
 
-  // ========== 쿠폰 상태 ==========
-  const [coupons, setCoupons] = useLocalStorage<Coupon[]>(
-    "coupons",
-    INITIAL_COUPONS
-  );
+  // ========== 장바구니 상태 (Jotai) ==========
+  const [cart, setCart] = useAtom(cartAtom);
 
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+  // ========== 쿠폰 상태 (Jotai) ==========
+  const [coupons, setCoupons] = useAtom(couponsAtom);
+  const [selectedCoupon, setSelectedCoupon] = useAtom(selectedCouponAtom);
 
   // ========== 계산된 값들 (useMemo로 최적화) ==========
   const cartTotal = useMemo(() => {
@@ -44,28 +45,30 @@ export function useCart() {
     [cart]
   );
 
-  const totalItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const totalItemCount = useAtomValue(totalItemCountAtom);
 
   // ========== 장바구니 비즈니스 로직 ==========
   const addToCart = useCallback(
     (product: Product) => {
-      // 장바구니 수량 + 1로 재고 검증
-      const existingItem = cart.find((item) => item.product.id === product.id);
-      const newQuantity = (existingItem?.quantity || 0) + 1;
+      setCart((prev) => {
+        // 장바구니 수량 + 1로 재고 검증
+        const existingItem = prev.find(
+          (item) => item.product.id === product.id
+        );
+        const newQuantity = (existingItem?.quantity || 0) + 1;
 
-      const validation = validateCartStock(product, newQuantity, cart);
-      if (validation.errorMessage) {
-        addNotification(validation.errorMessage, "error");
-        return;
-      }
+        const validation = validateCartStock(product, newQuantity, prev);
+        if (validation.errorMessage) {
+          addNotification(validation.errorMessage, "error");
+          return prev;
+        }
 
-      // 상태 변경
-      setCart((prevCart) => cartModel.addItemToCart(prevCart, product));
-
-      // 성공 알림
-      addNotification("장바구니에 담았습니다", "success");
+        // 성공 알림
+        addNotification("장바구니에 담았습니다", "success");
+        return cartModel.addItemToCart(prev, product);
+      });
     },
-    [cart, setCart, addNotification]
+    [setCart, addNotification]
   );
 
   const removeFromCart = useCallback(
@@ -85,16 +88,19 @@ export function useCart() {
       const product = products?.find((p) => p.id === productId);
       if (!product) return;
 
-      // 재고 검증
-      const validation = validateCartStock(product, newQuantity, cart);
-      if (validation.errorMessage) {
-        addNotification(validation.errorMessage, "error");
-        return;
-      }
-
-      setCart((prevCart) =>
-        cartModel.updateCartItemQuantity(prevCart, productId, newQuantity)
-      );
+      setCart((prevCart) => {
+        // prevCart로 검증
+        const validation = validateCartStock(product, newQuantity, prevCart);
+        if (validation.errorMessage) {
+          addNotification(validation.errorMessage, "error");
+          return prevCart; // 기존 상태 유지
+        }
+        return cartModel.updateCartItemQuantity(
+          prevCart,
+          productId,
+          newQuantity
+        );
+      });
     },
     [setCart, removeFromCart, addNotification]
   );
@@ -107,7 +113,7 @@ export function useCart() {
     );
     setCart([]);
     setSelectedCoupon(null);
-  }, [addNotification, setCart]);
+  }, [addNotification, setCart, setSelectedCoupon]);
 
   // ========== 쿠폰 비즈니스 로직 ==========
   const addCoupon = useCallback(
@@ -131,7 +137,7 @@ export function useCart() {
       }
       addNotification("쿠폰이 삭제되었습니다.", "success");
     },
-    [setCoupons, selectedCoupon?.code, addNotification]
+    [setCoupons, selectedCoupon?.code, addNotification, setSelectedCoupon]
   );
 
   const applyCoupon = useCallback(
@@ -159,7 +165,7 @@ export function useCart() {
       setSelectedCoupon(coupon);
       addNotification("쿠폰이 적용되었습니다.", "success");
     },
-    [cart, addNotification]
+    [cart, setSelectedCoupon, addNotification]
   );
 
   return {

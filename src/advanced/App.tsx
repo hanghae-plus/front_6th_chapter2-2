@@ -17,7 +17,6 @@ const App = () => {
     // 장바구니
     cart,
     cartTotal,
-    totalItemCount,
     getRemainingStock,
     calculateItemTotal,
     addToCart,
@@ -57,7 +56,6 @@ const App = () => {
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
             onToggleContent={() => setIsAdmin(!isAdmin)}
-            cartItemCount={totalItemCount}
           />
         )}
       </HeaderLayout>

@@ -1,16 +1,18 @@
+import { useAtomValue } from "jotai";
+import { totalItemCountAtom } from "../../atoms";
+
 interface ShopHeaderContentProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
   onToggleContent: () => void;
-  cartItemCount: number;
 }
 
 const ShopHeaderContent = ({
   searchTerm,
   onSearchChange,
   onToggleContent,
-  cartItemCount,
 }: ShopHeaderContentProps) => {
+  const cartItemCount = useAtomValue(totalItemCountAtom);
   return (
     <>
       <div className="flex items-center flex-1">
