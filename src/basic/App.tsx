@@ -21,18 +21,12 @@ import {
   validateCouponApplication,
   validateCouponCode,
 } from './utils';
-import { useLocalStorage } from './hooks';
-
-interface Notification {
-  id: string;
-  message: string;
-  type: 'error' | 'success' | 'warning';
-}
+import { useLocalStorage, useNotifications } from './hooks';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [cart, setCart] = useLocalStorage<CartItem[]>('cart', []);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const { notifications, addNotification, removeNotification } = useNotifications();
   const {
     coupons,
     setCoupons,
@@ -90,18 +84,6 @@ const App = () => {
       return getRemainingStock(product, cart);
     },
     [cart]
-  );
-
-  const addNotification = useCallback(
-    (message: string, type: 'error' | 'success' | 'warning' = 'success') => {
-      const id = Date.now().toString();
-      setNotifications((prev) => [...prev, { id, message, type }]);
-
-      setTimeout(() => {
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
-      }, 3000);
-    },
-    []
   );
 
   const [totalItemCount, setTotalItemCount] = useState(0);
@@ -315,7 +297,7 @@ const App = () => {
             <NotificationItem
               key={notif.id}
               notif={notif}
-              onClose={() => setNotifications((prev) => prev.filter((n) => n.id !== notif.id))}
+              onClose={() => removeNotification(notif.id)}
             />
           ))}
         </div>
