@@ -1,6 +1,7 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { Products } from '../constants/products';
 import { useNotification } from './useNotification';
+import { useLocalStorage } from '../utils/hooks/useLocalStorage';
 
 // 1. 상품 목록 상태 관리 (localStorage 연동 고려)
 // 2. 상품 CRUD 작업
@@ -8,18 +9,8 @@ import { useNotification } from './useNotification';
 // 4. 할인 규칙 추가/삭제
 
 export function useProducts() {
+  const [products, setProducts] = useLocalStorage<typeof Products>('products', Products);
   const { addNotification } = useNotification();
-  const [products, setProducts] = useState<typeof Products>(() => {
-    const saved = localStorage.getItem('products');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return Products;
-      }
-    }
-    return Products;
-  });
 
   // useCallback 사용 이유: 함수를 캐싱해주기 위해서 (=재정의 하지 않기 위해서)
   // 만약 Props로 updateProduct를 받아오면 함수를 재정의 하게 되어 무한 렌더링이 발생함

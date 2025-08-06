@@ -2,13 +2,14 @@ import { useState, useCallback, useEffect } from 'react';
 import { CartItem, Coupon, Product } from '../types';
 import { formatPrice } from './utils/formatters';
 import { Products } from './constants/products';
-import { Coupons } from './constants/coupons';
 import { useNotification } from './hooks/useNotification';
 import { useProducts } from './hooks/useProducts';
+import { useCoupons } from './hooks/useCoupons';
 
 const App = () => {
   const { notifications, addNotification, setNotifications } = useNotification();
   const { products, updateProduct, addProduct, deleteProduct } = useProducts();
+  const { coupons, addCoupon, removeCoupon } = useCoupons();
 
   const [cart, setCart] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem('cart');
@@ -20,18 +21,6 @@ const App = () => {
       }
     }
     return [];
-  });
-
-  const [coupons, setCoupons] = useState<typeof Coupons>(() => {
-    const saved = localStorage.getItem('coupons');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return Coupons;
-      }
-    }
-    return Coupons;
   });
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
@@ -241,30 +230,6 @@ const App = () => {
     setCart([]);
     setSelectedCoupon(null);
   }, [addNotification]);
-
-  const addCoupon = useCallback(
-    (newCoupon: Coupon) => {
-      const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
-      if (existingCoupon) {
-        addNotification('이미 존재하는 쿠폰 코드입니다.', 'error');
-        return;
-      }
-      setCoupons((prev) => [...prev, newCoupon]);
-      addNotification('쿠폰이 추가되었습니다.', 'success');
-    },
-    [coupons, addNotification],
-  );
-
-  const deleteCoupon = useCallback(
-    (couponCode: string) => {
-      setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
-      if (selectedCoupon?.code === couponCode) {
-        setSelectedCoupon(null);
-      }
-      addNotification('쿠폰이 삭제되었습니다.', 'success');
-    },
-    [selectedCoupon, addNotification],
-  );
 
   const handleProductSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -756,7 +721,7 @@ const App = () => {
                             </div>
                           </div>
                           <button
-                            onClick={() => deleteCoupon(coupon.code)}
+                            onClick={() => removeCoupon(coupon.code)}
                             className='text-gray-400 hover:text-red-600 transition-colors'
                           >
                             <svg
