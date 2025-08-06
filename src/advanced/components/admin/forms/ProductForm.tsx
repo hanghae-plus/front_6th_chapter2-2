@@ -5,6 +5,7 @@ import { DeleteIcon } from '../../ui/Icons';
 import Input from '../../ui/Input';
 import { addNotificationAtom } from '../../../atoms/notificationsAtoms';
 import { useProductForm } from '../../../hooks/product/useProductForm';
+import { useEffect } from 'react';
 
 interface ProductFormProps {
   onToggleForm: (show: boolean) => void;
@@ -14,6 +15,13 @@ export default function ProductForm({ onToggleForm }: ProductFormProps) {
   const addNotification = useSetAtom(addNotificationAtom);
   const { handleProductSubmit, setProductForm, productForm, editingProduct, setEditingProduct } =
     useProductForm();
+
+  // ProductForm이 마운트될 때 editingProduct가 null이면 'new' 모드로 설정
+  useEffect(() => {
+    if (editingProduct === null) {
+      setEditingProduct('new');
+    }
+  }, [editingProduct, setEditingProduct]);
 
   return (
     <div className='p-6 border-t border-gray-200 bg-gray-50'>
@@ -47,16 +55,19 @@ export default function ProductForm({ onToggleForm }: ProductFormProps) {
           <div>
             <label className='block text-sm font-medium text-gray-700 mb-1'>가격</label>
             <Input
+              required
               type='text'
-              value={productForm.price === 0 ? '' : productForm.price}
+              value={productForm.price.toString()}
               onChange={(e) => {
                 const value = e.target.value;
+                // 빈 문자열이거나 숫자로만 구성된 경우에만 허용
                 if (value === '' || /^\d+$/.test(value)) {
                   setProductForm({
                     ...productForm,
                     price: value === '' ? 0 : parseInt(value),
                   });
                 }
+                // 잘못된 입력은 무시 (이전 값 유지)
               }}
               onBlur={(e) => {
                 const value = e.target.value;
@@ -68,7 +79,6 @@ export default function ProductForm({ onToggleForm }: ProductFormProps) {
                 }
               }}
               placeholder='숫자만 입력'
-              required
             />
           </div>
           <div>
