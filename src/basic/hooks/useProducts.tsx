@@ -19,14 +19,29 @@ import { initialProducts } from '../constants';
 import * as productModel from '../models/product';
 import { useLocalStorage } from '../utils/hooks/useLocalStorage';
 
+interface UseProductsParams {
+  addNotification: (params: {
+    message: string;
+    type: 'error' | 'success';
+  }) => void;
+}
+
 interface UseProductsReturn {
   products: ProductWithUI[];
   setProducts: Dispatch<SetStateAction<Product[]>>;
   getRemainingStock: (params: { cart: CartItem[]; product: Product }) => number;
   isSoldOut: (params: { cart: CartItem[]; product: Product }) => boolean;
+  addProduct: (params: { newProduct: Omit<ProductWithUI, 'id'> }) => void;
+  updateProduct: (params: {
+    productId: string;
+    updates: Partial<ProductWithUI>;
+  }) => void;
+  deleteProduct: (params: { productId: string }) => void;
 }
 
-export function useProducts(): UseProductsReturn {
+export function useProducts({
+  addNotification,
+}: UseProductsParams): UseProductsReturn {
   const [products, setProducts] = useLocalStorage({
     key: 'products',
     initialValue: initialProducts,
@@ -43,5 +58,60 @@ export function useProducts(): UseProductsReturn {
     isSoldOut: useCallback((params) => {
       return productModel.getRemainingStock(params) <= 0;
     }, []),
+
+    addProduct: useCallback(
+      (params) => {
+        setProducts((prevProducts) => {
+          return productModel.addProduct({
+            newProduct: params.newProduct,
+            products: prevProducts,
+            onSuccess: () => {
+              addNotification({
+                message: '상품이 추가되었습니다.',
+                type: 'success',
+              });
+            },
+          });
+        });
+      },
+      [setProducts, addNotification]
+    ),
+
+    updateProduct: useCallback(
+      ({ productId, updates }) => {
+        setProducts((prevProducts) => {
+          return productModel.updateProduct({
+            productId,
+            updates,
+            products: prevProducts,
+            onSuccess: () => {
+              addNotification({
+                message: '상품이 수정되었습니다.',
+                type: 'success',
+              });
+            },
+          });
+        });
+      },
+      [setProducts, addNotification]
+    ),
+
+    deleteProduct: useCallback(
+      ({ productId }) => {
+        setProducts((prevProducts) => {
+          return productModel.deleteProduct({
+            productId,
+            products: prevProducts,
+            onSuccess: () => {
+              addNotification({
+                message: '상품이 삭제되었습니다.',
+                type: 'success',
+              });
+            },
+          });
+        });
+      },
+      [setProducts, addNotification]
+    ),
   };
 }

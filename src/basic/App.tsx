@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ProductWithUI } from '../types';
 import { useCart } from './hooks/useCart';
 import { useCoupons } from './hooks/useCoupons';
@@ -11,7 +11,16 @@ import { formatNumberWon, formatPriceKRW } from './utils/formatters';
 const App = () => {
   const { notifications, setNotifications, addNotification } =
     useNotification();
-  const { products, setProducts, getRemainingStock, isSoldOut } = useProducts();
+  const {
+    products,
+    getRemainingStock,
+    isSoldOut,
+    addProduct,
+    updateProduct,
+    deleteProduct,
+  } = useProducts({
+    addNotification,
+  });
   const {
     cart,
     totalItemCount,
@@ -73,56 +82,20 @@ const App = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  const addProduct = useCallback(
-    (newProduct: Omit<ProductWithUI, 'id'>) => {
-      const product: ProductWithUI = {
-        ...newProduct,
-        id: `p${Date.now()}`,
-      };
-      setProducts((prev) => [...prev, product]);
-      addNotification({
-        message: '상품이 추가되었습니다.',
-        type: 'success',
-      });
-    },
-    [addNotification]
-  );
-
-  const updateProduct = useCallback(
-    (productId: string, updates: Partial<ProductWithUI>) => {
-      setProducts((prev) =>
-        prev.map((product) =>
-          product.id === productId ? { ...product, ...updates } : product
-        )
-      );
-      addNotification({
-        message: '상품이 수정되었습니다.',
-        type: 'success',
-      });
-    },
-    [addNotification]
-  );
-
-  const deleteProduct = useCallback(
-    (productId: string) => {
-      setProducts((prev) => prev.filter((p) => p.id !== productId));
-      addNotification({
-        message: '상품이 삭제되었습니다.',
-        type: 'success',
-      });
-    },
-    [addNotification]
-  );
-
   const handleProductSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (editingProduct && editingProduct !== 'new') {
-      updateProduct(editingProduct, productForm);
+      updateProduct({
+        productId: editingProduct,
+        updates: productForm,
+      });
       setEditingProduct(null);
     } else {
       addProduct({
-        ...productForm,
-        discounts: productForm.discounts,
+        newProduct: {
+          ...productForm,
+          discounts: productForm.discounts,
+        },
       });
     }
     setProductForm({
@@ -394,7 +367,9 @@ const App = () => {
                                 수정
                               </button>
                               <button
-                                onClick={() => deleteProduct(product.id)}
+                                onClick={() =>
+                                  deleteProduct({ productId: product.id })
+                                }
                                 className="text-red-600 hover:text-red-900"
                               >
                                 삭제
