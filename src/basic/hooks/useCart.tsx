@@ -24,7 +24,7 @@
 // - getRemainingStock: 재고 확인 함수
 // - clearCart: 장바구니 비우기 함수
 
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import type { CartItem, Product } from '../../types';
 import * as cartModel from '../models/cart';
 import { useLocalStorage } from '../utils/hooks/useLocalStorage';
@@ -52,10 +52,17 @@ export function useCart({
   addNotification,
   isSoldOut,
 }: UseCartParams): UseCartReturn {
+  const LOCAL_STORAGE_KEY = 'cart';
   const [cart, setCart] = useLocalStorage<CartItem[]>({
-    key: 'cart',
+    key: LOCAL_STORAGE_KEY,
     initialValue: [],
   });
+
+  useEffect(() => {
+    if (!cart.length) {
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
+    }
+  }, [LOCAL_STORAGE_KEY, cart.length]);
 
   return {
     cart,
