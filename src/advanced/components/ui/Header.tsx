@@ -1,5 +1,4 @@
 import { useAtom, useAtomValue } from 'jotai';
-import { CartItem } from '../../../types';
 import { isAdminAtom } from '../../atoms/uiAtoms';
 import Button from './Button';
 import { CartIcon } from './Icons';
