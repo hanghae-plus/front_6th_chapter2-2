@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { ProductWithUI } from "../entities/products/product.types";
-import { Coupon } from "../../types";
+import { CouponWithUI } from "../entities/coupon/coupon.types";
 import { useCouponHandlers } from "../entities/coupon/useCouponHandlers";
 import { useProductForm } from "../entities/products/useProductForm";
 import { useCouponForm } from "../entities/coupon/useCouponForm";

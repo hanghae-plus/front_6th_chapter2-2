@@ -1,11 +1,8 @@
+import { CouponFormData } from "../../../entities/coupon/useCouponForm";
+
 interface CouponFormProps {
-  couponForm: {
-    name: string;
-    code: string;
-    discountType: "amount" | "percentage";
-    discountValue: number;
-  };
-  setCouponForm: (form: any) => void;
+  couponForm: CouponFormData;
+  setCouponForm: (form: CouponFormData) => void;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
   addNotification: (

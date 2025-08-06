@@ -1,21 +1,27 @@
 import { useState } from "react";
+import { CouponWithUI } from "./coupon.types";
+
+export interface CouponFormData {
+  name: string;
+  code: string;
+  discountType: "amount" | "percentage";
+  discountValue: number;
+}
+
+const initialCouponForm: CouponFormData = {
+  name: "",
+  code: "",
+  discountType: "amount",
+  discountValue: 0,
+};
 
 export const useCouponForm = () => {
   const [showCouponForm, setShowCouponForm] = useState(false);
-  const [couponForm, setCouponForm] = useState({
-    name: "",
-    code: "",
-    discountType: "amount" as "amount" | "percentage",
-    discountValue: 0,
-  });
+  const [couponForm, setCouponForm] =
+    useState<CouponFormData>(initialCouponForm);
 
   const resetCouponForm = () => {
-    setCouponForm({
-      name: "",
-      code: "",
-      discountType: "amount",
-      discountValue: 0,
-    });
+    setCouponForm(initialCouponForm);
   };
 
   const closeCouponForm = () => {

@@ -1,5 +1,6 @@
 import { useCallback } from "react";
-import { Coupon, CartItem } from "../../../types";
+import { CartItem } from "../../../types";
+import { CouponWithUI } from "./coupon.types";
 import { useCoupon } from "./useCoupon";
 
 interface UseCouponHandlersProps {
@@ -22,7 +23,7 @@ export const useCouponHandlers = ({
   } = useCoupon();
 
   const addCoupon = useCallback(
-    (newCoupon: Coupon) => {
+    (newCoupon: Omit<CouponWithUI, "id">) => {
       const result = addCouponAction(newCoupon);
       if (result.type) {
         addNotification(result.message, result.type);
@@ -42,7 +43,7 @@ export const useCouponHandlers = ({
   );
 
   const applyCoupon = useCallback(
-    (coupon: Coupon, cart: CartItem[]) => {
+    (coupon: CouponWithUI, cart: CartItem[]) => {
       const result = applyCouponAction(coupon, cart);
       if (result.type) {
         addNotification(result.message, result.type);

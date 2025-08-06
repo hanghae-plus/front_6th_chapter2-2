@@ -1,7 +1,7 @@
-import { Coupon } from "../../../../types";
+import { CouponWithUI } from "../../../entities/coupon/coupon.types";
 
 interface CouponGridProps {
-  coupons: Coupon[];
+  coupons: CouponWithUI[];
   onDeleteCoupon: (code: string) => void;
   onAddCoupon: () => void;
 }
@@ -20,7 +20,7 @@ export const CouponGrid = ({
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {coupons.map((coupon) => (
             <div
-              key={coupon.code}
+              key={coupon.id}
               className="relative bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200"
             >
               <div className="flex justify-between items-start">
