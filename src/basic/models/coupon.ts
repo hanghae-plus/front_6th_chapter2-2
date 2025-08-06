@@ -1,4 +1,5 @@
 import { Coupon } from '../../types'
+import { MAX_DISCOUNT_RATE } from '../constants'
 
 export const calculateDiscountedTotal = (total: number, coupon: Coupon) => {
   let totalAfterDiscount = total
@@ -6,7 +7,7 @@ export const calculateDiscountedTotal = (total: number, coupon: Coupon) => {
     totalAfterDiscount = Math.max(0, totalAfterDiscount - coupon.discountValue)
   } else {
     totalAfterDiscount = Math.round(
-      totalAfterDiscount * (1 - coupon.discountValue / 100),
+      totalAfterDiscount * (1 - coupon.discountValue / MAX_DISCOUNT_RATE),
     )
   }
 

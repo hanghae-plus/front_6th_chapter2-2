@@ -2,6 +2,11 @@ import { useState, FocusEvent } from 'react'
 import { ProductWithUI } from '../types'
 import { Coupon, Discount, ProductForm } from '../../types'
 import { isValidStrNumber } from '../utils/validators'
+import {
+  MAX_DISCOUNT_AMOUNT,
+  MAX_DISCOUNT_RATE,
+  MAX_STOCK_LIMIT,
+} from '../constants'
 
 export function useCouponForm(
   addCoupon: (newCoupon: Coupon) => void,
@@ -54,11 +59,11 @@ export function useCouponForm(
     const value = parseInt(e.target.value) || 0
 
     if (couponForm.discountType === 'percentage') {
-      if (value > 100) {
+      if (value > MAX_DISCOUNT_RATE) {
         addNotification('할인율은 100%를 초과할 수 없습니다', 'error')
         setCouponForm({
           ...couponForm,
-          discountValue: 100,
+          discountValue: MAX_DISCOUNT_RATE,
         })
       } else if (value < 0) {
         setCouponForm({
@@ -67,11 +72,11 @@ export function useCouponForm(
         })
       }
     } else {
-      if (value > 100000) {
+      if (value > MAX_DISCOUNT_AMOUNT) {
         addNotification('할인 금액은 100,000원을 초과할 수 없습니다', 'error')
         setCouponForm({
           ...couponForm,
-          discountValue: 100000,
+          discountValue: MAX_DISCOUNT_AMOUNT,
         })
       } else if (value < 0) {
         setCouponForm({
@@ -188,7 +193,7 @@ export function useProductForm(
       const newDiscounts = [...productForm.discounts]
       const value = parseInt(e.target.value) || 0
       newDiscounts[index][key as keyof Discount] =
-        value / (key === 'rate' ? 100 : 1)
+        value / (key === 'rate' ? MAX_DISCOUNT_RATE : 1)
       setProductForm({
         ...productForm,
         discounts: newDiscounts,
@@ -228,9 +233,9 @@ export function useProductForm(
     } else if (parseInt(value) < 0) {
       addNotification('재고는 0보다 커야 합니다', 'error')
       setProductForm({ ...productForm, stock: 0 })
-    } else if (parseInt(value) > 9999) {
+    } else if (parseInt(value) > MAX_STOCK_LIMIT) {
       addNotification('재고는 9999개를 초과할 수 없습니다', 'error')
-      setProductForm({ ...productForm, stock: 9999 })
+      setProductForm({ ...productForm, stock: MAX_STOCK_LIMIT })
     }
   }
 

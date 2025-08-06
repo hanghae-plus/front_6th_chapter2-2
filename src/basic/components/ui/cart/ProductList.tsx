@@ -1,3 +1,4 @@
+import { LOW_STOCK_THRESHOLD, MAX_DISCOUNT_RATE } from '../../../constants'
 import { ProductWithUI } from '../../../types'
 import { formatPrice } from '../../../utils/formatters'
 
@@ -44,7 +45,10 @@ export function ProductList({
               )}
               {product.discounts.length > 0 && (
                 <span className="absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded">
-                  ~{Math.max(...product.discounts.map((d) => d.rate)) * 100}%
+                  ~
+                  {Math.max(...product.discounts.map((d) => d.rate)) *
+                    MAX_DISCOUNT_RATE}
+                  %
                 </span>
               )}
             </div>
@@ -70,19 +74,20 @@ export function ProductList({
                 {product.discounts.length > 0 && (
                   <p className="text-xs text-gray-500">
                     {product.discounts[0].quantity}개 이상 구매시 할인{' '}
-                    {product.discounts[0].rate * 100}%
+                    {product.discounts[0].rate * MAX_DISCOUNT_RATE}%
                   </p>
                 )}
               </div>
 
               {/* 재고 상태 */}
               <div className="mb-3">
-                {remainingStock <= 5 && remainingStock > 0 && (
-                  <p className="text-xs text-red-600 font-medium">
-                    품절임박! {remainingStock}개 남음
-                  </p>
-                )}
-                {remainingStock > 5 && (
+                {remainingStock <= LOW_STOCK_THRESHOLD &&
+                  remainingStock > 0 && (
+                    <p className="text-xs text-red-600 font-medium">
+                      품절임박! {remainingStock}개 남음
+                    </p>
+                  )}
+                {remainingStock > LOW_STOCK_THRESHOLD && (
                   <p className="text-xs text-gray-500">
                     재고 {remainingStock}개
                   </p>

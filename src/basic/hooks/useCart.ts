@@ -34,6 +34,7 @@ import {
   addItemToCart,
 } from '../models/cart'
 import { useLocalStorage } from '../utils/hooks/useLocalStorage'
+import { MIN_COUPON_AMOUNT } from '../constants'
 
 export function useCart(
   addNotification: (
@@ -126,7 +127,10 @@ export function useCart(
         selectedCoupon,
       ).totalAfterDiscount
 
-      if (currentTotal < 10000 && coupon.discountType === 'percentage') {
+      if (
+        currentTotal < MIN_COUPON_AMOUNT &&
+        coupon.discountType === 'percentage'
+      ) {
         addNotification(
           'percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.',
           'error',

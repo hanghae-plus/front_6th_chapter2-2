@@ -1,4 +1,5 @@
 import { CartItem, Coupon } from '../../../../types'
+import { MAX_DISCOUNT_RATE } from '../../../constants'
 import { ProductWithUI } from '../../../types'
 
 export const Cart = ({
@@ -78,7 +79,9 @@ export const Cart = ({
                 const originalPrice = item.product.price * item.quantity
                 const hasDiscount = itemTotal < originalPrice
                 const discountRate = hasDiscount
-                  ? Math.round((1 - itemTotal / originalPrice) * 100)
+                  ? Math.round(
+                      (1 - itemTotal / originalPrice) * MAX_DISCOUNT_RATE,
+                    )
                   : 0
 
                 return (

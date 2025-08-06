@@ -9,13 +9,27 @@ import { Coupon } from '../../types'
 import { ProductWithUI } from '../types'
 
 // TODO: 구현
+// 재고 관련 상수
+export const LOW_STOCK_THRESHOLD = 5
+
+// 쿠폰 관련 상수
+export const MIN_COUPON_AMOUNT = 10000
+
+// 할인율 관련 상수
+export const MAX_DISCOUNT_RATE = 100
+
+// 재고 관련 상수
+export const MAX_STOCK_LIMIT = 9999
+
+// 할인 금액 관련 상수
+export const MAX_DISCOUNT_AMOUNT = 100000
 
 // 초기 데이터
 export const initialProducts: ProductWithUI[] = [
   {
     id: 'p1',
     name: '상품1',
-    price: 10000,
+    price: MIN_COUPON_AMOUNT,
     stock: 20,
     discounts: [
       { quantity: 10, rate: 0.1 },

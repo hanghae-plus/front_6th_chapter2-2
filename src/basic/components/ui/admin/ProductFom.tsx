@@ -1,5 +1,6 @@
 import React, { FocusEvent } from 'react'
 import { ProductForm } from '../../../../types'
+import { MAX_DISCOUNT_RATE } from '../../../constants'
 
 export function ProductFom({
   productForm,
@@ -110,11 +111,11 @@ export function ProductFom({
                   <span className="text-sm">개 이상 구매 시</span>
                   <input
                     type="number"
-                    value={discount.rate * 100}
+                    value={discount.rate * MAX_DISCOUNT_RATE}
                     onChange={(e) => handleEditProuctForm(e, 'rate', index)}
                     className="w-16 px-2 py-1 border rounded"
                     min="0"
-                    max="100"
+                    max={MAX_DISCOUNT_RATE}
                     placeholder="%"
                   />
                   <span className="text-sm">% 할인</span>
