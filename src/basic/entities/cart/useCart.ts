@@ -4,7 +4,9 @@ import { ProductWithUI } from "../products/product.types";
 import { NotificationType } from "../../hooks/useNotifications";
 import { calculateRemainingStock } from "../../utils/calculateRemainingStock";
 import { useLocalStorageState } from "../../utils/hooks/useLocalStorageState";
+import { cartModel } from "./cart.model";
 
+//TODO : 카트에서 노티피케이션 제거하기!
 export const useCart = (
   addNotification: (message: string, type: NotificationType) => void
 ) => {
@@ -12,37 +14,21 @@ export const useCart = (
 
   const addToCart = useCallback(
     (product: ProductWithUI) => {
-      const remainingStock = calculateRemainingStock(product, cart);
+      const remainingStock = cartModel.getRemainingStock(product, cart);
       if (remainingStock <= 0) {
         addNotification("재고가 부족합니다!", "error");
         return;
       }
 
-      setCart((prevCart: CartItem[]) => {
-        const existingItem = prevCart.find(
-          (item) => item.product.id === product.id
-        );
+      const newCart = cartModel.addToCart(cart, product);
+      const addFailed = newCart === cart; // 장바구니에 담기지 않은 경우
 
-        if (existingItem) {
-          const newQuantity = existingItem.quantity + 1;
+      if (addFailed) {
+        addNotification(`재고는 ${product.stock}개까지만 있습니다.`, "error");
+        return;
+      }
 
-          if (newQuantity > product.stock) {
-            addNotification(
-              `재고는 ${product.stock}개까지만 있습니다.`,
-              "error"
-            );
-            return prevCart;
-          }
-
-          return prevCart.map((item) =>
-            item.product.id === product.id
-              ? { ...item, quantity: newQuantity }
-              : item
-          );
-        }
-
-        return [...prevCart, { product, quantity: 1 }];
-      });
+      setCart(newCart);
 
       addNotification("장바구니에 담았습니다", "success");
     },
@@ -50,9 +36,7 @@ export const useCart = (
   );
 
   const removeFromCart = useCallback((productId: string) => {
-    setCart((prevCart) =>
-      prevCart.filter((item) => item.product.id !== productId)
-    );
+    setCart((prevCart) => cartModel.removeFromCart(prevCart, productId));
   }, []);
 
   const totalItemCount = useMemo(() => {
