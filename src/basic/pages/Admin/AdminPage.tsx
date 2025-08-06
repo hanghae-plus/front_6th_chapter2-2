@@ -47,7 +47,7 @@ export default function AdminPage({
   } = useProductForm();
 
   // Coupon Form 훅 사용
-  const { couponForm, showCouponForm, setCouponForm, showForm, hideForm, handleCouponSubmit } = useCouponForm();
+  const { couponForm, showCouponForm, updateField, showForm, hideForm, handleCouponSubmit } = useCouponForm();
 
   // Product Form 제출 처리
   const handleProductFormSubmit = (e: React.FormEvent) => {
@@ -98,7 +98,7 @@ export default function AdminPage({
               showForm={showForm}
               hideForm={hideForm}
               couponForm={couponForm}
-              setCouponForm={setCouponForm}
+              updateField={updateField}
               onCouponSubmit={handleCouponFormSubmit}
               addNotification={addNotification}
             />

@@ -17,6 +17,14 @@ export const useCouponForm = () => {
     setCouponForm(INITIAL_COUPON_FORM);
   }, []);
 
+  // 범용 필드 업데이트 함수
+  const updateField = useCallback((field: keyof CouponFormState, value: string | number) => {
+    setCouponForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  }, []);
+
   // 쿠폰 폼 제출 처리 (실제 추가 로직은 외부에서 처리)
   const handleCouponSubmit = useCallback(
     (e: React.FormEvent, onAddCoupon: (coupon: Coupon) => void) => {
@@ -32,12 +40,12 @@ export const useCouponForm = () => {
   );
 
   return {
-    // 상태
+    // 상태 (읽기 전용)
     couponForm,
     showCouponForm,
 
-    // 상태 설정자
-    setCouponForm,
+    // ✅ 범용 필드 업데이트
+    updateField,
     showForm,
     hideForm,
     handleCouponSubmit,

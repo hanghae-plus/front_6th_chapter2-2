@@ -1,24 +1,13 @@
-// 쿠폰 관리 컴포넌트
+import type { CouponFormState } from "../../types/admin";
+
 interface CouponManagementProps {
   coupons: any[];
   onDeleteCoupon: (couponCode: string) => void;
   showCouponForm: boolean;
-  couponForm: {
-    name: string;
-    code: string;
-    discountType: "amount" | "percentage";
-    discountValue: number;
-  };
+  couponForm: CouponFormState;
   showForm: () => void;
   hideForm: () => void;
-  setCouponForm: React.Dispatch<
-    React.SetStateAction<{
-      name: string;
-      code: string;
-      discountType: "amount" | "percentage";
-      discountValue: number;
-    }>
-  >;
+  updateField: (field: keyof CouponFormState, value: any) => void;
   onCouponSubmit: (e: React.FormEvent) => void;
   addNotification: (message: string, type: "success" | "error") => void;
 }
@@ -30,7 +19,7 @@ const CouponManagement = ({
   showForm,
   hideForm,
   couponForm,
-  setCouponForm,
+  updateField,
   onCouponSubmit,
   addNotification,
 }: CouponManagementProps) => (
@@ -94,7 +83,7 @@ const CouponManagement = ({
                 <input
                   type="text"
                   value={couponForm.name}
-                  onChange={(e) => setCouponForm({ ...couponForm, name: e.target.value })}
+                  onChange={(e) => updateField("name", e.target.value)}
                   className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
                   placeholder="신규 가입 쿠폰"
                   required
@@ -105,7 +94,7 @@ const CouponManagement = ({
                 <input
                   type="text"
                   value={couponForm.code}
-                  onChange={(e) => setCouponForm({ ...couponForm, code: e.target.value.toUpperCase() })}
+                  onChange={(e) => updateField("code", e.target.value)}
                   className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm font-mono"
                   placeholder="WELCOME2024"
                   required
@@ -115,12 +104,7 @@ const CouponManagement = ({
                 <label className="block text-sm font-medium text-gray-700 mb-1">할인 타입</label>
                 <select
                   value={couponForm.discountType}
-                  onChange={(e) =>
-                    setCouponForm({
-                      ...couponForm,
-                      discountType: e.target.value as "amount" | "percentage",
-                    })
-                  }
+                  onChange={(e) => updateField("discountType", e.target.value as "amount" | "percentage")}
                   className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
                 >
                   <option value="amount">정액 할인</option>
@@ -137,7 +121,7 @@ const CouponManagement = ({
                   onChange={(e) => {
                     const value = e.target.value;
                     if (value === "" || /^\d+$/.test(value)) {
-                      setCouponForm({ ...couponForm, discountValue: value === "" ? 0 : parseInt(value) });
+                      updateField("discountValue", value === "" ? 0 : parseInt(value));
                     }
                   }}
                   onBlur={(e) => {
@@ -145,16 +129,16 @@ const CouponManagement = ({
                     if (couponForm.discountType === "percentage") {
                       if (value > 100) {
                         addNotification("할인율은 100%를 초과할 수 없습니다", "error");
-                        setCouponForm({ ...couponForm, discountValue: 100 });
+                        updateField("discountValue", 100);
                       } else if (value < 0) {
-                        setCouponForm({ ...couponForm, discountValue: 0 });
+                        updateField("discountValue", 0);
                       }
                     } else {
                       if (value > 100000) {
                         addNotification("할인 금액은 100,000원을 초과할 수 없습니다", "error");
-                        setCouponForm({ ...couponForm, discountValue: 100000 });
+                        updateField("discountValue", 100000);
                       } else if (value < 0) {
-                        setCouponForm({ ...couponForm, discountValue: 0 });
+                        updateField("discountValue", 0);
                       }
                     }
                   }}
