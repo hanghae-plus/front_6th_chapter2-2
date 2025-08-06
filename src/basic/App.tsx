@@ -3,6 +3,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { initialProducts, initialCoupons } from './constants';
 import { ProductWithUI, Notification, CartItem, Coupon, Product } from './types';
 import { useCart } from './hooks/useCart';
+import { useNotification } from './hooks/useNotification';
 import { formatPrice } from './utils/formatters';
 import { calculateItemTotal, calculateCartTotal } from './models/cart';
 
@@ -19,17 +20,17 @@ const App = () => {
     return initialProducts;
   });
 
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem('cart');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return [];
-      }
-    }
-    return [];
-  });
+  // const [cart, setCart] = useState<CartItem[]>(() => {
+  //   const saved = localStorage.getItem('cart');
+  //   if (saved) {
+  //     try {
+  //       return JSON.parse(saved);
+  //     } catch {
+  //       return [];
+  //     }
+  //   }
+  //   return [];
+  // });
 
   const [coupons, setCoupons] = useState<Coupon[]>(() => {
     const saved = localStorage.getItem('coupons');
@@ -45,7 +46,7 @@ const App = () => {
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  // const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
   const [showProductForm, setShowProductForm] = useState(false);
@@ -69,37 +70,47 @@ const App = () => {
     discountValue: 0,
   });
 
-  const { getRemainingStock } = useCart();
+  const { addNotification, notifications, removeNotification } = useNotification();
+
+  const {
+    getRemainingStock,
+    updateQuantity,
+    cart,
+    addToCart,
+    removeFromCart,
+    totalItemCount,
+    clearCart,
+  } = useCart(products, addNotification);
 
   // UI에 관련된 함수같다!
   const getDisplayPrice = (price: number, productId?: string): string => {
     if (productId) {
       const product = products.find((p) => p.id === productId);
-      if (product && getRemainingStock(product, cart) <= 0) {
+      if (product && getRemainingStock(product) <= 0) {
         return 'SOLD OUT';
       }
     }
     return formatPrice(price, isAdmin);
   };
 
-  const addNotification = useCallback(
-    (message: string, type: 'error' | 'success' | 'warning' = 'success') => {
-      const id = Date.now().toString();
-      setNotifications((prev) => [...prev, { id, message, type }]);
+  // const addNotification = useCallback(
+  //   (message: string, type: 'error' | 'success' | 'warning' = 'success') => {
+  //     const id = Date.now().toString();
+  //     setNotifications((prev) => [...prev, { id, message, type }]);
 
-      setTimeout(() => {
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
-      }, 3000);
-    },
-    [],
-  );
+  //     setTimeout(() => {
+  //       setNotifications((prev) => prev.filter((n) => n.id !== id));
+  //     }, 3000);
+  //   },
+  //   [],
+  // );
 
-  const [totalItemCount, setTotalItemCount] = useState(0);
+  // const [totalItemCount, setTotalItemCount] = useState(0);
 
-  useEffect(() => {
-    const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-    setTotalItemCount(count);
-  }, [cart]);
+  // useEffect(() => {
+  //   const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+  //   setTotalItemCount(count);
+  // }, [cart]);
 
   useEffect(() => {
     localStorage.setItem('products', JSON.stringify(products));
@@ -109,13 +120,13 @@ const App = () => {
     localStorage.setItem('coupons', JSON.stringify(coupons));
   }, [coupons]);
 
-  useEffect(() => {
-    if (cart.length > 0) {
-      localStorage.setItem('cart', JSON.stringify(cart));
-    } else {
-      localStorage.removeItem('cart');
-    }
-  }, [cart]);
+  // useEffect(() => {
+  //   if (cart.length > 0) {
+  //     localStorage.setItem('cart', JSON.stringify(cart));
+  //   } else {
+  //     localStorage.removeItem('cart');
+  //   }
+  // }, [cart]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -124,66 +135,66 @@ const App = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  const addToCart = useCallback(
-    (product: ProductWithUI) => {
-      const remainingStock = getRemainingStock(product, cart);
-      if (remainingStock <= 0) {
-        addNotification('재고가 부족합니다!', 'error');
-        return;
-      }
+  // const addToCart = useCallback(
+  //   (product: ProductWithUI) => {
+  //     const remainingStock = getRemainingStock(product);
+  //     if (remainingStock <= 0) {
+  //       addNotification('재고가 부족합니다!', 'error');
+  //       return;
+  //     }
 
-      setCart((prevCart) => {
-        const existingItem = prevCart.find((item) => item.product.id === product.id);
+  //     setCart((prevCart) => {
+  //       const existingItem = prevCart.find((item) => item.product.id === product.id);
 
-        if (existingItem) {
-          const newQuantity = existingItem.quantity + 1;
+  //       if (existingItem) {
+  //         const newQuantity = existingItem.quantity + 1;
 
-          if (newQuantity > product.stock) {
-            addNotification(`재고는 ${product.stock}개까지만 있습니다.`, 'error');
-            return prevCart;
-          }
+  //         if (newQuantity > product.stock) {
+  //           addNotification(`재고는 ${product.stock}개까지만 있습니다.`, 'error');
+  //           return prevCart;
+  //         }
 
-          return prevCart.map((item) =>
-            item.product.id === product.id ? { ...item, quantity: newQuantity } : item,
-          );
-        }
+  //         return prevCart.map((item) =>
+  //           item.product.id === product.id ? { ...item, quantity: newQuantity } : item,
+  //         );
+  //       }
 
-        return [...prevCart, { product, quantity: 1 }];
-      });
+  //       return [...prevCart, { product, quantity: 1 }];
+  //     });
 
-      addNotification('장바구니에 담았습니다', 'success');
-    },
-    [cart, addNotification, getRemainingStock],
-  );
+  //     addNotification('장바구니에 담았습니다', 'success');
+  //   },
+  //   [cart, addNotification, getRemainingStock],
+  // );
 
-  const removeFromCart = useCallback((productId: string) => {
-    setCart((prevCart) => prevCart.filter((item) => item.product.id !== productId));
-  }, []);
+  // const removeFromCart = useCallback((productId: string) => {
+  //   setCart((prevCart) => prevCart.filter((item) => item.product.id !== productId));
+  // }, []);
 
-  const updateQuantity = useCallback(
-    (productId: string, newQuantity: number) => {
-      if (newQuantity <= 0) {
-        removeFromCart(productId);
-        return;
-      }
+  // const updateQuantity = useCallback(
+  //   (productId: string, newQuantity: number) => {
+  //     if (newQuantity <= 0) {
+  //       removeFromCart(productId);
+  //       return;
+  //     }
 
-      const product = products.find((p) => p.id === productId);
-      if (!product) return;
+  //     const product = products.find((p) => p.id === productId);
+  //     if (!product) return;
 
-      const maxStock = product.stock;
-      if (newQuantity > maxStock) {
-        addNotification(`재고는 ${maxStock}개까지만 있습니다.`, 'error');
-        return;
-      }
+  //     const maxStock = product.stock;
+  //     if (newQuantity > maxStock) {
+  //       addNotification(`재고는 ${maxStock}개까지만 있습니다.`, 'error');
+  //       return;
+  //     }
 
-      setCart((prevCart) =>
-        prevCart.map((item) =>
-          item.product.id === productId ? { ...item, quantity: newQuantity } : item,
-        ),
-      );
-    },
-    [products, removeFromCart, addNotification, getRemainingStock],
-  );
+  //     setCart((prevCart) =>
+  //       prevCart.map((item) =>
+  //         item.product.id === productId ? { ...item, quantity: newQuantity } : item,
+  //       ),
+  //     );
+  //   },
+  //   [products, removeFromCart, addNotification, getRemainingStock],
+  // );
 
   const applyCoupon = useCallback(
     (coupon: Coupon) => {
@@ -197,13 +208,13 @@ const App = () => {
       setSelectedCoupon(coupon);
       addNotification('쿠폰이 적용되었습니다.', 'success');
     },
-    [addNotification, calculateCartTotal],
+    [cart, selectedCoupon, addNotification],
   );
 
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
     addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
-    setCart([]);
+    clearCart();
     setSelectedCoupon(null);
   }, [addNotification]);
 
@@ -329,7 +340,7 @@ const App = () => {
             >
               <span className='mr-2'>{notif.message}</span>
               <button
-                onClick={() => setNotifications((prev) => prev.filter((n) => n.id !== notif.id))}
+                onClick={() => removeNotification(notif.id)}
                 className='text-white hover:text-gray-200'
               >
                 <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
@@ -885,7 +896,7 @@ const App = () => {
                 ) : (
                   <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
                     {filteredProducts.map((product) => {
-                      const remainingStock = getRemainingStock(product, cart);
+                      const remainingStock = getRemainingStock(product);
 
                       return (
                         <div

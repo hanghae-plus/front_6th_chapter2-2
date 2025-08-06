@@ -75,8 +75,26 @@ const calculateCartTotal = (
   return {
     totalBeforeDiscount: Math.round(totalBeforeDiscount),
     totalAfterDiscount: Math.round(totalAfterDiscount),
-    totalAfterDiscount: Math.round(totalAfterDiscount),
   };
 };
 
-export { calculateItemTotal, calculateCartTotal };
+// 4. updateCartItemQuantity(cart, productId, quantity): 수량 변경
+const updateCartItemQuantity = (
+  cart: CartItem[],
+  productId: string,
+  quantity: number,
+): CartItem[] => {
+  if (!productId) return cart;
+
+  if (quantity <= 0) {
+    return removeItemFromCart(cart, productId);
+  }
+
+  return cart.map((item) => (item.product.id === productId ? { ...item, quantity } : item));
+};
+
+// 6. removeItemFromCart(cart, productId): 상품 제거
+const removeItemFromCart = (cart: CartItem[], productId: string): CartItem[] =>
+  cart.filter((item) => item.product.id !== productId);
+
+export { calculateItemTotal, calculateCartTotal, updateCartItemQuantity, removeItemFromCart };
