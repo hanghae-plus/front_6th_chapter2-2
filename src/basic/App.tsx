@@ -1,11 +1,12 @@
 import { useState, useCallback, useEffect } from 'react';
-import { CartItem, Product } from '../types';
+import { CartItem } from '../types';
 import { formatPrice } from './utils/formatters';
 import { Products } from './constants/products';
 import { useNotification } from './hooks/useNotification';
 import { useProducts } from './hooks/useProducts';
 import { useCoupons } from './hooks/useCoupons';
 import { useCart } from './hooks/useCart';
+import { useDebounce } from './utils/hooks/useDebounce';
 
 const App = () => {
   const { notifications, addNotification, setNotifications } = useNotification();
@@ -29,7 +30,7 @@ const App = () => {
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
   const [showProductForm, setShowProductForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   // Admin
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
@@ -88,13 +89,6 @@ const App = () => {
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);
     setTotalItemCount(count);
   }, [cart]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
 
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
