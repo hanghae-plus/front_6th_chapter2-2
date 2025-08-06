@@ -4,12 +4,9 @@ import Header from "./app/components/Header";
 
 import { AdminPage } from "./pages/AdminPage";
 import { CartPage } from "./pages/CartPage";
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { Notification } from "./entities/notification/ui/Notification";
-import {
-  NotificationVariant,
-  type Notification as NotificationType,
-} from "./entities/notification/types";
+import { useNotification } from "./features/show-notification";
 import { useCartStorage } from "./entities/cart/hooks/useCartStorage";
 import { useProductStorage } from "./entities/product/hooks/useProductStorage";
 import { useCouponStorage } from "./entities/coupon/hooks/useCouponStorage";
@@ -25,7 +22,8 @@ const App = () => {
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [notifications, setNotifications] = useState<NotificationType[]>([]);
+  const { notifications, addNotification, removeNotification } =
+    useNotification();
 
   const getProductRemainingStock = (product: Product): number => {
     const cartItem = cart.find((item) => item.product.id === product.id);
@@ -33,28 +31,11 @@ const App = () => {
     return calculateStock(product.stock, cartQuantity);
   };
 
-  const addNotification = useCallback(
-    (
-      message: string,
-      variant: NotificationVariant = NotificationVariant.SUCCESS
-    ) => {
-      const id = Date.now().toString();
-      setNotifications((prev) => [...prev, { id, message, variant }]);
-
-      setTimeout(() => {
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
-      }, 3000);
-    },
-    []
-  );
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Notification
         notifications={notifications}
-        onRemoveNotification={(id) =>
-          setNotifications((prev) => prev.filter((n) => n.id !== id))
-        }
+        onRemoveNotification={removeNotification}
       />
       <Header
         isAdmin={isAdmin}
