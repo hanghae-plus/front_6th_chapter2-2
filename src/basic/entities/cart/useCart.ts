@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { CartItem, Product } from "../../../types";
-import { ProductWithUI } from "../products/types";
+import { ProductWithUI } from "../products/product.types";
 import { NotificationType } from "../../hooks/useNotifications";
 import { calculateRemainingStock } from "../../utils/calculateRemainingStock";
 import { useLocalStorageState } from "../../utils/hooks/useLocalStorageState";

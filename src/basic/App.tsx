@@ -1,14 +1,14 @@
 import { useState, useCallback, useEffect } from "react";
 import { CartItem, Coupon } from "../types";
 import { formatPrice } from "./utils/formatters";
-import { ProductWithUI } from "./models/products/types";
+import { ProductWithUI } from "./entities/products/product.types";
 
-import { useProducts } from "./models/products/useProducts";
+import { useProducts } from "./entities/products/useProducts";
 import { useNotifications } from "./hooks/useNotifications";
-import { useCart } from "./models/cart/useCart";
+import { useCart } from "./entities/cart/useCart";
 import { calculateRemainingStock } from "./utils/calculateRemainingStock";
-import { useCoupon } from "./models/coupon/useCoupon";
-import { useProductForm } from "./models/products/useProductForm";
+import { useCoupon } from "./entities/coupon/useCoupon";
+import { useProductForm } from "./entities/products/useProductForm";
 import { calculateCartTotal } from "./utils/calculateCartTotal";
 import { calculateItemTotal } from "./utils/calculateItemTotal";
 import { useDebounce } from "./utils/hooks/useDebounce";

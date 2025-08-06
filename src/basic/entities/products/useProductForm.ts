@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ProductWithUI } from "./types";
+import { ProductWithUI } from "./product.types";
 
 export const useProductForm = () => {
   const [productForm, setProductForm] = useState({

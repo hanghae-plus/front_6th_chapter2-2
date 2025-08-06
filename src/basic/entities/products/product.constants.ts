@@ -1,4 +1,4 @@
-import { ProductWithUI } from "./types";
+import { ProductWithUI } from "./product.types";
 
 export const initialProducts: ProductWithUI[] = [
   {
