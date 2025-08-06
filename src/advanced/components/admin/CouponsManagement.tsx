@@ -1,26 +1,20 @@
 import { useState } from 'react';
-import { Coupon, CouponForm } from '../../../types';
 import Button from '../ui/Button';
 import IconButton from '../ui/IconButton';
 import CouponsForm from './forms/CouponsForm';
 import { PlusIcon, TrashIcon } from '../ui/Icons';
+import { useAtomValue } from 'jotai';
+import { couponsAtom } from '../../atoms/couponsAtom';
+import { useCouponsForm } from '../../hooks/coupons/useCouponsForm';
 
-interface CouponsManagementProps {
-  coupons: Coupon[];
-  couponForm: CouponForm;
-  onCouponDelete: (code: string) => void;
-  onCouponSubmit: (e: React.FormEvent) => void;
-  onCouponFormChange: (form: CouponForm) => void;
-}
-
-export default function CouponsManagement({
-  coupons,
-  couponForm,
-  onCouponDelete,
-  onCouponSubmit,
-  onCouponFormChange,
-}: CouponsManagementProps) {
+export default function CouponsManagement() {
   const [showCouponForm, setShowCouponForm] = useState(false);
+
+  // atom에서 직접 읽기
+  const coupons = useAtomValue(couponsAtom);
+
+  // useCoupons에서 삭제 함수는 없으니 useCouponsForm에서 가져와야 함
+  const { deleteCoupon, couponForm, handleCouponSubmit, setCouponForm } = useCouponsForm();
 
   return (
     <section className='bg-white rounded-lg border border-gray-200'>
@@ -49,7 +43,7 @@ export default function CouponsManagement({
 
                 <IconButton
                   variant='danger'
-                  onClick={() => onCouponDelete(coupon.code)}
+                  onClick={() => deleteCoupon(coupon.code)}
                   icon={<TrashIcon />}
                 />
               </div>
@@ -71,8 +65,8 @@ export default function CouponsManagement({
         {showCouponForm && (
           <CouponsForm
             couponForm={couponForm}
-            onCouponSubmit={onCouponSubmit}
-            onCouponFormChange={onCouponFormChange}
+            onCouponSubmit={handleCouponSubmit}
+            onCouponFormChange={setCouponForm}
             onToggleForm={setShowCouponForm}
           />
         )}

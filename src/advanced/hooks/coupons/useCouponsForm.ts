@@ -1,35 +1,32 @@
 import { useCallback, useState } from 'react';
 import { Coupon } from '../../../types';
+import { useAtom, useSetAtom } from 'jotai';
+import { couponsAtom, selectedCouponAtom } from '../../atoms/couponsAtom';
+import { addNotificationAtom } from '../../atoms/notificationsAtoms';
 
-export const useCouponsForm = (
-  coupons: Coupon[],
-  setCoupons: React.Dispatch<React.SetStateAction<Coupon[]>>,
-  selectedCoupon: Coupon | null = null,
-  setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>,
-  onAddSuccess: (message: string) => void,
-  onAddError: (message: string) => void,
-  onDeleteSuccess: (message: string) => void,
-) => {
+export const useCouponsForm = () => {
+  const [coupons, setCoupons] = useAtom(couponsAtom);
   const [couponForm, setCouponForm] = useState({
     name: '',
     code: '',
     discountType: 'amount' as 'amount' | 'percentage',
     discountValue: 0,
   });
+  const [selectedCoupon, setSelectedCoupon] = useAtom(selectedCouponAtom);
+
+  const addNotification = useSetAtom(addNotificationAtom);
 
   const addCoupon = useCallback(
     (newCoupon: Coupon, coupons: Coupon[]) => {
       const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
       if (existingCoupon) {
-        // addNotification('이미 존재하는 쿠폰 코드입니다.', 'error');
-        onAddError?.('이미 존재하는 쿠폰 코드입니다.');
+        addNotification({ message: '이미 존재하는 쿠폰 코드입니다.', type: 'error' });
         return;
       }
       setCoupons((prev) => [...prev, newCoupon]);
-      // addNotification('쿠폰이 추가되었습니다.', 'success');
-      onAddSuccess?.('쿠폰이 추가되었습니다.');
+      addNotification({ message: '쿠폰이 추가되었습니다.', type: 'success' });
     },
-    [coupons, onAddSuccess, onAddError],
+    [coupons],
   );
 
   const deleteCoupon = useCallback(
@@ -38,10 +35,9 @@ export const useCouponsForm = (
       if (selectedCoupon?.code === couponCode) {
         setSelectedCoupon(null);
       }
-      // addNotification('쿠폰이 삭제되었습니다.', 'success');
-      onDeleteSuccess?.('쿠폰이 삭제되었습니다.');
+      addNotification({ message: '쿠폰이 삭제되었습니다.', type: 'success' });
     },
-    [selectedCoupon, onDeleteSuccess],
+    [selectedCoupon],
   );
 
   const handleCouponSubmit = (e: React.FormEvent, onSuccess?: () => void) => {
@@ -53,7 +49,6 @@ export const useCouponsForm = (
       discountType: 'amount',
       discountValue: 0,
     });
-    // setShowCouponForm(false);
     onSuccess?.();
   };
 

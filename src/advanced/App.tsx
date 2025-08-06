@@ -25,21 +25,10 @@ const App = () => {
   const isAdmin = useAtomValue(isAdminAtom);
 
   // 쿠폰 관리 훅
-  const { coupons, setCoupons, selectedCoupon, setSelectedCoupon, applyCoupon } = useCoupons(
-    (message) => addNotification({ message, type: 'success' }),
-    (message) => addNotification({ message, type: 'error' }),
-  );
+  // const { coupons, setCoupons, selectedCoupon, setSelectedCoupon, applyCoupon } = useCoupons();
 
   // 쿠폰 폼 관리 훅
-  const { couponForm, setCouponForm, deleteCoupon, handleCouponSubmit } = useCouponsForm(
-    coupons,
-    setCoupons,
-    selectedCoupon,
-    setSelectedCoupon,
-    (message) => addNotification({ message, type: 'success' }),
-    (message) => addNotification({ message, type: 'error' }),
-    (message) => addNotification({ message, type: 'success' }),
-  );
+  // const { couponForm, setCouponForm, deleteCoupon, handleCouponSubmit } = useCouponsForm();
 
   // 장바구니 관리 훅
   const { cart, setCart, totalCartItem, addToCart, removeFromCart, updateQuantity } = useCart();
@@ -48,14 +37,14 @@ const App = () => {
   const { query, setQuery, debouncedQuery } = useSearch();
 
   // 결제 처리 훅
-  const { completeOrder } = useCheckout(
-    () => setCart([]),
-    () => setSelectedCoupon(null),
-    (message) => addNotification({ message, type: 'success' }),
-  );
+  // const { completeOrder } = useCheckout(
+  //   () => setCart([]),
+  //   () => setSelectedCoupon(null),
+  //   (message) => addNotification({ message, type: 'success' }),
+  // );
 
   // 계산된 데이터
-  const totals = calculateCartTotal(cart, selectedCoupon);
+  // const totals = calculateCartTotal(cart, selectedCoupon);
   // const filteredProductList = filteredProducts(products, debouncedQuery);
 
   return (
@@ -78,14 +67,7 @@ const App = () => {
 
       <main className='max-w-7xl mx-auto px-4 py-8'>
         {isAdmin ? (
-          <AdminDashboard
-            cart={cart}
-            coupons={coupons}
-            couponForm={couponForm}
-            onCouponDelete={deleteCoupon}
-            onCouponSubmit={handleCouponSubmit}
-            onCouponFormChange={setCouponForm}
-          />
+          <AdminDashboard />
         ) : (
           <ShopView
             filteredProductList={filteredProductList}

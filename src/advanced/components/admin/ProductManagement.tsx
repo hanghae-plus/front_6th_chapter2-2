@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { CartItem, Product, ProductFormType } from '../../../types';
 import { getRemainingStock } from '../../utils/calculations/stockCalculations';
 import { formatPriceWithSoldOut } from '../../utils/formatters/priceFormatter';
 import Button from '../ui/Button';
@@ -9,19 +8,17 @@ import { isAdminAtom } from '../../atoms/uiAtoms';
 import { productsAtom } from '../../atoms/productsAtom';
 import { useProducts } from '../../hooks/product/useProducts';
 import { useProductForm } from '../../hooks/product/useProductForm';
+import { cartAtom } from '../../atoms/cartAtoms';
 
-interface ProductManagementProps {
-  cart: CartItem[];
-}
-
-export default function ProductManagement({ cart }: ProductManagementProps) {
+export default function ProductManagement() {
   const [showProductForm, setShowProductForm] = useState(false);
   const isAdmin = useAtomValue(isAdminAtom);
 
   const products = useAtomValue(productsAtom);
+  const cart = useAtomValue(cartAtom);
   const { deleteProduct } = useProducts();
 
-  const { setProductForm, handleProductEdit, editingProduct, setEditingProduct } = useProductForm();
+  const { setProductForm, handleProductEdit, setEditingProduct } = useProductForm();
 
   return (
     <section className='bg-white rounded-lg border border-gray-200'>

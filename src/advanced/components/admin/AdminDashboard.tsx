@@ -2,25 +2,8 @@ import { useState } from 'react';
 import ProductManagement from './ProductManagement';
 import Tab from '../ui/Tab';
 import CouponsManagement from './CouponsManagement';
-import { CartItem, Coupon, CouponForm, Product, ProductFormType } from '../../../types';
 
-interface AdminDashboardProps {
-  cart: CartItem[];
-  coupons: Coupon[];
-  couponForm: CouponForm;
-  onCouponDelete: (code: string) => void;
-  onCouponSubmit: (e: React.FormEvent) => void;
-  onCouponFormChange: (form: CouponForm) => void;
-}
-
-export default function AdminDashboard({
-  cart,
-  coupons,
-  couponForm,
-  onCouponDelete,
-  onCouponSubmit,
-  onCouponFormChange,
-}: AdminDashboardProps) {
+export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
 
   return (
@@ -40,17 +23,7 @@ export default function AdminDashboard({
         </nav>
       </div>
 
-      {activeTab === 'products' ? (
-        <ProductManagement cart={cart} />
-      ) : (
-        <CouponsManagement
-          coupons={coupons}
-          couponForm={couponForm}
-          onCouponDelete={onCouponDelete}
-          onCouponSubmit={onCouponSubmit}
-          onCouponFormChange={onCouponFormChange}
-        />
-      )}
+      {activeTab === 'products' ? <ProductManagement /> : <CouponsManagement />}
     </div>
   );
 }
