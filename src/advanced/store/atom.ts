@@ -13,14 +13,15 @@ export const productsAtom = atomWithStorage<IProductWithUI[]>(
   initialProducts
 );
 
-// 로컬 스토리지와 연동된 장바구니
-export const cartAtom = atomWithStorage<ICartItem[]>("cart", initialCarts);
-
 // 로컬 스토리지와 연동된 쿠폰
 export const couponsAtom = atomWithStorage<ICoupon[]>(
   "coupons",
   initialCoupons
 );
+
+// 로컬 스토리지와 연동된 장바구니
+export const cartAtom = atomWithStorage<ICartItem[]>("cart", initialCarts);
+
 // 현재 선택된 쿠폰
 export const selectedCouponAtom = atom<ICoupon | null>(null);
 
