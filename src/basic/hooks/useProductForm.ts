@@ -22,7 +22,6 @@ export const useProductForm = () => {
 
   // 새 상품 추가 시작
   const startAddProduct = useCallback(() => {
-    console.log("startAddProduct");
     setEditingProduct("new");
     setProductForm(INITIAL_PRODUCT_FORM);
     setShowProductForm(true);
@@ -44,11 +43,12 @@ export const useProductForm = () => {
     ) => {
       e.preventDefault();
 
+      // 수정
       if (editingProduct && editingProduct !== "new") {
-        // 수정
         onUpdate(editingProduct, productForm);
-      } else {
-        // 추가
+      }
+      // 추가
+      else {
         onAdd({
           ...productForm,
           discounts: productForm.discounts,

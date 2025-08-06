@@ -1,24 +1,17 @@
-import { ProductWithUI } from "../../hooks/useProducts";
 import ProductManagement from "../../components/admin/ProductManagement";
 import CouponManagement from "../../components/admin/CouponManagement";
 import { Tabs } from "../../components/ui/tabs";
 import { ADMIN_TABS } from "../../types/admin";
-import type { Coupon, CouponFormState, ProductFormState, NotificationType } from "../../types/admin";
-import type { CartItem } from "../../../types";
-
+import { useProductForm } from "../../hooks/useProductForm";
+import type { Coupon, CouponFormState, NotificationType } from "../../types/admin";
+import type { CartItem, Product } from "../../../types";
 interface AdminPageProps {
-  // 상품 관련
-  products: ProductWithUI[];
+  // 상품 관련 - 외부에서 받아야 하는 것들
+  products: Product[];
   cart: CartItem[];
-  onEditProduct: (product: ProductWithUI) => void;
   onDeleteProduct: (productId: string) => void;
-  onAddProduct: () => void;
-  showProductForm: boolean;
-  productForm: ProductFormState;
-  setProductForm: React.Dispatch<React.SetStateAction<ProductFormState>>;
-  editingProduct: string | null;
-  onProductSubmit: (e: React.FormEvent) => void;
-  onCancelProductForm: () => void;
+  onAddProduct: (product: Omit<Product, "id">) => void;
+  onUpdateProduct: (productId: string, updates: Partial<Product>) => void;
   addNotification: (message: string, type: NotificationType) => void;
 
   // 쿠폰 관련
@@ -35,15 +28,9 @@ export default function AdminPage({
   // 상품 관련 props
   products,
   cart,
-  onEditProduct,
   onDeleteProduct,
   onAddProduct,
-  showProductForm,
-  productForm,
-  setProductForm,
-  editingProduct,
-  onProductSubmit,
-  onCancelProductForm,
+  onUpdateProduct,
   addNotification,
 
   // 쿠폰 관련 props
@@ -55,6 +42,21 @@ export default function AdminPage({
   setCouponForm,
   onCouponSubmit,
 }: AdminPageProps) {
+  const {
+    editingProduct,
+    productForm,
+    showProductForm,
+    setProductForm,
+    startEditProduct,
+    startAddProduct,
+    cancelProductForm,
+    handleProductSubmit,
+  } = useProductForm();
+
+  // Product Form 제출 처리
+  const handleProductFormSubmit = (e: React.FormEvent) => {
+    handleProductSubmit(e, onAddProduct, onUpdateProduct);
+  };
   return (
     <div className="max-w-6xl mx-auto">
       {/* 대시보드 헤더 */}
@@ -74,15 +76,15 @@ export default function AdminPage({
             <ProductManagement
               products={products}
               cart={cart}
-              onEditProduct={onEditProduct}
+              onEditProduct={startEditProduct}
               onDeleteProduct={onDeleteProduct}
-              onAddProduct={onAddProduct}
+              onAddProduct={startAddProduct}
               showProductForm={showProductForm}
               productForm={productForm}
               setProductForm={setProductForm}
               editingProduct={editingProduct}
-              onProductSubmit={onProductSubmit}
-              onCancelProductForm={onCancelProductForm}
+              onProductSubmit={handleProductFormSubmit}
+              onCancelProductForm={cancelProductForm}
               addNotification={addNotification}
             />
           </Tabs.Panel>

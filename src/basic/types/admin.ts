@@ -1,4 +1,4 @@
-import { ProductWithUI } from "../hooks/useProducts";
+import { Product } from "../../types";
 
 // 쿠폰 관련 타입
 export interface Coupon {
@@ -37,7 +37,7 @@ export type NotificationType = "success" | "error";
 
 // 이벤트 핸들러 타입들
 export interface ProductHandlers {
-  onEdit: (product: ProductWithUI) => void;
+  onEdit: (product: Product) => void;
   onDelete: (productId: string) => void;
   onAdd: () => void;
   onSubmit: (e: React.FormEvent) => void;
@@ -63,7 +63,7 @@ export interface CouponFormActions {
 
 // 관리자 상태 그룹
 export interface AdminProductState {
-  products: ProductWithUI[];
+  products: Product[];
   productForm: ProductFormState;
   showProductForm: boolean;
   editingProduct: string | null;

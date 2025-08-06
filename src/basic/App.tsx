@@ -4,7 +4,6 @@ import { useProducts } from "./hooks/useProducts";
 import { useCart } from "./hooks/useCart";
 import { useCoupons } from "./hooks/useCoupons";
 import { useNotification } from "./hooks/useNotification";
-import { useProductForm } from "./hooks/useProductForm";
 
 // utils
 import { useSearch } from "./utils/hooks/useSearch";
@@ -44,18 +43,6 @@ const App = () => {
   // 로컬 UI 상태
   const [isAdmin, setIsAdmin] = useState(false);
   const [showCouponForm, setShowCouponForm] = useState(false);
-
-  // Product Form 관리
-  const {
-    editingProduct,
-    productForm,
-    showProductForm,
-    setProductForm,
-    startEditProduct,
-    startAddProduct,
-    cancelProductForm,
-    handleProductSubmit: handleProductFormSubmit,
-  } = useProductForm();
 
   const [couponForm, setCouponForm] = useState({
     name: "",
@@ -143,10 +130,6 @@ const App = () => {
     [deleteCoupon, addNotification]
   );
 
-  const handleProductSubmit = (e: React.FormEvent) => {
-    handleProductFormSubmit(e, handleAddProduct, handleUpdateProduct);
-  };
-
   const handleCouponSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     handleAddCoupon(couponForm);
@@ -180,15 +163,9 @@ const App = () => {
             // 상품 관련 props
             products={products}
             cart={cart}
-            onEditProduct={startEditProduct}
             onDeleteProduct={handleDeleteProduct}
-            onAddProduct={startAddProduct}
-            showProductForm={showProductForm}
-            productForm={productForm}
-            setProductForm={setProductForm}
-            editingProduct={editingProduct}
-            onProductSubmit={handleProductSubmit}
-            onCancelProductForm={cancelProductForm}
+            onAddProduct={handleAddProduct}
+            onUpdateProduct={handleUpdateProduct}
             addNotification={addNotification}
             // 쿠폰 관련 props
             coupons={coupons}
