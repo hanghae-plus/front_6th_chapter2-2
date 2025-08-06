@@ -1,21 +1,18 @@
-import { CartItem as CartItemType, Coupon } from '../../../types';
+import { useAtomValue } from 'jotai';
 import Button from '../ui/Button';
+import { cartAtom } from '../../atoms/cartAtoms';
+import { couponsAtom, selectedCouponAtom } from '../../atoms/couponsAtom';
+import { useCoupons } from '../../hooks/coupons/useCoupons';
 
-interface CouponSelectorProps {
-  coupons: Coupon[];
-  cart: CartItemType[];
-  selectedCoupon: Coupon | null;
-  onApplyCoupon: (coupon: Coupon, cart: CartItemType[]) => void;
-  onSelectedCouponChange: (coupon: Coupon | null) => void;
-}
+export default function CouponSelector() {
+  // atom에서 상태 가져오기
+  const coupons = useAtomValue(couponsAtom);
+  const cart = useAtomValue(cartAtom);
+  const selectedCoupon = useAtomValue(selectedCouponAtom);
 
-export default function CouponSelector({
-  coupons,
-  cart,
-  selectedCoupon,
-  onApplyCoupon,
-  onSelectedCouponChange,
-}: CouponSelectorProps) {
+  // 커스텀 훅에서 함수들 가져오기
+  const { applyCoupon, setSelectedCoupon } = useCoupons();
+
   return (
     <section className='bg-white rounded-lg border border-gray-200 p-4'>
       <div className='flex items-center justify-between mb-3'>
@@ -31,7 +28,7 @@ export default function CouponSelector({
           onChange={(e) => {
             const coupon = coupons.find((c) => c.code === e.target.value);
 
-            coupon ? onApplyCoupon(coupon, cart) : onSelectedCouponChange(null);
+            coupon ? applyCoupon(coupon, cart) : setSelectedCoupon(null);
           }}
         >
           <option value=''>쿠폰 선택</option>

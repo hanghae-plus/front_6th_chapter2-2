@@ -1,43 +1,26 @@
 import { useAtomValue } from 'jotai';
-import { CartItem, Coupon, Product, ProductWithUI } from '../../../types';
 import { getRemainingStock } from '../../utils/calculations/stockCalculations';
+import { filteredProducts } from '../../utils/calculations/productCalculations';
 import ProductCard from '../ui/ProductCard';
 import Cart from './Cart';
 import { productsAtom } from '../../atoms/productsAtom';
+import { cartAtom } from '../../atoms/cartAtoms';
+import { debouncedSearchQueryAtom } from '../../atoms/searchAtom';
+import { useCart } from '../../hooks/cart/useCart';
+import useCheckout from '../../hooks/checkout/useCheckout';
 
-interface ShopViewProps {
-  filteredProductList: ProductWithUI[];
-  debouncedQuery: string;
-  cart: CartItem[];
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  totals: {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
-  };
-  addToCart: (product: ProductWithUI) => void;
-  onRemoveFromCart: (productId: string) => void;
-  onUpdateQuantity: (productId: string, quantity: number) => void;
-  onApplyCoupon: (coupon: Coupon, cart: CartItem[]) => void;
-  onSelectedCouponChange: (coupon: Coupon | null) => void;
-  onCompleteOrder: () => void;
-}
-
-export default function ShopView({
-  filteredProductList,
-  debouncedQuery,
-  cart,
-  coupons,
-  selectedCoupon,
-  totals,
-  addToCart,
-  onRemoveFromCart,
-  onUpdateQuantity,
-  onApplyCoupon,
-  onSelectedCouponChange,
-  onCompleteOrder,
-}: ShopViewProps) {
+export default function ShopView() {
+  // atom에서 직접 가져오기
   const products = useAtomValue(productsAtom);
+  const cart = useAtomValue(cartAtom);
+  const debouncedQuery = useAtomValue(debouncedSearchQueryAtom);
+
+  // 커스텀 훅에서 함수들 가져오기
+  const { addToCart } = useCart();
+  useCheckout();
+
+  // 계산된 값들
+  const filteredProductList = filteredProducts(products, debouncedQuery);
 
   return (
     <div className='grid grid-cols-1 lg:grid-cols-4 gap-6'>
@@ -70,17 +53,7 @@ export default function ShopView({
           )}
         </section>
       </div>
-      <Cart
-        cart={cart}
-        coupons={coupons}
-        selectedCoupon={selectedCoupon}
-        totals={totals}
-        onRemoveFromCart={onRemoveFromCart}
-        onUpdateQuantity={onUpdateQuantity}
-        onApplyCoupon={onApplyCoupon}
-        onSelectedCouponChange={onSelectedCouponChange}
-        onCompleteOrder={onCompleteOrder}
-      />
+      <Cart />
     </div>
   );
 }

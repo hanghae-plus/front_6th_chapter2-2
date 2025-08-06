@@ -1,36 +1,19 @@
-import { CartItem as CartItemType, Coupon } from '../../../types';
+import { useAtomValue } from 'jotai';
 import { calculateItemTotal } from '../../utils/calculations/cartCalculations';
 import { BagIcon } from '../ui/Icons';
 import CartItem from './CartItem';
 import Checkout from './Checkout';
 import CouponSelector from './CouponSelector';
+import { cartAtom } from '../../atoms/cartAtoms';
+import { useCart } from '../../hooks/cart/useCart';
 
-interface CartProps {
-  cart: CartItemType[];
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  totals: {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
-  };
-  onRemoveFromCart: (productId: string) => void;
-  onUpdateQuantity: (productId: string, quantity: number) => void;
-  onApplyCoupon: (coupon: Coupon, cart: CartItemType[]) => void;
-  onSelectedCouponChange: (coupon: Coupon | null) => void;
-  onCompleteOrder: () => void;
-}
+export default function Cart() {
+  // atom에서 상태 가져오기
+  const cart = useAtomValue(cartAtom);
 
-export default function Cart({
-  cart,
-  coupons,
-  selectedCoupon,
-  totals,
-  onRemoveFromCart,
-  onUpdateQuantity,
-  onApplyCoupon,
-  onSelectedCouponChange,
-  onCompleteOrder,
-}: CartProps) {
+  // 커스텀 훅에서 함수들 가져오기
+  const { removeFromCart, updateQuantity } = useCart();
+
   return (
     <div className='lg:col-span-1'>
       <div className='sticky top-24 space-y-4'>
@@ -58,11 +41,11 @@ export default function Cart({
                   <CartItem
                     key={item.product.id}
                     item={item}
-                    onRemoveFromCart={onRemoveFromCart}
-                    onUpdateQuantity={onUpdateQuantity}
+                    onRemoveFromCart={removeFromCart}
+                    onUpdateQuantity={updateQuantity}
                     hasDiscount={hasDiscount}
-                    discountRate={discountRate}
                     itemTotal={itemTotal}
+                    discountRate={discountRate}
                   />
                 );
               })}
@@ -72,14 +55,8 @@ export default function Cart({
 
         {cart.length > 0 && (
           <>
-            <CouponSelector
-              coupons={coupons}
-              cart={cart}
-              selectedCoupon={selectedCoupon}
-              onApplyCoupon={onApplyCoupon}
-              onSelectedCouponChange={onSelectedCouponChange}
-            />
-            <Checkout totals={totals} onCompleteOrder={onCompleteOrder} />
+            <CouponSelector />
+            <Checkout />
           </>
         )}
       </div>

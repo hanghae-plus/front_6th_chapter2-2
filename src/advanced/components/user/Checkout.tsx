@@ -1,14 +1,21 @@
+import { useAtomValue } from 'jotai';
 import Button from '../ui/Button';
+import { cartAtom } from '../../atoms/cartAtoms';
+import { selectedCouponAtom } from '../../atoms/couponsAtom';
+import { calculateCartTotal } from '../../utils/calculations/cartCalculations';
+import useCheckout from '../../hooks/checkout/useCheckout';
 
-interface CheckoutProps {
-  totals: {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
-  };
-  onCompleteOrder: () => void;
-}
+export default function Checkout() {
+  // atom에서 상태 가져오기
+  const cart = useAtomValue(cartAtom);
+  const selectedCoupon = useAtomValue(selectedCouponAtom);
 
-export default function Checkout({ totals, onCompleteOrder }: CheckoutProps) {
+  // 커스텀 훅에서 함수 가져오기
+  const { completeOrder } = useCheckout();
+
+  // 계산된 값
+  const totals = calculateCartTotal(cart, selectedCoupon);
+
   return (
     <section className='bg-white rounded-lg border border-gray-200 p-4'>
       <h3 className='text-lg font-semibold mb-4'>결제 정보</h3>
@@ -35,7 +42,7 @@ export default function Checkout({ totals, onCompleteOrder }: CheckoutProps) {
 
       {/* Todo :: primary - lg 사이즈 옵션 수정 */}
       <Button
-        onClick={onCompleteOrder}
+        onClick={completeOrder}
         size='lg'
         className='w-full hover:bg-yellow-500 bg-yellow-400 !text-gray-900 mt-4 py-3'
       >
