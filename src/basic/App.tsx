@@ -77,23 +77,9 @@ const App = () => {
     [products, cart, isAdmin]
   );
 
-  const getItemTotal = useCallback(
-    (item: CartItem): number => {
-      return calculateItemTotal(item, cart);
-    },
-    [cart]
-  );
-
-  const getCartTotal = useCallback((): {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
-  } => {
-    return calculateCartTotal(cart, selectedCoupon);
-  }, [cart, selectedCoupon]);
-
   const applyCoupon = useCallback(
     (coupon: Coupon) => {
-      const currentTotal = getCartTotal().totalAfterDiscount;
+      const currentTotal = calculateCartTotal(cart, selectedCoupon).totalAfterDiscount;
       const validation = validateCouponApplication(coupon, currentTotal);
 
       if (!validation.isValid) {
@@ -104,7 +90,7 @@ const App = () => {
       setSelectedCoupon(coupon);
       addNotification('쿠폰이 적용되었습니다.', 'success');
     },
-    [addNotification, getCartTotal]
+    [addNotification, cart, selectedCoupon]
   );
 
   const addProduct = useCallback(
@@ -207,7 +193,7 @@ const App = () => {
     setShowProductForm(true);
   };
 
-  const totals = getCartTotal();
+  const totals = calculateCartTotal(cart, selectedCoupon);
 
   const filteredProducts = filterProducts(products, debouncedSearchTerm);
 
@@ -274,7 +260,7 @@ const App = () => {
                 {/* Cart */}
                 <Cart
                   cart={cart}
-                  calculateItemTotal={getItemTotal}
+                  calculateItemTotal={(item) => calculateItemTotal(item, cart)}
                   removeFromCart={removeFromCart}
                   updateQuantity={updateQuantity}
                 />
