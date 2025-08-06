@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { ProductWithUI } from "../../hooks/useProducts";
+import type { ProductFormState, NotificationType } from "../../types/admin";
 
 interface ProductManagementProps {
   products: ProductWithUI[];
@@ -8,26 +8,12 @@ interface ProductManagementProps {
   onDeleteProduct: (productId: string) => void;
   onAddProduct: () => void;
   showProductForm: boolean;
-  productForm: {
-    name: string;
-    price: number;
-    stock: number;
-    description: string;
-    discounts: Array<{ quantity: number; rate: number }>;
-  };
-  setProductForm: React.Dispatch<
-    React.SetStateAction<{
-      name: string;
-      price: number;
-      stock: number;
-      description: string;
-      discounts: Array<{ quantity: number; rate: number }>;
-    }>
-  >;
+  productForm: ProductFormState;
+  setProductForm: React.Dispatch<React.SetStateAction<ProductFormState>>;
   editingProduct: string | null;
   onProductSubmit: (e: React.FormEvent) => void;
   onCancelProductForm: () => void;
-  addNotification: (message: string, type: "success" | "error") => void;
+  addNotification: (message: string, type: NotificationType) => void;
 }
 
 export const ProductManagement = ({
@@ -140,26 +126,12 @@ const ProductTable = ({ products, formatPriceWithAdmin, onEdit, onDelete }: Prod
 
 // 상품 폼 컴포넌트
 interface ProductFormProps {
-  productForm: {
-    name: string;
-    price: number;
-    stock: number;
-    description: string;
-    discounts: Array<{ quantity: number; rate: number }>;
-  };
-  setProductForm: React.Dispatch<
-    React.SetStateAction<{
-      name: string;
-      price: number;
-      stock: number;
-      description: string;
-      discounts: Array<{ quantity: number; rate: number }>;
-    }>
-  >;
+  productForm: ProductFormState;
+  setProductForm: React.Dispatch<React.SetStateAction<ProductFormState>>;
   editingProduct: string | null;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
-  addNotification: (message: string, type: "success" | "error") => void;
+  addNotification: (message: string, type: NotificationType) => void;
 }
 
 const ProductForm = ({
@@ -331,3 +303,5 @@ const ProductForm = ({
     </form>
   </div>
 );
+
+export default ProductManagement;
