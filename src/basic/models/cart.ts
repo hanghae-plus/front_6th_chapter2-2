@@ -1,25 +1,5 @@
 import { CartItem, Coupon, Product } from '../../types';
-
-// 적용 가능한 최대 할인율 계산
-const getMaxApplicableDiscount = (item: CartItem): number => {
-  const { discounts } = item.product;
-  const { quantity } = item;
-
-  return discounts.reduce((maxDiscount, discount) => {
-    return quantity >= discount.quantity && discount.rate > maxDiscount
-      ? discount.rate
-      : maxDiscount;
-  }, 0);
-};
-
-// 개별 아이템의 할인 적용 후 총액 계산
-export const calculateItemTotal = (item: CartItem): number => {
-  const { price } = item.product;
-  const { quantity } = item;
-  const discount = getMaxApplicableDiscount(item);
-
-  return Math.round(price * quantity * (1 - discount));
-};
+import { calculateItemTotal } from '../utils/cart';
 
 // 남은 재고 계산
 export const getRemainingStock = (product: Product, cart: CartItem[]): number => {
@@ -73,7 +53,7 @@ export const calculateCartTotal = (
     0,
   );
 
-  let totalAfterDiscount = cart.reduce((sum, item) => sum + calculateItemTotal(item), 0);
+  let totalAfterDiscount = cart.reduce((sum, item) => sum + calculateItemTotal(item, cart), 0);
 
   if (selectedCoupon) {
     if (selectedCoupon.discountType === 'amount') {
