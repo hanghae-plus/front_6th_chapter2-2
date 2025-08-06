@@ -1,6 +1,15 @@
 import type { CartItem, Coupon } from '../../types';
 
 /**
+ * 장바구니 아이템 수량 계산
+ * @param cart 장바구니
+ * @returns 장바구니 아이템 수량
+ */
+export function calculateItemTotalQuantity(cart: CartItem[]): number {
+  return cart.reduce((sum, item) => sum + item.quantity, 0);
+}
+
+/**
  * 개별 아이템의 할인 적용 후 총액 계산
  * @param item 아이템
  * @param cart 장바구니
@@ -93,13 +102,4 @@ function getMaxApplicableDiscount(item: CartItem, cart: CartItem[]): number {
   }
 
   return baseDiscount;
-}
-
-/**
- * 장바구니 아이템 수량 계산
- * @param cart 장바구니
- * @returns 장바구니 아이템 수량
- */
-export function calculateItemTotalQuantity(cart: CartItem[]): number {
-  return cart.reduce((sum, item) => sum + item.quantity, 0);
 }

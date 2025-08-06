@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 
 import { useCouponStore } from './useCouponStore';
 import type { CartItem, Coupon, NotificationVariant } from '../../types';
-import { calculateCartTotal } from '../models/entity';
+import { calculateCartTotal } from '../models/cart';
 
 interface UseCouponServiceProps {
   onAddNotification: (message: string, type: NotificationVariant) => void;

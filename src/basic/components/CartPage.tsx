@@ -1,7 +1,7 @@
 import type { CartItem, Coupon, NotificationVariant } from '../../types';
 import type { ProductWithUI } from '../constants';
 import { Icon } from './icons';
-import { calculateCartTotal } from '../models/entity';
+import { calculateCartTotal } from '../models/cart';
 import { CartHeader } from './ui/CartHeader';
 import { CartItemList } from './ui/CartItemList';
 import { CouponSelector } from './ui/CouponSelector';
