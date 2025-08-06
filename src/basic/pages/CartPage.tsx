@@ -56,7 +56,6 @@ export const CartPage = ({
           debouncedSearchTerm={debouncedSearchTerm}
           cart={cart}
           checkSoldOutByProductId={checkSoldOutByProductId}
-          isAdmin={isAdmin}
           addToCart={addToCart}
         />
       </div>

@@ -1,7 +1,7 @@
 export const formatPrice = (
   price: number,
   isSoldOut: boolean,
-  isAdmin: boolean
+  isAdmin?: boolean
 ): string => {
   if (isSoldOut) {
     return "SOLD OUT";
