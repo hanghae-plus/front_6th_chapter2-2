@@ -19,6 +19,8 @@ const App = () => {
     removeFromCart,
     updateQuantity,
     applyCoupon,
+    calculateCartTotal,
+    getRemainingStock,
     clearCart,
   } = useCart(addNotification);
 
@@ -78,42 +80,6 @@ const App = () => {
     const discount = getMaxApplicableDiscount(item);
 
     return Math.round(price * quantity * (1 - discount));
-  };
-
-  const calculateCartTotal = (): {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
-  } => {
-    let totalBeforeDiscount = 0;
-    let totalAfterDiscount = 0;
-
-    cart.forEach((item) => {
-      const itemPrice = item.product.price * item.quantity;
-      totalBeforeDiscount += itemPrice;
-      totalAfterDiscount += calculateItemTotal(item);
-    });
-
-    if (selectedCoupon) {
-      if (selectedCoupon.discountType === 'amount') {
-        totalAfterDiscount = Math.max(0, totalAfterDiscount - selectedCoupon.discountValue);
-      } else {
-        totalAfterDiscount = Math.round(
-          totalAfterDiscount * (1 - selectedCoupon.discountValue / 100),
-        );
-      }
-    }
-
-    return {
-      totalBeforeDiscount: Math.round(totalBeforeDiscount),
-      totalAfterDiscount: Math.round(totalAfterDiscount),
-    };
-  };
-
-  const getRemainingStock = (product: Product): number => {
-    const cartItem = cart.find((item) => item.product.id === product.id);
-    const remaining = product.stock - (cartItem?.quantity || 0);
-
-    return remaining;
   };
 
   const [totalItemCount, setTotalItemCount] = useState(0);
