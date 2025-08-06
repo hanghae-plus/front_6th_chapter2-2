@@ -1,12 +1,11 @@
-import { ProductWithUI } from "../../hooks/useProducts";
 import type { ProductFormState, NotificationType } from "../../types/admin";
-import type { CartItem } from "../../../types";
+import type { CartItem, Product } from "../../../types";
 import { formatPriceWithStock } from "../../utils/formatters";
 
 interface ProductManagementProps {
-  products: ProductWithUI[];
+  products: Product[];
   cart: CartItem[];
-  onEditProduct: (product: ProductWithUI) => void;
+  onEditProduct: (product: Product) => void;
   onDeleteProduct: (productId: string) => void;
   onAddProduct: () => void;
   showProductForm: boolean;
@@ -67,9 +66,9 @@ export const ProductManagement = ({
 
 // 상품 테이블 컴포넌트
 interface ProductTableProps {
-  products: ProductWithUI[];
+  products: Product[];
   cart: CartItem[];
-  onEdit: (product: ProductWithUI) => void;
+  onEdit: (product: Product) => void;
   onDelete: (productId: string) => void;
 }
 

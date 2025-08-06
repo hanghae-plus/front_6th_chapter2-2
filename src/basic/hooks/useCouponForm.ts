@@ -38,8 +38,8 @@ export const useCouponForm = () => {
 
     // 상태 설정자
     setCouponForm,
-    setShowCouponForm,
-
+    showForm,
+    hideForm,
     handleCouponSubmit,
   };
 };

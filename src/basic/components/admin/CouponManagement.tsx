@@ -3,13 +3,14 @@ interface CouponManagementProps {
   coupons: any[];
   onDeleteCoupon: (couponCode: string) => void;
   showCouponForm: boolean;
-  setShowCouponForm: React.Dispatch<React.SetStateAction<boolean>>;
   couponForm: {
     name: string;
     code: string;
     discountType: "amount" | "percentage";
     discountValue: number;
   };
+  showForm: () => void;
+  hideForm: () => void;
   setCouponForm: React.Dispatch<
     React.SetStateAction<{
       name: string;
@@ -26,7 +27,8 @@ const CouponManagement = ({
   coupons,
   onDeleteCoupon,
   showCouponForm,
-  setShowCouponForm,
+  showForm,
+  hideForm,
   couponForm,
   setCouponForm,
   onCouponSubmit,
@@ -73,10 +75,7 @@ const CouponManagement = ({
         ))}
 
         <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 flex items-center justify-center hover:border-gray-400 transition-colors">
-          <button
-            onClick={() => setShowCouponForm(!showCouponForm)}
-            className="text-gray-400 hover:text-gray-600 flex flex-col items-center"
-          >
+          <button onClick={() => showForm()} className="text-gray-400 hover:text-gray-600 flex flex-col items-center">
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
@@ -168,7 +167,7 @@ const CouponManagement = ({
             <div className="flex justify-end gap-3">
               <button
                 type="button"
-                onClick={() => setShowCouponForm(false)}
+                onClick={() => hideForm()}
                 className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
                 취소
