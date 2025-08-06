@@ -25,8 +25,8 @@
 // - clearCart: 장바구니 비우기 함수
 import { useCallback, useState, useEffect } from 'react';
 
-import { updateCartItemQuantity } from '../models/cart';
-import { CartItem, Product, ProductWithUI } from '../types';
+import { calculateCartTotal, updateCartItemQuantity } from '../models/cart';
+import { CartItem, Coupon, Product, ProductWithUI } from '../types';
 
 const useCart = (
   products: Product[],
@@ -44,6 +44,7 @@ const useCart = (
     return [];
   });
   const [totalItemCount, setTotalItemCount] = useState(0);
+  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
   useEffect(() => {
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -126,6 +127,26 @@ const useCart = (
     setCart([]);
   }, []);
 
+  const applyCoupon = useCallback(
+    (coupon: Coupon | null) => {
+      if (!coupon) {
+        setSelectedCoupon(null);
+        return;
+      }
+
+      const currentTotal = calculateCartTotal(cart, selectedCoupon).totalAfterDiscount;
+
+      if (currentTotal < 10000 && coupon.discountType === 'percentage') {
+        addNotification('percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.', 'error');
+        return;
+      }
+
+      setSelectedCoupon(coupon);
+      addNotification('쿠폰이 적용되었습니다.', 'success');
+    },
+    [cart, selectedCoupon, addNotification],
+  );
+
   return {
     cart,
     getRemainingStock,
@@ -134,6 +155,8 @@ const useCart = (
     removeFromCart,
     totalItemCount,
     clearCart,
+    selectedCoupon,
+    applyCoupon,
   };
 };
 

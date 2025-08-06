@@ -32,7 +32,6 @@ const App = () => {
     return initialCoupons;
   });
 
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
@@ -67,6 +66,8 @@ const App = () => {
     removeFromCart,
     totalItemCount,
     clearCart,
+    selectedCoupon,
+    applyCoupon,
   } = useCart(products, addNotification);
 
   // UI에 관련된 함수같다!
@@ -95,26 +96,11 @@ const App = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  const applyCoupon = useCallback(
-    (coupon: Coupon) => {
-      const currentTotal = calculateCartTotal(cart, selectedCoupon).totalAfterDiscount;
-
-      if (currentTotal < 10000 && coupon.discountType === 'percentage') {
-        addNotification('percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.', 'error');
-        return;
-      }
-
-      setSelectedCoupon(coupon);
-      addNotification('쿠폰이 적용되었습니다.', 'success');
-    },
-    [cart, selectedCoupon, addNotification],
-  );
-
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
     addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
     clearCart();
-    setSelectedCoupon(null);
+    applyCoupon(null);
   }, [addNotification]);
 
   const addProduct = useCallback(
@@ -164,7 +150,7 @@ const App = () => {
     (couponCode: string) => {
       setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
       if (selectedCoupon?.code === couponCode) {
-        setSelectedCoupon(null);
+        applyCoupon(null);
       }
       addNotification('쿠폰이 삭제되었습니다.', 'success');
     },
@@ -1007,7 +993,7 @@ const App = () => {
                           onChange={(e) => {
                             const coupon = coupons.find((c) => c.code === e.target.value);
                             if (coupon) applyCoupon(coupon);
-                            else setSelectedCoupon(null);
+                            else applyCoupon(null);
                           }}
                         >
                           <option value=''>쿠폰 선택</option>
