@@ -1,6 +1,6 @@
-import React from "react";
 import { ProductTableRow } from "./ProductTableRow";
 import { Product, CartItem } from "../../../types";
+import { getRemainingStock } from "../../utils/formatters";
 
 interface ProductTableProps {
   products: Product[];
@@ -23,9 +23,18 @@ export const ProductTable = ({ products, cart, onEdit, onDelete }: ProductTableP
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {products.map((product) => (
-            <ProductTableRow key={product.id} product={product} cart={cart} onEdit={onEdit} onDelete={onDelete} />
-          ))}
+          {products.map((product) => {
+            const remainingStock = getRemainingStock(product, cart);
+            return (
+              <ProductTableRow
+                key={product.id}
+                product={product}
+                remainingStock={remainingStock}
+                onEdit={onEdit}
+                onDelete={onDelete}
+              />
+            );
+          })}
         </tbody>
       </table>
     </div>

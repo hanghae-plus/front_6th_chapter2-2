@@ -31,6 +31,21 @@ export const formatPriceWithStock = (
 };
 
 /**
+ * 남은 재고를 고려한 가격 포맷팅 (Props Drilling 해결용)
+ */
+export const formatPriceWithRemainingStock = (
+  price: number,
+  remainingStock: number,
+  isAdmin: boolean = false
+): string => {
+  if (remainingStock <= 0) {
+    return "SOLD OUT";
+  }
+
+  return isAdmin ? formatAdminPrice(price) : formatPrice(price);
+};
+
+/**
  * 남은 재고 계산
  */
 export const getRemainingStock = (product: Product, cart: CartItem[]): number => {

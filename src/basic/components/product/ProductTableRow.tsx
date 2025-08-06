@@ -1,15 +1,15 @@
 import { Button } from "../ui/button/Button";
-import { Product, CartItem } from "../../../types";
-import { formatPriceWithStock } from "../../utils/formatters";
+import { Product } from "../../../types";
+import { formatPriceWithRemainingStock } from "../../utils/formatters";
 
 interface ProductTableRowProps {
   product: Product;
-  cart: CartItem[];
+  remainingStock: number;
   onEdit: (product: Product) => void;
   onDelete: (productId: string) => void;
 }
 
-export const ProductTableRow = ({ product, cart, onEdit, onDelete }: ProductTableRowProps) => {
+export const ProductTableRow = ({ product, remainingStock, onEdit, onDelete }: ProductTableRowProps) => {
   const getStockBadgeClass = (stock: number) => {
     if (stock > 10) return "bg-green-100 text-green-800";
     if (stock > 0) return "bg-yellow-100 text-yellow-800";
@@ -20,7 +20,7 @@ export const ProductTableRow = ({ product, cart, onEdit, onDelete }: ProductTabl
     <tr className="hover:bg-gray-50">
       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{product.name}</td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-        {formatPriceWithStock(product.price, product, cart, true)}
+        {formatPriceWithRemainingStock(product.price, remainingStock, true)}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
         <span
