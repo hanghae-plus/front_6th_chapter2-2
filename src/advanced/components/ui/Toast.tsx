@@ -29,7 +29,7 @@ const Toast = React.memo(function Toast({ id, type, message }: ToastProps) {
     return () => {
       clearTimeout(timer);
     };
-  }, []);
+  }, [removeNotification, id]);
 
   const handleClose = () => removeNotification(id);
 
