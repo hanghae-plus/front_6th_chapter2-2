@@ -1,4 +1,6 @@
-export const ProductItem = ({ product, remainingStock, formatPrice, addToCart }) => {
+import { formatPrice } from '../../utils/product';
+
+export const ProductItem = ({ product, remainingStock, addToCart }) => {
   return (
     <div
       key={product.id}
@@ -43,7 +45,7 @@ export const ProductItem = ({ product, remainingStock, formatPrice, addToCart })
         {/* 가격 정보 */}
         <div className='mb-3'>
           <p className='text-lg font-bold text-gray-900'>
-            {formatPrice(product.price, product.id)}
+            {remainingStock <= 0 ? 'SOLD OUT' : formatPrice(product.price)}
           </p>
           {product.discounts.length > 0 && (
             <p className='text-xs text-gray-500'>

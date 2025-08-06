@@ -23,17 +23,16 @@ export function CartPage({
   products,
   cart,
   coupons,
-  selectedCoupon,
-  debouncedSearchTerm,
   totals,
-  getRemainingStock,
+  debouncedSearchTerm,
+  selectedCoupon,
+  applyCoupon,
   addToCart,
   removeFromCart,
   updateQuantity,
-  applyCoupon,
-  addNotification,
+  getRemainingStock,
   clearCart,
-  formatPrice,
+  addNotification,
 }) {
   return (
     <div className='grid grid-cols-1 lg:grid-cols-4 gap-6'>
@@ -41,19 +40,18 @@ export function CartPage({
         products={products}
         debouncedSearchTerm={debouncedSearchTerm}
         getRemainingStock={getRemainingStock}
-        formatPrice={formatPrice}
         addToCart={addToCart}
       />
       <OrderSummary
         cart={cart}
-        removeFromCart={removeFromCart}
-        updateQuantity={updateQuantity}
         coupons={coupons}
         selectedCoupon={selectedCoupon}
-        applyCoupon={applyCoupon}
         totals={totals}
-        addNotification={addNotification}
+        updateQuantity={updateQuantity}
+        removeFromCart={removeFromCart}
         clearCart={clearCart}
+        applyCoupon={applyCoupon}
+        addNotification={addNotification}
       />
     </div>
   );

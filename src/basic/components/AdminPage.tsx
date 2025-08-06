@@ -15,28 +15,28 @@
 // - CouponForm: 새 쿠폰 추가 폼
 // - CouponList: 쿠폰 목록 표시
 
-import { useState } from "react";
+import { useState } from 'react';
 import { Product } from '../../types';
+import { formatPrice } from '../utils/product';
 
 interface ProductWithUI extends Product {
-	description?: string;
-	isRecommended?: boolean;
+  description?: string;
+  isRecommended?: boolean;
 }
 
 export function AdminPage({
   products,
   coupons,
-	addProduct,
-	updateProduct,
+  addProduct,
+  updateProduct,
   deleteProduct,
-	addCoupon,
+  addCoupon,
   deleteCoupon,
-  formatPrice,
   addNotification,
-}) {	
-	const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
-const [showProductForm, setShowProductForm] = useState(false);
-const [showCouponForm, setShowCouponForm] = useState(false);
+}) {
+  const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
+  const [showProductForm, setShowProductForm] = useState(false);
+  const [showCouponForm, setShowCouponForm] = useState(false);
 
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [productForm, setProductForm] = useState({
@@ -54,45 +54,45 @@ const [showCouponForm, setShowCouponForm] = useState(false);
     discountValue: 0,
   });
 
-	const handleProductSubmit = (e: React.FormEvent) => {
-		e.preventDefault();
-		if (editingProduct && editingProduct !== 'new') {
-			updateProduct(editingProduct, productForm);
-			setEditingProduct(null);
-		} else {
-			addProduct({
-				...productForm,
-				discounts: productForm.discounts,
-			});
-		}
-		setProductForm({ name: '', price: 0, stock: 0, description: '', discounts: [] });
-		setEditingProduct(null);
-		setShowProductForm(false);
-	};
+  const handleProductSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editingProduct && editingProduct !== 'new') {
+      updateProduct(editingProduct, productForm);
+      setEditingProduct(null);
+    } else {
+      addProduct({
+        ...productForm,
+        discounts: productForm.discounts,
+      });
+    }
+    setProductForm({ name: '', price: 0, stock: 0, description: '', discounts: [] });
+    setEditingProduct(null);
+    setShowProductForm(false);
+  };
 
-	const handleCouponSubmit = (e: React.FormEvent) => {
-		e.preventDefault();
-		addCoupon(couponForm);
-		setCouponForm({
-			name: '',
-			code: '',
-			discountType: 'amount',
-			discountValue: 0,
-		});
-		setShowCouponForm(false);
-	};
+  const handleCouponSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    addCoupon(couponForm);
+    setCouponForm({
+      name: '',
+      code: '',
+      discountType: 'amount',
+      discountValue: 0,
+    });
+    setShowCouponForm(false);
+  };
 
-	const startEditProduct = (product: ProductWithUI) => {
-		setEditingProduct(product.id);
-		setProductForm({
-			name: product.name,
-			price: product.price,
-			stock: product.stock,
-			description: product.description || '',
-			discounts: product.discounts || [],
-		});
-		setShowProductForm(true);
-	};
+  const startEditProduct = (product: ProductWithUI) => {
+    setEditingProduct(product.id);
+    setProductForm({
+      name: product.name,
+      price: product.price,
+      stock: product.stock,
+      description: product.description || '',
+      discounts: product.discounts || [],
+    });
+    setShowProductForm(true);
+  };
   return (
     <div className='max-w-6xl mx-auto'>
       <div className='mb-8'>
@@ -176,7 +176,7 @@ const [showCouponForm, setShowCouponForm] = useState(false);
                       {product.name}
                     </td>
                     <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>
-                      {formatPrice(product.price, product.id)}
+                      {formatPrice(product.price, { isAdmin: true })}
                     </td>
                     <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>
                       <span

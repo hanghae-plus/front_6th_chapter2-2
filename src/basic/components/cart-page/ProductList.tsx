@@ -1,12 +1,6 @@
 import { ProductItem } from './ProductItem';
 
-export const ProductList = ({
-  products,
-  debouncedSearchTerm,
-  getRemainingStock,
-  formatPrice,
-  addToCart,
-}) => {
+export const ProductList = ({ products, debouncedSearchTerm, getRemainingStock, addToCart }) => {
   const filteredProducts = debouncedSearchTerm
     ? products.filter(
         (product) =>
@@ -36,7 +30,6 @@ export const ProductList = ({
                 <ProductItem
                   product={product}
                   remainingStock={remainingStock}
-                  formatPrice={formatPrice}
                   addToCart={addToCart}
                 />
               );

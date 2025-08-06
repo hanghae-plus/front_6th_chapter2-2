@@ -30,20 +30,6 @@ const App = () => {
 
   const totals = cartModel.calculateCartTotal(cart, selectedCoupon);
 
-  const formatPrice = (price: number, productId?: string): string => {
-    if (productId) {
-      const product = products.find((p) => p.id === productId);
-      if (product && getRemainingStock(product) <= 0) {
-        return 'SOLD OUT';
-      }
-    }
-    if (isAdmin) {
-      return `${price.toLocaleString()}원`;
-    }
-
-    return `₩${price.toLocaleString()}`;
-  };
-
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
@@ -64,43 +50,30 @@ const App = () => {
       <main className='max-w-7xl mx-auto px-4 py-8'>
         {isAdmin ? (
           <AdminPage
-            // --- 데이터 엔티티 ---
             products={products}
             coupons={coupons}
-            // --- 상품 관련 핸들러 ---
             addProduct={addProduct}
             updateProduct={updateProduct}
             deleteProduct={deleteProduct}
-            // --- 쿠폰 관련 핸들러 ---
             addCoupon={addCoupon}
             deleteCoupon={deleteCoupon}
-            // --- 유틸 함수 ---
-            formatPrice={formatPrice}
             addNotification={addNotification}
           />
         ) : (
           <CartPage
-            // --- 데이터 엔티티 ---
             products={products}
             cart={cart}
             coupons={coupons}
-            // --- 파생 데이터 ---
             totals={totals}
-            // --- UI 상태 ---
-            selectedCoupon={selectedCoupon}
             debouncedSearchTerm={debouncedSearchTerm}
-            // --- 장바구니 관련 핸들러 ---
+            selectedCoupon={selectedCoupon}
+            applyCoupon={applyCoupon}
             addToCart={addToCart}
             removeFromCart={removeFromCart}
             updateQuantity={updateQuantity}
             getRemainingStock={getRemainingStock}
-            // --- 쿠폰 관련 핸들러 ---
-            applyCoupon={applyCoupon}
-            // --- 주문 관련 핸들러 ---
-            addNotification={addNotification}
             clearCart={clearCart}
-            // --- 계산 및 포맷팅 유틸 함수 ---
-            formatPrice={formatPrice}
+            addNotification={addNotification}
           />
         )}
       </main>
