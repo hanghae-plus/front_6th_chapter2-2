@@ -171,6 +171,29 @@ const applyCouponDiscount = (amount: number, coupon: Coupon | null): number => {
   }
 };
 
+/**
+ * 최종 장바구니 총액 계산
+ * @param cart - 장바구니 아이템들
+ * @param selectedCoupon - 선택된 쿠폰
+ * @returns 할인 전/후 총액
+ */
+const calculateCartTotal = (
+  cart: CartItem[], 
+  selectedCoupon: Coupon | null
+): {
+  totalBeforeDiscount: number;
+  totalAfterDiscount: number;
+} => {
+  const totalBeforeDiscount = calculateCartSubtotal(cart);
+  const itemDiscountedTotal = calculateCartDiscountedTotal(cart);
+  const totalAfterDiscount = applyCouponDiscount(itemDiscountedTotal, selectedCoupon);
+  
+  return {
+    totalBeforeDiscount: Math.round(totalBeforeDiscount),
+    totalAfterDiscount: Math.round(totalAfterDiscount)
+  };
+};
+
 const App = () => {
 
   /**
@@ -271,28 +294,18 @@ const App = () => {
     return `₩${price.toLocaleString()}`;
   };
 
-/**
- * 최종 장바구니 총액 계산
- * @param cart - 장바구니 아이템들
- * @param selectedCoupon - 선택된 쿠폰
- * @returns 할인 전/후 총액
- */
-const calculateCartTotal = (
-  cart: CartItem[], 
-  selectedCoupon: Coupon | null
-): {
-  totalBeforeDiscount: number;
-  totalAfterDiscount: number;
-} => {
-  const totalBeforeDiscount = calculateCartSubtotal(cart);
-  const itemDiscountedTotal = calculateCartDiscountedTotal(cart);
-  const totalAfterDiscount = applyCouponDiscount(itemDiscountedTotal, selectedCoupon);
-  
-  return {
-    totalBeforeDiscount: Math.round(totalBeforeDiscount),
-    totalAfterDiscount: Math.round(totalAfterDiscount)
+  /**
+   * 결제 총 가격 계산
+   * @param cart - 장바구니 아이템들
+   * @param selectedCoupon - 선택된 쿠폰
+   * @returns 할인 전/후 총액
+   */
+  const getCartTotal = (cart: CartItem[], selectedCoupon: Coupon | null): {
+    totalBeforeDiscount: number;
+    totalAfterDiscount: number;
+  } => {
+    return calculateCartTotal(cart, selectedCoupon);
   };
-};
 
   /**
    * 장바구니에 담긴 상품의 재고를 조회
@@ -438,7 +451,7 @@ const calculateCartTotal = (
    * @param coupon - 쿠폰
    */
   const applyCoupon = useCallback((coupon: Coupon) => {
-    const currentTotal = calculateCartTotal(cart, selectedCoupon).totalAfterDiscount;
+    const currentTotal = getCartTotal(cart, selectedCoupon).totalAfterDiscount;
     
     if (currentTotal < 10000 && coupon.discountType === 'percentage') {
       addNotification('percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.', 'error');
@@ -447,7 +460,7 @@ const calculateCartTotal = (
 
     setSelectedCoupon(coupon);
     addNotification('쿠폰이 적용되었습니다.', 'success');
-  }, [addNotification, calculateCartTotal]);
+  }, [addNotification, getCartTotal]);
 
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
@@ -568,7 +581,7 @@ const calculateCartTotal = (
     setShowProductForm(true);
   };
 
-  const totals = calculateCartTotal(cart, selectedCoupon);
+  const totals = getCartTotal(cart, selectedCoupon);
 
   /**
    * 상품 검색 로직
