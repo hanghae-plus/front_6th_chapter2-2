@@ -15,6 +15,7 @@ import { useDebounce } from "./utils/hooks/useDebounce";
 import { Header } from "./components/layouts/Header";
 import { useSearchProduct } from "./hooks/useSearchProduct";
 import { Layout } from "./components/layouts/Layout";
+import { Body } from "./components/layouts/Body";
 
 const App = () => {
   const { notifications, setNotifications, addNotification } =
@@ -200,7 +201,7 @@ const App = () => {
         setIsAdmin={setIsAdmin}
       />
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <Body>
         {isAdmin ? (
           <div className="max-w-6xl mx-auto">
             <div className="mb-8">
@@ -1140,7 +1141,7 @@ const App = () => {
             </div>
           </div>
         )}
-      </main>
+      </Body>
     </Layout>
   );
 };
