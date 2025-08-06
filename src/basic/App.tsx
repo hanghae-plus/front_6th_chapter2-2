@@ -60,10 +60,6 @@ const App = () => {
     discountValue: 0,
   });
 
-  const formatPriceWithAdmin = (price: number, productId?: string): string => {
-    return formatPrice(price, productId, products, cart, isAdmin);
-  };
-
   // 쿠폰 적용된 총합 계산
   const getFinalTotal = (): {
     totalBeforeDiscount: number;
@@ -245,7 +241,7 @@ const App = () => {
           <AdminPage
             // 상품 관련 props
             products={products}
-            formatPriceWithAdmin={formatPriceWithAdmin}
+            cart={cart}
             onEditProduct={startEditProduct}
             onDeleteProduct={handleDeleteProduct}
             onAddProduct={() => {
@@ -280,7 +276,6 @@ const App = () => {
                 <ProductList
                   products={filteredProducts}
                   searchInfo={searchInfo}
-                  formatPriceWithAdmin={formatPriceWithAdmin}
                   getRemainingStock={getRemainingStock}
                   addToCart={addToCart}
                 />

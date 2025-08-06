@@ -1,27 +1,33 @@
 import { Product, CartItem } from "../../types";
 
 /**
- * 가격을 포맷팅하여 문자열로 반환
+ * 기본 가격 포맷팅 (고객용)
  */
-export const formatPrice = (
+export const formatPrice = (price: number): string => {
+  return `₩${price.toLocaleString()}`;
+};
+
+/**
+ * 관리자용 가격 포맷팅
+ */
+export const formatAdminPrice = (price: number): string => {
+  return `${price.toLocaleString()}원`;
+};
+
+/**
+ * 재고 상태를 확인하여 가격 또는 품절 메시지 반환
+ */
+export const formatPriceWithStock = (
   price: number,
-  productId?: string,
-  products: Product[] = [],
-  cart: CartItem[] = [],
+  product: Product,
+  cart: CartItem[],
   isAdmin: boolean = false
 ): string => {
-  if (productId) {
-    const product = products.find((p) => p.id === productId);
-    if (product && getRemainingStock(product, cart) <= 0) {
-      return "SOLD OUT";
-    }
+  if (getRemainingStock(product, cart) <= 0) {
+    return "SOLD OUT";
   }
 
-  if (isAdmin) {
-    return `${price.toLocaleString()}원`;
-  }
-
-  return `₩${price.toLocaleString()}`;
+  return isAdmin ? formatAdminPrice(price) : formatPrice(price);
 };
 
 /**

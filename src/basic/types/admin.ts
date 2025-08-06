@@ -77,7 +77,6 @@ export interface AdminCouponState {
 
 // 유틸리티 함수 타입
 export interface AdminUtils {
-  formatPriceWithAdmin: (price: number, productId?: string) => string;
   addNotification: (message: string, type: NotificationType) => void;
 }
 

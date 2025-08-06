@@ -4,11 +4,12 @@ import CouponManagement from "../../components/admin/CouponManagement";
 import { Tabs } from "../../components/ui/tabs";
 import { ADMIN_TABS } from "../../types/admin";
 import type { Coupon, CouponFormState, ProductFormState, NotificationType } from "../../types/admin";
+import type { CartItem } from "../../../types";
 
 interface AdminPageProps {
   // 상품 관련
   products: ProductWithUI[];
-  formatPriceWithAdmin: (price: number, productId?: string) => string;
+  cart: CartItem[];
   onEditProduct: (product: ProductWithUI) => void;
   onDeleteProduct: (productId: string) => void;
   onAddProduct: () => void;
@@ -33,7 +34,7 @@ interface AdminPageProps {
 export default function AdminPage({
   // 상품 관련 props
   products,
-  formatPriceWithAdmin,
+  cart,
   onEditProduct,
   onDeleteProduct,
   onAddProduct,
@@ -72,7 +73,7 @@ export default function AdminPage({
           <Tabs.Panel value={ADMIN_TABS.PRODUCTS}>
             <ProductManagement
               products={products}
-              formatPriceWithAdmin={formatPriceWithAdmin}
+              cart={cart}
               onEditProduct={onEditProduct}
               onDeleteProduct={onDeleteProduct}
               onAddProduct={onAddProduct}

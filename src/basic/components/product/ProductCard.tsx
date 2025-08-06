@@ -1,24 +1,19 @@
 import { ProductWithUI } from "../../hooks/useProducts";
+import { formatPrice } from "../../utils/formatters";
 
 interface ProductCardProps {
   product: ProductWithUI;
-  formatPriceWithAdmin: (price: number, productId?: string) => string;
   getRemainingStock: (product: ProductWithUI) => number;
   addToCart: (product: ProductWithUI) => void;
 }
 
-export const ProductCard = ({ product, formatPriceWithAdmin, getRemainingStock, addToCart }: ProductCardProps) => {
+export const ProductCard = ({ product, getRemainingStock, addToCart }: ProductCardProps) => {
   const remainingStock = getRemainingStock(product);
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
       <ProductImage product={product} />
-      <ProductInfo
-        product={product}
-        remainingStock={remainingStock}
-        formatPriceWithAdmin={formatPriceWithAdmin}
-        addToCart={addToCart}
-      />
+      <ProductInfo product={product} remainingStock={remainingStock} addToCart={addToCart} />
     </div>
   );
 };
@@ -58,17 +53,15 @@ const ProductBadges = ({ product }: { product: ProductWithUI }) => (
 const ProductInfo = ({
   product,
   remainingStock,
-  formatPriceWithAdmin,
   addToCart,
 }: {
   product: ProductWithUI;
   remainingStock: number;
-  formatPriceWithAdmin: (price: number, productId?: string) => string;
   addToCart: (product: ProductWithUI) => void;
 }) => (
   <div className="p-4">
     <ProductHeader product={product} />
-    <ProductPrice product={product} formatPriceWithAdmin={formatPriceWithAdmin} />
+    <ProductPrice product={product} />
     <ProductStock remainingStock={remainingStock} />
     <ProductAction product={product} remainingStock={remainingStock} addToCart={addToCart} />
   </div>
@@ -83,15 +76,9 @@ const ProductHeader = ({ product }: { product: ProductWithUI }) => (
 );
 
 // 상품 가격 정보
-const ProductPrice = ({
-  product,
-  formatPriceWithAdmin,
-}: {
-  product: ProductWithUI;
-  formatPriceWithAdmin: (price: number, productId?: string) => string;
-}) => (
+const ProductPrice = ({ product }: { product: ProductWithUI }) => (
   <div className="mb-3">
-    <p className="text-lg font-bold text-gray-900">{formatPriceWithAdmin(product.price, product.id)}</p>
+    <p className="text-lg font-bold text-gray-900">{formatPrice(product.price)}</p>
     {product.discounts.length > 0 && (
       <p className="text-xs text-gray-500">
         {product.discounts[0].quantity}개 이상 구매시 할인 {product.discounts[0].rate * 100}%

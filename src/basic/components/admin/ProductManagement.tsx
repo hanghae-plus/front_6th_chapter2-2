@@ -1,9 +1,11 @@
 import { ProductWithUI } from "../../hooks/useProducts";
 import type { ProductFormState, NotificationType } from "../../types/admin";
+import type { CartItem } from "../../../types";
+import { formatPriceWithStock } from "../../utils/formatters";
 
 interface ProductManagementProps {
   products: ProductWithUI[];
-  formatPriceWithAdmin: (price: number, productId?: string) => string;
+  cart: CartItem[];
   onEditProduct: (product: ProductWithUI) => void;
   onDeleteProduct: (productId: string) => void;
   onAddProduct: () => void;
@@ -18,7 +20,7 @@ interface ProductManagementProps {
 
 export const ProductManagement = ({
   products,
-  formatPriceWithAdmin,
+  cart,
   onEditProduct,
   onDeleteProduct,
   onAddProduct,
@@ -46,12 +48,7 @@ export const ProductManagement = ({
       </div>
 
       {/* 상품 테이블 */}
-      <ProductTable
-        products={products}
-        formatPriceWithAdmin={formatPriceWithAdmin}
-        onEdit={onEditProduct}
-        onDelete={onDeleteProduct}
-      />
+      <ProductTable products={products} cart={cart} onEdit={onEditProduct} onDelete={onDeleteProduct} />
 
       {/* 상품 폼 */}
       {showProductForm && (
@@ -71,12 +68,12 @@ export const ProductManagement = ({
 // 상품 테이블 컴포넌트
 interface ProductTableProps {
   products: ProductWithUI[];
-  formatPriceWithAdmin: (price: number, productId?: string) => string;
+  cart: CartItem[];
   onEdit: (product: ProductWithUI) => void;
   onDelete: (productId: string) => void;
 }
 
-const ProductTable = ({ products, formatPriceWithAdmin, onEdit, onDelete }: ProductTableProps) => (
+const ProductTable = ({ products, cart, onEdit, onDelete }: ProductTableProps) => (
   <div className="overflow-x-auto">
     <table className="w-full">
       <thead className="bg-gray-50 border-b border-gray-200">
@@ -93,7 +90,7 @@ const ProductTable = ({ products, formatPriceWithAdmin, onEdit, onDelete }: Prod
           <tr key={product.id} className="hover:bg-gray-50">
             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{product.name}</td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              {formatPriceWithAdmin(product.price, product.id)}
+              {formatPriceWithStock(product.price, product, cart, true)}
             </td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
               <span

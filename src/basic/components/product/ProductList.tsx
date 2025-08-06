@@ -7,25 +7,17 @@ interface ProductListProps {
     isSearching: boolean;
     searchTerm: string;
   };
-  formatPriceWithAdmin: (price: number, productId?: string) => string;
   getRemainingStock: (product: ProductWithUI) => number;
   addToCart: (product: ProductWithUI) => void;
 }
 
-export const ProductList = ({
-  products,
-  searchInfo,
-  formatPriceWithAdmin,
-  getRemainingStock,
-  addToCart,
-}: ProductListProps) => {
+export const ProductList = ({ products, searchInfo, getRemainingStock, addToCart }: ProductListProps) => {
   return (
     <>
       <ProductListHeader productCount={products.length} />
       <ProductListContent
         products={products}
         searchInfo={searchInfo}
-        formatPriceWithAdmin={formatPriceWithAdmin}
         getRemainingStock={getRemainingStock}
         addToCart={addToCart}
       />
@@ -44,13 +36,7 @@ const ProductListHeader = ({ productCount }: { productCount: number }) => {
 };
 
 // 상품 리스트 콘텐츠
-const ProductListContent = ({
-  products,
-  searchInfo,
-  formatPriceWithAdmin,
-  getRemainingStock,
-  addToCart,
-}: ProductListProps) => {
+const ProductListContent = ({ products, searchInfo, getRemainingStock, addToCart }: ProductListProps) => {
   if (products.length === 0) {
     return <EmptyProductList searchInfo={searchInfo} />;
   }
@@ -58,13 +44,7 @@ const ProductListContent = ({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {products.map((product) => (
-        <ProductCard
-          key={product.id}
-          product={product}
-          formatPriceWithAdmin={formatPriceWithAdmin}
-          getRemainingStock={getRemainingStock}
-          addToCart={addToCart}
-        />
+        <ProductCard key={product.id} product={product} getRemainingStock={getRemainingStock} addToCart={addToCart} />
       ))}
     </div>
   );
