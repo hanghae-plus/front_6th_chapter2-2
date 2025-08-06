@@ -13,7 +13,7 @@ import {
 import { useCartStorage } from "./entities/cart/hooks/useCartStorage";
 import { useProductStorage } from "./entities/product/hooks/useProductStorage";
 import { useCouponStorage } from "./entities/coupon/hooks/useCouponStorage";
-import { getRemainingStock } from "./features/check-stock/libs";
+import { calculateStock } from "./entities/product/libs/stock";
 import { useProductSearch } from "./features/search-product/hooks/useProductSearch";
 
 const App = () => {
@@ -30,7 +30,7 @@ const App = () => {
   const getProductRemainingStock = (product: Product): number => {
     const cartItem = cart.find((item) => item.product.id === product.id);
     const cartQuantity = cartItem?.quantity || 0;
-    return getRemainingStock(product, cartQuantity);
+    return calculateStock(product.stock, cartQuantity);
   };
 
   const addNotification = useCallback(

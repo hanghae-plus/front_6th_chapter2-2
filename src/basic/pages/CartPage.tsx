@@ -11,10 +11,8 @@ import { useCallback } from "react";
 import { CartItem } from "../entities/cart/ui/CartItem";
 import CartBagIcon from "../assets/icons/CartBagIcon.svg?react";
 import { NotificationVariant } from "../entities/notification/types";
-import {
-  getProductStockStatus,
-  getRemainingStock,
-} from "../features/check-stock/libs";
+import { getProductStockStatus } from "../features/check-stock/libs";
+import { calculateStock } from "../entities/product/libs/stock";
 
 interface CartPageProps {
   products: ProductWithUI[];
@@ -50,7 +48,7 @@ export function CartPage({
   const getProductRemainingStock = (product: Product): number => {
     const cartItem = cart.find((item) => item.product.id === product.id);
     const cartQuantity = cartItem?.quantity || 0;
-    return getRemainingStock(product, cartQuantity);
+    return calculateStock(product.stock, cartQuantity);
   };
 
   const getMaxApplicableDiscount = (item: CartItemType): number => {

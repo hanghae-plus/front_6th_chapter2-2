@@ -1,8 +1,5 @@
 import { Product } from "../../../entities/product/types";
-
-export const getRemainingStock = (product: Product, cartQuantity: number) => {
-  return product.stock - cartQuantity;
-};
+import { calculateStock } from "../../../entities/product/libs/stock";
 
 export const getProductStockStatus = ({
   product,
@@ -11,5 +8,5 @@ export const getProductStockStatus = ({
   product: Product;
   cartQuantity: number;
 }) => {
-  return getRemainingStock(product, cartQuantity) <= 0 ? "SOLD OUT" : "";
+  return calculateStock(product.stock, cartQuantity) <= 0 ? "SOLD OUT" : "";
 };
