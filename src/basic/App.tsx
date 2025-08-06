@@ -1,15 +1,7 @@
 import { useState, useCallback } from 'react';
 import { Coupon } from '../types';
 import { ProductWithUI } from './constants/mocks';
-import {
-  AdminDashboard,
-  Cart,
-  Coupons,
-  Header,
-  NotificationItem,
-  Payments,
-  ProductList,
-} from './ui';
+import { AdminDashboard, Header, NotificationItem, UserDashboard } from './ui';
 import { useCoupons } from './entities/coupons';
 import { useProducts } from './entities/products';
 import {
@@ -225,44 +217,24 @@ const App = () => {
             handleCouponSubmit={handleCouponSubmit}
           />
         ) : (
-          <div className='grid grid-cols-1 lg:grid-cols-4 gap-6'>
-            <div className='lg:col-span-3'>
-              {/* 상품 목록 */}
-              <ProductList
-                products={products}
-                filteredProducts={filteredProducts}
-                debouncedSearchTerm={debouncedSearchTerm}
-                getRemainingStock={getStock}
-                formatPrice={formatPrice}
-                addToCart={addToCart}
-              />
-            </div>
-
-            <div className='lg:col-span-1'>
-              <div className='sticky top-24 space-y-4'>
-                {/* Cart */}
-                <Cart
-                  cart={cart}
-                  calculateItemTotal={(item) => calculateItemTotal(item, cart)}
-                  removeFromCart={removeFromCart}
-                  updateQuantity={updateQuantity}
-                />
-
-                {cart.length > 0 && (
-                  <>
-                    <Coupons
-                      coupons={coupons}
-                      selectedCoupon={selectedCoupon}
-                      applyCoupon={applyCoupon}
-                      setSelectedCoupon={setSelectedCoupon}
-                    />
-                    {/* Payment */}
-                    <Payments totals={totals} completeOrder={completeOrder} />
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
+          <UserDashboard
+            products={products}
+            filteredProducts={filteredProducts}
+            debouncedSearchTerm={debouncedSearchTerm}
+            formatPrice={formatPrice}
+            cart={cart}
+            addToCart={addToCart}
+            removeFromCart={removeFromCart}
+            updateQuantity={updateQuantity}
+            getStock={getStock}
+            calculateItemTotal={(item) => calculateItemTotal(item, cart)}
+            coupons={coupons}
+            selectedCoupon={selectedCoupon}
+            applyCoupon={applyCoupon}
+            setSelectedCoupon={setSelectedCoupon}
+            totals={totals}
+            completeOrder={completeOrder}
+          />
         )}
       </main>
     </div>
