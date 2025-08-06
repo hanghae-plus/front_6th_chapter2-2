@@ -1,14 +1,11 @@
+import { useAtom } from "jotai";
+import { couponsAtom } from "../store/atom";
 import { ICoupon } from "../type";
-import { initialCoupons } from "../constants/initialStates";
-import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 import { couponModel } from "../models/coupon";
 
 export const useCoupons = () => {
   // 로컬스토리지 연동된 coupons
-  const [coupons, setCoupons] = useLocalStorage<ICoupon[]>(
-    "coupons",
-    initialCoupons
-  );
+  const [coupons, setCoupons] = useAtom(couponsAtom);
 
   /**
    * 쿠폰 추가

@@ -1,15 +1,11 @@
+import { useAtom } from "jotai";
+import { productsAtom } from "../store/atom";
 import { IProductWithUI } from "../type";
-import { initialProducts } from "../constants/initialStates";
-import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 import { productModel } from "../models/product";
 
 export const useProducts = () => {
   // 로컬스토리지 연동된 products
-  const [products, setProducts] = useLocalStorage<IProductWithUI[]>(
-    "products",
-    initialProducts
-  );
-
+  const [products, setProducts] = useAtom(productsAtom);
   /**
    * 상품 추가
    */

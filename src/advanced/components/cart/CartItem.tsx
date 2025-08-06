@@ -1,24 +1,57 @@
 import { ICartItem } from "../../type";
 import { CloseIcon } from "../icon";
 import { formatPercentage } from "../../utils/formatters";
+import { useProducts } from "../../hooks/useProducts";
+import { useNotification } from "../../hooks/useNotification";
+import { useCart } from "../../hooks/useCart";
+import { useCallback } from "react";
+import { MESSAGES } from "../../constants/messages";
 
 interface CartItemProps {
   item: ICartItem;
-  calculateItemTotal: (item: ICartItem) => number;
-  removeItemFromCart: (productId: string) => void;
-  updateItemQuantity: (productId: string, newQuantity: number) => void;
 }
 
-const CartItem = ({
-  item,
-  calculateItemTotal,
-  removeItemFromCart,
-  updateItemQuantity,
-}: CartItemProps) => {
+const CartItem = ({ item }: CartItemProps) => {
+  const { products } = useProducts();
+  const { addNotification } = useNotification();
+  const {
+    updateQuantity,
+    removeFromCart,
+    calculateItemTotal,
+    getRemainingStock,
+  } = useCart();
+
   const itemTotal = calculateItemTotal(item);
   const originalPrice = item.product.price * item.quantity;
   const hasDiscount = itemTotal < originalPrice;
   const discountRate = hasDiscount ? 1 - itemTotal / originalPrice : 0;
+
+  // 장바구니의 상품 수 업데이트 (-1, +1 처리)
+  const updateItemQuantity = useCallback(
+    (productId: string, newQuantity: number) => {
+      if (newQuantity <= 0) {
+        removeItemFromCart(productId);
+        return;
+      }
+
+      const product = products.find((p) => p.id === productId);
+      if (!product) return;
+
+      const maxStock = product.stock;
+      if (newQuantity > maxStock) {
+        addNotification(MESSAGES.PRODUCT.MAX_STOCK(maxStock));
+        return;
+      }
+
+      updateQuantity(productId, newQuantity);
+    },
+    [products, addNotification, getRemainingStock]
+  );
+
+  // 장바구니에서 상품 제거
+  const removeItemFromCart = useCallback((productId: string) => {
+    removeFromCart(productId);
+  }, []);
 
   return (
     <div key={item.product.id} className="border-b pb-3 last:border-b-0">

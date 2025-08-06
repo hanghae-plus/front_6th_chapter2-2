@@ -1,20 +1,14 @@
+import { useSearchTerm } from "../../hooks/useSearchTerm";
 import { IProductWithUI } from "../../type";
-import { formatPrice } from "../../utils/formatters";
 import ProductItem from "./ProductItem";
 
 interface ProductListProps {
   products: IProductWithUI[];
-  addItemToCart: (product: IProductWithUI) => void;
-  getRemainingStock: (product: IProductWithUI) => number;
-  debouncedSearchTerm?: string;
 }
 
-const ProductList = ({
-  products,
-  addItemToCart,
-  getRemainingStock,
-  debouncedSearchTerm,
-}: ProductListProps) => {
+const ProductList = ({ products }: ProductListProps) => {
+  const { debouncedSearchTerm } = useSearchTerm();
+
   // 검색어 반영된 상품 목록
   const filteredProducts = debouncedSearchTerm
     ? products.filter(
@@ -28,12 +22,6 @@ const ProductList = ({
               .includes(debouncedSearchTerm.toLowerCase()))
       )
     : products;
-
-  // 가격 텍스트 처리
-  const getPriceText = (item: IProductWithUI) => {
-    if (item && getRemainingStock(item) <= 0) return "SOLD OUT";
-    return formatPrice(item.price, "krw");
-  };
 
   return (
     <section>
@@ -49,20 +37,10 @@ const ProductList = ({
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredProducts.map((product) => {
-            const remainingStock = getRemainingStock(product);
-
-            return (
-              // 상품 컴포넌트
-              <ProductItem
-                key={product.id}
-                product={product}
-                remainingStock={remainingStock}
-                priceText={getPriceText(product)}
-                addItemToCart={addItemToCart}
-              />
-            );
-          })}
+          {filteredProducts.map((product) => (
+            // 상품 컴포넌트
+            <ProductItem key={product.id} product={product} />
+          ))}
         </div>
       )}
     </section>

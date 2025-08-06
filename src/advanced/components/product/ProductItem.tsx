@@ -1,21 +1,43 @@
 import { IProductWithUI } from "../../type";
-import { formatPercentage } from "../../utils/formatters";
+import { formatPercentage, formatPrice } from "../../utils/formatters";
 import { STOCK } from "../../constants/business";
 import { ImageIcon } from "../icon";
+import { useCart } from "../../hooks/useCart";
+import { useNotification } from "../../hooks/useNotification";
+import { useCallback } from "react";
+import { MESSAGES } from "../../constants/messages";
 
 interface ProductItemProps {
   product: IProductWithUI;
-  priceText: string;
-  remainingStock: number;
-  addItemToCart: (product: IProductWithUI) => void;
 }
 
-const ProductItem = ({
-  product,
-  priceText,
-  remainingStock,
-  addItemToCart,
-}: ProductItemProps) => {
+const ProductItem = ({ product }: ProductItemProps) => {
+  const { addToCart, getRemainingStock } = useCart();
+  const { addNotification } = useNotification();
+
+  const remainingStock = getRemainingStock(product);
+
+  // 가격 텍스트 처리
+  const getPriceText = (item: IProductWithUI) => {
+    if (item && getRemainingStock(item) <= 0) return "SOLD OUT";
+    return formatPrice(item.price, "krw");
+  };
+
+  // 장바구니 담기 버튼 처리
+  const addItemToCart = useCallback(
+    (product: IProductWithUI) => {
+      const remainingStock = getRemainingStock(product);
+      if (remainingStock <= 0) {
+        addNotification(MESSAGES.PRODUCT.OUT_OF_STOCK, "error");
+        return;
+      }
+
+      addToCart(product);
+      addNotification(MESSAGES.PRODUCT.ADDED_TO_CART, "success");
+    },
+    [addNotification, getRemainingStock]
+  );
+
   return (
     <div
       key={product.id}
@@ -53,7 +75,9 @@ const ProductItem = ({
 
         {/* 가격 정보 */}
         <div className="mb-3">
-          <p className="text-lg font-bold text-gray-900">{priceText}</p>
+          <p className="text-lg font-bold text-gray-900">
+            {getPriceText(product)}
+          </p>
           {product.discounts.length > 0 && (
             <p className="text-xs text-gray-500">
               {product.discounts[0].quantity}개 이상 구매시 할인{" "}

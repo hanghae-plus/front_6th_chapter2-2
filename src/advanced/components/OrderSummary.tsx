@@ -1,9 +1,20 @@
-interface OrderSummaryProps {
-  cartTotalPrice: { totalBeforeDiscount: number; totalAfterDiscount: number };
-  completeOrder: () => void;
-}
+import { useCallback } from "react";
+import { MESSAGES } from "../constants/messages";
+import { useNotification } from "../hooks/useNotification";
+import { useCart } from "../hooks/useCart";
 
-const OrderSummary = ({ cartTotalPrice, completeOrder }: OrderSummaryProps) => {
+const OrderSummary = () => {
+  const { cartTotalPrice, setSelectedCoupon, clearCart } = useCart();
+  const { addNotification } = useNotification();
+
+  // 주문 완료 처리 함수
+  const completeOrder = useCallback(() => {
+    const orderNumber = `ORD-${Date.now()}`;
+    addNotification(MESSAGES.ORDER.COMPLETED(orderNumber), "success");
+    clearCart();
+    setSelectedCoupon(null);
+  }, [addNotification]);
+
   return (
     <section className="bg-white rounded-lg border border-gray-200 p-4">
       <h3 className="text-lg font-semibold mb-4">결제 정보</h3>

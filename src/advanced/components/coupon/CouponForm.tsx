@@ -2,26 +2,22 @@ import { useState, useCallback } from "react";
 import { ICoupon, ICouponForm } from "../../type";
 import { MESSAGES } from "../../constants/messages";
 import { validator } from "../../utils/vaildators";
+import { useNotification } from "../../hooks/useNotification";
+import { useCoupons } from "../../hooks/useCoupons";
 
 interface CouponFormProps {
   // coupon
   coupons: ICoupon[];
   setShowCouponForm: React.Dispatch<React.SetStateAction<boolean>>;
-  addCoupon: (newCoupon: ICoupon) => void;
-
-  // notification
-  addNotification: (
-    message: string,
-    type?: "error" | "success" | "warning"
-  ) => void;
 }
 
 const CouponForm = ({
   coupons,
   setShowCouponForm,
-  addCoupon,
-  addNotification,
 }: CouponFormProps) => {
+  const { addCoupon } = useCoupons();
+  const { addNotification } = useNotification();
+
   // 현재 작성 중인 쿠폰 정보
   const [couponForm, setCouponForm] = useState<ICouponForm>({
     name: "",
@@ -137,7 +133,9 @@ const CouponForm = ({
                 setCouponForm({ ...couponForm, discountValue });
               }}
               onBlur={(e) => {
-                const inputValue = validator.validateNumericString(e.target.value);
+                const inputValue = validator.validateNumericString(
+                  e.target.value
+                );
                 if (inputValue === null) return;
 
                 const value = inputValue === "" ? 0 : parseInt(inputValue);

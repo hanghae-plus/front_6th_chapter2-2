@@ -1,15 +1,15 @@
-import { useState, useMemo } from "react";
-import { ICartItem, ICoupon, IProductWithUI } from "../type";
-import { initialCarts } from "../constants/initialStates";
-import { useLocalStorage } from "../utils/hooks/useLocalStorage";
+import { useMemo } from "react";
+import { useAtom } from "jotai";
+import { cartAtom, selectedCouponAtom } from "../store/atom";
+import { ICartItem, IProductWithUI } from "../type";
 import { cartModel } from "../models/cart";
 
 export const useCart = () => {
   // 로컬스토리지 연동된 cart
-  const [cart, setCart] = useLocalStorage<ICartItem[]>("cart", initialCarts);
+  const [cart, setCart] = useAtom(cartAtom);
 
   // 현재 선택된 쿠폰
-  const [selectedCoupon, setSelectedCoupon] = useState<ICoupon | null>(null);
+  const [selectedCoupon, setSelectedCoupon] = useAtom(selectedCouponAtom);
 
   /**
    * 장바구니 상품 수량 변경

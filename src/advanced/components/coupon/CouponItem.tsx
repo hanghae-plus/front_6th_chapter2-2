@@ -1,12 +1,32 @@
+import { useCallback } from "react";
+import { useNotification } from "../../hooks/useNotification";
 import { ICoupon } from "../../type";
 import { TrashIcon } from "../icon";
+import { useCoupons } from "../../hooks/useCoupons";
+import { useCart } from "../../hooks/useCart";
+import { MESSAGES } from "../../constants/messages";
 
 interface CouponItemProps {
   coupon: ICoupon;
-  deleteCoupon: (couponCode: string) => void;
 }
 
-const CouponItem = ({ coupon, deleteCoupon }: CouponItemProps) => {
+const CouponItem = ({ coupon }: CouponItemProps) => {
+  const { addNotification } = useNotification();
+  const { selectedCoupon, setSelectedCoupon } = useCart();
+  const { deleteCoupon } = useCoupons();
+
+  // 쿠폰 삭제
+  const deleteCouponItem = useCallback(
+    (couponCode: string) => {
+      deleteCoupon(couponCode);
+      if (selectedCoupon?.code === couponCode) {
+        setSelectedCoupon(null);
+      }
+      addNotification(MESSAGES.COUPON.DELETED, "success");
+    },
+    [selectedCoupon, addNotification]
+  );
+
   return (
     <div
       key={coupon.code}
@@ -25,7 +45,7 @@ const CouponItem = ({ coupon, deleteCoupon }: CouponItemProps) => {
           </div>
         </div>
         <button
-          onClick={() => deleteCoupon(coupon.code)}
+          onClick={() => deleteCouponItem(coupon.code)}
           className="text-gray-400 hover:text-red-600 transition-colors"
         >
           {/* 쿠폰 - 휴지통 아이콘 */}

@@ -1,15 +1,14 @@
-import { INotification } from "../type";
-import { CloseIcon } from "./icon";
+import { INotification } from "../../type";
+import { CloseIcon } from "../icon";
+import { useNotification } from "../../hooks/useNotification";
 
 interface NotificationItemProps {
   notification: INotification;
-  removeNotification: (notif: INotification) => void;
 }
 
-const NotificationItem = ({
-  notification,
-  removeNotification,
-}: NotificationItemProps) => {
+const NotificationItem = ({ notification }: NotificationItemProps) => {
+  const { removeNotification } = useNotification();
+
   return (
     <div
       key={notification.id}

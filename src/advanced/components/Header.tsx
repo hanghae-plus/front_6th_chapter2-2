@@ -1,21 +1,20 @@
+import { useCart } from "../hooks/useCart";
+import { useSearchTerm } from "../hooks/useSearchTerm";
 import { CartIcon } from "./icon";
 import SearchBar from "./SearchBar";
 
 interface HeaderProps {
   isAdmin: boolean;
   setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>;
-  searchTerm: string;
-  handleSearchTerm: (value: string) => void;
-  cartTotalItem: number;
 }
 
 const Header = ({
   isAdmin,
   setIsAdmin,
-  searchTerm,
-  handleSearchTerm,
-  cartTotalItem,
 }: HeaderProps) => {
+  const { cartTotalItem } = useCart();
+  const { searchTerm, handleSearchTerm } = useSearchTerm();
+
   return (
     <header className="bg-white shadow-sm sticky top-0 z-40 border-b">
       <div className="max-w-7xl mx-auto px-4">

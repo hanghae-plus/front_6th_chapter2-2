@@ -1,10 +1,12 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
+import { useAtom } from "jotai";
+import { notificationAtom } from "../store/atom";
 import { INotification } from "../type";
 import { NOTIFICATION_DURATION } from "../constants/time";
 
 export const useNotification = () => {
   // 토스트 모달 알람 배열
-  const [notifications, setNotifications] = useState<INotification[]>([]);
+  const [notifications, setNotifications] = useAtom(notificationAtom)
 
   // 알림 생성
   const addNotification = useCallback(

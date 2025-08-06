@@ -1,26 +1,34 @@
 import { IProductWithUI } from "../../type";
 import { STOCK } from "../../constants/business";
+import { useCart } from "../../hooks/useCart";
+import { formatPrice } from "../../utils/formatters";
 
 interface ProductTableItemProps {
   product: IProductWithUI;
-  priceText: string;
   startEditProduct: (product: IProductWithUI) => void;
   deleteProductItem: (productId: string) => void;
 }
 
 const ProductTableItem = ({
   product,
-  priceText,
   startEditProduct,
   deleteProductItem,
 }: ProductTableItemProps) => {
+  const { getRemainingStock } = useCart();
+
+  // 가격 텍스트 처리
+  const getPriceText = (item: IProductWithUI) => {
+    if (item && getRemainingStock(item) <= 0) return "SOLD OUT";
+    return formatPrice(item.price, "won");
+  };
+
   return (
     <tr key={product.id} className="hover:bg-gray-50">
       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
         {product.name}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-        {priceText}
+        {getPriceText(product)}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
         <span

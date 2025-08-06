@@ -3,34 +3,28 @@ import { IProductForm, IProductWithUI } from "../../type";
 import { validator } from "../../utils/vaildators";
 import { MESSAGES } from "../../constants/messages";
 import { CloseIcon } from "../icon";
+import { useProducts } from "../../hooks/useProducts";
+import { useNotification } from "../../hooks/useNotification";
 
 interface ProductFormProps {
   // product
   setShowProductForm: React.Dispatch<React.SetStateAction<boolean>>;
-  addProduct: (newProduct: Omit<IProductWithUI, "id">) => void;
-  updateProduct: (productId: string, updates: Partial<IProductWithUI>) => void;
   editingProduct: string | null;
   setEditingProduct: React.Dispatch<React.SetStateAction<string | null>>;
   productForm: IProductForm;
   setProductForm: React.Dispatch<React.SetStateAction<IProductForm>>;
-
-  // notification
-  addNotification: (
-    message: string,
-    type?: "error" | "success" | "warning"
-  ) => void;
 }
 
 const ProductForm = ({
   setShowProductForm,
-  addProduct,
-  updateProduct,
   editingProduct,
   setEditingProduct,
   productForm,
   setProductForm,
-  addNotification,
 }: ProductFormProps) => {
+  const { addProduct, updateProduct } = useProducts();
+  const { addNotification} = useNotification();
+
   // 상품 추가
   const addProductItem = useCallback(
     (newProduct: Omit<IProductWithUI, "id">) => {

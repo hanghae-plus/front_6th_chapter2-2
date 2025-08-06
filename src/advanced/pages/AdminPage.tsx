@@ -1,43 +1,8 @@
 import { useState } from "react";
-import { ICoupon, IProductWithUI } from "../type";
 import ProductTab from "../components/product/ProductTab";
 import CouponTab from "../components/coupon/CouponTab";
 
-interface AdminPageProps {
-  // products
-  products: IProductWithUI[];
-  addProduct: (newProduct: Omit<IProductWithUI, "id">) => void;
-  updateProduct: (productId: string, updates: Partial<IProductWithUI>) => void;
-  deleteProduct: (productId: string) => void;
-  getRemainingStock: (product: IProductWithUI) => number;
-
-  // coupons
-  coupons: ICoupon[];
-  addCoupon: (newCoupon: ICoupon) => void;
-  deleteCoupon: (couponCode: string) => void;
-  selectedCoupon: ICoupon | null;
-  setSelectedCoupon: React.Dispatch<React.SetStateAction<ICoupon | null>>;
-
-  // notification
-  addNotification: (
-    message: string,
-    type?: "error" | "success" | "warning"
-  ) => void;
-}
-
-const AdminPage = ({
-  products,
-  getRemainingStock,
-  coupons,
-  addNotification,
-  addProduct,
-  updateProduct,
-  deleteProduct,
-  addCoupon,
-  deleteCoupon,
-  selectedCoupon,
-  setSelectedCoupon,
-}: AdminPageProps) => {
+const AdminPage = () => {
   // 관리자 페이지 - 활성화된 탭 (상품/쿠폰 관리)
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
     "products"
@@ -77,24 +42,10 @@ const AdminPage = ({
 
       {activeTab === "products" ? (
         // Product Tab
-        <ProductTab
-          products={products}
-          addProduct={addProduct}
-          updateProduct={updateProduct}
-          deleteProduct={deleteProduct}
-          getRemainingStock={getRemainingStock}
-          addNotification={addNotification}
-        />
+        <ProductTab />
       ) : (
         // Coupon Tab
-        <CouponTab
-          coupons={coupons}
-          addCoupon={addCoupon}
-          deleteCoupon={deleteCoupon}
-          selectedCoupon={selectedCoupon}
-          setSelectedCoupon={setSelectedCoupon}
-          addNotification={addNotification}
-        />
+        <CouponTab />
       )}
     </div>
   );

@@ -4,17 +4,9 @@ import CartItem from "./CartItem";
 
 interface CartListProps {
   cart: ICartItem[];
-  calculateItemTotal: (item: ICartItem) => number;
-  removeItemFromCart: (productId: string) => void;
-  updateItemQuantity: (productId: string, newQuantity: number) => void;
 }
 
-const CartList = ({
-  cart,
-  calculateItemTotal,
-  removeItemFromCart,
-  updateItemQuantity,
-}: CartListProps) => {
+const CartList = ({ cart }: CartListProps) => {
   return (
     <section className="bg-white rounded-lg border border-gray-200 p-4">
       <h2 className="text-lg font-semibold mb-4 flex items-center">
@@ -30,18 +22,10 @@ const CartList = ({
         </div>
       ) : (
         <div className="space-y-3">
-          {cart.map((item) => {
-            return (
-              // 카트 상품 컴포넌트
-              <CartItem
-                key={item.product.id}
-                item={item}
-                calculateItemTotal={calculateItemTotal}
-                removeItemFromCart={removeItemFromCart}
-                updateItemQuantity={updateItemQuantity}
-              />
-            );
-          })}
+          {cart.map((item) => (
+            // 카트 상품 컴포넌트
+            <CartItem key={item.product.id} item={item} />
+          ))}
         </div>
       )}
     </section>

@@ -3,34 +3,16 @@ import { IProductForm, IProductWithUI } from "../../type";
 import { MESSAGES } from "../../constants/messages";
 import ProductForm from "./ProductForm";
 import ProductTable from "./ProductTable";
+import { useNotification } from "../../hooks/useNotification";
+import { useProducts } from "../../hooks/useProducts";
 
-interface ProductTabProps {
-  // product
-  products: IProductWithUI[];
-  addProduct: (newProduct: Omit<IProductWithUI, "id">) => void;
-  updateProduct: (productId: string, updates: Partial<IProductWithUI>) => void;
-  deleteProduct: (productId: string) => void;
-  getRemainingStock: (product: IProductWithUI) => number;
+const ProductTab = () => {
+  const { products, deleteProduct } = useProducts();
+  const { addNotification } = useNotification();
 
-  // notification
-  addNotification: (
-    message: string,
-    type?: "error" | "success" | "warning"
-  ) => void;
-}
-
-const ProductTab = ({
-  products,
-  addProduct,
-  updateProduct,
-  deleteProduct,
-  getRemainingStock,
-  addNotification,
-}: ProductTabProps) => {
   // 상품 추가 (수정) 폼 표시
   const [showProductForm, setShowProductForm] = useState(false);
 
-  // Admin
   // 작성 중인 상품의 상태 - new(추가)이거나 상품의 id(수정)
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   // 현재 작성 중인 상품 정보
@@ -41,6 +23,19 @@ const ProductTab = ({
     description: "",
     discounts: [] as Array<{ quantity: number; rate: number }>,
   });
+
+  // 새 상품 추가 함수
+  const handleAddProduct = () => {
+    setEditingProduct("new");
+    setProductForm({
+      name: "",
+      price: 0,
+      stock: 0,
+      description: "",
+      discounts: [],
+    });
+    setShowProductForm(true);
+  };
 
   // 상품 삭제
   const deleteProductItem = useCallback(
@@ -73,17 +68,7 @@ const ProductTab = ({
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-semibold">상품 목록</h2>
           <button
-            onClick={() => {
-              setEditingProduct("new");
-              setProductForm({
-                name: "",
-                price: 0,
-                stock: 0,
-                description: "",
-                discounts: [],
-              });
-              setShowProductForm(true);
-            }}
+            onClick={handleAddProduct}
             className="px-4 py-2 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800"
           >
             새 상품 추가
@@ -93,7 +78,6 @@ const ProductTab = ({
 
       <ProductTable
         products={products}
-        getRemainingStock={getRemainingStock}
         startEditProduct={startEditProduct}
         deleteProductItem={deleteProductItem}
       />
@@ -101,13 +85,10 @@ const ProductTab = ({
       {showProductForm && (
         <ProductForm
           setShowProductForm={setShowProductForm}
-          addProduct={addProduct}
-          updateProduct={updateProduct}
           editingProduct={editingProduct}
           setEditingProduct={setEditingProduct}
           productForm={productForm}
           setProductForm={setProductForm}
-          addNotification={addNotification}
         />
       )}
     </section>
