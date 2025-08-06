@@ -1,18 +1,13 @@
-// TODO: 쿠폰 관리 Hook
-// 힌트:
-// 1. 쿠폰 목록 상태 관리 (localStorage 연동 고려)
-// 2. 쿠폰 추가/삭제
-//
-// 반환할 값:
-// - coupons: 쿠폰 배열
-// - addCoupon: 새 쿠폰 추가
-// - removeCoupon: 쿠폰 삭제
 import { useState, useCallback, useEffect } from 'react';
 
 import { Coupon } from '../../types';
 import { initialCoupons } from '../constants';
 
-export function useCoupons({ addNotification }) {
+interface UseCouponsProps {
+  addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
+}
+
+export function useCoupons({ addNotification }: UseCouponsProps) {
   const [coupons, setCoupons] = useState<Coupon[]>(() => {
     const saved = localStorage.getItem('coupons');
     if (saved) {
@@ -25,13 +20,13 @@ export function useCoupons({ addNotification }) {
     return initialCoupons;
   });
 
-  const [selectedCoupon, setSelectedCoupon] = useState(null);
+  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
   useEffect(() => {
     localStorage.setItem('coupons', JSON.stringify(coupons));
   }, [coupons]);
 
-  const applyCoupon = (coupon) => {
+  const applyCoupon = (coupon: Coupon) => {
     if (coupon) {
       setSelectedCoupon(coupon);
       addNotification(`${coupon.name} 쿠폰이 적용되었습니다.`);

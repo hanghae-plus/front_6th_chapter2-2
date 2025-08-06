@@ -3,11 +3,11 @@ import { Product, Discount } from '../../types';
 import { initialProducts } from '../constants';
 import * as productModel from '../models/product';
 
-export const useProducts = ({
-  addNotification,
-}: {
-  addNotification: (message: string, type: string) => void;
-}) => {
+interface UseProductsProps {
+  addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
+}
+
+export const useProducts = ({ addNotification }: UseProductsProps) => {
   const [products, setProducts] = useState<Product[]>(() => {
     const saved = localStorage.getItem('products');
     return saved ? JSON.parse(saved) : initialProducts;

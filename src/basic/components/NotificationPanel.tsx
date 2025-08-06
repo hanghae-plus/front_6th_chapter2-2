@@ -1,4 +1,4 @@
-export const NotificationPanel = ({ notifications, setNotifications }) => {
+export const NotificationPanel = ({ notifications, addNotification }) => {
   return (
     notifications.length > 0 && (
       <div className='fixed top-20 right-4 z-50 space-y-2 max-w-sm'>
@@ -15,7 +15,7 @@ export const NotificationPanel = ({ notifications, setNotifications }) => {
           >
             <span className='mr-2'>{notif.message}</span>
             <button
-              onClick={() => setNotifications((prev) => prev.filter((n) => n.id !== notif.id))}
+              onClick={() => addNotification((prev) => prev.filter((n) => n.id !== notif.id))}
               className='text-white hover:text-gray-200'
             >
               <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>

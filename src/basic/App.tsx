@@ -4,12 +4,7 @@ import { AdminPage } from './components/AdminPage';
 import { CartPage } from './components/CartPage';
 import { Header } from './components/Header';
 import { NotificationPanel } from './components/NotificationPanel';
-import { useCart } from './hooks/useCart';
-import { useCoupons } from './hooks/useCoupons';
-import { useNotifications } from './hooks/useNotifications';
-import { useProducts } from './hooks/useProducts';
-
-import * as cartModel from './models/cart';
+import { useStore } from './hooks/useStore';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -17,18 +12,26 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
-  const { notifications, setNotifications, addNotification } = useNotifications();
-
-  const { products, addProduct, updateProduct, deleteProduct } = useProducts({ addNotification });
-
-  const { cart, addToCart, removeFromCart, updateQuantity, getRemainingStock, clearCart } = useCart(
-    { products, addNotification },
-  );
-  const { coupons, addCoupon, selectedCoupon, applyCoupon, deleteCoupon } = useCoupons({
+  const {
+    notifications,
     addNotification,
-  });
-
-  const totals = cartModel.calculateCartTotal(cart, selectedCoupon);
+    products,
+    addProduct,
+    updateProduct,
+    deleteProduct,
+    cart,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+    getRemainingStock,
+    clearCart,
+    coupons,
+    addCoupon,
+    selectedCoupon,
+    applyCoupon,
+    deleteCoupon,
+    totals,
+  } = useStore();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -39,7 +42,7 @@ const App = () => {
 
   return (
     <div className='min-h-screen bg-gray-50'>
-      <NotificationPanel notifications={notifications} setNotifications={setNotifications} />
+      <NotificationPanel notifications={notifications} addNotification={addNotification} />
       <Header
         isAdmin={isAdmin}
         setIsAdmin={setIsAdmin}

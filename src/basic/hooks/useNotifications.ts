@@ -1,10 +1,6 @@
 import { useState, useCallback } from 'react';
 
-interface Notification {
-  id: string;
-  message: string;
-  type: 'error' | 'success' | 'warning';
-}
+import { Notification } from '../../types';
 
 export const useNotifications = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -20,5 +16,5 @@ export const useNotifications = () => {
     },
     [],
   );
-  return { notifications, setNotifications, addNotification };
+  return { notifications, addNotification };
 };
