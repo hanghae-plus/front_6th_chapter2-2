@@ -96,22 +96,21 @@ export function ProductsTab({ addNotification }: ProductsTabProps) {
         onDelete={deleteProduct}
       />
 
-      {showProductForm && editingProduct && (
-        <EditProductForm
-          initialProduct={editingProduct}
-          onSubmit={updateProduct}
-          onCancel={resetForm}
-          addNotification={addNotification}
-        />
-      )}
-
-      {showProductForm && !editingProduct && (
-        <AddProductForm
-          onSubmit={addProduct}
-          onCancel={resetForm}
-          addNotification={addNotification}
-        />
-      )}
+      {showProductForm &&
+        (editingProduct ? (
+          <EditProductForm
+            initialProduct={editingProduct}
+            onSubmit={updateProduct}
+            onCancel={resetForm}
+            addNotification={addNotification}
+          />
+        ) : (
+          <AddProductForm
+            onSubmit={addProduct}
+            onCancel={resetForm}
+            addNotification={addNotification}
+          />
+        ))}
     </section>
   );
 }
