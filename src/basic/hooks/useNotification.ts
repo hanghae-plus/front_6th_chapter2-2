@@ -1,13 +1,13 @@
 import { useCallback, useState } from "react";
 
-import { NOTIFICATION_TIMEOUT_MS } from "@/basic/constants/notification";
+import { NOTIFICATION } from "@/basic/constants";
 import { Notification, NotificationType } from "@/types";
 
 export function useNotification() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   const addNotification = useCallback(
-    (message: string, type: NotificationType = NotificationType.SUCCESS) => {
+    (message: string, type: NotificationType = NOTIFICATION.TYPES.SUCCESS) => {
       const id = Date.now().toString();
 
       const newNotification: Notification = { id, message, type };
@@ -16,7 +16,7 @@ export function useNotification() {
 
       setTimeout(() => {
         setNotifications((prev) => prev.filter((n) => n.id !== id));
-      }, NOTIFICATION_TIMEOUT_MS);
+      }, NOTIFICATION.TIMEOUT_MS);
     },
     []
   );

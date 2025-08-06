@@ -1,10 +1,6 @@
-/**
- * 기본값 상수들
- */
 import { DiscountType } from "@/types";
 
-/** 상품 폼 기본값 */
-export const DEFAULT_PRODUCT_FORM = {
+const PRODUCT_FORM = {
   name: "",
   price: 0,
   stock: 0,
@@ -12,16 +8,20 @@ export const DEFAULT_PRODUCT_FORM = {
   discounts: [] as Array<{ quantity: number; rate: number }>,
 };
 
-/** 쿠폰 폼 기본값 */
-export const DEFAULT_COUPON_FORM = {
+const COUPON_FORM = {
   name: "",
   code: "",
   discountType: DiscountType.AMOUNT,
   discountValue: 0,
 };
 
-/** 기본 수량값 */
-export const DEFAULT_QUANTITY = 1;
+const QUANTITY = 1;
 
-/** 기본 합계값 */
-export const DEFAULT_TOTAL = 0;
+const TOTAL = 0;
+
+export const DEFAULTS = {
+  PRODUCT_FORM,
+  COUPON_FORM,
+  QUANTITY,
+  TOTAL,
+} as const;

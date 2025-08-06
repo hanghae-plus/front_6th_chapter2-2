@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 
-import { initialProducts } from "@/basic/data/product.data";
+import { NOTIFICATION } from "@/basic/constants";
+import { productData } from "@/basic/data";
 import { useLocalStorage } from "@/basic/hooks";
 import { NotificationType, ProductWithUI } from "@/types";
 
@@ -11,7 +12,7 @@ interface Props {
 export function useProducts({ addNotification }: Props) {
   const [products, setProducts] = useLocalStorage<ProductWithUI[]>(
     "products",
-    initialProducts
+    productData.initialProducts
   );
 
   const addProduct = useCallback(
@@ -21,7 +22,7 @@ export function useProducts({ addNotification }: Props) {
         id: `p${Date.now()}`,
       };
       setProducts((prev) => [...prev, product]);
-      addNotification("상품이 추가되었습니다.", NotificationType.SUCCESS);
+      addNotification("상품이 추가되었습니다.", NOTIFICATION.TYPES.SUCCESS);
     },
     [addNotification]
   );
@@ -33,7 +34,7 @@ export function useProducts({ addNotification }: Props) {
           product.id === productId ? { ...product, ...updates } : product
         )
       );
-      addNotification("상품이 수정되었습니다.", NotificationType.SUCCESS);
+      addNotification("상품이 수정되었습니다.", NOTIFICATION.TYPES.SUCCESS);
     },
     [addNotification]
   );
@@ -41,7 +42,7 @@ export function useProducts({ addNotification }: Props) {
   const deleteProduct = useCallback(
     (productId: string) => {
       setProducts((prev) => prev.filter((p) => p.id !== productId));
-      addNotification("상품이 삭제되었습니다.", NotificationType.SUCCESS);
+      addNotification("상품이 삭제되었습니다.", NOTIFICATION.TYPES.SUCCESS);
     },
     [addNotification]
   );

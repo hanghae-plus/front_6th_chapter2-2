@@ -1,6 +1,6 @@
 import { ProductWithUI } from "@/types";
 
-export const initialProducts: ProductWithUI[] = [
+const initialProducts: ProductWithUI[] = [
   {
     id: "p1",
     name: "상품1",
@@ -33,3 +33,7 @@ export const initialProducts: ProductWithUI[] = [
     description: "대용량과 고성능을 자랑하는 상품입니다.",
   },
 ];
+
+export const productData = {
+  initialProducts,
+};

@@ -1,4 +1,4 @@
-import { MATH } from "@/basic/constants";
+import { CALCULATION } from "@/basic/constants";
 
 /**
  * 정액 할인을 적용하여 할인된 가격을 계산합니다.
@@ -23,7 +23,7 @@ export const calculatePercentageDiscount = (
   originalPrice: number,
   discountPercentage: number
 ): number => {
-  const discountRate = discountPercentage / MATH.PERCENTAGE_TO_DECIMAL;
+  const discountRate = discountPercentage / CALCULATION.PERCENTAGE_TO_DECIMAL;
   return calculateDiscountedPrice(originalPrice, discountRate);
 };
 
@@ -37,7 +37,9 @@ export const calculateDiscountedPrice = (
   originalPrice: number,
   discountRate: number
 ): number => {
-  return Math.round(originalPrice * (MATH.ORIGINAL_PRICE_RATIO - discountRate));
+  return Math.round(
+    originalPrice * (CALCULATION.ORIGINAL_PRICE_RATIO - discountRate)
+  );
 };
 
 /**
@@ -66,7 +68,7 @@ export const calculateDiscountPercentage = (
   if (originalPrice === 0) return 0;
 
   return Math.round(
-    (1 - finalPrice / originalPrice) * MATH.PERCENTAGE_TO_DECIMAL
+    (1 - finalPrice / originalPrice) * CALCULATION.PERCENTAGE_TO_DECIMAL
   );
 };
 

@@ -1,4 +1,4 @@
-import { NOTIFICATION_TYPES } from "@/basic/constants/notification";
+import { NOTIFICATION } from "@/basic/constants";
 
 export interface Product {
   id: string;
@@ -42,4 +42,4 @@ export interface Notification {
 }
 
 export type NotificationType =
-  (typeof NOTIFICATION_TYPES)[keyof typeof NOTIFICATION_TYPES];
+  (typeof NOTIFICATION.TYPES)[keyof typeof NOTIFICATION.TYPES];

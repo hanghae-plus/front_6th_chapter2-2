@@ -2,12 +2,16 @@ import {
   calculateAmountDiscount,
   calculatePercentageDiscount,
 } from "@/basic/utils/calculation.util";
-import { Coupon } from "@/types";
+import { Coupon, DiscountType } from "@/types";
 
-export const applyCouponDiscount = (total: number, coupon: Coupon): number => {
-  if (coupon.discountType === "amount") {
+const applyCouponDiscount = (total: number, coupon: Coupon): number => {
+  if (coupon.discountType === DiscountType.AMOUNT) {
     return calculateAmountDiscount(total, coupon.discountValue);
   }
 
   return calculatePercentageDiscount(total, coupon.discountValue);
+};
+
+export const couponModel = {
+  applyCouponDiscount,
 };

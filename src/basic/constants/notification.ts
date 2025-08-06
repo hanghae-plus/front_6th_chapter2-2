@@ -1,7 +1,12 @@
-export const NOTIFICATION_TIMEOUT_MS = 3000;
+const TIMEOUT_MS = 3000;
 
-export const NOTIFICATION_TYPES = {
+const TYPES = {
   ERROR: "error",
   SUCCESS: "success",
   WARNING: "warning",
+} as const;
+
+export const NOTIFICATION = {
+  TIMEOUT_MS,
+  TYPES,
 } as const;

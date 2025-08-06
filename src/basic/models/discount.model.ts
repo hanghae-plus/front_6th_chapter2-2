@@ -1,7 +1,7 @@
-import { CART, DEFAULT_TOTAL, DISCOUNT } from "@/basic/constants";
+import { CART, DISCOUNT } from "@/basic/constants";
 import { CartItem } from "@/types";
 
-export const getMaxApplicableDiscountRate = (
+const getMaxApplicableDiscountRate = (
   item: CartItem,
   cart: CartItem[]
 ): number => {
@@ -10,7 +10,7 @@ export const getMaxApplicableDiscountRate = (
 
   const maxApplicableDiscountRate = discounts
     .filter((discount) => quantity >= discount.quantity)
-    .reduce((max, discount) => Math.max(max, discount.rate), DEFAULT_TOTAL);
+    .reduce((max, discount) => Math.max(max, discount.rate), 0);
 
   const hasBulkPurchase = cart.some(
     (cartItem) => cartItem.quantity >= CART.BULK_PURCHASE_THRESHOLD
@@ -24,4 +24,8 @@ export const getMaxApplicableDiscountRate = (
   }
 
   return maxApplicableDiscountRate;
+};
+
+export const discountModel = {
+  getMaxApplicableDiscountRate,
 };

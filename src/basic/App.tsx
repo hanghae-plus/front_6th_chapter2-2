@@ -1,23 +1,18 @@
-import { STOCK } from "./constants/product";
-import { COUPON_LIMITS, PRODUCT_LIMITS } from "./constants/validation";
-
 import { useCallback, useEffect, useState } from "react";
 
 import {
-  DEFAULT_COUPON_FORM,
-  DEFAULT_PRODUCT_FORM,
-} from "@/basic/constants/defaults";
-import { SEARCH_DEBOUNCE_DELAY_MS } from "@/basic/constants/search";
+  DEFAULTS,
+  NOTIFICATION,
+  PRODUCT,
+  SEARCH,
+  VALIDATION,
+} from "@/basic/constants";
 import { useCart, useProducts } from "@/basic/hooks";
 import { useCoupon } from "@/basic/hooks/useCoupon";
 import { useNotification } from "@/basic/hooks/useNotification";
-import {
-  calculateCartTotal,
-  calculateItemTotal,
-  getRemainingStock,
-} from "@/basic/models/cart.model";
-import { getFormattedProductPrice } from "@/basic/models/product.model";
-import { DiscountType, NotificationType, ProductWithUI } from "@/types";
+import { productModel } from "@/basic/models";
+import { cartModel } from "@/basic/models/cart.model";
+import { DiscountType, ProductWithUI } from "@/types";
 
 const App = () => {
   const { notifications, addNotification, removeNotification } =
@@ -56,14 +51,14 @@ const App = () => {
 
   // Admin
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
-  const [productForm, setProductForm] = useState(DEFAULT_PRODUCT_FORM);
+  const [productForm, setProductForm] = useState(DEFAULTS.PRODUCT_FORM);
 
-  const [couponForm, setCouponForm] = useState(DEFAULT_COUPON_FORM);
+  const [couponForm, setCouponForm] = useState(DEFAULTS.COUPON_FORM);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
-    }, SEARCH_DEBOUNCE_DELAY_MS);
+    }, SEARCH.DEBOUNCE_DELAY_MS);
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
@@ -71,7 +66,7 @@ const App = () => {
     const orderNumber = `ORD-${Date.now()}`;
     addNotification(
       `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
-      NotificationType.SUCCESS
+      NOTIFICATION.TYPES.SUCCESS
     );
     setCart([]);
     resetCoupon();
@@ -88,7 +83,7 @@ const App = () => {
         discounts: productForm.discounts,
       });
     }
-    setProductForm(DEFAULT_PRODUCT_FORM);
+    setProductForm(DEFAULTS.PRODUCT_FORM);
     setEditingProduct(null);
     setShowProductForm(false);
   };
@@ -96,7 +91,7 @@ const App = () => {
   const handleCouponSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     addCoupon(couponForm);
-    setCouponForm(DEFAULT_COUPON_FORM);
+    setCouponForm(DEFAULTS.COUPON_FORM);
     setShowCouponForm(false);
   };
 
@@ -112,7 +107,7 @@ const App = () => {
     setShowProductForm(true);
   };
 
-  const totals = calculateCartTotal(cart, selectedCoupon);
+  const totals = cartModel.calculateCartTotal(cart, selectedCoupon);
 
   const filteredProducts = debouncedSearchTerm
     ? products.filter(
@@ -271,7 +266,7 @@ const App = () => {
                     <button
                       onClick={() => {
                         setEditingProduct("new");
-                        setProductForm(DEFAULT_PRODUCT_FORM);
+                        setProductForm(DEFAULTS.PRODUCT_FORM);
                         setShowProductForm(true);
                       }}
                       className="px-4 py-2 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800"
@@ -310,7 +305,7 @@ const App = () => {
                               {product.name}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {getFormattedProductPrice({
+                              {productModel.getFormattedProductPrice({
                                 productId: product.id,
                                 products,
                                 cart,
@@ -411,7 +406,7 @@ const App = () => {
                                   ...productForm,
                                   price:
                                     value === ""
-                                      ? PRODUCT_LIMITS.MIN_PRICE
+                                      ? VALIDATION.PRODUCT_LIMITS.MIN_PRICE
                                       : parseInt(value),
                                 });
                               }
@@ -421,18 +416,19 @@ const App = () => {
                               if (value === "") {
                                 setProductForm({
                                   ...productForm,
-                                  price: PRODUCT_LIMITS.MIN_PRICE,
+                                  price: VALIDATION.PRODUCT_LIMITS.MIN_PRICE,
                                 });
                               } else if (
-                                parseInt(value) < PRODUCT_LIMITS.MIN_PRICE
+                                parseInt(value) <
+                                VALIDATION.PRODUCT_LIMITS.MIN_PRICE
                               ) {
                                 addNotification(
-                                  `가격은 ${PRODUCT_LIMITS.MIN_PRICE}보다 커야 합니다`,
-                                  NotificationType.ERROR
+                                  `가격은 ${VALIDATION.PRODUCT_LIMITS.MIN_PRICE}보다 커야 합니다`,
+                                  NOTIFICATION.TYPES.ERROR
                                 );
                                 setProductForm({
                                   ...productForm,
-                                  price: PRODUCT_LIMITS.MIN_PRICE,
+                                  price: VALIDATION.PRODUCT_LIMITS.MIN_PRICE,
                                 });
                               }
                             }}
@@ -457,7 +453,7 @@ const App = () => {
                                   ...productForm,
                                   stock:
                                     value === ""
-                                      ? PRODUCT_LIMITS.MIN_STOCK
+                                      ? VALIDATION.PRODUCT_LIMITS.MIN_STOCK
                                       : parseInt(value),
                                 });
                               }
@@ -467,29 +463,31 @@ const App = () => {
                               if (value === "") {
                                 setProductForm({
                                   ...productForm,
-                                  stock: PRODUCT_LIMITS.MIN_STOCK,
+                                  stock: VALIDATION.PRODUCT_LIMITS.MIN_STOCK,
                                 });
                               } else if (
-                                parseInt(value) < PRODUCT_LIMITS.MIN_STOCK
+                                parseInt(value) <
+                                VALIDATION.PRODUCT_LIMITS.MIN_STOCK
                               ) {
                                 addNotification(
-                                  `재고는 ${PRODUCT_LIMITS.MIN_STOCK}보다 커야 합니다`,
-                                  NotificationType.ERROR
+                                  `재고는 ${VALIDATION.PRODUCT_LIMITS.MIN_STOCK}보다 커야 합니다`,
+                                  NOTIFICATION.TYPES.ERROR
                                 );
                                 setProductForm({
                                   ...productForm,
-                                  stock: PRODUCT_LIMITS.MIN_STOCK,
+                                  stock: VALIDATION.PRODUCT_LIMITS.MIN_STOCK,
                                 });
                               } else if (
-                                parseInt(value) > PRODUCT_LIMITS.MAX_STOCK
+                                parseInt(value) >
+                                VALIDATION.PRODUCT_LIMITS.MAX_STOCK
                               ) {
                                 addNotification(
-                                  `재고는 ${PRODUCT_LIMITS.MAX_STOCK}개를 초과할 수 없습니다`,
-                                  NotificationType.ERROR
+                                  `재고는 ${VALIDATION.PRODUCT_LIMITS.MAX_STOCK}개를 초과할 수 없습니다`,
+                                  NOTIFICATION.TYPES.ERROR
                                 );
                                 setProductForm({
                                   ...productForm,
-                                  stock: PRODUCT_LIMITS.MAX_STOCK,
+                                  stock: VALIDATION.PRODUCT_LIMITS.MAX_STOCK,
                                 });
                               }
                             }}
@@ -601,7 +599,7 @@ const App = () => {
                           type="button"
                           onClick={() => {
                             setEditingProduct(null);
-                            setProductForm(DEFAULT_PRODUCT_FORM);
+                            setProductForm(DEFAULTS.PRODUCT_FORM);
                             setShowProductForm(false);
                           }}
                           className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
@@ -773,7 +771,8 @@ const App = () => {
                                     ...couponForm,
                                     discountValue:
                                       value === ""
-                                        ? COUPON_LIMITS.MIN_DISCOUNT_VALUE
+                                        ? VALIDATION.COUPON_LIMITS
+                                            .MIN_DISCOUNT_VALUE
                                         : parseInt(value),
                                   });
                                 }
@@ -783,46 +782,54 @@ const App = () => {
                                 if (couponForm.discountType === "percentage") {
                                   if (
                                     value >
-                                    COUPON_LIMITS.MAX_DISCOUNT_PERCENTAGE
+                                    VALIDATION.COUPON_LIMITS
+                                      .MAX_DISCOUNT_PERCENTAGE
                                   ) {
                                     addNotification(
-                                      `할인율은 ${COUPON_LIMITS.MAX_DISCOUNT_PERCENTAGE}%를 초과할 수 없습니다`,
-                                      NotificationType.ERROR
+                                      `할인율은 ${VALIDATION.COUPON_LIMITS.MAX_DISCOUNT_PERCENTAGE}%를 초과할 수 없습니다`,
+                                      NOTIFICATION.TYPES.ERROR
                                     );
                                     setCouponForm({
                                       ...couponForm,
                                       discountValue:
-                                        COUPON_LIMITS.MAX_DISCOUNT_PERCENTAGE,
+                                        VALIDATION.COUPON_LIMITS
+                                          .MAX_DISCOUNT_PERCENTAGE,
                                     });
                                   } else if (
-                                    value < COUPON_LIMITS.MIN_DISCOUNT_VALUE
+                                    value <
+                                    VALIDATION.COUPON_LIMITS.MIN_DISCOUNT_VALUE
                                   ) {
                                     setCouponForm({
                                       ...couponForm,
                                       discountValue:
-                                        COUPON_LIMITS.MIN_DISCOUNT_VALUE,
+                                        VALIDATION.COUPON_LIMITS
+                                          .MIN_DISCOUNT_VALUE,
                                     });
                                   }
                                 } else {
                                   if (
-                                    value > COUPON_LIMITS.MAX_DISCOUNT_AMOUNT
+                                    value >
+                                    VALIDATION.COUPON_LIMITS.MAX_DISCOUNT_AMOUNT
                                   ) {
                                     addNotification(
-                                      `할인 금액은 ${COUPON_LIMITS.MAX_DISCOUNT_AMOUNT.toLocaleString()}원을 초과할 수 없습니다`,
-                                      NotificationType.ERROR
+                                      `할인 금액은 ${VALIDATION.COUPON_LIMITS.MAX_DISCOUNT_AMOUNT.toLocaleString()}원을 초과할 수 없습니다`,
+                                      NOTIFICATION.TYPES.ERROR
                                     );
                                     setCouponForm({
                                       ...couponForm,
                                       discountValue:
-                                        COUPON_LIMITS.MAX_DISCOUNT_AMOUNT,
+                                        VALIDATION.COUPON_LIMITS
+                                          .MAX_DISCOUNT_AMOUNT,
                                     });
                                   } else if (
-                                    value < COUPON_LIMITS.MIN_DISCOUNT_VALUE
+                                    value <
+                                    VALIDATION.COUPON_LIMITS.MIN_DISCOUNT_VALUE
                                   ) {
                                     setCouponForm({
                                       ...couponForm,
                                       discountValue:
-                                        COUPON_LIMITS.MIN_DISCOUNT_VALUE,
+                                        VALIDATION.COUPON_LIMITS
+                                          .MIN_DISCOUNT_VALUE,
                                     });
                                   }
                                 }
@@ -881,7 +888,10 @@ const App = () => {
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {filteredProducts.map((product) => {
-                      const remainingStock = getRemainingStock(product, cart);
+                      const remainingStock = cartModel.getRemainingStock(
+                        product,
+                        cart
+                      );
 
                       return (
                         <div
@@ -937,7 +947,7 @@ const App = () => {
                             {/* 가격 정보 */}
                             <div className="mb-3">
                               <p className="text-lg font-bold text-gray-900">
-                                {getFormattedProductPrice({
+                                {productModel.getFormattedProductPrice({
                                   productId: product.id,
                                   products,
                                   cart,
@@ -954,16 +964,21 @@ const App = () => {
 
                             {/* 재고 상태 */}
                             <div className="mb-3">
-                              {remainingStock <= STOCK.LOW_STOCK_THRESHOLD &&
-                                remainingStock >
-                                  STOCK.OUT_OF_STOCK_THRESHOLD && (
+                              {cartModel.getRemainingStock(product, cart) <=
+                                PRODUCT.LOW_STOCK_THRESHOLD &&
+                                cartModel.getRemainingStock(product, cart) >
+                                  PRODUCT.OUT_OF_STOCK_THRESHOLD && (
                                   <p className="text-xs text-red-600 font-medium">
-                                    품절임박! {remainingStock}개 남음
+                                    품절임박!{" "}
+                                    {cartModel.getRemainingStock(product, cart)}
+                                    개 남음
                                   </p>
                                 )}
-                              {remainingStock > STOCK.LOW_STOCK_THRESHOLD && (
+                              {cartModel.getRemainingStock(product, cart) >
+                                PRODUCT.LOW_STOCK_THRESHOLD && (
                                 <p className="text-xs text-gray-500">
-                                  재고 {remainingStock}개
+                                  재고{" "}
+                                  {cartModel.getRemainingStock(product, cart)}개
                                 </p>
                               )}
                             </div>
@@ -971,9 +986,11 @@ const App = () => {
                             {/* 장바구니 버튼 */}
                             <button
                               onClick={() => addToCart(product)}
-                              disabled={remainingStock <= 0}
+                              disabled={
+                                cartModel.getRemainingStock(product, cart) <= 0
+                              }
                               className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
-                                remainingStock <= 0
+                                cartModel.getRemainingStock(product, cart) <= 0
                                   ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                                   : "bg-gray-900 text-white hover:bg-gray-800"
                               }`}
@@ -1030,7 +1047,10 @@ const App = () => {
                   ) : (
                     <div className="space-y-3">
                       {cart.map((item) => {
-                        const itemTotal = calculateItemTotal(item, cart);
+                        const itemTotal = cartModel.calculateItemTotal(
+                          item,
+                          cart
+                        );
                         const originalPrice =
                           item.product.price * item.quantity;
                         const hasDiscount = itemTotal < originalPrice;

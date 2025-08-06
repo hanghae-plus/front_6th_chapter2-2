@@ -1,24 +1,23 @@
-import { applyCouponDiscount } from "@/basic/models/coupon.model";
-import { getMaxApplicableDiscountRate } from "@/basic/models/discount.model";
+import { couponModel, discountModel } from "@/basic/models";
 import { calculateDiscountedPrice } from "@/basic/utils/calculation.util";
 import { CartItem, Coupon, Product } from "@/types";
 
-export const calculateItemTotal = (
-  item: CartItem,
-  cart: CartItem[]
-): number => {
-  const maxDiscountRate = getMaxApplicableDiscountRate(item, cart);
+const calculateItemTotal = (item: CartItem, cart: CartItem[]): number => {
+  const maxDiscountRate = discountModel.getMaxApplicableDiscountRate(
+    item,
+    cart
+  );
   const itemTotal = item.product.price * item.quantity;
 
   return calculateDiscountedPrice(itemTotal, maxDiscountRate);
 };
 
-export interface CartTotal {
+interface CartTotal {
   totalBeforeDiscount: number;
   totalAfterDiscount: number;
 }
 
-export const calculateCartTotal = (
+const calculateCartTotal = (
   cart: CartItem[],
   selectedCoupon: Coupon | null
 ): CartTotal => {
@@ -30,7 +29,7 @@ export const calculateCartTotal = (
   );
 
   const totalAfterCouponDiscount = selectedCoupon
-    ? applyCouponDiscount(totalAfterItemDiscounts, selectedCoupon)
+    ? couponModel.applyCouponDiscount(totalAfterItemDiscounts, selectedCoupon)
     : totalAfterItemDiscounts;
 
   return {
@@ -39,19 +38,23 @@ export const calculateCartTotal = (
   };
 };
 
-export const calculateCartOriginalTotal = (cart: CartItem[]): number => {
+const calculateCartOriginalTotal = (cart: CartItem[]): number => {
   return cart.reduce(
     (sum, item) => sum + item.product.price * item.quantity,
     0
   );
 };
 
-export const getRemainingStock = (
-  product: Product,
-  cart: CartItem[]
-): number => {
+const getRemainingStock = (product: Product, cart: CartItem[]): number => {
   const cartItem = cart.find((item) => item.product.id === product.id);
   const remaining = product.stock - (cartItem?.quantity || 0);
 
   return remaining;
+};
+
+export const cartModel = {
+  calculateItemTotal,
+  calculateCartTotal,
+  calculateCartOriginalTotal,
+  getRemainingStock,
 };

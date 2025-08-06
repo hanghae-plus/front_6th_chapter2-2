@@ -1,11 +1,16 @@
-export const PRODUCT_LIMITS = {
+const PRODUCT_LIMITS = {
   MAX_STOCK: 9999,
   MIN_PRICE: 0,
   MIN_STOCK: 0,
 } as const;
 
-export const COUPON_LIMITS = {
+const COUPON_LIMITS = {
   MAX_DISCOUNT_AMOUNT: 100000,
   MAX_DISCOUNT_PERCENTAGE: 100,
   MIN_DISCOUNT_VALUE: 0,
+} as const;
+
+export const VALIDATION = {
+  PRODUCT_LIMITS,
+  COUPON_LIMITS,
 } as const;

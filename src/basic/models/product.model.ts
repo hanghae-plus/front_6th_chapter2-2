@@ -1,7 +1,7 @@
 import { formatPrice } from "@/basic/utils";
 import { CartItem, Product, ProductWithUI } from "@/types";
 
-export const isProductSoldout = ({
+const isProductSoldout = ({
   productId,
   products,
   cart,
@@ -17,7 +17,7 @@ export const isProductSoldout = ({
   return product.stock - (cartItem?.quantity || 0) <= 0;
 };
 
-export const formatProductPrice = ({
+const formatProductPrice = ({
   price,
   isAdmin = false,
 }: {
@@ -27,7 +27,7 @@ export const formatProductPrice = ({
   return isAdmin ? `${price.toLocaleString()}원` : formatPrice(price);
 };
 
-export const getFormattedProductPrice = ({
+const getFormattedProductPrice = ({
   productId,
   products,
   cart,
@@ -50,4 +50,10 @@ export const getFormattedProductPrice = ({
 
   const price = formatProductPrice({ price: product.price, isAdmin });
   return price;
+};
+
+export const productModel = {
+  isProductSoldout,
+  formatProductPrice,
+  getFormattedProductPrice,
 };

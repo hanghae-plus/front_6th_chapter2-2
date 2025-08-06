@@ -338,7 +338,67 @@
   - Import 경로 단순화
   - 코드 일관성 향상
 
-### 2.7 긴 함수 분할
+### 2.7 폴더 구조 체계화 및 Import 경로 정리 ✅
+
+- **목적**: 전체 프로젝트의 폴더 구조 체계화 및 일관된 import 패턴 적용
+- **작업 내용**:
+  - [x] **Index 파일 추가**:
+    - `src/basic/constants/index.ts` - 상수 통합 export
+    - `src/basic/data/index.ts` - 데이터 통합 export
+    - `src/basic/models/index.ts` - 모델 통합 export
+  - [x] **Import 경로 정리**:
+    - 21개 파일의 import 경로 일관성 개선
+    - 통합 import 패턴 적용: `import { COUPON, PRODUCT_LIMITS } from "@/basic/constants"`
+    - 개별 import 패턴 유지: `import { COUPON } from "@/basic/constants/coupon"`
+  - [x] **코드 품질 개선**:
+    - `src/basic/utils/discount.util.ts` 삭제 (0줄 중복 파일)
+    - `src/basic/utils/format.util.ts` 함수 시그니처 개선 (locale 기본값 설정)
+    - `src/types.ts` 타입 정의 개선
+  - [x] **전체 파일 수정**:
+    - constants/ 폴더: 6개 파일 수정 (calculation.ts, defaults.ts, notification.ts, product.ts, search.ts, validation.ts)
+    - data/ 폴더: 2개 파일 수정 (coupon.data.ts, product.data.ts)
+    - hooks/ 폴더: 4개 파일 수정 (useCart.ts, useCoupon.ts, useNotification.ts, useProducts.ts)
+    - models/ 폴더: 4개 파일 수정 (cart.model.ts, coupon.model.ts, discount.model.ts, product.model.ts)
+    - utils/ 폴더: 2개 파일 수정 (calculation.util.ts, index.ts)
+    - App.tsx: 148줄 수정 (import 경로 정리 및 코드 개선)
+- **검증**:
+  - [x] TypeScript 컴파일 오류 없음
+  - [x] 모든 테스트 코드 통과 (63개 테스트)
+  - [x] 모든 기능 정상 작동 확인
+  - [x] Import 경로 정상 작동
+- **개선 효과**:
+  - **개발 경험 향상**: 일관된 import 패턴으로 코드 작성 편의성 증대
+  - **유지보수성 향상**: 통합 export로 의존성 관리 용이
+  - **코드 중복 제거**: 불필요한 파일 삭제로 프로젝트 정리
+  - **타입 안정성 강화**: 함수 시그니처 개선으로 더 안전한 코드
+- **변경 통계**:
+  - 21개 파일 변경: 213줄 추가, 157줄 삭제 (순증가: 56줄)
+  - 3개 새 파일 생성 (index.ts 파일들)
+  - 1개 파일 삭제 (discount.util.ts)
+
+#### 📌 **설계 목표 및 고민사항**
+
+**1. 직관적인 폴더 구조 설계**
+
+- 폴더명과 파일명만 봐도 역할이 즉시 파악 가능하도록 설계
+- 엔티티별로 효율적인 네임스페이스 관리 체계 구축
+
+**2. Import 문 최적화**
+
+- Import 문 개수를 줄이면서도 가독성 유지
+- Import된 모듈의 출처와 역할이 명확하게 드러나도록 설계
+
+**3. 네임스페이스 통합 관리**
+
+- 기존: 각 상수를 개별 export (`export const COUPON_MIN_AMOUNT = 10000`)
+- 개선: 엔티티별로 네임스페이스 객체로 통합 export (`export const COUPON = { MIN_AMOUNT: 10000 }`)
+
+**4. 일관된 패턴 적용**
+
+- 모든 도메인(constants, data, models)에 동일한 네임스페이스 패턴 적용
+- 개발자가 예측 가능한 구조로 코드 작성 경험 향상
+
+### 2.8 긴 함수 분할
 
 - **목적**: 함수 길이 20줄 이하 준수
 - **작업 예정**:
@@ -641,29 +701,30 @@ function calculateCartTotal(cart, coupon) {
 1. ✅ **Phase 2.4: 계산 함수 분리** - README 요구사항 (완료)
 2. ✅ **Phase 2.5: Custom Hook 분리** - 거대 컴포넌트 리팩토링 (완료)
 3. ✅ **Phase 2.6: Constants 폴더 구조 정리** - Import 경로 문제 해결 (완료)
-4. ✅ **Phase 3.2: 커스텀 훅 분리** - useCart, useCoupon, useProducts, useNotification (완료)
-5. ✅ **Phase 4.1: 테스트 코드 통과** - README 요구사항 (완료)
+4. ✅ **Phase 2.7: 폴더 구조 체계화** - 전체 프로젝트 import 경로 정리 (완료)
+5. ✅ **Phase 3.2: 커스텀 훅 분리** - useCart, useCoupon, useProducts, useNotification (완료)
+6. ✅ **Phase 4.1: 테스트 코드 통과** - README 요구사항 (완료)
 
 ### 기본과제 (남은 작업)
 
-6. **Phase 2.7: 긴 함수 분할** - 20줄 이하 함수 규칙 준수 (다음 우선순위)
-7. **Phase 3.1: 엔티티 컴포넌트와 UI 컴포넌트 분리** - README 요구사항
-8. **Phase 3.3: 타입 시스템 강화** - 더 강력한 타입 안정성 확보
+7. **Phase 2.8: 긴 함수 분할** - 20줄 이하 함수 규칙 준수 (다음 우선순위)
+8. **Phase 3.1: 엔티티 컴포넌트와 UI 컴포넌트 분리** - README 요구사항
+9. **Phase 3.3: 타입 시스템 강화** - 더 강력한 타입 안정성 확보
 
 ### 심화과제 (기본과제 완료 후)
 
-9. **Phase 6: Props drilling 제거** - Context 또는 Jotai 사용
-10. **Phase 5: 성능 최적화** - 렌더링 및 번들 최적화
+10. **Phase 6: Props drilling 제거** - Context 또는 Jotai 사용
+11. **Phase 5: 성능 최적화** - 렌더링 및 번들 최적화
 
 ### 📋 체크리스트 업데이트
 
 현재 진행 상황을 반영하여 체크리스트가 업데이트되었습니다:
 
-- **완료**: ✅ 매직 넘버 상수화 (Phase 2.1), ✅ 중복 코드 제거 (Phase 2.2), ✅ 함수형 프로그래밍 원칙 적용 (Phase 2.3), ✅ 계산 함수 분리 (Phase 2.4), ✅ Custom Hook 분리 (Phase 2.5), ✅ Constants 구조 정리 (Phase 2.6), ✅ 커스텀 훅 분리 (Phase 3.2), ✅ 테스트 코드 통과 (Phase 4.1)
-- **다음 우선순위**: 긴 함수 분할 (Phase 2.7)
+- **완료**: ✅ 매직 넘버 상수화 (Phase 2.1), ✅ 중복 코드 제거 (Phase 2.2), ✅ 함수형 프로그래밍 원칙 적용 (Phase 2.3), ✅ 계산 함수 분리 (Phase 2.4), ✅ Custom Hook 분리 (Phase 2.5), ✅ Constants 구조 정리 (Phase 2.6), ✅ 폴더 구조 체계화 (Phase 2.7), ✅ 커스텀 훅 분리 (Phase 3.2), ✅ 테스트 코드 통과 (Phase 4.1)
+- **다음 우선순위**: 긴 함수 분할 (Phase 2.8)
 - **기본과제**: 엔티티 컴포넌트 분리, 타입 시스템 강화
 - **심화과제**: Props drilling 제거 (Context/Jotai), 성능 최적화
 
 ---
 
-**마지막 업데이트**: 2024년 (Clean Code 분석, Prettier, 절대 경로 설정, 매직넘버 상수화, 함수형 프로그래밍 원칙 적용, 할인 계산 로직 유틸화, Custom Hook 분리, Constants 구조 정리, 테스트 코드 통과 완료)
+**마지막 업데이트**: 2024년 (Clean Code 분석, Prettier, 절대 경로 설정, 매직넘버 상수화, 함수형 프로그래밍 원칙 적용, 할인 계산 로직 유틸화, Custom Hook 분리, Constants 구조 정리, 폴더 구조 체계화, 테스트 코드 통과 완료)
