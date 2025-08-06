@@ -40,7 +40,6 @@ interface CartPageProps {
   selectedCoupon: Coupon | null;
   setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
   debouncedSearchTerm: string;
-  totalItemCount: number;
   setTotalItemCount: Dispatch<SetStateAction<number>>;
 }
 
@@ -51,7 +50,6 @@ export function CartPage({
   selectedCoupon,
   setSelectedCoupon,
   debouncedSearchTerm,
-  totalItemCount,
   setTotalItemCount,
 }: CartPageProps) {
   // TODO: 구현
@@ -92,7 +90,6 @@ export function CartPage({
   const totals = calculateCartTotal({
     cart,
     selectedCoupon,
-    discount,
   });
 
   const filteredProducts = debouncedSearchTerm

@@ -16,7 +16,7 @@
 // - 외부 상태에 의존하지 않음
 // - 모든 필요한 데이터는 파라미터로 전달받음
 
-import { CartItem, Coupon, Product } from "../../types";
+import { CartItem, Product } from "../../types";
 import { ProductWithUI } from "../App";
 
 // TODO: 구현
@@ -121,10 +121,8 @@ const addItemToCart = ({
   }
 
   const existingItem = cart.find((item) => item.product.id === product.id);
-
   if (existingItem) {
     const newQuantity = existingItem.quantity + 1;
-
     if (newQuantity > product.stock) {
       return {
         success: false,
@@ -136,7 +134,6 @@ const addItemToCart = ({
     const newCart = cart.map((item) =>
       item.product.id === product.id ? { ...item, quantity: newQuantity } : item
     );
-
     return {
       success: true,
       message: "장바구니에 담았습니다",

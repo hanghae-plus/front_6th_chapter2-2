@@ -107,7 +107,6 @@ const App = () => {
             selectedCoupon={selectedCoupon}
             setSelectedCoupon={setSelectedCoupon}
             debouncedSearchTerm={debouncedSearchTerm}
-            totalItemCount={totalItemCount}
             setTotalItemCount={setTotalItemCount}
           />
         )}

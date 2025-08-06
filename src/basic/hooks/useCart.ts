@@ -14,6 +14,7 @@ import {
   updateCartItemQuantity,
   getMaxApplicableDiscount,
   hasBulkPurchase,
+  calculateItemTotal,
 } from "../models/cart";
 
 // TODO: 장바구니 관리 Hook
@@ -158,28 +159,13 @@ export function useCart({
     [cart, addNotification, products]
   );
 
-  const calculateItemTotal = ({
-    item,
-    discount,
-  }: {
-    item: CartItem;
-    discount: number;
-  }): number => {
-    const { price } = item.product;
-    const { quantity } = item;
-
-    return Math.round(price * quantity * (1 - discount));
-  };
-
   const calculateCartTotal = useCallback(
     ({
       cart,
       selectedCoupon,
-      discount,
     }: {
       cart: CartItem[];
       selectedCoupon: Coupon | null;
-      discount: number;
     }): {
       totalBeforeDiscount: number;
       totalAfterDiscount: number;
@@ -190,6 +176,13 @@ export function useCart({
       cart.forEach((item) => {
         const itemPrice = item.product.price * item.quantity;
         totalBeforeDiscount += itemPrice;
+
+        const discount = getMaxApplicableDiscount({
+          discounts: item.product.discounts,
+          quantity: item.quantity,
+          hasBulkPurchase: hasBulkPurchase(cart),
+        });
+
         totalAfterDiscount += calculateItemTotal({ item, discount });
       });
 
@@ -216,16 +209,9 @@ export function useCart({
 
   const applyCoupon = useCallback(
     ({ coupon, cart }: { coupon: Coupon; cart: CartItem[] }) => {
-      const discount = getMaxApplicableDiscount({
-        discounts: cart.flatMap((item) => item.product.discounts),
-        quantity: cart.reduce((acc, item) => acc + item.quantity, 0),
-        hasBulkPurchase: hasBulkPurchase(cart),
-      });
-
       const currentTotal = calculateCartTotal({
         cart,
         selectedCoupon: coupon,
-        discount,
       }).totalAfterDiscount;
 
       if (currentTotal < 10000 && coupon.discountType === "percentage") {
@@ -249,7 +235,6 @@ export function useCart({
 
   return {
     cart,
-    // selectedCoupon,
     addToCart,
     removeFromCart,
     updateQuantity,
