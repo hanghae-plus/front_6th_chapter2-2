@@ -24,16 +24,6 @@ const App = () => {
   // UI 상태 관리
   const isAdmin = useAtomValue(isAdminAtom);
 
-  // 상품 폼 관리 훅 (추가/수정)
-  const {
-    productForm,
-    setProductForm,
-    editingProduct,
-    setEditingProduct,
-    handleProductSubmit,
-    handleProductEdit,
-  } = useProductForm();
-
   // 쿠폰 관리 훅
   const { coupons, setCoupons, selectedCoupon, setSelectedCoupon, applyCoupon } = useCoupons(
     (message) => addNotification({ message, type: 'success' }),
@@ -73,7 +63,6 @@ const App = () => {
       {notifications.length > 0 && (
         <div className='fixed top-20 right-4 z-50 space-y-2 max-w-sm'>
           {notifications.map((notification) => {
-            console.log(`Rendering Toast for: ${notification.message} (id: ${notification.id})`);
             return (
               <Toast
                 key={notification.id}
@@ -91,14 +80,8 @@ const App = () => {
         {isAdmin ? (
           <AdminDashboard
             cart={cart}
-            editingProduct={editingProduct}
-            productForm={productForm}
             coupons={coupons}
             couponForm={couponForm}
-            onEditClick={setEditingProduct}
-            onFormChange={setProductForm}
-            handleProductEdit={handleProductEdit}
-            handleProductSubmit={handleProductSubmit}
             onCouponDelete={deleteCoupon}
             onCouponSubmit={handleCouponSubmit}
             onCouponFormChange={setCouponForm}

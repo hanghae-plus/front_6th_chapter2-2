@@ -1,29 +1,19 @@
 import { useSetAtom } from 'jotai';
-import { ProductFormType } from '../../../../types';
 import Button from '../../ui/Button';
 import IconButton from '../../ui/IconButton';
 import { DeleteIcon } from '../../ui/Icons';
 import Input from '../../ui/Input';
 import { addNotificationAtom } from '../../../atoms/notificationsAtoms';
+import { useProductForm } from '../../../hooks/product/useProductForm';
 
 interface ProductFormProps {
-  handleProductSubmit: (e: React.FormEvent, callback: () => void) => void;
   onToggleForm: (show: boolean) => void;
-  editingProduct: string | null;
-  productForm: ProductFormType;
-  onFormChange: (form: ProductFormType) => void;
-  onEditClick: (value: string | null) => void;
 }
 
-export default function ProductForm({
-  editingProduct,
-  productForm,
-  handleProductSubmit,
-  onFormChange,
-  onToggleForm,
-  onEditClick,
-}: ProductFormProps) {
+export default function ProductForm({ onToggleForm }: ProductFormProps) {
   const addNotification = useSetAtom(addNotificationAtom);
+  const { handleProductSubmit, setProductForm, productForm, editingProduct, setEditingProduct } =
+    useProductForm();
 
   return (
     <div className='p-6 border-t border-gray-200 bg-gray-50'>
@@ -42,7 +32,7 @@ export default function ProductForm({
             <Input
               type='text'
               value={productForm.name}
-              onChange={(e) => onFormChange({ ...productForm, name: e.target.value })}
+              onChange={(e) => setProductForm({ ...productForm, name: e.target.value })}
               required
             />
           </div>
@@ -51,7 +41,7 @@ export default function ProductForm({
             <Input
               type='text'
               value={productForm.description}
-              onChange={(e) => onFormChange({ ...productForm, description: e.target.value })}
+              onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}
             />
           </div>
           <div>
@@ -62,7 +52,7 @@ export default function ProductForm({
               onChange={(e) => {
                 const value = e.target.value;
                 if (value === '' || /^\d+$/.test(value)) {
-                  onFormChange({
+                  setProductForm({
                     ...productForm,
                     price: value === '' ? 0 : parseInt(value),
                   });
@@ -71,10 +61,10 @@ export default function ProductForm({
               onBlur={(e) => {
                 const value = e.target.value;
                 if (value === '') {
-                  onFormChange({ ...productForm, price: 0 });
+                  setProductForm({ ...productForm, price: 0 });
                 } else if (parseInt(value) < 0) {
                   addNotification({ message: '가격은 0보다 커야 합니다', type: 'error' });
-                  onFormChange({ ...productForm, price: 0 });
+                  setProductForm({ ...productForm, price: 0 });
                 }
               }}
               placeholder='숫자만 입력'
@@ -89,7 +79,7 @@ export default function ProductForm({
               onChange={(e) => {
                 const value = e.target.value;
                 if (value === '' || /^\d+$/.test(value)) {
-                  onFormChange({
+                  setProductForm({
                     ...productForm,
                     stock: value === '' ? 0 : parseInt(value),
                   });
@@ -98,13 +88,13 @@ export default function ProductForm({
               onBlur={(e) => {
                 const value = e.target.value;
                 if (value === '') {
-                  onFormChange({ ...productForm, stock: 0 });
+                  setProductForm({ ...productForm, stock: 0 });
                 } else if (parseInt(value) < 0) {
                   addNotification({ message: '재고는 0보다 커야 합니다', type: 'error' });
-                  onFormChange({ ...productForm, stock: 0 });
+                  setProductForm({ ...productForm, stock: 0 });
                 } else if (parseInt(value) > 9999) {
                   addNotification({ message: '재고는 9999개를 초과할 수 없습니다', type: 'error' });
-                  onFormChange({ ...productForm, stock: 9999 });
+                  setProductForm({ ...productForm, stock: 9999 });
                 }
               }}
               placeholder='숫자만 입력'
@@ -123,7 +113,7 @@ export default function ProductForm({
                   onChange={(e) => {
                     const newDiscounts = [...productForm.discounts];
                     newDiscounts[index].quantity = parseInt(e.target.value) || 0;
-                    onFormChange({ ...productForm, discounts: newDiscounts });
+                    setProductForm({ ...productForm, discounts: newDiscounts });
                   }}
                   size='sm'
                   min='1'
@@ -136,7 +126,7 @@ export default function ProductForm({
                   onChange={(e) => {
                     const newDiscounts = [...productForm.discounts];
                     newDiscounts[index].rate = (parseInt(e.target.value) || 0) / 100;
-                    onFormChange({ ...productForm, discounts: newDiscounts });
+                    setProductForm({ ...productForm, discounts: newDiscounts });
                   }}
                   size='xs'
                   min='0'
@@ -150,7 +140,7 @@ export default function ProductForm({
                   type='button'
                   onClick={() => {
                     const newDiscounts = productForm.discounts.filter((_, i) => i !== index);
-                    onFormChange({ ...productForm, discounts: newDiscounts });
+                    setProductForm({ ...productForm, discounts: newDiscounts });
                   }}
                   icon={<DeleteIcon />}
                 />
@@ -160,7 +150,7 @@ export default function ProductForm({
             <Button
               type='button'
               onClick={() => {
-                onFormChange({
+                setProductForm({
                   ...productForm,
                   discounts: [...productForm.discounts, { quantity: 10, rate: 0.1 }],
                 });
@@ -177,8 +167,8 @@ export default function ProductForm({
           <Button
             type='button'
             onClick={() => {
-              onEditClick(null);
-              onFormChange({
+              setEditingProduct(null);
+              setProductForm({
                 name: '',
                 price: 0,
                 stock: 0,

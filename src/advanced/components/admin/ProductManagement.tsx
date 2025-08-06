@@ -8,31 +8,20 @@ import { useAtomValue } from 'jotai';
 import { isAdminAtom } from '../../atoms/uiAtoms';
 import { productsAtom } from '../../atoms/productsAtom';
 import { useProducts } from '../../hooks/product/useProducts';
+import { useProductForm } from '../../hooks/product/useProductForm';
 
 interface ProductManagementProps {
   cart: CartItem[];
-  editingProduct: string | null;
-  productForm: ProductFormType;
-  handleProductEdit: (product: Product) => void;
-  onEditClick: (value: string | null) => void;
-  onFormChange: (form: ProductFormType) => void;
-  handleProductSubmit: (e: React.FormEvent, callback: () => void) => void;
 }
 
-export default function ProductManagement({
-  cart,
-  editingProduct,
-  productForm,
-  handleProductEdit,
-  handleProductSubmit,
-  onEditClick,
-  onFormChange,
-}: ProductManagementProps) {
+export default function ProductManagement({ cart }: ProductManagementProps) {
   const [showProductForm, setShowProductForm] = useState(false);
   const isAdmin = useAtomValue(isAdminAtom);
 
   const products = useAtomValue(productsAtom);
   const { deleteProduct } = useProducts();
+
+  const { setProductForm, handleProductEdit, editingProduct, setEditingProduct } = useProductForm();
 
   return (
     <section className='bg-white rounded-lg border border-gray-200'>
@@ -44,8 +33,8 @@ export default function ProductManagement({
             variant='primary'
             size='md'
             onClick={() => {
-              onEditClick('new');
-              onFormChange({
+              setEditingProduct('new');
+              setProductForm({
                 name: '',
                 price: 0,
                 stock: 0,
@@ -135,16 +124,7 @@ export default function ProductManagement({
           </tbody>
         </table>
       </div>
-      {showProductForm && (
-        <ProductForm
-          editingProduct={editingProduct}
-          productForm={productForm}
-          handleProductSubmit={handleProductSubmit}
-          onToggleForm={setShowProductForm}
-          onFormChange={onFormChange}
-          onEditClick={onEditClick}
-        />
-      )}
+      {showProductForm && <ProductForm onToggleForm={setShowProductForm} />}
     </section>
   );
 }
