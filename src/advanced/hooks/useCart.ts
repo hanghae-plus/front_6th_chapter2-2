@@ -1,15 +1,10 @@
 import { useMemo, useCallback } from "react";
 import { useAtom, useSetAtom, useAtomValue } from "jotai";
-import { CartItem, Product, Coupon } from "../types";
+import { CartItem, Product } from "../types";
 import * as composedModels from "../models";
 import * as cartModel from "../models/cart";
 import * as productModel from "../models/product";
-import * as couponModel from "../models/coupon";
-import {
-  validateCartStock,
-  validateCouponAvailable,
-  validateCouponCode,
-} from "../utils/validators";
+import { validateCartStock } from "../utils/validators";
 import {
   addNotificationAtom,
   cartAtom,
@@ -17,6 +12,10 @@ import {
   selectedCouponAtom,
   totalItemCountAtom,
   productsAtom,
+  addCouponAtom,
+  removeCouponAtom,
+  applyCouponAtom,
+  completeOrderAtom,
 } from "../atoms";
 
 // 장바구니 + 쿠폰 통합 관리 훅
@@ -28,9 +27,9 @@ export function useCart() {
   const [cart, setCart] = useAtom(cartAtom);
 
   // ========== 쿠폰 상태 (Jotai) ==========
-  const [coupons, setCoupons] = useAtom(couponsAtom);
-  const [selectedCoupon, setSelectedCoupon] = useAtom(selectedCouponAtom);
-  
+  const coupons = useAtomValue(couponsAtom);
+  const selectedCoupon = useAtomValue(selectedCouponAtom);
+
   // ========== 상품 상태 (Jotai) ==========
   const products = useAtomValue(productsAtom);
 
@@ -100,7 +99,7 @@ export function useCart() {
           addNotification(validation.errorMessage, "error");
           return prevCart; // 기존 상태 유지
         }
-        
+
         // 수량 업데이트
         return cartModel.updateCartItemQuantity(
           prevCart,
@@ -112,68 +111,11 @@ export function useCart() {
     [products, setCart, addNotification]
   );
 
-  const completeOrder = useCallback(() => {
-    const orderNumber = `ORD-${Date.now()}`;
-    addNotification(
-      `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
-      "success"
-    );
-    setCart([]);
-    setSelectedCoupon(null);
-  }, [addNotification, setCart, setSelectedCoupon]);
-
-  // ========== 쿠폰 비즈니스 로직 ==========
-  const addCoupon = useCallback(
-    (newCoupon: Coupon) => {
-      const validation = validateCouponCode(coupons, newCoupon.code);
-      if (validation.errorMessage) {
-        addNotification(validation.errorMessage, "error");
-        return;
-      }
-      setCoupons((prev) => couponModel.addCouponToList(prev, newCoupon));
-      addNotification("쿠폰이 추가되었습니다.", "success");
-    },
-    [coupons, setCoupons, addNotification]
-  );
-
-  const removeCoupon = useCallback(
-    (couponCode: string) => {
-      setCoupons((prev) => couponModel.removeCouponFromList(prev, couponCode));
-      if (selectedCoupon?.code === couponCode) {
-        setSelectedCoupon(null);
-      }
-      addNotification("쿠폰이 삭제되었습니다.", "success");
-    },
-    [setCoupons, selectedCoupon?.code, addNotification, setSelectedCoupon]
-  );
-
-  const applyCoupon = useCallback(
-    (coupon: Coupon | null) => {
-      if (!coupon) {
-        setSelectedCoupon(null);
-        return;
-      }
-
-      // 쿠폰 검증
-      const cartTotalForValidation = composedModels.calculateCartTotal(
-        cart,
-        null
-      );
-      const validation = validateCouponAvailable(
-        coupon,
-        cartTotalForValidation.totalAfterDiscount
-      );
-
-      if (validation.errorMessage) {
-        addNotification(validation.errorMessage, "error");
-        return;
-      }
-
-      setSelectedCoupon(coupon);
-      addNotification("쿠폰이 적용되었습니다.", "success");
-    },
-    [cart, setSelectedCoupon, addNotification]
-  );
+  // ========== 액션 아톰들 (useSetAtom) ==========
+  const addCoupon = useSetAtom(addCouponAtom);
+  const removeCoupon = useSetAtom(removeCouponAtom);
+  const applyCoupon = useSetAtom(applyCouponAtom);
+  const completeOrder = useSetAtom(completeOrderAtom);
 
   return {
     // ========== 장바구니 상태 및 기능 ==========
