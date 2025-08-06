@@ -1,10 +1,9 @@
-import type { NotificationVariant } from '../../../types';
-import { type CouponForm as CouponFormType } from '../../models/coupon';
+import type { Coupon, NotificationVariant } from '../../../types';
 
 interface CouponFormProps {
   isOpen: boolean;
-  form: CouponFormType;
-  updateForm: (updates: Partial<CouponFormType>) => void;
+  form: Coupon;
+  updateForm: (updates: Partial<Coupon>) => void;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
   onAddNotification: (message: string, type: Exclude<NotificationVariant, 'warning'>) => void;

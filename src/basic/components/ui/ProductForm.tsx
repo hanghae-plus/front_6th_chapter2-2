@@ -1,11 +1,11 @@
 import type { NotificationVariant } from '../../../types';
-import { type ProductForm as ProductFormType } from '../../models/product';
+import type { ProductWithUI } from '../../constants';
 import { Icon } from '../icons';
 
 interface ProductFormProps {
   isOpen: boolean;
-  form: ProductFormType;
-  updateForm: (updates: Partial<ProductFormType>) => void;
+  form: Omit<ProductWithUI, 'id'>;
+  updateForm: (updates: Partial<ProductWithUI>) => void;
   editingProduct: string | null;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;

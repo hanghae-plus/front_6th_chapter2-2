@@ -1,19 +1,26 @@
 import { useState } from 'react';
 
 import type { ProductWithUI } from '../constants';
-import { initialProductForm, ProductForm } from '../models/product';
 import { useForm } from '../utils/hooks/useForm';
 
+export const initialProductForm: Omit<ProductWithUI, 'id'> = {
+  name: '',
+  price: 0,
+  stock: 0,
+  description: '',
+  discounts: [],
+};
+
 interface UseProductFormProps {
-  onAddProduct: (product: ProductForm) => void;
-  onUpdateProduct: (productId: string, product: ProductForm) => void;
+  onAddProduct: (product: Omit<ProductWithUI, 'id'>) => void;
+  onUpdateProduct: (productId: string, product: Omit<ProductWithUI, 'id'>) => void;
 }
 
 export function useProductForm({ onAddProduct, onUpdateProduct }: UseProductFormProps) {
   const [showProductForm, setShowProductForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [productFormData, updateProductFormData, resetProductFormData] =
-    useForm<ProductForm>(initialProductForm);
+    useForm<Omit<ProductWithUI, 'id'>>(initialProductForm);
 
   const startEditProduct = (product: ProductWithUI) => {
     setEditingProduct(product.id);

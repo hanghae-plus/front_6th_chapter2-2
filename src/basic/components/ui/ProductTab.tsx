@@ -3,12 +3,11 @@ import { ProductForm } from './ProductForm';
 import { NotificationVariant } from '../../../types';
 import type { ProductWithUI } from '../../constants';
 import { useProductForm } from '../../hooks/useProductForm';
-import type { ProductForm as ProductFormType } from '../../models/product';
 
 interface ProductTabProps {
   products: ProductWithUI[];
-  onAddProduct: (product: ProductFormType) => void;
-  onUpdateProduct: (productId: string, product: ProductFormType) => void;
+  onAddProduct: (product: Omit<ProductWithUI, 'id'>) => void;
+  onUpdateProduct: (productId: string, product: Omit<ProductWithUI, 'id'>) => void;
   onDeleteProduct: (productId: string) => void;
   onAddNotification: (message: string, type: NotificationVariant) => void;
 }

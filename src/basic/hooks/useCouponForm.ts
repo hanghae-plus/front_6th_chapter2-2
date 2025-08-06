@@ -1,8 +1,14 @@
 import { useState } from 'react';
 
 import type { Coupon } from '../../types';
-import { initialCouponForm } from '../models/coupon';
 import { useForm } from '../utils/hooks/useForm';
+
+const initialCouponForm: Coupon = {
+  name: '',
+  code: '',
+  discountType: 'amount',
+  discountValue: 0,
+};
 
 interface UseCouponFormProps {
   onAddCoupon: (coupon: Coupon) => void;
