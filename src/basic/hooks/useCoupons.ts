@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 
-import { Coupon } from '../../types';
+import { Coupon, NotificationCallback } from '../../types';
 import { initialCoupons } from '../constants';
 import { validateCouponCode, calculateCouponDiscount } from '../models/coupon';
 
@@ -20,10 +20,7 @@ export function useCoupons() {
 
   // addCoupon 함수
   const addCoupon = useCallback(
-    (
-      newCoupon: Coupon,
-      onNotification?: (message: string, type: 'success' | 'error' | 'warning') => void
-    ) => {
+    (newCoupon: Coupon, onNotification?: NotificationCallback) => {
       if (!validateCouponCode(newCoupon.code, coupons)) {
         onNotification?.('이미 존재하는 쿠폰 코드입니다.', 'error');
         return;
@@ -35,22 +32,10 @@ export function useCoupons() {
   );
 
   // removeCoupon 함수
-  const removeCoupon = useCallback(
-    (
-      couponCode: string,
-      onNotification?: (message: string, type: 'success' | 'error' | 'warning') => void,
-      selectedCoupon?: Coupon | null,
-      setSelectedCoupon?: (coupon: Coupon | null) => void
-    ) => {
-      setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
-      // 원본 로직: 선택된 쿠폰이 삭제되면 선택 해제
-      if (selectedCoupon?.code === couponCode && setSelectedCoupon) {
-        setSelectedCoupon(null);
-      }
-      onNotification?.('쿠폰이 삭제되었습니다.', 'success');
-    },
-    []
-  );
+  const removeCoupon = useCallback((couponCode: string, onNotification?: NotificationCallback) => {
+    setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
+    onNotification?.('쿠폰이 삭제되었습니다.', 'success');
+  }, []);
 
   // calculateCouponDiscount 활용 함수
   const getCouponDiscountAmount = useCallback((coupon: Coupon, cartTotal: number): number => {

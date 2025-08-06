@@ -1,4 +1,4 @@
-import { Coupon, ProductWithUI } from '../../types';
+import { Coupon, ProductWithUI, ProductForm, CouponForm } from '../../types';
 
 // 초기 상품 데이터
 export const initialProducts: ProductWithUI[] = [
@@ -52,17 +52,17 @@ export const initialCoupons: Coupon[] = [
 ];
 
 // 기본 폼 상태
-export const defaultProductForm = {
+export const defaultProductForm: ProductForm = {
   name: '',
   price: 0,
   stock: 0,
   description: '',
-  discounts: [] as Array<{ quantity: number; rate: number }>,
+  discounts: [],
 };
 
-export const defaultCouponForm = {
+export const defaultCouponForm: CouponForm = {
   name: '',
   code: '',
-  discountType: 'amount' as 'amount' | 'percentage',
+  discountType: 'amount',
   discountValue: 0,
 };

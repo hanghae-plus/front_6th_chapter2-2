@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 
-import { CartItem, Coupon, ProductWithUI } from '../../types';
+import { CartItem, Coupon, ProductWithUI, NotificationCallback } from '../../types';
 import { calculateItemTotal, getRemainingStock } from '../models/cart';
 
 export function useCart(products: ProductWithUI[] = []) {
@@ -57,40 +57,34 @@ export function useCart(products: ProductWithUI[] = []) {
   }, [cart, selectedCoupon]);
 
   // addToCart 함수 (원본 로직과 동일)
-  const addToCart = useCallback(
-    (
-      product: ProductWithUI,
-      onNotification?: (message: string, type: 'success' | 'error' | 'warning') => void
-    ) => {
-      setCart((prevCart) => {
-        const remainingStock = getRemainingStock(product, prevCart);
-        if (remainingStock <= 0) {
-          onNotification?.('재고가 부족합니다!', 'error');
-          return prevCart;
+  const addToCart = useCallback((product: ProductWithUI, onNotification?: NotificationCallback) => {
+    setCart((prevCart) => {
+      const remainingStock = getRemainingStock(product, prevCart);
+      if (remainingStock <= 0) {
+        onNotification?.('재고가 부족합니다!', 'error');
+        return prevCart;
+      }
+
+      const existingItem = prevCart.find((item) => item.product.id === product.id);
+
+      if (existingItem) {
+        const newQuantity = existingItem.quantity + 1;
+
+        if (newQuantity > product.stock) {
+          onNotification?.(`재고는 ${product.stock}개까지만 있습니다.`, 'error');
+          return prevCart; // 원본과 동일하게 prevCart 반환
         }
 
-        const existingItem = prevCart.find((item) => item.product.id === product.id);
+        return prevCart.map((item) =>
+          item.product.id === product.id ? { ...item, quantity: newQuantity } : item
+        );
+      }
 
-        if (existingItem) {
-          const newQuantity = existingItem.quantity + 1;
+      return [...prevCart, { product, quantity: 1 }];
+    });
 
-          if (newQuantity > product.stock) {
-            onNotification?.(`재고는 ${product.stock}개까지만 있습니다.`, 'error');
-            return prevCart; // 원본과 동일하게 prevCart 반환
-          }
-
-          return prevCart.map((item) =>
-            item.product.id === product.id ? { ...item, quantity: newQuantity } : item
-          );
-        }
-
-        return [...prevCart, { product, quantity: 1 }];
-      });
-
-      onNotification?.('장바구니에 담았습니다', 'success');
-    },
-    []
-  );
+    onNotification?.('장바구니에 담았습니다', 'success');
+  }, []);
 
   // removeFromCart 함수 (원본 로직과 동일)
   const removeFromCart = useCallback((productId: string) => {
@@ -99,11 +93,7 @@ export function useCart(products: ProductWithUI[] = []) {
 
   // updateQuantity 함수 (원본 로직과 동일)
   const updateQuantity = useCallback(
-    (
-      productId: string,
-      newQuantity: number,
-      onNotification?: (message: string, type: 'success' | 'error' | 'warning') => void
-    ) => {
+    (productId: string, newQuantity: number, onNotification?: NotificationCallback) => {
       if (newQuantity <= 0) {
         removeFromCart(productId);
         return;
@@ -129,25 +119,8 @@ export function useCart(products: ProductWithUI[] = []) {
 
   // applyCoupon 함수
   const applyCoupon = useCallback(
-    (
-      coupon: Coupon,
-      onNotification?: (message: string, type: 'success' | 'error' | 'warning') => void
-    ) => {
-      // calculateCartTotal 로직을 직접 구현
-      let totalAfterDiscount = 0;
-      cart.forEach((item) => {
-        totalAfterDiscount += calculateItemTotal(item, cart);
-      });
-
-      if (selectedCoupon) {
-        if (selectedCoupon.discountType === 'amount') {
-          totalAfterDiscount = Math.max(0, totalAfterDiscount - selectedCoupon.discountValue);
-        } else {
-          totalAfterDiscount = Math.round(
-            totalAfterDiscount * (1 - selectedCoupon.discountValue / 100)
-          );
-        }
-      }
+    (coupon: Coupon, onNotification?: NotificationCallback) => {
+      const { totalAfterDiscount } = calculateCartTotal();
 
       // 쿠폰 적용 가능 여부 확인 (10,000원 이상 구매 시 사용 가능)
       if (coupon.discountType === 'percentage' && totalAfterDiscount < 10000) {
@@ -158,19 +131,16 @@ export function useCart(products: ProductWithUI[] = []) {
       setSelectedCoupon(coupon);
       onNotification?.('쿠폰이 적용되었습니다.', 'success');
     },
-    [cart, selectedCoupon]
+    [calculateCartTotal]
   );
 
   // completeOrder 함수
-  const completeOrder = useCallback(
-    (onNotification?: (message: string, type: 'success' | 'error' | 'warning') => void) => {
-      const orderNumber = `ORD-${Date.now()}`;
-      onNotification?.(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
-      setCart([]);
-      setSelectedCoupon(null);
-    },
-    []
-  );
+  const completeOrder = useCallback((onNotification?: NotificationCallback) => {
+    const orderNumber = `ORD-${Date.now()}`;
+    onNotification?.(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
+    setCart([]);
+    setSelectedCoupon(null);
+  }, []);
 
   // clearCart 함수
   const clearCart = useCallback(() => {

@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 
-import { Coupon, ProductWithUI, Notification } from '../types';
+import { Coupon, ProductWithUI, Notification, ProductForm, CouponForm } from '../types';
 import {
   CloseIcon,
   CartIcon,
@@ -76,7 +76,7 @@ const App = () => {
 
   // 쿠폰 관련 UI 상태 관리
   const [showCouponForm, setShowCouponForm] = useState(false);
-  const [couponForm, setCouponForm] = useState(defaultCouponForm);
+  const [couponForm, setCouponForm] = useState<CouponForm>(defaultCouponForm);
 
   // 쿠폰 폼 제출 핸들러
   const handleCouponSubmit = (e: React.FormEvent) => {
@@ -121,7 +121,7 @@ const App = () => {
 
   // Admin
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
-  const [productForm, setProductForm] = useState(defaultProductForm);
+  const [productForm, setProductForm] = useState<ProductForm>(defaultProductForm);
 
   // ===== localStorage 동기화 =====
   useEffect(() => {
@@ -624,14 +624,13 @@ const App = () => {
                             </div>
                           </div>
                           <Button
-                            onClick={() =>
-                              removeCoupon(
-                                coupon.code,
-                                addNotification,
-                                selectedCoupon,
-                                setSelectedCoupon
-                              )
-                            }
+                            onClick={() => {
+                              removeCoupon(coupon.code, addNotification);
+                              // 선택된 쿠폰이 삭제되면 선택 해제
+                              if (selectedCoupon?.code === coupon.code) {
+                                setSelectedCoupon(null);
+                              }
+                            }}
                             hasTransition
                             className='text-gray-400 hover:text-red-600'
                           >

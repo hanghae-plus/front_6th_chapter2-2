@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 
-import { ProductWithUI } from '../../types';
+import { ProductWithUI, NotificationCallback } from '../../types';
 import { initialProducts } from '../constants';
 
 export function useProducts() {
@@ -19,10 +19,7 @@ export function useProducts() {
 
   // addProduct 함수
   const addProduct = useCallback(
-    (
-      newProduct: Omit<ProductWithUI, 'id'>,
-      onNotification?: (message: string, type: 'success' | 'error' | 'warning') => void
-    ) => {
+    (newProduct: Omit<ProductWithUI, 'id'>, onNotification?: NotificationCallback) => {
       const product: ProductWithUI = {
         ...newProduct,
         id: `p${Date.now()}`,
@@ -35,11 +32,7 @@ export function useProducts() {
 
   // updateProduct 함수
   const updateProduct = useCallback(
-    (
-      productId: string,
-      updates: Partial<ProductWithUI>,
-      onNotification?: (message: string, type: 'success' | 'error' | 'warning') => void
-    ) => {
+    (productId: string, updates: Partial<ProductWithUI>, onNotification?: NotificationCallback) => {
       setProducts((prev) =>
         prev.map((product) => (product.id === productId ? { ...product, ...updates } : product))
       );
@@ -49,16 +42,10 @@ export function useProducts() {
   );
 
   // deleteProduct 함수
-  const deleteProduct = useCallback(
-    (
-      productId: string,
-      onNotification?: (message: string, type: 'success' | 'error' | 'warning') => void
-    ) => {
-      setProducts((prev) => prev.filter((p) => p.id !== productId));
-      onNotification?.('상품이 삭제되었습니다.', 'success');
-    },
-    []
-  );
+  const deleteProduct = useCallback((productId: string, onNotification?: NotificationCallback) => {
+    setProducts((prev) => prev.filter((p) => p.id !== productId));
+    onNotification?.('상품이 삭제되었습니다.', 'success');
+  }, []);
 
   return {
     products,

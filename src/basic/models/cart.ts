@@ -25,8 +25,9 @@ export const getMaxApplicableDiscount = (item: CartItem, cart: CartItem[]): numb
       : maxDiscount;
   }, 0);
 
-  // 대량 구매 시 추가 5% 할인 (해당 상품이 10개 이상일 때)
-  if (quantity >= 10) {
+  // 대량 구매 시 추가 5% 할인 (장바구니에 어떤 상품이라도 10개 이상이 있으면)
+  const hasBulkPurchase = cart.some((cartItem) => cartItem.quantity >= 10);
+  if (hasBulkPurchase) {
     return Math.min(baseDiscount + 0.05, 0.5);
   }
 
