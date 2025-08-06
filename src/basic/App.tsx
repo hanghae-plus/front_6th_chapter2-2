@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ProductWithUI } from '../types';
 import { useCart } from './hooks/useCart';
 import { useCoupons } from './hooks/useCoupons';
@@ -7,6 +7,7 @@ import { useOrder } from './hooks/useOrder';
 import { useProducts } from './hooks/useProducts';
 import { getCouponApplier } from './models/coupon';
 import { formatNumberWon, formatPriceKRW } from './utils/formatters';
+import { useDebounce } from './utils/hooks/useDebounce';
 
 const App = () => {
   const { notifications, setNotifications, addNotification } =
@@ -56,7 +57,7 @@ const App = () => {
   );
   const [showProductForm, setShowProductForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce({ delay: 500, value: searchTerm });
 
   // Admin
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
@@ -74,13 +75,6 @@ const App = () => {
     discountType: 'amount' as 'amount' | 'percentage',
     discountValue: 0,
   });
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
 
   const handleProductSubmit = (e: React.FormEvent) => {
     e.preventDefault();
