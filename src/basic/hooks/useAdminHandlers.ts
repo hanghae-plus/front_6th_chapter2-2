@@ -1,67 +1,71 @@
-import { useState, useCallback } from "react";
-import { Coupon } from "../../types";
+import { useCallback } from "react";
 import { ProductWithUI } from "../entities/products/product.types";
+import { ProductFormData } from "../entities/products/useProductForm";
+import { CouponWithUI, CouponFormData } from "../entities/coupon";
 
 interface UseAdminHandlersProps {
   addProduct: (product: Omit<ProductWithUI, "id">) => void;
   updateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
-  addCoupon: (coupon: Coupon) => void;
-  productForm: any;
-  setProductForm: any;
-  editingProduct: any;
-  setEditingProduct: any;
-  setShowProductForm: any;
+  addCoupon: (coupon: Omit<CouponWithUI, "id">) => void;
+  addNotification: (
+    message: string,
+    type: "error" | "success" | "warning"
+  ) => void;
+  productForm: ProductFormData;
+  setProductForm: (form: ProductFormData) => void;
+  editingProduct: string | null;
+  setEditingProduct: (product: string | null) => void;
+  setShowProductForm: (show: boolean) => void;
+  couponForm: CouponFormData;
+  closeCouponForm: () => void;
 }
 
 export const useAdminHandlers = ({
   addProduct,
   updateProduct,
   addCoupon,
+  addNotification,
   productForm,
   setProductForm,
   editingProduct,
   setEditingProduct,
   setShowProductForm,
+  couponForm,
+  closeCouponForm,
 }: UseAdminHandlersProps) => {
-  const [activeTab, setActiveTab] = useState<"products" | "coupons">(
-    "products"
-  );
-  const [showCouponForm, setShowCouponForm] = useState(false);
-  const [couponForm, setCouponForm] = useState({
-    name: "",
-    code: "",
-    discountType: "amount" as "amount" | "percentage",
-    discountValue: 0,
-  });
-
   const handleProductSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
-      if (editingProduct && editingProduct !== "new") {
-        updateProduct(editingProduct, productForm);
-        setEditingProduct(null);
-      } else {
+
+      if (editingProduct === "new") {
         addProduct({
-          ...productForm,
+          name: productForm.name,
+          price: productForm.price,
+          stock: productForm.stock,
+          description: productForm.description,
           discounts: productForm.discounts,
         });
+        addNotification("상품이 추가되었습니다", "success");
+      } else if (editingProduct) {
+        updateProduct(editingProduct, {
+          name: productForm.name,
+          price: productForm.price,
+          stock: productForm.stock,
+          description: productForm.description,
+          discounts: productForm.discounts,
+        });
+        addNotification("상품이 수정되었습니다", "success");
       }
-      setProductForm({
-        name: "",
-        price: 0,
-        stock: 0,
-        description: "",
-        discounts: [],
-      });
+
       setEditingProduct(null);
       setShowProductForm(false);
     },
     [
-      addProduct,
-      updateProduct,
       editingProduct,
       productForm,
-      setProductForm,
+      addProduct,
+      updateProduct,
+      addNotification,
       setEditingProduct,
       setShowProductForm,
     ]
@@ -70,25 +74,21 @@ export const useAdminHandlers = ({
   const handleCouponSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
-      addCoupon(couponForm);
-      setCouponForm({
-        name: "",
-        code: "",
-        discountType: "amount",
-        discountValue: 0,
+
+      addCoupon({
+        name: couponForm.name,
+        code: couponForm.code,
+        discountType: couponForm.discountType,
+        discountValue: couponForm.discountValue,
       });
-      setShowCouponForm(false);
+
+      addNotification("쿠폰이 추가되었습니다", "success");
+      closeCouponForm();
     },
-    [addCoupon, couponForm]
+    [couponForm, addCoupon, addNotification, closeCouponForm]
   );
 
   return {
-    activeTab,
-    setActiveTab,
-    showCouponForm,
-    setShowCouponForm,
-    couponForm,
-    setCouponForm,
     handleProductSubmit,
     handleCouponSubmit,
   };

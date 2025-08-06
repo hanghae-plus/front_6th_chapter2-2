@@ -1,9 +1,10 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { ProductWithUI } from "../entities/products/product.types";
 import { CouponWithUI } from "../entities/coupon/coupon.types";
 import { useCouponHandlers } from "../entities/coupon/useCouponHandlers";
 import { useProductForm } from "../entities/products/useProductForm";
 import { useCouponForm } from "../entities/coupon/useCouponForm";
+import { useAdminHandlers } from "../hooks/useAdminHandlers";
 import {
   AdminTabs,
   ProductTable,
@@ -66,62 +67,20 @@ export const AdminPage = ({
     openCouponForm,
   } = useCouponForm();
 
-  // handleProductSubmit을 내부에서 정의
-  const handleProductSubmit = useCallback(
-    (e: React.FormEvent) => {
-      e.preventDefault();
-
-      if (editingProduct === "new") {
-        addProduct({
-          name: productForm.name,
-          price: productForm.price,
-          stock: productForm.stock,
-          description: productForm.description,
-          discounts: productForm.discounts,
-        });
-        addNotification("상품이 추가되었습니다", "success");
-      } else if (editingProduct) {
-        updateProduct(editingProduct, {
-          name: productForm.name,
-          price: productForm.price,
-          stock: productForm.stock,
-          description: productForm.description,
-          discounts: productForm.discounts,
-        });
-        addNotification("상품이 수정되었습니다", "success");
-      }
-
-      setEditingProduct(null);
-      setShowProductForm(false);
-    },
-    [
-      editingProduct,
-      productForm,
-      addProduct,
-      updateProduct,
-      addNotification,
-      setEditingProduct,
-      setShowProductForm,
-    ]
-  );
-
-  // handleCouponSubmit을 내부에서 정의
-  const handleCouponSubmit = useCallback(
-    (e: React.FormEvent) => {
-      e.preventDefault();
-
-      addCoupon({
-        name: couponForm.name,
-        code: couponForm.code,
-        discountType: couponForm.discountType,
-        discountValue: couponForm.discountValue,
-      });
-
-      addNotification("쿠폰이 추가되었습니다", "success");
-      closeCouponForm();
-    },
-    [couponForm, addCoupon, addNotification, closeCouponForm]
-  );
+  // Admin 핸들러들
+  const { handleProductSubmit, handleCouponSubmit } = useAdminHandlers({
+    addProduct,
+    updateProduct,
+    addCoupon,
+    addNotification,
+    productForm,
+    setProductForm,
+    editingProduct,
+    setEditingProduct,
+    setShowProductForm,
+    couponForm,
+    closeCouponForm,
+  });
 
   return (
     <div className="max-w-6xl mx-auto">
