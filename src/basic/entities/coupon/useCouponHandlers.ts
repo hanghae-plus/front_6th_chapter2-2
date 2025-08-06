@@ -2,14 +2,13 @@ import { useCallback } from "react";
 import { CartItem } from "../../../types";
 import { CouponWithUI } from "./coupon.types";
 import { useCoupon } from "./useCoupon";
+import { BaseHandlerProps } from "../../types/common";
 
-interface UseCouponHandlersProps {
-  addNotification: (
-    message: string,
-    type: "success" | "error" | "warning"
-  ) => void;
-}
+interface UseCouponHandlersProps extends BaseHandlerProps {}
 
+/**
+ * 쿠폰 관련 핸들러들을 제공하는 훅
+ */
 export const useCouponHandlers = ({
   addNotification,
 }: UseCouponHandlersProps) => {
@@ -20,14 +19,14 @@ export const useCouponHandlers = ({
     addCoupon: addCouponAction,
     deleteCoupon: deleteCouponAction,
     applyCoupon: applyCouponAction,
+    clearSelectedCoupon,
+    findCoupon,
   } = useCoupon();
 
   const addCoupon = useCallback(
     (newCoupon: Omit<CouponWithUI, "id">) => {
       const result = addCouponAction(newCoupon);
-      if (result.type) {
-        addNotification(result.message, result.type);
-      }
+      addNotification(result.message, result.type);
     },
     [addCouponAction, addNotification]
   );
@@ -35,9 +34,7 @@ export const useCouponHandlers = ({
   const deleteCoupon = useCallback(
     (couponCode: string) => {
       const result = deleteCouponAction(couponCode);
-      if (result.type) {
-        addNotification(result.message, result.type);
-      }
+      addNotification(result.message, result.type);
     },
     [deleteCouponAction, addNotification]
   );
@@ -45,9 +42,7 @@ export const useCouponHandlers = ({
   const applyCoupon = useCallback(
     (coupon: CouponWithUI, cart: CartItem[]) => {
       const result = applyCouponAction(coupon, cart);
-      if (result.type) {
-        addNotification(result.message, result.type);
-      }
+      addNotification(result.message, result.type);
     },
     [applyCouponAction, addNotification]
   );
@@ -59,5 +54,7 @@ export const useCouponHandlers = ({
     addCoupon,
     deleteCoupon,
     applyCoupon,
+    clearSelectedCoupon,
+    findCoupon,
   };
 };

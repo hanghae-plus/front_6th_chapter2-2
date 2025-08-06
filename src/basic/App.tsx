@@ -11,16 +11,14 @@ const App = () => {
   const {
     // 기본 상태
     notifications,
-    setNotifications,
     addNotification,
+    removeNotification,
     isAdmin,
-    setIsAdmin,
+    toggleAdminMode,
 
     // 도메인 상태
     products,
-    setProducts,
     cart,
-    setCart,
     totalItemCount,
 
     // 도메인 핸들러들
@@ -30,6 +28,7 @@ const App = () => {
     addToCart,
     removeFromCart,
     updateQuantity,
+    clearCart,
 
     // 검색 관련
     searchTerm,
@@ -46,7 +45,7 @@ const App = () => {
       {notifications.length > 0 && (
         <NotificationComponent
           notifications={notifications}
-          setNotifications={setNotifications}
+          onRemoveNotification={removeNotification}
         />
       )}
 
@@ -56,19 +55,17 @@ const App = () => {
         handleSearch={handleSearch}
         cart={cart}
         totalItemCount={totalItemCount}
-        setIsAdmin={setIsAdmin}
+        onToggleAdminMode={toggleAdminMode}
       />
 
       <Body>
         {isAdmin ? (
           <AdminPage
             products={products}
-            setProducts={setProducts}
             addProduct={addProduct}
             updateProduct={updateProduct}
             deleteProduct={deleteProduct}
             checkSoldOutByProductId={checkSoldOutByProductId}
-            isAdmin={isAdmin}
             addNotification={addNotification}
           />
         ) : (
@@ -77,12 +74,11 @@ const App = () => {
             filteredProducts={filteredProducts}
             debouncedSearchTerm={debouncedSearchTerm}
             cart={cart}
-            setCart={setCart}
             checkSoldOutByProductId={checkSoldOutByProductId}
-            isAdmin={isAdmin}
             addToCart={addToCart}
             removeFromCart={removeFromCart}
             updateQuantity={updateQuantity}
+            onClearCart={clearCart}
             addNotification={addNotification}
           />
         )}

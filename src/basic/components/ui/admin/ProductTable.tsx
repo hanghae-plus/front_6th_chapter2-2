@@ -5,7 +5,7 @@ import { STOCK } from "../../../constants";
 interface ProductTableProps {
   products: ProductWithUI[];
   checkSoldOutByProductId: (productId: string) => boolean;
-  isAdmin: boolean;
+
   onEditProduct: (product: ProductWithUI) => void;
   onDeleteProduct: (productId: string) => void;
   onAddProduct: () => void;
@@ -14,7 +14,7 @@ interface ProductTableProps {
 export const ProductTable = ({
   products,
   checkSoldOutByProductId,
-  isAdmin,
+
   onEditProduct,
   onDeleteProduct,
   onAddProduct,
@@ -61,7 +61,7 @@ export const ProductTable = ({
                   {formatPrice(
                     product.price,
                     checkSoldOutByProductId(product.id),
-                    isAdmin
+                    true
                   )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

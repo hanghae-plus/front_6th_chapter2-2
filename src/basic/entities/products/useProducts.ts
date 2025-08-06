@@ -4,7 +4,11 @@ import { initialProducts } from "./product.constants";
 import { useLocalStorageState } from "../../utils/hooks";
 import { productModel } from "./product.model";
 import { ActionResult } from "../../types/common";
+import { MESSAGES } from "../../constants";
 
+/**
+ * 상품 상태 관리 훅
+ */
 export const useProducts = () => {
   const [products, setProducts] = useLocalStorageState<ProductWithUI[]>(
     "products",
@@ -16,7 +20,7 @@ export const useProducts = () => {
       setProducts((prev) => productModel.addProduct(prev, newProduct));
       return {
         success: true,
-        message: "상품이 추가되었습니다.",
+        message: MESSAGES.SUCCESS.PRODUCT_ADDED,
         type: "success",
       };
     },
@@ -25,26 +29,58 @@ export const useProducts = () => {
 
   const updateProduct = useCallback(
     (productId: string, updates: Partial<ProductWithUI>): ActionResult => {
+      const currentProducts = products;
+
+      if (!productModel.isProductExists(currentProducts, productId)) {
+        return {
+          success: false,
+          message: "존재하지 않는 상품입니다.",
+          type: "error",
+        };
+      }
+
       setProducts((prev) =>
         productModel.updateProduct(prev, productId, updates)
       );
+
       return {
         success: true,
-        message: "상품이 수정되었습니다.",
+        message: MESSAGES.SUCCESS.PRODUCT_UPDATED,
         type: "success",
       };
     },
-    []
+    [products]
   );
 
-  const deleteProduct = useCallback((productId: string): ActionResult => {
-    setProducts((prev) => productModel.deleteProduct(prev, productId));
-    return {
-      success: true,
-      message: "상품이 삭제되었습니다.",
-      type: "success",
-    };
-  }, []);
+  const deleteProduct = useCallback(
+    (productId: string): ActionResult => {
+      const currentProducts = products;
+
+      if (!productModel.isProductExists(currentProducts, productId)) {
+        return {
+          success: false,
+          message: "존재하지 않는 상품입니다.",
+          type: "error",
+        };
+      }
+
+      setProducts((prev) => productModel.deleteProduct(prev, productId));
+
+      return {
+        success: true,
+        message: MESSAGES.SUCCESS.PRODUCT_DELETED,
+        type: "success",
+      };
+    },
+    [products]
+  );
+
+  const findProduct = useCallback(
+    (productId: string): ProductWithUI | undefined => {
+      return productModel.findProductById(products, productId);
+    },
+    [products]
+  );
 
   return {
     products,
@@ -52,5 +88,6 @@ export const useProducts = () => {
     addProduct,
     updateProduct,
     deleteProduct,
+    findProduct,
   };
 };

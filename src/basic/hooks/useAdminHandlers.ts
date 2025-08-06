@@ -12,7 +12,6 @@ interface UseAdminHandlersProps {
     type: "error" | "success" | "warning"
   ) => void;
   productForm: ProductFormData;
-  setProductForm: (form: ProductFormData) => void;
   editingProduct: string | null;
   setEditingProduct: (product: string | null) => void;
   setShowProductForm: (show: boolean) => void;
@@ -26,7 +25,6 @@ export const useAdminHandlers = ({
   addCoupon,
   addNotification,
   productForm,
-  setProductForm,
   editingProduct,
   setEditingProduct,
   setShowProductForm,

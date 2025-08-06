@@ -24,6 +24,7 @@ export const useProductForm = () => {
 
   const {
     values: productForm,
+    setValue,
     setAllValues: setProductForm,
     reset,
     show,
@@ -31,6 +32,13 @@ export const useProductForm = () => {
   } = useForm({
     initialValues: initialProductForm,
   });
+
+  const updateField = useCallback(
+    (field: string, value: any) => {
+      setValue(field as keyof ProductFormData, value);
+    },
+    [setValue]
+  );
 
   const startEditProduct = useCallback(
     (product: ProductWithUI) => {
@@ -48,28 +56,34 @@ export const useProductForm = () => {
   );
 
   const resetProductForm = useCallback(() => {
-    setProductForm(initialProductForm);
+    reset();
     setEditingProduct(null);
-  }, [setProductForm]);
+  }, [reset]);
 
   const hideProductForm = useCallback(() => {
+    hide();
     setShowProductForm(false);
     resetProductForm();
-  }, [resetProductForm]);
+  }, [hide, resetProductForm]);
 
   const showNewProductForm = useCallback(() => {
-    resetProductForm();
     setEditingProduct("new");
+    reset();
     setShowProductForm(true);
-  }, [resetProductForm]);
+  }, [reset]);
 
   return {
+    // 상태
     productForm,
-    setProductForm,
     editingProduct,
-    setEditingProduct,
     showProductForm,
+
+    // 상태 변경 핸들러들
+    setEditingProduct,
     setShowProductForm,
+    updateField,
+
+    // 복합 액션들
     startEditProduct,
     resetProductForm,
     hideProductForm,

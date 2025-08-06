@@ -4,4 +4,4 @@ export { useCoupon } from "./useCoupon";
 export { useCouponHandlers } from "./useCouponHandlers";
 export { useCouponForm } from "./useCouponForm";
 export type { CouponFormData } from "./useCouponForm";
-export { initialCoupons } from "./constants";
+export { initialCoupons } from "./coupon.constants";

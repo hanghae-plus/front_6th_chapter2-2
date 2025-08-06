@@ -1,11 +1,11 @@
 import { CouponFormData } from "../../../entities/coupon/useCouponForm";
-import { DISCOUNT, COUPON } from "../../../constants";
+import { DISCOUNT, COUPON, MESSAGES } from "../../../constants";
 
 interface CouponFormProps {
   couponForm: CouponFormData;
-  setCouponForm: (form: CouponFormData) => void;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
+  onUpdateField: (field: keyof CouponFormData, value: any) => void;
   addNotification: (
     message: string,
     type: "error" | "success" | "warning"
@@ -14,11 +14,48 @@ interface CouponFormProps {
 
 export const CouponForm = ({
   couponForm,
-  setCouponForm,
   onSubmit,
   onCancel,
+  onUpdateField,
   addNotification,
 }: CouponFormProps) => {
+  const handleDiscountValueChange = (value: string) => {
+    if (value === "" || /^\d+$/.test(value)) {
+      onUpdateField("discountValue", value === "" ? 0 : parseInt(value));
+    }
+  };
+
+  const handleDiscountValueBlur = (value: string) => {
+    const numValue = parseInt(value) || 0;
+
+    if (couponForm.discountType === "percentage") {
+      if (numValue > DISCOUNT.MAX_PERCENTAGE_RATE) {
+        addNotification(
+          MESSAGES.ERROR.DISCOUNT_RATE_MAX(DISCOUNT.MAX_PERCENTAGE_RATE),
+          "error"
+        );
+        onUpdateField("discountValue", DISCOUNT.MAX_PERCENTAGE_RATE);
+      } else if (numValue < 0) {
+        onUpdateField("discountValue", 0);
+      }
+    } else {
+      if (numValue > COUPON.MAX_DISCOUNT_AMOUNT) {
+        addNotification(
+          MESSAGES.ERROR.DISCOUNT_AMOUNT_MAX(COUPON.MAX_DISCOUNT_AMOUNT),
+          "error"
+        );
+        onUpdateField("discountValue", COUPON.MAX_DISCOUNT_AMOUNT);
+      } else if (numValue < 0) {
+        onUpdateField("discountValue", 0);
+      }
+    }
+  };
+
+  const discountLabel =
+    couponForm.discountType === "amount" ? "할인 금액" : "할인율(%)";
+  const discountPlaceholder =
+    couponForm.discountType === "amount" ? "5000" : "10";
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-md">
@@ -31,9 +68,7 @@ export const CouponForm = ({
             <input
               type="text"
               value={couponForm.name}
-              onChange={(e) =>
-                setCouponForm({ ...couponForm, name: e.target.value })
-              }
+              onChange={(e) => onUpdateField("name", e.target.value)}
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
               placeholder="신규 가입 쿠폰"
               required
@@ -47,10 +82,7 @@ export const CouponForm = ({
               type="text"
               value={couponForm.code}
               onChange={(e) =>
-                setCouponForm({
-                  ...couponForm,
-                  code: e.target.value.toUpperCase(),
-                })
+                onUpdateField("code", e.target.value.toUpperCase())
               }
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm font-mono"
               placeholder="WELCOME2024"
@@ -65,10 +97,10 @@ export const CouponForm = ({
               <select
                 value={couponForm.discountType}
                 onChange={(e) =>
-                  setCouponForm({
-                    ...couponForm,
-                    discountType: e.target.value as "amount" | "percentage",
-                  })
+                  onUpdateField(
+                    "discountType",
+                    e.target.value as "amount" | "percentage"
+                  )
                 }
                 className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
               >
@@ -78,64 +110,17 @@ export const CouponForm = ({
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                {couponForm.discountType === "amount"
-                  ? "할인 금액"
-                  : "할인율(%)"}
+                {discountLabel}
               </label>
               <input
                 type="text"
                 value={
                   couponForm.discountValue === 0 ? "" : couponForm.discountValue
                 }
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (value === "" || /^\d+$/.test(value)) {
-                    setCouponForm({
-                      ...couponForm,
-                      discountValue: value === "" ? 0 : parseInt(value),
-                    });
-                  }
-                }}
-                onBlur={(e) => {
-                  const value = parseInt(e.target.value) || 0;
-                  if (couponForm.discountType === "percentage") {
-                    if (value > DISCOUNT.MAX_PERCENTAGE_RATE) {
-                      addNotification(
-                        `할인율은 ${DISCOUNT.MAX_PERCENTAGE_RATE}%를 초과할 수 없습니다`,
-                        "error"
-                      );
-                      setCouponForm({
-                        ...couponForm,
-                        discountValue: DISCOUNT.MAX_PERCENTAGE_RATE,
-                      });
-                    } else if (value < 0) {
-                      setCouponForm({
-                        ...couponForm,
-                        discountValue: 0,
-                      });
-                    }
-                  } else {
-                    if (value > COUPON.MAX_DISCOUNT_AMOUNT) {
-                      addNotification(
-                        `할인 금액은 ${COUPON.MAX_DISCOUNT_AMOUNT.toLocaleString()}원을 초과할 수 없습니다`,
-                        "error"
-                      );
-                      setCouponForm({
-                        ...couponForm,
-                        discountValue: COUPON.MAX_DISCOUNT_AMOUNT,
-                      });
-                    } else if (value < 0) {
-                      setCouponForm({
-                        ...couponForm,
-                        discountValue: 0,
-                      });
-                    }
-                  }
-                }}
+                onChange={(e) => handleDiscountValueChange(e.target.value)}
+                onBlur={(e) => handleDiscountValueBlur(e.target.value)}
                 className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
-                placeholder={
-                  couponForm.discountType === "amount" ? "5000" : "10"
-                }
+                placeholder={discountPlaceholder}
                 required
               />
             </div>

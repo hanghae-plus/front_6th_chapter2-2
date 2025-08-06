@@ -1,12 +1,16 @@
 import { useCallback, useState } from "react";
 import { CartItem } from "../../../types";
 import { CouponWithUI } from "./coupon.types";
-import { initialCoupons } from "./constants";
+import { initialCoupons } from "./coupon.constants";
 import { calculateCartTotal } from "../../utils/calculateCartTotal";
 import { useLocalStorageState } from "../../utils/hooks";
 import { couponModel } from "./coupon.model";
 import { ActionResult } from "../../types/common";
+import { MESSAGES } from "../../constants";
 
+/**
+ * 쿠폰 상태 관리 훅
+ */
 export const useCoupon = () => {
   const [coupons, setCoupons] = useLocalStorageState<CouponWithUI[]>(
     "coupons",
@@ -22,7 +26,7 @@ export const useCoupon = () => {
       if (couponModel.isCouponExists(coupons, newCoupon.code)) {
         return {
           success: false,
-          message: "이미 존재하는 쿠폰 코드입니다.",
+          message: MESSAGES.ERROR.COUPON_EXISTS,
           type: "error",
         };
       }
@@ -30,7 +34,7 @@ export const useCoupon = () => {
       setCoupons((prev) => couponModel.addCoupon(prev, newCoupon));
       return {
         success: true,
-        message: "쿠폰이 추가되었습니다.",
+        message: MESSAGES.SUCCESS.COUPON_ADDED,
         type: "success",
       };
     },
@@ -39,30 +43,38 @@ export const useCoupon = () => {
 
   const deleteCoupon = useCallback(
     (couponCode: string): ActionResult => {
+      if (!couponModel.findCouponByCode(coupons, couponCode)) {
+        return {
+          success: false,
+          message: "존재하지 않는 쿠폰입니다.",
+          type: "error",
+        };
+      }
+
       setCoupons((prev) => couponModel.deleteCoupon(prev, couponCode));
+
+      // 삭제된 쿠폰이 선택된 쿠폰이라면 선택 해제
       if (selectedCoupon?.code === couponCode) {
         setSelectedCoupon(null);
       }
+
       return {
         success: true,
-        message: "쿠폰이 삭제되었습니다.",
+        message: MESSAGES.SUCCESS.COUPON_DELETED,
         type: "success",
       };
     },
-    [selectedCoupon]
+    [selectedCoupon, coupons]
   );
 
   const applyCoupon = useCallback(
     (coupon: CouponWithUI, cart: CartItem[]): ActionResult => {
-      const currentTotal = calculateCartTotal(
-        cart,
-        selectedCoupon
-      ).totalAfterDiscount;
+      const cartTotals = calculateCartTotal(cart, null);
 
-      if (!couponModel.canApplyCoupon(coupon, currentTotal)) {
+      if (!couponModel.canApplyCoupon(coupon, cartTotals.totalBeforeDiscount)) {
         return {
           success: false,
-          message: "percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.",
+          message: "쿠폰을 적용할 수 없습니다.",
           type: "error",
         };
       }
@@ -74,16 +86,28 @@ export const useCoupon = () => {
         type: "success",
       };
     },
-    [selectedCoupon]
+    []
+  );
+
+  const clearSelectedCoupon = useCallback(() => {
+    setSelectedCoupon(null);
+  }, []);
+
+  const findCoupon = useCallback(
+    (code: string): CouponWithUI | undefined => {
+      return couponModel.findCouponByCode(coupons, code);
+    },
+    [coupons]
   );
 
   return {
     coupons,
-    setCoupons,
-    addCoupon,
-    deleteCoupon,
     selectedCoupon,
     setSelectedCoupon,
+    addCoupon,
+    deleteCoupon,
     applyCoupon,
+    clearSelectedCoupon,
+    findCoupon,
   };
 };

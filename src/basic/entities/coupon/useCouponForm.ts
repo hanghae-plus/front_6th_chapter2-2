@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { CouponWithUI } from "./coupon.types";
 
 export interface CouponFormData {
@@ -20,24 +20,28 @@ export const useCouponForm = () => {
   const [couponForm, setCouponForm] =
     useState<CouponFormData>(initialCouponForm);
 
-  const resetCouponForm = () => {
-    setCouponForm(initialCouponForm);
-  };
+  const updateField = useCallback((field: keyof CouponFormData, value: any) => {
+    setCouponForm((prev) => ({ ...prev, [field]: value }));
+  }, []);
 
-  const closeCouponForm = () => {
+  const resetCouponForm = useCallback(() => {
+    setCouponForm(initialCouponForm);
+  }, []);
+
+  const closeCouponForm = useCallback(() => {
     setShowCouponForm(false);
     resetCouponForm();
-  };
+  }, [resetCouponForm]);
 
-  const openCouponForm = () => {
+  const openCouponForm = useCallback(() => {
     setShowCouponForm(true);
-  };
+  }, []);
 
   return {
     showCouponForm,
     setShowCouponForm,
     couponForm,
-    setCouponForm,
+    updateField,
     resetCouponForm,
     closeCouponForm,
     openCouponForm,

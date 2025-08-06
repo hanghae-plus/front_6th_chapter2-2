@@ -15,12 +15,11 @@ import {
 
 interface AdminPageProps {
   products: ProductWithUI[];
-  setProducts: (products: ProductWithUI[]) => void;
-  addProduct: (product: Omit<ProductWithUI, "id">) => void;
+  addProduct: (newProduct: Omit<ProductWithUI, "id">) => void;
   updateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
   deleteProduct: (productId: string) => void;
   checkSoldOutByProductId: (productId: string) => boolean;
-  isAdmin: boolean;
+
   addNotification: (
     message: string,
     type: "error" | "success" | "warning"
@@ -29,12 +28,11 @@ interface AdminPageProps {
 
 export const AdminPage = ({
   products,
-  setProducts,
   addProduct,
   updateProduct,
   deleteProduct,
   checkSoldOutByProductId,
-  isAdmin,
+
   addNotification,
 }: AdminPageProps) => {
   // Coupon 핸들러들을 내부에서 관리
@@ -50,19 +48,20 @@ export const AdminPage = ({
   // ProductForm 관련 로직을 내부로 이동
   const {
     productForm,
-    setProductForm,
     editingProduct,
-    setEditingProduct,
     showProductForm,
+    setEditingProduct,
     setShowProductForm,
+    updateField: updateProductField,
     startEditProduct,
+    showNewProductForm,
   } = useProductForm();
 
   // CouponForm 관련 로직
   const {
     showCouponForm,
     couponForm,
-    setCouponForm,
+    updateField: updateCouponField,
     closeCouponForm,
     openCouponForm,
   } = useCouponForm();
@@ -74,7 +73,6 @@ export const AdminPage = ({
     addCoupon,
     addNotification,
     productForm,
-    setProductForm,
     editingProduct,
     setEditingProduct,
     setShowProductForm,
@@ -96,38 +94,18 @@ export const AdminPage = ({
           <ProductTable
             products={products}
             checkSoldOutByProductId={checkSoldOutByProductId}
-            isAdmin={isAdmin}
             onEditProduct={startEditProduct}
             onDeleteProduct={deleteProduct}
-            onAddProduct={() => {
-              setEditingProduct("new");
-              setProductForm({
-                name: "",
-                price: 0,
-                stock: 0,
-                description: "",
-                discounts: [],
-              });
-              setShowProductForm(true);
-            }}
+            onAddProduct={showNewProductForm}
           />
+
           {showProductForm && (
             <ProductForm
               productForm={productForm}
-              setProductForm={setProductForm}
               editingProduct={editingProduct}
               onSubmit={handleProductSubmit}
-              onCancel={() => {
-                setEditingProduct(null);
-                setProductForm({
-                  name: "",
-                  price: 0,
-                  stock: 0,
-                  description: "",
-                  discounts: [],
-                });
-                setShowProductForm(false);
-              }}
+              onCancel={() => setShowProductForm(false)}
+              onUpdateField={updateProductField}
               addNotification={addNotification}
             />
           )}
@@ -139,12 +117,13 @@ export const AdminPage = ({
             onDeleteCoupon={deleteCoupon}
             onAddCoupon={openCouponForm}
           />
+
           {showCouponForm && (
             <CouponForm
               couponForm={couponForm}
-              setCouponForm={setCouponForm}
               onSubmit={handleCouponSubmit}
               onCancel={closeCouponForm}
+              onUpdateField={updateCouponField}
               addNotification={addNotification}
             />
           )}

@@ -3,24 +3,22 @@ import { CartItem } from "../../types";
 import { calculateCartTotal } from "../utils/calculateCartTotal";
 import { useCouponHandlers } from "../entities/coupon/useCouponHandlers";
 import { useOrderHandlers } from "../hooks/useOrderHandlers";
-import {
-  ProductListSection,
-  CartSection,
-  CouponSection,
-  PaymentSummarySection,
-} from "../components/ui/cart";
+import { ProductListSection } from "../components/ui/cart/ProductListSection";
+import { CartSection } from "../components/ui/cart/CartSection";
+import { CouponSection } from "../components/ui/cart/CouponSection";
+import { PaymentSummarySection } from "../components/ui/cart/PaymentSummarySection";
 
 interface CartPageProps {
   products: ProductWithUI[];
   filteredProducts: ProductWithUI[];
   debouncedSearchTerm: string;
   cart: CartItem[];
-  setCart: React.Dispatch<React.SetStateAction<CartItem[]>>;
   checkSoldOutByProductId: (productId: string) => boolean;
-  isAdmin: boolean;
+
   addToCart: (product: ProductWithUI) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, newQuantity: number) => void;
+  onClearCart: () => void;
   addNotification: (
     message: string,
     type: "error" | "success" | "warning"
@@ -32,12 +30,12 @@ export const CartPage = ({
   filteredProducts,
   debouncedSearchTerm,
   cart,
-  setCart,
   checkSoldOutByProductId,
-  isAdmin,
+
   addToCart,
   removeFromCart,
   updateQuantity,
+  onClearCart,
   addNotification,
 }: CartPageProps) => {
   // Coupon 핸들러들을 내부에서 관리
@@ -47,8 +45,8 @@ export const CartPage = ({
   // Order 핸들러를 내부에서 관리
   const { completeOrder } = useOrderHandlers({
     addNotification,
-    setCart,
-    setSelectedCoupon,
+    onClearCart,
+    onClearCoupon: () => setSelectedCoupon(null),
   });
 
   // totals를 별도로 계산

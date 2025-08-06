@@ -3,32 +3,30 @@ import { CloseIcon } from "../../icons";
 
 interface NotificationProps {
   notifications: Notification[];
-  setNotifications: React.Dispatch<React.SetStateAction<Notification[]>>;
+  onRemoveNotification: (id: string) => void;
 }
 
 export const NotificationComponent = ({
   notifications,
-  setNotifications,
+  onRemoveNotification,
 }: NotificationProps) => {
   return (
-    <div className="fixed top-20 right-4 z-50 space-y-2 max-w-sm">
-      {notifications.map((notif) => (
+    <div className="fixed top-4 right-4 z-50 space-y-2">
+      {notifications.map((notification) => (
         <div
-          key={notif.id}
-          className={`p-4 rounded-md shadow-md text-white flex justify-between items-center ${
-            notif.type === "error"
-              ? "bg-red-600"
-              : notif.type === "warning"
-              ? "bg-yellow-600"
-              : "bg-green-600"
+          key={notification.id}
+          className={`flex items-center justify-between p-4 rounded-lg shadow-lg ${
+            notification.type === "error"
+              ? "bg-red-100 text-red-800 border border-red-200"
+              : notification.type === "warning"
+              ? "bg-yellow-100 text-yellow-800 border border-yellow-200"
+              : "bg-green-100 text-green-800 border border-green-200"
           }`}
         >
-          <span className="mr-2">{notif.message}</span>
+          <span className="text-sm font-medium">{notification.message}</span>
           <button
-            onClick={() =>
-              setNotifications((prev) => prev.filter((n) => n.id !== notif.id))
-            }
-            className="text-white hover:text-gray-200"
+            onClick={() => onRemoveNotification(notification.id)}
+            className="ml-3 text-gray-400 hover:text-gray-600"
           >
             <CloseIcon />
           </button>
