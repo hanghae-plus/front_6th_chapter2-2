@@ -29,6 +29,10 @@ export function ProductList({ products, debouncedSearchTerm, cart, addToCart }: 
       {filteredProducts.map((product) => {
         const remainingStock = getRemainingStock(product, cart);
 
+        const isEnoughStock = remainingStock > 5;
+        const isLowStock = remainingStock <= 5 && remainingStock > 0;
+        const isOutOfStock = remainingStock <= 0;
+
         return (
           <div
             key={product.id}
@@ -61,7 +65,7 @@ export function ProductList({ products, debouncedSearchTerm, cart, addToCart }: 
               {/* 가격 정보 */}
               <div className='mb-3'>
                 <p className='text-lg font-bold text-gray-900'>
-                  {remainingStock <= 0 ? 'SOLD OUT' : formatKRWPrice(product.price, 'symbol')}
+                  {isOutOfStock ? 'SOLD OUT' : formatKRWPrice(product.price, 'symbol')}
                 </p>
                 {product.discounts.length > 0 && (
                   <p className='text-xs text-gray-500'>
@@ -73,27 +77,25 @@ export function ProductList({ products, debouncedSearchTerm, cart, addToCart }: 
 
               {/* 재고 상태 */}
               <div className='mb-3'>
-                {remainingStock <= 5 && remainingStock > 0 && (
+                {isLowStock && (
                   <p className='text-xs text-red-600 font-medium'>
                     품절임박! {remainingStock}개 남음
                   </p>
                 )}
-                {remainingStock > 5 && (
-                  <p className='text-xs text-gray-500'>재고 {remainingStock}개</p>
-                )}
+                {isEnoughStock && <p className='text-xs text-gray-500'>재고 {remainingStock}개</p>}
               </div>
 
               {/* 장바구니 버튼 */}
               <button
                 onClick={() => addToCart(product)}
-                disabled={remainingStock <= 0}
+                disabled={isOutOfStock}
                 className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
-                  remainingStock <= 0
+                  isOutOfStock
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                     : 'bg-gray-900 text-white hover:bg-gray-800'
                 }`}
               >
-                {remainingStock <= 0 ? '품절' : '장바구니 담기'}
+                {isOutOfStock ? '품절' : '장바구니 담기'}
               </button>
             </div>
           </div>
