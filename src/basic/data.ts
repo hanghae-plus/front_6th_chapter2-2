@@ -1,12 +1,7 @@
-import { Coupon, Product } from "../types";
-
-export interface ProductWithUI extends Product {
-  description?: string;
-  isRecommended?: boolean;
-}
+import { Coupon } from "../types";
 
 // 초기 데이터
-export const initialProducts: ProductWithUI[] = [
+export const initialProducts = [
   {
     id: "p1",
     name: "상품1",
