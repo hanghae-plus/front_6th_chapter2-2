@@ -8,7 +8,6 @@ interface ShopViewProps {
   filteredProductList: ProductWithUI[];
   debouncedQuery: string;
   cart: CartItem[];
-  isAdmin: boolean;
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
   totals: {
@@ -28,7 +27,6 @@ export default function ShopView({
   filteredProductList,
   debouncedQuery,
   cart,
-  isAdmin,
   coupons,
   selectedCoupon,
   totals,
@@ -61,7 +59,6 @@ export default function ShopView({
                     key={product.id}
                     product={product}
                     cart={cart}
-                    isAdmin={isAdmin}
                     remainingStock={remainingStock}
                     addToCart={addToCart}
                   />

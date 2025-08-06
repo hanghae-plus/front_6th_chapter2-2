@@ -1,24 +1,19 @@
+import { useAtom } from 'jotai';
 import { CartItem } from '../../../types';
+import { isAdminAtom } from '../../atoms/uiAtoms';
 import Button from './Button';
 import { CartIcon } from './Icons';
 
 interface HeaderProps {
-  isAdmin: boolean;
-  setIsAdmin: (value: boolean) => void;
   query: string;
   setQuery: (value: string) => void;
   cart: CartItem[];
   totalCartItem: number;
 }
 
-export default function Header({
-  isAdmin,
-  setIsAdmin,
-  query,
-  setQuery,
-  cart,
-  totalCartItem,
-}: HeaderProps) {
+export default function Header({ query, setQuery, cart, totalCartItem }: HeaderProps) {
+  const [isAdmin, setIsAdmin] = useAtom(isAdminAtom);
+
   return (
     <header className='bg-white shadow-sm sticky top-0 z-40 border-b'>
       <div className='max-w-7xl mx-auto px-4'>

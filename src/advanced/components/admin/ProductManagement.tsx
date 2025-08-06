@@ -4,10 +4,11 @@ import { getRemainingStock } from '../../utils/calculations/stockCalculations';
 import { formatPriceWithSoldOut } from '../../utils/formatters/priceFormatter';
 import Button from '../ui/Button';
 import ProductForm from './forms/ProductForm';
+import { useAtomValue } from 'jotai';
+import { isAdminAtom } from '../../atoms/uiAtoms';
 
 interface ProductManagementProps {
   products: Product[];
-  isAdmin: boolean;
   cart: CartItem[];
   editingProduct: string | null;
   productForm: ProductFormType;
@@ -20,7 +21,6 @@ interface ProductManagementProps {
 
 export default function ProductManagement({
   products,
-  isAdmin,
   cart,
   editingProduct,
   productForm,
@@ -31,6 +31,7 @@ export default function ProductManagement({
   onProductDelete,
 }: ProductManagementProps) {
   const [showProductForm, setShowProductForm] = useState(false);
+  const isAdmin = useAtomValue(isAdminAtom);
 
   return (
     <section className='bg-white rounded-lg border border-gray-200'>

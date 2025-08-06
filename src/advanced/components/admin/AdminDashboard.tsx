@@ -6,7 +6,6 @@ import { CartItem, Coupon, CouponForm, Product, ProductFormType } from '../../..
 
 interface AdminDashboardProps {
   products: Product[];
-  isAdmin: boolean;
   cart: CartItem[];
   editingProduct: string | null;
   productForm: ProductFormType;
@@ -24,7 +23,6 @@ interface AdminDashboardProps {
 
 export default function AdminDashboard({
   products,
-  isAdmin,
   cart,
   editingProduct,
   productForm,
@@ -61,7 +59,6 @@ export default function AdminDashboard({
       {activeTab === 'products' ? (
         <ProductManagement
           products={products}
-          isAdmin={isAdmin}
           cart={cart}
           editingProduct={editingProduct}
           productForm={productForm}

@@ -1,12 +1,13 @@
+import { useAtomValue } from 'jotai';
 import { CartItem, ProductWithUI } from '../../../types';
 import { getRemainingStock } from '../../utils/calculations/stockCalculations';
 import { formatPriceWithSoldOut } from '../../utils/formatters/priceFormatter';
 import Button from './Button';
 import { ImageIcon } from './Icons';
+import { isAdminAtom } from '../../atoms/uiAtoms';
 
 interface ProductCardProps {
   product: ProductWithUI;
-  isAdmin: boolean;
   remainingStock: number;
   addToCart: (product: ProductWithUI) => void;
   cart: CartItem[];
@@ -15,10 +16,11 @@ interface ProductCardProps {
 export default function ProductCard({
   product,
   cart,
-  isAdmin,
   remainingStock,
   addToCart,
 }: ProductCardProps) {
+  const isAdmin = useAtomValue(isAdminAtom);
+
   return (
     <div
       key={product.id}

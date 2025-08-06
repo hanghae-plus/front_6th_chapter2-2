@@ -12,12 +12,13 @@ import { filteredProducts } from './utils/calculations/productCalculations';
 import { useSearch } from './hooks/search/useSearch';
 import AdminDashboard from './components/admin/AdminDashboard';
 import ShopView from './components/user/ShopView';
-import { useAtom, useSetAtom } from 'jotai';
+import { Provider, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
   addNotificationAtom,
   notificationsAtom,
   removeNotificationAtom,
 } from './atoms/notificationsAtoms';
+import { isAdminAtom } from './atoms/uiAtoms';
 
 const App = () => {
   // 기본 데이터 관리
@@ -28,7 +29,8 @@ const App = () => {
   const removeNotification = useSetAtom(removeNotificationAtom);
 
   // UI 상태 관리
-  const [isAdmin, setIsAdmin] = useState(false);
+  // const [isAdmin, setIsAdmin] = useState(false);
+  const isAdmin = useAtomValue(isAdminAtom);
 
   // 상품 폼 관리 훅 (추가/수정)
   const {
@@ -91,20 +93,12 @@ const App = () => {
           })}
         </div>
       )}
-      <Header
-        isAdmin={isAdmin}
-        setIsAdmin={setIsAdmin}
-        query={query}
-        setQuery={setQuery}
-        cart={cart}
-        totalCartItem={totalCartItem}
-      />
+      <Header query={query} setQuery={setQuery} cart={cart} totalCartItem={totalCartItem} />
 
       <main className='max-w-7xl mx-auto px-4 py-8'>
         {isAdmin ? (
           <AdminDashboard
             products={products}
-            isAdmin={isAdmin}
             cart={cart}
             editingProduct={editingProduct}
             productForm={productForm}
@@ -125,7 +119,6 @@ const App = () => {
             filteredProductList={filteredProductList}
             debouncedQuery={debouncedQuery}
             cart={cart}
-            isAdmin={isAdmin}
             coupons={coupons}
             selectedCoupon={selectedCoupon}
             totals={totals}
