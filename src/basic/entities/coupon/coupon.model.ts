@@ -1,4 +1,5 @@
 import { CouponWithUI } from "./coupon.types";
+import { COUPON } from "../../constants";
 
 // 고유 ID 생성을 위한 카운터
 let idCounter = 0;
@@ -56,7 +57,10 @@ export const couponModel = {
    * 쿠폰 적용 가능 여부 확인
    */
   canApplyCoupon: (coupon: CouponWithUI, cartTotal: number): boolean => {
-    if (coupon.discountType === "percentage" && cartTotal < 10000) {
+    if (
+      coupon.discountType === "percentage" &&
+      cartTotal < COUPON.MIN_AMOUNT_FOR_PERCENTAGE
+    ) {
       return false;
     }
     return true;

@@ -1,4 +1,5 @@
 import { CartItem } from "../../types";
+import { DISCOUNT } from "../constants";
 
 export const getMaxApplicableDiscount = (
   item: CartItem,
@@ -13,9 +14,11 @@ export const getMaxApplicableDiscount = (
       : maxDiscount;
   }, 0);
 
-  const hasBulkPurchase = cart.some((cartItem) => cartItem.quantity >= 10);
+  const hasBulkPurchase = cart.some(
+    (cartItem) => cartItem.quantity >= DISCOUNT.BULK_THRESHOLD
+  );
   if (hasBulkPurchase) {
-    return Math.min(baseDiscount + 0.05, 0.5); // 대량 구매 시 추가 5% 할인
+    return Math.min(baseDiscount + DISCOUNT.BULK_BONUS, DISCOUNT.MAX_RATE);
   }
 
   return baseDiscount;

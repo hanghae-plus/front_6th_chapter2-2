@@ -1,5 +1,6 @@
 import { ProductWithUI } from "../../../entities/products/product.types";
 import { formatPrice } from "../../../utils/formatters";
+import { STOCK } from "../../../constants";
 
 interface ProductTableProps {
   products: ProductWithUI[];
@@ -20,21 +21,18 @@ export const ProductTable = ({
 }: ProductTableProps) => {
   return (
     <section className="bg-white rounded-lg border border-gray-200">
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex justify-between items-center">
-          <h2 className="text-lg font-semibold">상품 목록</h2>
-          <button
-            onClick={onAddProduct}
-            className="px-4 py-2 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800"
-          >
-            새 상품 추가
-          </button>
-        </div>
+      <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+        <h2 className="text-lg font-semibold">상품 관리</h2>
+        <button
+          onClick={onAddProduct}
+          className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700"
+        >
+          새 상품 추가
+        </button>
       </div>
-
       <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 상품명
@@ -69,7 +67,7 @@ export const ProductTable = ({
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   <span
                     className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      product.stock > 10
+                      product.stock > STOCK.GOOD_STOCK_THRESHOLD
                         ? "bg-green-100 text-green-800"
                         : product.stock > 0
                         ? "bg-yellow-100 text-yellow-800"

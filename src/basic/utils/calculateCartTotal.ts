@@ -1,5 +1,6 @@
 import { CartItem, Coupon } from "../../types";
 import { calculateItemTotal } from "./calculateItemTotal";
+import { DISCOUNT } from "../constants";
 
 export const calculateCartTotal = (
   cart: CartItem[],
@@ -22,7 +23,8 @@ export const calculateCartTotal = (
       );
     } else {
       totalAfterDiscount = Math.round(
-        totalAfterDiscount * (1 - selectedCoupon.discountValue / 100)
+        totalAfterDiscount *
+          (1 - selectedCoupon.discountValue / DISCOUNT.PERCENTAGE_BASE)
       );
     }
   }

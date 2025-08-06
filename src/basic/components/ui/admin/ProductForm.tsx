@@ -1,5 +1,6 @@
 import { ProductWithUI } from "../../../entities/products/product.types";
 import { CloseIcon } from "../../icons";
+import { PRICE } from "../../../constants";
 
 interface ProductFormProps {
   productForm: {
@@ -120,12 +121,12 @@ export const ProductForm = ({
                 } else if (parseInt(value) < 0) {
                   addNotification("재고는 0보다 커야 합니다", "error");
                   setProductForm({ ...productForm, stock: 0 });
-                } else if (parseInt(value) > 9999) {
+                } else if (parseInt(value) > PRICE.MAX_STOCK) {
                   addNotification(
-                    "재고는 9999개를 초과할 수 없습니다",
+                    `재고는 ${PRICE.MAX_STOCK}개를 초과할 수 없습니다`,
                     "error"
                   );
-                  setProductForm({ ...productForm, stock: 9999 });
+                  setProductForm({ ...productForm, stock: PRICE.MAX_STOCK });
                 }
               }}
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"

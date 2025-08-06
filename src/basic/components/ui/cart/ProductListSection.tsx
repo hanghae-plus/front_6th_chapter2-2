@@ -3,6 +3,7 @@ import { ProductWithUI } from "../../../entities/products/product.types";
 import { calculateRemainingStock } from "../../../utils/calculateRemainingStock";
 import { formatPrice } from "../../../utils/formatters";
 import { PhotoIcon } from "../../icons/PhotoIcon";
+import { STOCK, DISCOUNT } from "../../../constants";
 
 interface ProductListSectionProps {
   products: ProductWithUI[];
@@ -34,7 +35,7 @@ export const ProductListSection = ({
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {filteredProducts.map((product) => {
             const remainingStock = calculateRemainingStock(product, cart);
 
@@ -55,7 +56,9 @@ export const ProductListSection = ({
                   )}
                   {product.discounts.length > 0 && (
                     <span className="absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded">
-                      ~{Math.max(...product.discounts.map((d) => d.rate)) * 100}
+                      ~
+                      {Math.max(...product.discounts.map((d) => d.rate)) *
+                        DISCOUNT.PERCENTAGE_BASE}
                       %
                     </span>
                   )}
@@ -83,19 +86,20 @@ export const ProductListSection = ({
                     {product.discounts.length > 0 && (
                       <p className="text-xs text-gray-500">
                         {product.discounts[0].quantity}개 이상 구매시 할인{" "}
-                        {product.discounts[0].rate * 100}%
+                        {product.discounts[0].rate * DISCOUNT.PERCENTAGE_BASE}%
                       </p>
                     )}
                   </div>
 
                   {/* 재고 상태 */}
                   <div className="mb-3">
-                    {remainingStock <= 5 && remainingStock > 0 && (
-                      <p className="text-xs text-red-600 font-medium">
-                        품절임박! {remainingStock}개 남음
-                      </p>
-                    )}
-                    {remainingStock > 5 && (
+                    {remainingStock <= STOCK.LOW_STOCK_THRESHOLD &&
+                      remainingStock > 0 && (
+                        <p className="text-xs text-red-600 font-medium">
+                          품절임박! {remainingStock}개 남음
+                        </p>
+                      )}
+                    {remainingStock > STOCK.LOW_STOCK_THRESHOLD && (
                       <p className="text-xs text-gray-500">
                         재고 {remainingStock}개
                       </p>
@@ -105,14 +109,16 @@ export const ProductListSection = ({
                   {/* 장바구니 버튼 */}
                   <button
                     onClick={() => addToCart(product)}
-                    disabled={remainingStock <= 0}
-                    className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
-                      remainingStock <= 0
+                    disabled={checkSoldOutByProductId(product.id)}
+                    className={`w-full py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                      checkSoldOutByProductId(product.id)
                         ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : "bg-gray-900 text-white hover:bg-gray-800"
+                        : "bg-blue-600 text-white hover:bg-blue-700"
                     }`}
                   >
-                    {remainingStock <= 0 ? "품절" : "장바구니 담기"}
+                    {checkSoldOutByProductId(product.id)
+                      ? "품절"
+                      : "장바구니 담기"}
                   </button>
                 </div>
               </div>
