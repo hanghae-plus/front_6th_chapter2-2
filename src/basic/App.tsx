@@ -30,18 +30,6 @@ const App = () => {
     return initialProducts;
   });
 
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem("cart");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return [];
-      }
-    }
-    return [];
-  });
-
   const [coupons, setCoupons] = useState<Coupon[]>(() => {
     const saved = localStorage.getItem("coupons");
     if (saved) {
@@ -72,12 +60,6 @@ const App = () => {
     },
     []
   );
-
-  useEffect(() => {
-    const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-    setTotalItemCount(count);
-  }, [cart]);
-
   useEffect(() => {
     localStorage.setItem("products", JSON.stringify(products));
   }, [products]);
@@ -85,14 +67,6 @@ const App = () => {
   useEffect(() => {
     localStorage.setItem("coupons", JSON.stringify(coupons));
   }, [coupons]);
-
-  useEffect(() => {
-    if (cart.length > 0) {
-      localStorage.setItem("cart", JSON.stringify(cart));
-    } else {
-      localStorage.removeItem("cart");
-    }
-  }, [cart]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -112,7 +86,6 @@ const App = () => {
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
         setIsAdmin={setIsAdmin}
-        cart={cart}
         totalItemCount={totalItemCount}
       />
       <Layout.Main>
@@ -129,13 +102,13 @@ const App = () => {
         ) : (
           <CartPage
             products={products}
-            cart={cart}
-            setCart={setCart}
             coupons={coupons}
             addNotification={addNotification}
             selectedCoupon={selectedCoupon}
             setSelectedCoupon={setSelectedCoupon}
             debouncedSearchTerm={debouncedSearchTerm}
+            totalItemCount={totalItemCount}
+            setTotalItemCount={setTotalItemCount}
           />
         )}
       </Layout.Main>

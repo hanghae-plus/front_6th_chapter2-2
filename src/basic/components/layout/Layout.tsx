@@ -12,7 +12,6 @@ interface HeaderProps {
   searchTerm: string;
   setSearchTerm: Dispatch<SetStateAction<string>>;
   setIsAdmin: Dispatch<SetStateAction<boolean>>;
-  cart: CartItem[];
   totalItemCount: number;
 }
 
@@ -21,9 +20,14 @@ function Header({
   searchTerm,
   setSearchTerm,
   setIsAdmin,
-  cart,
   totalItemCount,
 }: HeaderProps) {
+  const cart = localStorage.getItem("cart");
+  let cartItems: CartItem[] = [];
+  if (cart) {
+    cartItems = JSON.parse(cart);
+  }
+
   return (
     <header className="bg-white shadow-sm sticky top-0 z-40 border-b">
       <div className="max-w-7xl mx-auto px-4">
@@ -49,7 +53,7 @@ function Header({
             {!isAdmin && (
               <div className="relative">
                 <ShoppingCartIcon />
-                {cart.length > 0 && (
+                {cartItems.length > 0 && (
                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                     {totalItemCount}
                   </span>
