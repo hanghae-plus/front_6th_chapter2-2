@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 import { AdminPage } from './components/AdminPage';
 import { CartPage } from './components/CartPage';

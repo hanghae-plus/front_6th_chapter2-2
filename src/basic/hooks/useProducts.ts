@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 
 import { Product, Discount } from '../../types';
 import { initialProducts } from '../constants';
+import * as discountModel from '../models/discount';
 import * as productModel from '../models/product';
 import { useLocalStorage } from '../utils/hooks/useLocalStorage';
 
@@ -48,7 +49,7 @@ export const useProducts = ({ addNotification }: UseProductsProps) => {
   const addProductDiscount = useCallback(
     (productId: string, newDiscount: Discount) => {
       setProducts((prevProducts) =>
-        productModel.addProductDiscount(prevProducts, productId, newDiscount),
+        discountModel.addProductDiscount(prevProducts, productId, newDiscount),
       );
     },
     [setProducts],
@@ -57,7 +58,7 @@ export const useProducts = ({ addNotification }: UseProductsProps) => {
   const removeProductDiscount = useCallback(
     (productId: string, discountQuantity: number) => {
       setProducts((prevProducts) =>
-        productModel.removeProductDiscount(prevProducts, productId, discountQuantity),
+        discountModel.removeProductDiscount(prevProducts, productId, discountQuantity),
       );
     },
     [setProducts],
