@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Coupon, ProductWithUI } from '../types';
+import { ProductWithUI } from '../types';
 import { useCart } from './hooks/useCart';
 import { useCoupons } from './hooks/useCoupons';
 import { useNotification } from './hooks/useNotification';
@@ -26,15 +26,19 @@ const App = () => {
     isSoldOut,
     getCouponApplier,
   });
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+  const {
+    coupons,
+    selectedCoupon,
+    addCoupon,
+    deleteCoupon,
+    applyCoupon,
+    clearSelectedCoupon,
+  } = useCoupons({ addNotification, calculateCartTotal });
   const { completeOrder } = useOrder({
     addNotification,
     clearCart,
-    clearSelectedCoupon: useCallback(() => {
-      setSelectedCoupon(null);
-    }, []),
+    clearSelectedCoupon,
   });
-  const { coupons, addCoupon, deleteCoupon } = useCoupons({ addNotification });
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [showCouponForm, setShowCouponForm] = useState(false);
@@ -68,27 +72,6 @@ const App = () => {
     }, 500);
     return () => clearTimeout(timer);
   }, [searchTerm]);
-
-  const applyCoupon = useCallback(
-    (coupon: Coupon) => {
-      const currentTotal = calculateCartTotal({ coupon }).totalAfterDiscount;
-
-      if (currentTotal < 10000 && coupon.discountType === 'percentage') {
-        addNotification({
-          message: 'percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.',
-          type: 'error',
-        });
-        return;
-      }
-
-      setSelectedCoupon(coupon);
-      addNotification({
-        message: '쿠폰이 적용되었습니다.',
-        type: 'success',
-      });
-    },
-    [cart, addNotification]
-  );
 
   const addProduct = useCallback(
     (newProduct: Omit<ProductWithUI, 'id'>) => {
@@ -1175,8 +1158,8 @@ const App = () => {
                             const coupon = coupons.find(
                               (c) => c.code === e.target.value
                             );
-                            if (coupon) applyCoupon(coupon);
-                            else setSelectedCoupon(null);
+                            if (coupon) applyCoupon({ coupon });
+                            else clearSelectedCoupon();
                           }}
                         >
                           <option value="">쿠폰 선택</option>

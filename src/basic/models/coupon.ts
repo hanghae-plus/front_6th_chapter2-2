@@ -70,3 +70,26 @@ export function deleteCoupon({
   onSuccess();
   return coupons.filter((coupon) => coupon.code !== couponCode);
 }
+
+interface ApplyCouponParams {
+  coupon: Coupon;
+  prevCoupon: Coupon | null;
+  cartTotal: number;
+  onFailure: (params: { message: string }) => void;
+}
+
+export function applyCoupon({
+  coupon,
+  prevCoupon,
+  cartTotal,
+  onFailure,
+}: ApplyCouponParams) {
+  if (cartTotal < 10_000 && coupon.discountType === 'percentage') {
+    onFailure({
+      message: 'percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.',
+    });
+    return prevCoupon;
+  }
+
+  return coupon;
+}

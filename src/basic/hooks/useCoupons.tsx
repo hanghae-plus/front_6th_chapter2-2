@@ -8,7 +8,7 @@
 // - addCoupon: 새 쿠폰 추가
 // - removeCoupon: 쿠폰 삭제
 
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import type { Coupon } from '../../types';
 import { initialCoupons } from '../constants';
 import * as couponModel from '../models/coupon';
@@ -19,24 +19,34 @@ interface UseCouponsParams {
     message: string;
     type: 'error' | 'success';
   }) => void;
+  calculateCartTotal: ({ coupon }: { coupon: Coupon }) => {
+    totalAfterDiscount: number;
+    totalBeforeDiscount: number;
+  };
 }
 
 interface UseCouponsReturn {
   coupons: Coupon[];
+  selectedCoupon: Coupon | null;
   addCoupon: (params: { newCoupon: Coupon }) => void;
   deleteCoupon: (params: { couponCode: string }) => void;
+  applyCoupon: (params: { coupon: Coupon }) => void;
+  clearSelectedCoupon: () => void;
 }
 
 export function useCoupons({
   addNotification,
+  calculateCartTotal,
 }: UseCouponsParams): UseCouponsReturn {
   const [coupons, setCoupons] = useLocalStorage({
     key: 'coupons',
     initialValue: initialCoupons,
   });
+  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
   return {
     coupons,
+    selectedCoupon,
 
     addCoupon: useCallback(
       ({ newCoupon }) => {
@@ -76,5 +86,28 @@ export function useCoupons({
       },
       [setCoupons, addNotification]
     ),
+
+    applyCoupon: useCallback(
+      ({ coupon }) => {
+        setSelectedCoupon((prevCoupon) => {
+          const { totalAfterDiscount } = calculateCartTotal({
+            coupon,
+          });
+          return couponModel.applyCoupon({
+            coupon,
+            prevCoupon,
+            cartTotal: totalAfterDiscount,
+            onFailure: ({ message }) => {
+              addNotification({ message, type: 'error' });
+            },
+          });
+        });
+      },
+      [calculateCartTotal, addNotification]
+    ),
+
+    clearSelectedCoupon: useCallback(() => {
+      setSelectedCoupon(null);
+    }, []),
   };
 }
