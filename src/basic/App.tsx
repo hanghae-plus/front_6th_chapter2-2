@@ -8,6 +8,7 @@ import { useNotification } from "./hooks/useNotification";
 // utils
 import { useSearch } from "./utils/hooks/useSearch";
 import { calculateFinalTotal } from "./utils/calculations";
+import { withTryNotifySuccess, withTryNotifyError } from "./utils/errorHandler";
 
 // components
 import { Header } from "./components/ui/header/Header";
@@ -18,7 +19,7 @@ import AdminPage from "./pages/Admin/AdminPage";
 import ShopPage from "./pages/Main/ShopPage/ShopPage";
 
 // type
-import { Product } from "../types";
+import { Coupon, Product } from "../types";
 
 const App = () => {
   // 커스텀 훅 사용
@@ -69,42 +70,30 @@ const App = () => {
     [cartTotals, selectedCoupon]
   );
 
-  // 장바구니에 상품 추가 (에러 처리 포함)
-  const addToCart = useCallback(
-    (product: Product) => {
-      try {
-        addToCartHook(product);
-        addNotification("장바구니에 담았습니다", "success");
-      } catch (error) {
-        addNotification(error instanceof Error ? error.message : "오류가 발생했습니다", "error");
-      }
-    },
-    [addToCartHook, addNotification]
-  );
+  // 장바구니에 상품 추가
+  const addToCart = useCallback(withTryNotifySuccess(addToCartHook, "장바구니에 담았습니다", addNotification), [
+    addToCartHook,
+    addNotification,
+  ]);
 
-  // 수량 업데이트 (에러 처리 포함)
+  // 수량 업데이트
   const handleUpdateQuantity = useCallback(
-    (productId: string, newQuantity: number) => {
-      try {
-        updateQuantity(productId, newQuantity, products);
-      } catch (error) {
-        addNotification(error instanceof Error ? error.message : "오류가 발생했습니다", "error");
-      }
-    },
+    withTryNotifyError((productId: string, newQuantity: number) => {
+      updateQuantity(productId, newQuantity, products);
+    }, addNotification),
     [updateQuantity, products, addNotification]
   );
 
-  // 쿠폰 적용 (에러 처리 포함)
+  // 쿠폰 적용
   const handleApplyCoupon = useCallback(
-    (coupon: any) => {
-      try {
+    withTryNotifySuccess(
+      (coupon: Coupon) => {
         const currentTotal = calculateCartTotal().totalAfterDiscount;
         applyCoupon(coupon, currentTotal);
-        addNotification("쿠폰이 적용되었습니다.", "success");
-      } catch (error) {
-        addNotification(error instanceof Error ? error.message : "오류가 발생했습니다", "error");
-      }
-    },
+      },
+      "쿠폰이 적용되었습니다.",
+      addNotification
+    ),
     [applyCoupon, calculateCartTotal, addNotification]
   );
 
@@ -116,68 +105,39 @@ const App = () => {
     setSelectedCoupon(null);
   }, [addNotification, clearCart, setSelectedCoupon]);
 
-  // 상품 추가 (에러 처리 포함)
-  const handleAddProduct = useCallback(
-    (newProduct: Omit<Product, "id">) => {
-      try {
-        addProduct(newProduct);
-        addNotification("상품이 추가되었습니다.", "success");
-      } catch (error) {
-        addNotification(error instanceof Error ? error.message : "오류가 발생했습니다", "error");
-      }
-    },
-    [addProduct, addNotification]
-  );
+  // 상품 추가
+  const handleAddProduct = useCallback(withTryNotifySuccess(addProduct, "상품이 추가되었습니다.", addNotification), [
+    addProduct,
+    addNotification,
+  ]);
 
-  // 상품 수정 (에러 처리 포함)
+  // 상품 수정
   const handleUpdateProduct = useCallback(
-    (productId: string, updates: Partial<Product>) => {
-      try {
+    withTryNotifySuccess(
+      (productId: string, updates: Partial<Product>) => {
         updateProduct(productId, updates);
-        addNotification("상품이 수정되었습니다.", "success");
-      } catch (error) {
-        addNotification(error instanceof Error ? error.message : "오류가 발생했습니다", "error");
-      }
-    },
+      },
+      "상품이 수정되었습니다.",
+      addNotification
+    ),
     [updateProduct, addNotification]
   );
 
-  // 상품 삭제 (에러 처리 포함)
+  // 상품 삭제
   const handleDeleteProduct = useCallback(
-    (productId: string) => {
-      try {
-        deleteProduct(productId);
-        addNotification("상품이 삭제되었습니다.", "success");
-      } catch (error) {
-        addNotification(error instanceof Error ? error.message : "오류가 발생했습니다", "error");
-      }
-    },
+    withTryNotifySuccess(deleteProduct, "상품이 삭제되었습니다.", addNotification),
     [deleteProduct, addNotification]
   );
 
-  // 쿠폰 추가 (에러 처리 포함)
-  const handleAddCoupon = useCallback(
-    (newCoupon: any) => {
-      try {
-        addCoupon(newCoupon);
-        addNotification("쿠폰이 추가되었습니다.", "success");
-      } catch (error) {
-        addNotification(error instanceof Error ? error.message : "오류가 발생했습니다", "error");
-      }
-    },
-    [addCoupon, addNotification]
-  );
+  // 쿠폰 추가
+  const handleAddCoupon = useCallback(withTryNotifySuccess(addCoupon, "쿠폰이 추가되었습니다.", addNotification), [
+    addCoupon,
+    addNotification,
+  ]);
 
-  // 쿠폰 삭제 (에러 처리 포함)
+  // 쿠폰 삭제
   const handleDeleteCoupon = useCallback(
-    (couponCode: string) => {
-      try {
-        deleteCoupon(couponCode);
-        addNotification("쿠폰이 삭제되었습니다.", "success");
-      } catch (error) {
-        addNotification(error instanceof Error ? error.message : "오류가 발생했습니다", "error");
-      }
-    },
+    withTryNotifySuccess(deleteCoupon, "쿠폰이 삭제되었습니다.", addNotification),
     [deleteCoupon, addNotification]
   );
 
