@@ -7,6 +7,7 @@ import {
 } from "react";
 import { CartItem, Coupon, Product } from "../../../types";
 import { useNotification } from "../../___features/notification/use-notification";
+import { useCoupons } from "../../___features/coupon/useCoupons";
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -15,27 +16,29 @@ interface ProductWithUI extends Product {
 
 interface ShopPageProps {
   products: ProductWithUI[];
-  coupons: Coupon[];
   cart: CartItem[];
   setCart: Dispatch<SetStateAction<CartItem[]>>;
   searchTerm: string;
   getRemainingStock: (product: Product) => number;
   formatPrice: (price: number, productId?: string) => string;
+  selectedCoupon: Coupon | null;
+  setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
 }
 
 function ShopPage({
   products,
-  coupons,
   cart,
   setCart,
   searchTerm,
   getRemainingStock,
   formatPrice,
+  selectedCoupon,
+  setSelectedCoupon,
 }: ShopPageProps) {
+  const { coupons } = useCoupons();
+
   const { addNotification } = useNotification();
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
   const filteredProducts = debouncedSearchTerm
     ? products.filter(

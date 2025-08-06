@@ -1,6 +1,9 @@
 import { Dispatch, SetStateAction, useCallback, useState } from "react";
 import { Coupon, Product } from "../../../types";
 import { useNotification } from "../../___features/notification/use-notification";
+import { useCoupons } from "../../___features/coupon/useCoupons";
+import { isAlreadyExistsCouponCodeError } from "../../___features/coupon/error";
+import { CouponMessage } from "../../__models/coupon/constant";
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -10,18 +13,19 @@ interface ProductWithUI extends Product {
 interface AdminPageProps {
   products: ProductWithUI[];
   setProducts: Dispatch<SetStateAction<ProductWithUI[]>>;
-  coupons: Coupon[];
-  setCoupons: Dispatch<SetStateAction<Coupon[]>>;
+  selectedCoupon: Coupon | null;
+  setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
   formatPrice: (price: number, productId?: string) => string;
 }
 
 function AdminPage({
   products,
   setProducts,
-  coupons,
-  setCoupons,
+  selectedCoupon,
+  setSelectedCoupon,
   formatPrice,
 }: AdminPageProps) {
+  const { addCoupon, removeCoupon, coupons } = useCoupons();
   const { addNotification } = useNotification();
 
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
@@ -46,8 +50,6 @@ function AdminPage({
     discountType: "amount" as "amount" | "percentage",
     discountValue: 0,
   });
-
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
   const [showCouponForm, setShowCouponForm] = useState(false);
 
@@ -126,49 +128,52 @@ function AdminPage({
     setShowProductForm(false);
   };
 
-  const deleteCoupon = useCallback(
+  const handleAddCoupon = useCallback((newCoupon: Coupon) => {
+    try {
+      addCoupon(newCoupon);
+
+      addNotification({
+        text: CouponMessage.ADD_COUPON_SUCCESS,
+        type: "success",
+      });
+    } catch (error) {
+      if (isAlreadyExistsCouponCodeError(error)) {
+        addNotification({
+          text: error.message,
+          type: "error",
+        });
+      }
+    }
+  }, []);
+
+  const handleDeleteCoupon = useCallback(
     (couponCode: string) => {
-      setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
+      removeCoupon(couponCode);
+
       if (selectedCoupon?.code === couponCode) {
         setSelectedCoupon(null);
       }
-      // addNotification("쿠폰이 삭제되었습니다.", "success");
+
       addNotification({
-        text: "쿠폰이 삭제되었습니다.",
+        text: CouponMessage.REMOVE_COUPON_SUCCESS,
         type: "success",
       });
     },
     [selectedCoupon, addNotification]
   );
 
-  const addCoupon = useCallback(
-    (newCoupon: Coupon) => {
-      const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
-      if (existingCoupon) {
-        addNotification({
-          text: "이미 존재하는 쿠폰 코드입니다.",
-          type: "error",
-        });
-        return;
-      }
-      setCoupons((prev) => [...prev, newCoupon]);
-      addNotification({
-        text: "쿠폰이 추가되었습니다.",
-        type: "success",
-      });
-    },
-    [coupons, addNotification]
-  );
-
   const handleCouponSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    addCoupon(couponForm);
+
+    handleAddCoupon(couponForm);
+
     setCouponForm({
       name: "",
       code: "",
       discountType: "amount",
       discountValue: 0,
     });
+
     setShowCouponForm(false);
   };
 
@@ -558,7 +563,7 @@ function AdminPage({
                         </div>
                       </div>
                       <button
-                        onClick={() => deleteCoupon(coupon.code)}
+                        onClick={() => handleDeleteCoupon(coupon.code)}
                         className="text-gray-400 hover:text-red-600 transition-colors"
                       >
                         <svg

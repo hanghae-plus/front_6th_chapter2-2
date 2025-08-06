@@ -46,21 +46,6 @@ const initialProducts: ProductWithUI[] = [
   },
 ];
 
-const initialCoupons: Coupon[] = [
-  {
-    name: "5000원 할인",
-    code: "AMOUNT5000",
-    discountType: "amount",
-    discountValue: 5000,
-  },
-  {
-    name: "10% 할인",
-    code: "PERCENT10",
-    discountType: "percentage",
-    discountValue: 10,
-  },
-];
-
 const App = () => {
   const [products, setProducts] = useLocalStorage<ProductWithUI[]>(
     "products",
@@ -69,10 +54,7 @@ const App = () => {
 
   const [cart, setCart, removeCart] = useLocalStorage<CartItem[]>("cart", []);
 
-  const [coupons, setCoupons] = useLocalStorage<Coupon[]>(
-    "coupons",
-    initialCoupons
-  );
+  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -122,19 +104,20 @@ const App = () => {
           <AdminPage
             products={products}
             setProducts={(value) => setProducts(value)}
-            coupons={coupons}
-            setCoupons={setCoupons}
             formatPrice={formatPrice}
+            selectedCoupon={selectedCoupon}
+            setSelectedCoupon={setSelectedCoupon}
           />
         ) : (
           <ShopPage
             searchTerm={searchTerm}
             products={products}
-            coupons={coupons}
             cart={cart}
             setCart={setCart}
             getRemainingStock={getRemainingStock}
             formatPrice={formatPrice}
+            selectedCoupon={selectedCoupon}
+            setSelectedCoupon={setSelectedCoupon}
           />
         )}
       </Layout>
