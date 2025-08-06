@@ -198,6 +198,47 @@ export function addItemToCart({ cart, product }: AddItemToCartParams) {
   return [...cart, { product, quantity: 1 }];
 }
 
+interface UpdateCartQuantityParams {
+  cart: CartItem[];
+  products: Product[];
+  productId: string;
+  newQuantity: number;
+  onFailure: (params: { message: string }) => void;
+  onSuccess: () => void;
+}
+
+export function updateCartQuantity({
+  cart,
+  products,
+  productId,
+  newQuantity,
+  onFailure,
+  onSuccess,
+}: UpdateCartQuantityParams) {
+  if (newQuantity <= 0) {
+    onSuccess();
+    return removeItemFromCart({ cart, productId });
+  }
+
+  const product = products.find((p) => p.id === productId);
+  if (!product) {
+    return cart;
+  }
+
+  const maxStock = product.stock;
+  if (newQuantity > maxStock) {
+    onFailure({ message: `재고는 ${maxStock}개까지만 있습니다.` });
+    return cart;
+  }
+
+  onSuccess();
+  return updateCartItemQuantity({
+    cart,
+    productId: productId,
+    quantity: newQuantity,
+  });
+}
+
 interface UpdateCartItemQuantityParams {
   cart: CartItem[];
   productId: string;

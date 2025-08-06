@@ -1,15 +1,5 @@
 import type { CartItem, Product } from '../../types';
 
-export interface IsSoldOutParams {
-  cart: CartItem[];
-  product: Product;
-}
-
-// 매진 여부 확인
-export function isSoldOut({ cart, product }: IsSoldOutParams) {
-  return getRemainingStock({ cart, product }) <= 0;
-}
-
 interface GetRemainingStockParams {
   cart: CartItem[];
   product: Product;
