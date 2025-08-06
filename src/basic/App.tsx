@@ -14,6 +14,7 @@ import { calculateItemTotal } from "./utils/calculateItemTotal";
 import { useDebounce } from "./utils/hooks/useDebounce";
 import { Header } from "./components/layouts/Header";
 import { useSearchProduct } from "./hooks/useSearchProduct";
+import { Layout } from "./components/layouts/Layout";
 
 const App = () => {
   const { notifications, setNotifications, addNotification } =
@@ -149,7 +150,7 @@ const App = () => {
     : products;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <Layout>
       {notifications.length > 0 && (
         <div className="fixed top-20 right-4 z-50 space-y-2 max-w-sm">
           {notifications.map((notif) => (
@@ -1140,7 +1141,7 @@ const App = () => {
           </div>
         )}
       </main>
-    </div>
+    </Layout>
   );
 };
 
