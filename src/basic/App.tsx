@@ -1,11 +1,23 @@
 import { useState, useCallback, useEffect } from 'react';
 import { CartItem, Coupon, Product } from '../types';
 
+/**
+ * @interface ProductWithUI
+ * @extends {Product}
+ * @property {string} description - 상품 설명
+ * @property {boolean} isRecommended - 추천 상품 여부
+ */
 interface ProductWithUI extends Product {
   description?: string;
   isRecommended?: boolean;
 }
 
+/**
+ * @interface Notification
+ * @property {string} id - 알림 메시지 ID
+ * @property {string} message - 알림 메시지 내용
+ * @property {'error' | 'success' | 'warning'} type - 알림 메시지 타입
+ */
 interface Notification {
   id: string;
   message: string;
@@ -66,6 +78,11 @@ const initialCoupons: Coupon[] = [
 
 const App = () => {
 
+  /**
+   * 상품 목록
+   * 로컬 스토리지에 저장된 상품 목록을 사용하거나, 초기 데이터를 사용
+   * @TODO 상태 초기값 로직에서 localStorage를 확인하는 로직이 있는데, 이 부분을 분리하여 사용하는 것이 좋을 듯.
+   */
   const [products, setProducts] = useState<ProductWithUI[]>(() => {
     const saved = localStorage.getItem('products');
     if (saved) {
@@ -78,6 +95,11 @@ const App = () => {
     return initialProducts;
   });
 
+  /**
+   * 장바구니
+   * 로컬 스토리지에 저장된 장바구니 목록을 사용하거나, 빈 배열을 사용
+   * @TODO 상태 초기값 로직에서 localStorage를 확인하는 로직이 있는데, 이 부분을 분리하여 사용하는 것이 좋을 듯.
+   */
   const [cart, setCart] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem('cart');
     if (saved) {
@@ -90,6 +112,11 @@ const App = () => {
     return [];
   });
 
+  /**
+   * 쿠폰 목록
+   * 로컬 스토리지에 저장된 쿠폰 목록을 사용하거나, 초기 데이터를 사용
+   * @TODO 상태 초기값 로직에서 localStorage를 확인하는 로직이 있는데, 이 부분을 분리하여 사용하는 것이 좋을 듯.
+   */
   const [coupons, setCoupons] = useState<Coupon[]>(() => {
     const saved = localStorage.getItem('coupons');
     if (saved) {
@@ -128,7 +155,12 @@ const App = () => {
     discountValue: 0
   });
 
-
+  /**
+   * 상품 가격을 포맷팅하여 반환
+   * @param price - 상품 가격
+   * @param productId - 상품 ID
+   * @returns 포맷팅된 가격
+   */
   const formatPrice = (price: number, productId?: string): string => {
     if (productId) {
       const product = products.find(p => p.id === productId);
@@ -144,6 +176,11 @@ const App = () => {
     return `₩${price.toLocaleString()}`;
   };
 
+  /**
+   * 장바구니에 담긴 상품의 최대 적용 가능 할인을 계산
+   * @param item - 장바구니 상품
+   * @returns 최대 적용 가능 할인
+   */
   const getMaxApplicableDiscount = (item: CartItem): number => {
     const { discounts } = item.product;
     const { quantity } = item;
@@ -162,6 +199,11 @@ const App = () => {
     return baseDiscount;
   };
 
+  /**
+   * 장바구니에 담긴 상품의 총 가격을 계산
+   * @param item - 장바구니 상품
+   * @returns 총 가격
+   */
   const calculateItemTotal = (item: CartItem): number => {
     const { price } = item.product;
     const { quantity } = item;
@@ -170,6 +212,10 @@ const App = () => {
     return Math.round(price * quantity * (1 - discount));
   };
 
+  /**
+   * 결제 총 가격 계산
+   * @returns 할인 전 총 가격, 할인 후 총 가격
+   */
   const calculateCartTotal = (): {
     totalBeforeDiscount: number;
     totalAfterDiscount: number;
@@ -197,6 +243,11 @@ const App = () => {
     };
   };
 
+  /**
+   * 장바구니에 담긴 상품의 재고를 조회
+   * @param product - 상품
+   * @returns 재고
+   */
   const getRemainingStock = (product: Product): number => {
     const cartItem = cart.find(item => item.product.id === product.id);
     const remaining = product.stock - (cartItem?.quantity || 0);
@@ -204,6 +255,11 @@ const App = () => {
     return remaining;
   };
 
+  /**
+   * 알림 메시지를 추가하고, 3초 후에 알림을 삭제
+   * @param message - 알림 메시지
+   * @param type - 알림 메시지 타입
+   */
   const addNotification = useCallback((message: string, type: 'error' | 'success' | 'warning' = 'success') => {
     const id = Date.now().toString();
     setNotifications(prev => [...prev, { id, message, type }]);
@@ -215,7 +271,9 @@ const App = () => {
 
   const [totalItemCount, setTotalItemCount] = useState(0);
   
-
+  /**
+   * 장바구니 상품 개수 계산
+   */
   useEffect(() => {
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);
     setTotalItemCount(count);
@@ -229,6 +287,9 @@ const App = () => {
     localStorage.setItem('coupons', JSON.stringify(coupons));
   }, [coupons]);
 
+  /**
+   * 장바구니 상품 목록 로컬 스토리지 동기화
+   */
   useEffect(() => {
     if (cart.length > 0) {
       localStorage.setItem('cart', JSON.stringify(cart));
@@ -237,6 +298,9 @@ const App = () => {
     }
   }, [cart]);
 
+  /**
+   * 검색어 디바운스
+   */
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
@@ -244,6 +308,12 @@ const App = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
+  /**
+   * 장바구니 상품 추가 로직
+   * @param product - 상품
+   * @returns 장바구니 상품 추가
+   * @TODO 재고가 모자랄 때 
+   */
   const addToCart = useCallback((product: ProductWithUI) => {
     const remainingStock = getRemainingStock(product);
     if (remainingStock <= 0) {
@@ -275,10 +345,19 @@ const App = () => {
     addNotification('장바구니에 담았습니다', 'success');
   }, [cart, addNotification, getRemainingStock]);
 
+  /**
+   * 장바구니 상품 삭제 로직
+   * @param productId - 상품 ID
+   */
   const removeFromCart = useCallback((productId: string) => {
     setCart(prevCart => prevCart.filter(item => item.product.id !== productId));
   }, []);
 
+  /**
+   * 장바구니 상품 수량 변경 로직
+   * @param productId - 상품 ID
+   * @param newQuantity - 새로운 수량
+   */
   const updateQuantity = useCallback((productId: string, newQuantity: number) => {
     if (newQuantity <= 0) {
       removeFromCart(productId);
@@ -303,6 +382,10 @@ const App = () => {
     );
   }, [products, removeFromCart, addNotification, getRemainingStock]);
 
+  /**
+   * 쿠폰 적용 로직
+   * @param coupon - 쿠폰
+   */
   const applyCoupon = useCallback((coupon: Coupon) => {
     const currentTotal = calculateCartTotal().totalAfterDiscount;
     
@@ -331,6 +414,11 @@ const App = () => {
     addNotification('상품이 추가되었습니다.', 'success');
   }, [addNotification]);
 
+  /**
+   * 상품 수정 로직
+   * @param productId - 상품 ID
+   * @param updates - 수정할 상품 정보
+   */
   const updateProduct = useCallback((productId: string, updates: Partial<ProductWithUI>) => {
     setProducts(prev =>
       prev.map(product =>
@@ -342,11 +430,19 @@ const App = () => {
     addNotification('상품이 수정되었습니다.', 'success');
   }, [addNotification]);
 
+  /**
+   * 상품 삭제 로직
+   * @param productId - 상품 ID
+   */
   const deleteProduct = useCallback((productId: string) => {
     setProducts(prev => prev.filter(p => p.id !== productId));
     addNotification('상품이 삭제되었습니다.', 'success');
   }, [addNotification]);
 
+  /**
+   * 쿠폰 추가 로직
+   * @param newCoupon - 추가할 쿠폰
+   */
   const addCoupon = useCallback((newCoupon: Coupon) => {
     const existingCoupon = coupons.find(c => c.code === newCoupon.code);
     if (existingCoupon) {
@@ -357,6 +453,10 @@ const App = () => {
     addNotification('쿠폰이 추가되었습니다.', 'success');
   }, [coupons, addNotification]);
 
+  /**
+   * 쿠폰 삭제 로직
+   * @param couponCode - 쿠폰 코드
+   */
   const deleteCoupon = useCallback((couponCode: string) => {
     setCoupons(prev => prev.filter(c => c.code !== couponCode));
     if (selectedCoupon?.code === couponCode) {
@@ -365,6 +465,10 @@ const App = () => {
     addNotification('쿠폰이 삭제되었습니다.', 'success');
   }, [selectedCoupon, addNotification]);
 
+  /**
+   * 상품 추가/수정 폼 제출 로직
+   * @param e - 이벤트
+   */
   const handleProductSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (editingProduct && editingProduct !== 'new') {
@@ -381,6 +485,10 @@ const App = () => {
     setShowProductForm(false);
   };
 
+  /**
+   * 쿠폰 추가/수정 폼 제출 로직
+   * @param e - 이벤트
+   */
   const handleCouponSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     addCoupon(couponForm);
@@ -393,6 +501,10 @@ const App = () => {
     setShowCouponForm(false);
   };
 
+  /**
+   * 상품 수정 시작 로직
+   * @param product - 상품
+   */
   const startEditProduct = (product: ProductWithUI) => {
     setEditingProduct(product.id);
     setProductForm({
@@ -407,6 +519,10 @@ const App = () => {
 
   const totals = calculateCartTotal();
 
+  /**
+   * 상품 검색 로직
+   * @returns 검색된 상품
+   */
   const filteredProducts = debouncedSearchTerm
     ? products.filter(product => 
         product.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
