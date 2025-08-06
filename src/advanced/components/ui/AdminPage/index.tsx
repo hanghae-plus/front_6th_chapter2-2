@@ -1,32 +1,27 @@
 import { useState } from "react";
-import { ProductWithUI, Coupon } from "../../../types";
+import { useAtomValue, useSetAtom } from "jotai";
 import { TabNavigation } from "./TabNavigation";
 import { ProductTab } from "./ProductTab";
 import { CouponTab } from "./CouponTab";
+import {
+  productsAtom,
+  addProductAtom,
+  updateProductAtom,
+  deleteProductAtom,
+  getRemainingStockAtom,
+  addCouponAtom,
+  removeCouponAtom,
+} from "../../../atoms";
 
-interface AdminPageProps {
-  // 상품 관련
-  products: ProductWithUI[];
-  onAddProduct: (product: Omit<ProductWithUI, "id">) => void;
-  onUpdateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
-  onDeleteProduct: (productId: string) => void;
-  getRemainingStock: (product: ProductWithUI) => number;
+export function AdminPage() {
+  const products = useAtomValue(productsAtom);
+  const getRemainingStock = useAtomValue(getRemainingStockAtom);
+  const addProduct = useSetAtom(addProductAtom);
+  const updateProduct = useSetAtom(updateProductAtom);
+  const deleteProduct = useSetAtom(deleteProductAtom);
+  const addCoupon = useSetAtom(addCouponAtom);
+  const removeCoupon = useSetAtom(removeCouponAtom);
 
-  // 쿠폰 관련
-  onAddCoupon: (coupon: Coupon) => void;
-  onDeleteCoupon: (couponCode: string) => void;
-}
-
-export function AdminPage({
-  products,
-  onAddProduct,
-  onUpdateProduct,
-  onDeleteProduct,
-  getRemainingStock,
-  onAddCoupon,
-  onDeleteCoupon,
-}: AdminPageProps) {
-  // =========== 탭 전환 관리 ===========
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
     "products"
   );
@@ -43,13 +38,13 @@ export function AdminPage({
       {activeTab === "products" ? (
         <ProductTab
           products={products}
-          onAddProduct={onAddProduct}
-          onUpdateProduct={onUpdateProduct}
-          onDeleteProduct={onDeleteProduct}
+          onAddProduct={addProduct}
+          onUpdateProduct={updateProduct}
+          onDeleteProduct={deleteProduct}
           getRemainingStock={getRemainingStock}
         />
       ) : (
-        <CouponTab onAddCoupon={onAddCoupon} onDeleteCoupon={onDeleteCoupon} />
+        <CouponTab onAddCoupon={addCoupon} onDeleteCoupon={removeCoupon} />
       )}
     </div>
   );

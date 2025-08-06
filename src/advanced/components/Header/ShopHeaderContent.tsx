@@ -1,18 +1,15 @@
-import { useAtomValue } from "jotai";
-import { totalItemCountAtom } from "../../atoms";
+import { useAtomValue, useSetAtom } from "jotai";
+import { searchTermAtom, totalItemCountAtom } from "../../atoms";
 
 interface ShopHeaderContentProps {
-  searchTerm: string;
-  onSearchChange: (value: string) => void;
   onToggleContent: () => void;
 }
 
-const ShopHeaderContent = ({
-  searchTerm,
-  onSearchChange,
-  onToggleContent,
-}: ShopHeaderContentProps) => {
+const ShopHeaderContent = ({ onToggleContent }: ShopHeaderContentProps) => {
   const cartItemCount = useAtomValue(totalItemCountAtom);
+  const searchTerm = useAtomValue(searchTermAtom);
+  const setSearchTerm = useSetAtom(searchTermAtom);
+
   return (
     <>
       <div className="flex items-center flex-1">
@@ -22,7 +19,7 @@ const ShopHeaderContent = ({
           <input
             type="text"
             value={searchTerm}
-            onChange={(e) => onSearchChange(e.target.value)}
+            onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="상품 검색..."
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
           />

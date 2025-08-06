@@ -1,19 +1,17 @@
-import { ProductWithUI } from "../../../types";
+import { useAtomValue } from "jotai";
 import Cart from "./Cart";
 import ProductCard from "./ProductCard";
+import {
+  filteredProductsAtom,
+  productsAtom,
+  searchTermAtom,
+} from "../../../atoms";
 
-interface CartPageProps {
-  // 상품 관련
-  products: ProductWithUI[];
-  filteredProducts: ProductWithUI[];
-  debouncedSearchTerm: string;
-}
+const CartPage = () => {
+  const products = useAtomValue(productsAtom);
+  const searchTerm = useAtomValue(searchTermAtom);
+  const filteredProducts = useAtomValue(filteredProductsAtom);
 
-const CartPage = ({
-  products,
-  filteredProducts,
-  debouncedSearchTerm,
-}: CartPageProps) => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
       <div className="lg:col-span-3">
@@ -28,16 +26,13 @@ const CartPage = ({
           {filteredProducts.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-gray-500">
-                "{debouncedSearchTerm}"에 대한 검색 결과가 없습니다.
+                "{searchTerm}"에 대한 검색 결과가 없습니다.
               </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredProducts.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                />
+                <ProductCard key={product.id} product={product} />
               ))}
             </div>
           )}
