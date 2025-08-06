@@ -6,72 +6,85 @@ import { generateId } from "../index";
 import { ProductWithUI } from "../../types";
 import { selectedCouponAtom } from "../atoms/couponAtoms";
 import { addNotificationHelper } from "./notificationActions";
+import { Getter } from "jotai";
+import { Setter } from "jotai";
 
-export const addToCartAtom = atom(null, (get, set, product: ProductWithUI) => {
-  try {
-    const cart = get(cartAtom);
-    const products = get(productsAtom);
+export const addToCartAtom = atom(
+  null,
+  (get: Getter, set: Setter, product: ProductWithUI) => {
+    try {
+      const cart = get(cartAtom);
+      const products = get(productsAtom);
 
-    const existingItem = cart.find((item) => item.product.id === product.id);
-    const productInStore = products.find((p) => p.id === product.id);
+      const existingItem = cart.find((item) => item.product.id === product.id);
+      const productInStore = products.find((p) => p.id === product.id);
 
-    if (!productInStore) {
-      addNotificationHelper(get, set, "상품을 찾을 수 없습니다.", "error");
-      return;
-    }
-
-    if (productInStore.stock <= 0) {
-      addNotificationHelper(get, set, "재고가 부족합니다.", "error");
-      return;
-    }
-
-    if (existingItem) {
-      if (existingItem.quantity >= productInStore.stock) {
-        addNotificationHelper(
-          get,
-          set,
-          "재고보다 많은 수량을 담을 수 없습니다.",
-          "error"
-        );
+      if (!productInStore) {
+        addNotificationHelper(get, set, "상품을 찾을 수 없습니다.", "error");
         return;
       }
 
-      const updatedCart = cart.map((item) =>
-        item.product.id === product.id
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
+      if (productInStore.stock <= 0) {
+        addNotificationHelper(get, set, "재고가 부족합니다.", "error");
+        return;
+      }
+
+      if (existingItem) {
+        if (existingItem.quantity >= productInStore.stock) {
+          addNotificationHelper(
+            get,
+            set,
+            "재고보다 많은 수량을 담을 수 없습니다.",
+            "error"
+          );
+          return;
+        }
+
+        const updatedCart = cart.map((item) =>
+          item.product.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+        set(cartAtom, updatedCart);
+      } else {
+        set(cartAtom, [...cart, { product, quantity: 1 }]);
+      }
+
+      addNotificationHelper(get, set, "장바구니에 담았습니다", "success");
+    } catch (error) {
+      addNotificationHelper(
+        get,
+        set,
+        "장바구니 추가 중 오류가 발생했습니다.",
+        "error"
       );
-      set(cartAtom, updatedCart);
-    } else {
-      set(cartAtom, [...cart, { product, quantity: 1 }]);
     }
-
-    addNotificationHelper(get, set, "장바구니에 담았습니다", "success");
-  } catch (error) {
-    addNotificationHelper(
-      get,
-      set,
-      "장바구니 추가 중 오류가 발생했습니다.",
-      "error"
-    );
   }
-});
+);
 
-export const removeFromCartAtom = atom(null, (get, set, productId: string) => {
-  try {
-    const cart = get(cartAtom);
-    const updatedCart = cart.filter((item) => item.product.id !== productId);
-    set(cartAtom, updatedCart);
-    addNotificationHelper(get, set, "장바구니에서 제거되었습니다.", "success");
-  } catch (error) {
-    addNotificationHelper(
-      get,
-      set,
-      "장바구니 제거 중 오류가 발생했습니다.",
-      "error"
-    );
+export const removeFromCartAtom = atom(
+  null,
+  (get: Getter, set: Setter, productId: string) => {
+    try {
+      const cart = get(cartAtom);
+      const updatedCart = cart.filter((item) => item.product.id !== productId);
+      set(cartAtom, updatedCart);
+      addNotificationHelper(
+        get,
+        set,
+        "장바구니에서 제거되었습니다.",
+        "success"
+      );
+    } catch (error) {
+      addNotificationHelper(
+        get,
+        set,
+        "장바구니 제거 중 오류가 발생했습니다.",
+        "error"
+      );
+    }
   }
-});
+);
 
 export const updateQuantityAtom = atom(
   null,
@@ -127,12 +140,12 @@ export const updateQuantityAtom = atom(
   }
 );
 
-export const clearCartAtom = atom(null, (get, set) => {
+export const clearCartAtom = atom(null, (get: Getter, set: Setter) => {
   set(cartAtom, []);
   addNotificationHelper(get, set, "장바구니가 비워졌습니다.", "success");
 });
 
-export const completeOrderAtom = atom(null, (get, set) => {
+export const completeOrderAtom = atom(null, (get: Getter, set: Setter) => {
   try {
     const orderNumber = generateId("ORD");
     addNotificationHelper(

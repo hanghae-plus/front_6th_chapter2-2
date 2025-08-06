@@ -2,11 +2,13 @@ import { atom } from "jotai";
 import { generateId } from "..";
 import { Notification } from "../../types";
 import { notificationsAtom } from "../atoms/notificationAtoms";
+import { Getter } from "jotai";
+import { Setter } from "jotai";
 
 // 알림 추가 헬퍼 함수
 export const addNotificationHelper = (
-  get: any,
-  set: any,
+  get: Getter,
+  set: Setter,
   message: string,
   type: "error" | "success" | "warning" = "success"
 ) => {
@@ -44,7 +46,7 @@ export const addNotificationAtom = atom(
 // 알림 제거 액션
 export const removeNotificationAtom = atom(
   null,
-  (get, set, notificationId: string) => {
+  (get: Getter, set: Setter, notificationId: string) => {
     const notifications = get(notificationsAtom);
     const updatedNotifications = notifications.filter(
       (notification) => notification.id !== notificationId
