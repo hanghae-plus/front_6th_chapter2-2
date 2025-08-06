@@ -21,7 +21,7 @@ export const useCouponForm = () => {
   const updateField = useCallback((field: keyof CouponFormState, value: string | number) => {
     setCouponForm((prev) => ({
       ...prev,
-      [field]: value,
+      [field]: field === "code" ? String(value).toUpperCase() : value,
     }));
   }, []);
 
