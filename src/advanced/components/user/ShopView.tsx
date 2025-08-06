@@ -1,10 +1,11 @@
+import { useAtomValue } from 'jotai';
 import { CartItem, Coupon, Product, ProductWithUI } from '../../../types';
 import { getRemainingStock } from '../../utils/calculations/stockCalculations';
 import ProductCard from '../ui/ProductCard';
 import Cart from './Cart';
+import { productsAtom } from '../../atoms/productsAtom';
 
 interface ShopViewProps {
-  products: Product[];
   filteredProductList: ProductWithUI[];
   debouncedQuery: string;
   cart: CartItem[];
@@ -23,7 +24,6 @@ interface ShopViewProps {
 }
 
 export default function ShopView({
-  products,
   filteredProductList,
   debouncedQuery,
   cart,
@@ -37,6 +37,8 @@ export default function ShopView({
   onSelectedCouponChange,
   onCompleteOrder,
 }: ShopViewProps) {
+  const products = useAtomValue(productsAtom);
+
   return (
     <div className='grid grid-cols-1 lg:grid-cols-4 gap-6'>
       <div className='lg:col-span-3'>

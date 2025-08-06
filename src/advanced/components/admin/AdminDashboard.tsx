@@ -5,7 +5,6 @@ import CouponsManagement from './CouponsManagement';
 import { CartItem, Coupon, CouponForm, Product, ProductFormType } from '../../../types';
 
 interface AdminDashboardProps {
-  products: Product[];
   cart: CartItem[];
   editingProduct: string | null;
   productForm: ProductFormType;
@@ -14,7 +13,6 @@ interface AdminDashboardProps {
   onEditClick: (value: string | null) => void;
   onFormChange: (form: ProductFormType) => void;
   handleProductEdit: (product: Product) => void;
-  onProductDelete: (id: string) => void;
   handleProductSubmit: (e: React.FormEvent, callback: () => void) => void;
   onCouponDelete: (code: string) => void;
   onCouponSubmit: (e: React.FormEvent) => void;
@@ -22,7 +20,6 @@ interface AdminDashboardProps {
 }
 
 export default function AdminDashboard({
-  products,
   cart,
   editingProduct,
   productForm,
@@ -31,7 +28,6 @@ export default function AdminDashboard({
   onEditClick,
   onFormChange,
   handleProductEdit,
-  onProductDelete,
   handleProductSubmit,
   onCouponDelete,
   onCouponSubmit,
@@ -58,7 +54,6 @@ export default function AdminDashboard({
 
       {activeTab === 'products' ? (
         <ProductManagement
-          products={products}
           cart={cart}
           editingProduct={editingProduct}
           productForm={productForm}
@@ -66,7 +61,6 @@ export default function AdminDashboard({
           handleProductSubmit={handleProductSubmit}
           onEditClick={onEditClick}
           onFormChange={onFormChange}
-          onProductDelete={onProductDelete}
         />
       ) : (
         <CouponsManagement

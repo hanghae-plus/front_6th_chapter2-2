@@ -6,21 +6,20 @@ import Button from '../ui/Button';
 import ProductForm from './forms/ProductForm';
 import { useAtomValue } from 'jotai';
 import { isAdminAtom } from '../../atoms/uiAtoms';
+import { productsAtom } from '../../atoms/productsAtom';
+import { useProducts } from '../../hooks/product/useProducts';
 
 interface ProductManagementProps {
-  products: Product[];
   cart: CartItem[];
   editingProduct: string | null;
   productForm: ProductFormType;
   handleProductEdit: (product: Product) => void;
-  onProductDelete: (id: string) => void;
   onEditClick: (value: string | null) => void;
   onFormChange: (form: ProductFormType) => void;
   handleProductSubmit: (e: React.FormEvent, callback: () => void) => void;
 }
 
 export default function ProductManagement({
-  products,
   cart,
   editingProduct,
   productForm,
@@ -28,10 +27,12 @@ export default function ProductManagement({
   handleProductSubmit,
   onEditClick,
   onFormChange,
-  onProductDelete,
 }: ProductManagementProps) {
   const [showProductForm, setShowProductForm] = useState(false);
   const isAdmin = useAtomValue(isAdminAtom);
+
+  const products = useAtomValue(productsAtom);
+  const { deleteProduct } = useProducts();
 
   return (
     <section className='bg-white rounded-lg border border-gray-200'>
@@ -123,7 +124,7 @@ export default function ProductManagement({
 
                   <Button
                     variant='link'
-                    onClick={() => onProductDelete(product.id)}
+                    onClick={() => deleteProduct(product.id)}
                     className='text-red-600 hover:text-red-900'
                   >
                     삭제

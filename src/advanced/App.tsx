@@ -12,24 +12,16 @@ import { filteredProducts } from './utils/calculations/productCalculations';
 import { useSearch } from './hooks/search/useSearch';
 import AdminDashboard from './components/admin/AdminDashboard';
 import ShopView from './components/user/ShopView';
-import { Provider, useAtom, useAtomValue, useSetAtom } from 'jotai';
-import {
-  addNotificationAtom,
-  notificationsAtom,
-  removeNotificationAtom,
-} from './atoms/notificationsAtoms';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { addNotificationAtom, notificationsAtom } from './atoms/notificationsAtoms';
 import { isAdminAtom } from './atoms/uiAtoms';
 
 const App = () => {
   // 기본 데이터 관리
-  const { products, deleteProduct, updateProduct, addProduct } = useProducts();
-  // const { notifications, setNotifications, addNotification } = useNotifications();
   const [notifications] = useAtom(notificationsAtom);
   const addNotification = useSetAtom(addNotificationAtom);
-  const removeNotification = useSetAtom(removeNotificationAtom);
 
   // UI 상태 관리
-  // const [isAdmin, setIsAdmin] = useState(false);
   const isAdmin = useAtomValue(isAdminAtom);
 
   // 상품 폼 관리 훅 (추가/수정)
@@ -40,7 +32,7 @@ const App = () => {
     setEditingProduct,
     handleProductSubmit,
     handleProductEdit,
-  } = useProductForm(addProduct, updateProduct);
+  } = useProductForm();
 
   // 쿠폰 관리 훅
   const { coupons, setCoupons, selectedCoupon, setSelectedCoupon, applyCoupon } = useCoupons(
@@ -74,7 +66,7 @@ const App = () => {
 
   // 계산된 데이터
   const totals = calculateCartTotal(cart, selectedCoupon);
-  const filteredProductList = filteredProducts(products, debouncedQuery);
+  // const filteredProductList = filteredProducts(products, debouncedQuery);
 
   return (
     <div className='min-h-screen bg-gray-50'>
@@ -98,7 +90,6 @@ const App = () => {
       <main className='max-w-7xl mx-auto px-4 py-8'>
         {isAdmin ? (
           <AdminDashboard
-            products={products}
             cart={cart}
             editingProduct={editingProduct}
             productForm={productForm}
@@ -107,7 +98,6 @@ const App = () => {
             onEditClick={setEditingProduct}
             onFormChange={setProductForm}
             handleProductEdit={handleProductEdit}
-            onProductDelete={deleteProduct}
             handleProductSubmit={handleProductSubmit}
             onCouponDelete={deleteCoupon}
             onCouponSubmit={handleCouponSubmit}
@@ -115,7 +105,6 @@ const App = () => {
           />
         ) : (
           <ShopView
-            products={products}
             filteredProductList={filteredProductList}
             debouncedQuery={debouncedQuery}
             cart={cart}
