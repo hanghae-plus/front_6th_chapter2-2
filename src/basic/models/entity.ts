@@ -16,6 +16,38 @@ export function calculateItemTotal(item: CartItem, cart: CartItem[]): number {
 }
 
 /**
+ * 장바구니 아이템 총액 계산
+ * @param cart 장바구니
+ * @returns 장바구니 아이템 총액
+ */
+function calculateCartItemTotals(cart: CartItem[]): {
+  totalBeforeDiscount: number;
+  totalAfterDiscount: number;
+} {
+  return cart.reduce(
+    (acc, item) => ({
+      totalBeforeDiscount: acc.totalBeforeDiscount + item.product.price * item.quantity,
+      totalAfterDiscount: acc.totalAfterDiscount + calculateItemTotal(item, cart),
+    }),
+    { totalBeforeDiscount: 0, totalAfterDiscount: 0 }
+  );
+}
+
+/**
+ * 쿠폰 할인 적용
+ * @param total 할인 적용 전 총액
+ * @param coupon 적용할 쿠폰
+ * @returns 할인 적용 후 총액
+ */
+function applyCouponDiscount(total: number, coupon: Coupon): number {
+  if (coupon.discountType === 'amount') {
+    return Math.max(0, total - coupon.discountValue);
+  }
+
+  return Math.round(total * (1 - coupon.discountValue / 100));
+}
+
+/**
  * 장바구니 총액 계산
  * @param cart 장바구니
  * @param selectedCoupon 선택된 쿠폰
@@ -28,28 +60,15 @@ export function calculateCartTotal(
   totalBeforeDiscount: number;
   totalAfterDiscount: number;
 } {
-  let totalBeforeDiscount = 0;
-  let totalAfterDiscount = 0;
+  const { totalBeforeDiscount, totalAfterDiscount } = calculateCartItemTotals(cart);
 
-  cart.forEach((item) => {
-    const itemPrice = item.product.price * item.quantity;
-    totalBeforeDiscount += itemPrice;
-    totalAfterDiscount += calculateItemTotal(item, cart);
-  });
-
-  if (selectedCoupon) {
-    if (selectedCoupon.discountType === 'amount') {
-      totalAfterDiscount = Math.max(0, totalAfterDiscount - selectedCoupon.discountValue);
-    } else {
-      totalAfterDiscount = Math.round(
-        totalAfterDiscount * (1 - selectedCoupon.discountValue / 100)
-      );
-    }
-  }
+  const finalTotalAfterDiscount = selectedCoupon
+    ? applyCouponDiscount(totalAfterDiscount, selectedCoupon)
+    : totalAfterDiscount;
 
   return {
     totalBeforeDiscount: Math.round(totalBeforeDiscount),
-    totalAfterDiscount: Math.round(totalAfterDiscount),
+    totalAfterDiscount: Math.round(finalTotalAfterDiscount),
   };
 }
 
