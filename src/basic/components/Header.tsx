@@ -3,9 +3,9 @@ import SearchBar from "./SearchBar";
 
 interface HeaderProps {
   isAdmin: boolean;
-  searchTerm: string;
-  setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
   setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>;
+  searchTerm: string;
+  handleSearchTerm: (value: string) => void;
   cartTotalItem: number;
 }
 
@@ -13,7 +13,7 @@ const Header = ({
   isAdmin,
   setIsAdmin,
   searchTerm,
-  setSearchTerm,
+  handleSearchTerm,
   cartTotalItem,
 }: HeaderProps) => {
   return (
@@ -26,7 +26,7 @@ const Header = ({
             {!isAdmin && (
               <SearchBar
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => handleSearchTerm(e.target.value)}
                 placeholder="상품 검색..."
               />
             )}

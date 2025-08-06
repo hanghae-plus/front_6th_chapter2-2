@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { SEARCH_DELAY } from "./constants/time";
 import { useProducts } from "./hooks/useProducts";
 import { useCoupons } from "./hooks/useCoupons";
 import { useCart } from "./hooks/useCart";
+import { useSearchTerm } from "./hooks/useSearchTerm";
 import { useNotification } from "./hooks/useNotification";
-import { useDebounce } from "./utils/hooks/useDebounce";
 import Header from "./components/Header";
 import NotificationItem from "./components/NotificationItem";
 import AdminPage from "./pages/AdminPage";
@@ -32,15 +31,14 @@ const App = () => {
     setSelectedCoupon,
   } = useCart();
 
+  // 검색 처리
+  const {searchTerm, debouncedSearchTerm, handleSearchTerm} = useSearchTerm();
   // 알림 처리
   const {notifications, addNotification, removeNotification} = useNotification();
 
   // 페이지 처리
   const [isAdmin, setIsAdmin] = useState(false);
 
-  // 검색 처리
-  const [searchTerm, setSearchTerm] = useState("");
-  const debouncedSearchTerm = useDebounce(searchTerm, SEARCH_DELAY);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -63,7 +61,7 @@ const App = () => {
         isAdmin={isAdmin}
         setIsAdmin={setIsAdmin}
         searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
+        handleSearchTerm={handleSearchTerm}
         cartTotalItem={cartTotalItem}
       />
 
