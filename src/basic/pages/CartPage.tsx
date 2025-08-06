@@ -7,6 +7,7 @@ import { ProductListSection } from "../components/ui/cart/ProductListSection";
 import { CartSection } from "../components/ui/cart/CartSection";
 import { CouponSection } from "../components/ui/cart/CouponSection";
 import { PaymentSummarySection } from "../components/ui/cart/PaymentSummarySection";
+import { NotificationType } from "../types/common";
 
 interface CartPageProps {
   products: ProductWithUI[];
@@ -19,10 +20,7 @@ interface CartPageProps {
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, newQuantity: number) => void;
   onClearCart: () => void;
-  addNotification: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
+  addNotification: (message: string, type?: NotificationType) => void;
 }
 
 export const CartPage = ({

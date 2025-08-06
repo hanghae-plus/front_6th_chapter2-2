@@ -5,6 +5,7 @@ import { useCouponHandlers } from "../entities/coupon/useCouponHandlers";
 import { useProductForm } from "../entities/products/useProductForm";
 import { useCouponForm } from "../entities/coupon/useCouponForm";
 import { useAdminHandlers } from "../hooks/useAdminHandlers";
+import { NotificationType } from "../types/common";
 import {
   AdminTabs,
   ProductTable,
@@ -20,10 +21,7 @@ interface AdminPageProps {
   deleteProduct: (productId: string) => void;
   checkSoldOutByProductId: (productId: string) => boolean;
 
-  addNotification: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
+  addNotification: (message: string, type?: NotificationType) => void;
 }
 
 export const AdminPage = ({
