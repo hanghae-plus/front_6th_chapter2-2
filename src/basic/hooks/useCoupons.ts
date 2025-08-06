@@ -12,8 +12,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { Coupon } from '../../types';
 import { initialCoupons } from '../constants';
 
-
-export function useCoupons({ selectedCoupon, setSelectedCoupon, addNotification }) {
+export function useCoupons({ addNotification }) {
   const [coupons, setCoupons] = useState<Coupon[]>(() => {
     const saved = localStorage.getItem('coupons');
     if (saved) {
@@ -26,9 +25,20 @@ export function useCoupons({ selectedCoupon, setSelectedCoupon, addNotification 
     return initialCoupons;
   });
 
+  const [selectedCoupon, setSelectedCoupon] = useState(null);
+
   useEffect(() => {
     localStorage.setItem('coupons', JSON.stringify(coupons));
   }, [coupons]);
+
+  const applyCoupon = (coupon) => {
+    if (coupon) {
+      setSelectedCoupon(coupon);
+      addNotification(`${coupon.name} 쿠폰이 적용되었습니다.`);
+    } else {
+      setSelectedCoupon(null);
+    }
+  };
 
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {
@@ -58,5 +68,7 @@ export function useCoupons({ selectedCoupon, setSelectedCoupon, addNotification 
     coupons,
     addCoupon,
     deleteCoupon,
+    selectedCoupon,
+    applyCoupon,
   };
 }
