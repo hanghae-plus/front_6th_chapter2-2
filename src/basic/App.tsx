@@ -5,22 +5,11 @@ import { ProductWithUI, Notification, CartItem, Coupon, Product } from './types'
 import { useCart } from './hooks/useCart';
 import { useNotification } from './hooks/useNotification';
 import { useCoupon } from './hooks/useCoupon';
+import { useProducts } from './hooks/useProducts';
 import { formatPrice } from './utils/formatters';
 import { calculateItemTotal } from './models/cart';
 
 const App = () => {
-  const [products, setProducts] = useState<ProductWithUI[]>(() => {
-    const saved = localStorage.getItem('products');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialProducts;
-      }
-    }
-    return initialProducts;
-  });
-
   const [isAdmin, setIsAdmin] = useState(false);
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
@@ -46,6 +35,7 @@ const App = () => {
   });
 
   const { addNotification, notifications, removeNotification } = useNotification();
+  const { products, addProduct, updateProduct, deleteProduct } = useProducts(addNotification);
   const {
     getRemainingStock,
     updateQuantity,
@@ -72,10 +62,6 @@ const App = () => {
   };
 
   useEffect(() => {
-    localStorage.setItem('products', JSON.stringify(products));
-  }, [products]);
-
-  useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
     }, 500);
@@ -88,36 +74,6 @@ const App = () => {
     clearCart();
     applyCoupon(null);
   }, [addNotification]);
-
-  const addProduct = useCallback(
-    (newProduct: Omit<ProductWithUI, 'id'>) => {
-      const product: ProductWithUI = {
-        ...newProduct,
-        id: `p${Date.now()}`,
-      };
-      setProducts((prev) => [...prev, product]);
-      addNotification('상품이 추가되었습니다.', 'success');
-    },
-    [addNotification],
-  );
-
-  const updateProduct = useCallback(
-    (productId: string, updates: Partial<ProductWithUI>) => {
-      setProducts((prev) =>
-        prev.map((product) => (product.id === productId ? { ...product, ...updates } : product)),
-      );
-      addNotification('상품이 수정되었습니다.', 'success');
-    },
-    [addNotification],
-  );
-
-  const deleteProduct = useCallback(
-    (productId: string) => {
-      setProducts((prev) => prev.filter((p) => p.id !== productId));
-      addNotification('상품이 삭제되었습니다.', 'success');
-    },
-    [addNotification],
-  );
 
   const handleProductSubmit = (e: React.FormEvent) => {
     e.preventDefault();
