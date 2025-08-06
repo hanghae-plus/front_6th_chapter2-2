@@ -28,10 +28,12 @@ import { useCallback, useEffect } from 'react';
 import type { CartItem, Coupon, Product } from '../../types';
 import * as cartModel from '../models/cart';
 import { useLocalStorage } from '../utils/hooks/useLocalStorage';
-import type { AddNotificationParams } from './useNotification';
 
 interface UseCartParams {
-  addNotification: (params: AddNotificationParams) => void;
+  addNotification: (params: {
+    message: string;
+    type?: 'error' | 'success' | 'warning';
+  }) => void;
   isSoldOut: (params: { cart: CartItem[]; product: Product }) => boolean;
   getCouponApplier: (params: {
     coupon: Coupon | null;
