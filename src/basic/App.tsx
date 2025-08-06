@@ -1,20 +1,30 @@
 import { useState } from 'react';
 
-import type { Coupon } from '../types';
 import { AdminPage } from './components/AdminPage';
 import { CartPage } from './components/CartPage';
 import { Notifications } from './components/ui/Notifications';
-import { useCouponStore } from './hooks/useCouponStore';
+import { useCouponService } from './hooks/useCouponService';
 import { useNotificationStore } from './hooks/useNotificationStore';
-import { useProductStore } from './hooks/useProductStore';
+import { useProductService } from './hooks/useProductService';
 
 const App = () => {
-  const { products, addProduct, updateProduct, deleteProduct } = useProductStore();
-  const { coupons, addCoupon, deleteCoupon } = useCouponStore();
   const { notifications, addNotification, removeNotification } = useNotificationStore();
 
+  const { products, onAddProduct, onUpdateProduct, onDeleteProduct } = useProductService({
+    onAddNotification: addNotification,
+  });
+  const {
+    coupons,
+    selectedCoupon,
+    onResetSelectedCoupon,
+    onAddCoupon,
+    onDeleteCoupon,
+    onApplyCoupon,
+  } = useCouponService({
+    onAddNotification: addNotification,
+  });
+
   const [isAdmin, setIsAdmin] = useState(false);
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
   return (
     <div className='min-h-screen bg-gray-50'>
@@ -25,16 +35,13 @@ const App = () => {
           setIsAdmin={setIsAdmin}
           // products
           products={products}
-          onAddProduct={addProduct}
-          onUpdateProduct={updateProduct}
-          onDeleteProduct={deleteProduct}
+          onAddProduct={onAddProduct}
+          onUpdateProduct={onUpdateProduct}
+          onDeleteProduct={onDeleteProduct}
           // coupons
           coupons={coupons}
-          onAddCoupon={addCoupon}
-          onDeleteCoupon={deleteCoupon}
-          // selectedCoupon
-          selectedCoupon={selectedCoupon}
-          setSelectedCoupon={setSelectedCoupon}
+          onAddCoupon={onAddCoupon}
+          onDeleteCoupon={onDeleteCoupon}
           // notifications
           onAddNotification={addNotification}
         />
@@ -46,7 +53,8 @@ const App = () => {
           // coupons
           coupons={coupons}
           selectedCoupon={selectedCoupon}
-          setSelectedCoupon={setSelectedCoupon}
+          onResetSelectedCoupon={onResetSelectedCoupon}
+          onApplyCoupon={onApplyCoupon}
           // notifications
           onAddNotification={addNotification}
         />

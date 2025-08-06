@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 
-import type { Coupon, NotificationVariant } from '../../types';
+import type { CartItem, Coupon, NotificationVariant } from '../../types';
 import type { ProductWithUI } from '../constants';
 import { Icon } from './icons';
 import { calculateCartTotal } from '../models/entity';
@@ -19,7 +19,8 @@ interface CartPageProps {
 
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
+  onResetSelectedCoupon: () => void;
+  onApplyCoupon: (cart: CartItem[], coupon: Coupon) => void;
 
   onAddNotification: (message: string, type: NotificationVariant) => void;
 }
@@ -31,7 +32,8 @@ export function CartPage({
 
   coupons,
   selectedCoupon,
-  setSelectedCoupon,
+  onResetSelectedCoupon,
+  onApplyCoupon,
 
   onAddNotification,
 }: CartPageProps) {
@@ -43,27 +45,12 @@ export function CartPage({
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
-  const applyCoupon = useCallback(
-    (coupon: Coupon) => {
-      const currentTotal = calculateCartTotal(cart, selectedCoupon).totalAfterDiscount;
-
-      if (currentTotal < 10000 && coupon.discountType === 'percentage') {
-        onAddNotification('percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.', 'error');
-        return;
-      }
-
-      setSelectedCoupon(coupon);
-      onAddNotification('쿠폰이 적용되었습니다.', 'success');
-    },
-    [onAddNotification, calculateCartTotal]
-  );
-
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
     onAddNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
     resetCart();
-    setSelectedCoupon(null);
-  }, [onAddNotification, resetCart]);
+    onResetSelectedCoupon();
+  }, [onAddNotification, resetCart, onResetSelectedCoupon]);
 
   const totals = calculateCartTotal(cart, selectedCoupon);
 
@@ -114,8 +101,8 @@ export function CartPage({
                   <CouponSelector
                     coupons={coupons}
                     selectedCoupon={selectedCoupon}
-                    onApplyCoupon={applyCoupon}
-                    onResetSelectedCoupon={() => setSelectedCoupon(null)}
+                    onApplyCoupon={(coupon) => onApplyCoupon(cart, coupon)}
+                    onResetSelectedCoupon={onResetSelectedCoupon}
                   />
 
                   <PaymentSummary totals={totals} completeOrder={completeOrder} />
