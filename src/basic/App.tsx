@@ -7,25 +7,26 @@ import { useNotification } from './hooks/useNotification';
 import { useCoupon } from './hooks/useCoupon';
 import { useProducts } from './hooks/useProducts';
 import { useCouponForm } from './hooks/form/useCouponForm';
+import { useProductForm } from './hooks/form/useProductForm';
 import { formatPrice } from './utils/formatters';
 import { calculateItemTotal } from './models/cart';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
-  const [showProductForm, setShowProductForm] = useState(false);
+  // const [showProductForm, setShowProductForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
   // Admin
-  const [editingProduct, setEditingProduct] = useState<string | null>(null);
-  const [productForm, setProductForm] = useState({
-    name: '',
-    price: 0,
-    stock: 0,
-    description: '',
-    discounts: [] as Array<{ quantity: number; rate: number }>,
-  });
+  // const [editingProduct, setEditingProduct] = useState<string | null>(null);
+  // const [productForm, setProductForm] = useState({
+  //   name: '',
+  //   price: 0,
+  //   stock: 0,
+  //   description: '',
+  //   discounts: [] as Array<{ quantity: number; rate: number }>,
+  // });
 
   const { addNotification, notifications, removeNotification } = useNotification();
   const { products, addProduct, updateProduct, deleteProduct } = useProducts(addNotification);
@@ -49,6 +50,17 @@ const App = () => {
     updateCouponForm,
     updateShowCouponForm,
   } = useCouponForm();
+  const {
+    productForm,
+    showProductForm,
+    editingProduct,
+    handleProductFormSubmit,
+    startEditProduct,
+    resetEditingProduct,
+    updateProductForm,
+    updateShowProductForm,
+    handleCancelProduct,
+  } = useProductForm();
 
   // UI에 관련된 함수같다!
   const getDisplayPrice = (price: number, productId?: string): string => {
@@ -79,16 +91,14 @@ const App = () => {
     e.preventDefault();
     if (editingProduct && editingProduct !== 'new') {
       updateProduct(editingProduct, productForm);
-      setEditingProduct(null);
     } else {
       addProduct({
         ...productForm,
         discounts: productForm.discounts,
       });
     }
-    setProductForm({ name: '', price: 0, stock: 0, description: '', discounts: [] });
-    setEditingProduct(null);
-    setShowProductForm(false);
+    handleProductFormSubmit();
+    resetEditingProduct();
   };
 
   const handleCouponSubmit = (e: React.FormEvent) => {
@@ -97,17 +107,17 @@ const App = () => {
     handleCouponFormSubmit();
   };
 
-  const startEditProduct = (product: ProductWithUI) => {
-    setEditingProduct(product.id);
-    setProductForm({
-      name: product.name,
-      price: product.price,
-      stock: product.stock,
-      description: product.description || '',
-      discounts: product.discounts || [],
-    });
-    setShowProductForm(true);
-  };
+  // const startEditProduct = (product: ProductWithUI) => {
+  //   setEditingProduct(product.id);
+  //   setProductForm({
+  //     name: product.name,
+  //     price: product.price,
+  //     stock: product.stock,
+  //     description: product.description || '',
+  //     discounts: product.discounts || [],
+  //   });
+  //   setShowProductForm(true);
+  // };
 
   const totals = calculateTotal();
 
@@ -119,6 +129,18 @@ const App = () => {
             product.description.toLowerCase().includes(debouncedSearchTerm.toLowerCase())),
       )
     : products;
+
+  const handleAddProduct = () => {
+    startEditProduct('new');
+    updateProductForm({
+      name: '',
+      price: 0,
+      stock: 0,
+      description: '',
+      discounts: [],
+    });
+    updateShowProductForm(true);
+  };
 
   return (
     <div className='min-h-screen bg-gray-50'>
@@ -200,17 +222,7 @@ const App = () => {
                   <div className='flex justify-between items-center'>
                     <h2 className='text-lg font-semibold'>상품 목록</h2>
                     <button
-                      onClick={() => {
-                        setEditingProduct('new');
-                        setProductForm({
-                          name: '',
-                          price: 0,
-                          stock: 0,
-                          description: '',
-                          discounts: [],
-                        });
-                        setShowProductForm(true);
-                      }}
+                      onClick={handleAddProduct}
                       className='px-4 py-2 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800'
                     >
                       새 상품 추가
@@ -297,9 +309,7 @@ const App = () => {
                           <input
                             type='text'
                             value={productForm.name}
-                            onChange={(e) =>
-                              setProductForm({ ...productForm, name: e.target.value })
-                            }
+                            onChange={(e) => updateProductForm({ name: e.target.value })}
                             className='w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border'
                             required
                           />
@@ -311,9 +321,7 @@ const App = () => {
                           <input
                             type='text'
                             value={productForm.description}
-                            onChange={(e) =>
-                              setProductForm({ ...productForm, description: e.target.value })
-                            }
+                            onChange={(e) => updateProductForm({ description: e.target.value })}
                             className='w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border'
                           />
                         </div>
@@ -327,19 +335,16 @@ const App = () => {
                             onChange={(e) => {
                               const value = e.target.value;
                               if (value === '' || /^\d+$/.test(value)) {
-                                setProductForm({
-                                  ...productForm,
-                                  price: value === '' ? 0 : parseInt(value),
-                                });
+                                updateProductForm({ price: value === '' ? 0 : parseInt(value) });
                               }
                             }}
                             onBlur={(e) => {
                               const value = e.target.value;
                               if (value === '') {
-                                setProductForm({ ...productForm, price: 0 });
+                                updateProductForm({ price: 0 });
                               } else if (parseInt(value) < 0) {
                                 addNotification('가격은 0보다 커야 합니다', 'error');
-                                setProductForm({ ...productForm, price: 0 });
+                                updateProductForm({ price: 0 });
                               }
                             }}
                             className='w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border'
@@ -357,22 +362,19 @@ const App = () => {
                             onChange={(e) => {
                               const value = e.target.value;
                               if (value === '' || /^\d+$/.test(value)) {
-                                setProductForm({
-                                  ...productForm,
-                                  stock: value === '' ? 0 : parseInt(value),
-                                });
+                                updateProductForm({ stock: value === '' ? 0 : parseInt(value) });
                               }
                             }}
                             onBlur={(e) => {
                               const value = e.target.value;
                               if (value === '') {
-                                setProductForm({ ...productForm, stock: 0 });
+                                updateProductForm({ stock: 0 });
                               } else if (parseInt(value) < 0) {
                                 addNotification('재고는 0보다 커야 합니다', 'error');
-                                setProductForm({ ...productForm, stock: 0 });
+                                updateProductForm({ stock: 0 });
                               } else if (parseInt(value) > 9999) {
                                 addNotification('재고는 9999개를 초과할 수 없습니다', 'error');
-                                setProductForm({ ...productForm, stock: 9999 });
+                                updateProductForm({ stock: 9999 });
                               }
                             }}
                             className='w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border'
@@ -397,7 +399,7 @@ const App = () => {
                                 onChange={(e) => {
                                   const newDiscounts = [...productForm.discounts];
                                   newDiscounts[index].quantity = parseInt(e.target.value) || 0;
-                                  setProductForm({ ...productForm, discounts: newDiscounts });
+                                  updateProductForm({ discounts: newDiscounts });
                                 }}
                                 className='w-20 px-2 py-1 border rounded'
                                 min='1'
@@ -410,7 +412,7 @@ const App = () => {
                                 onChange={(e) => {
                                   const newDiscounts = [...productForm.discounts];
                                   newDiscounts[index].rate = (parseInt(e.target.value) || 0) / 100;
-                                  setProductForm({ ...productForm, discounts: newDiscounts });
+                                  updateProductForm({ discounts: newDiscounts });
                                 }}
                                 className='w-16 px-2 py-1 border rounded'
                                 min='0'
@@ -424,7 +426,7 @@ const App = () => {
                                   const newDiscounts = productForm.discounts.filter(
                                     (_, i) => i !== index,
                                   );
-                                  setProductForm({ ...productForm, discounts: newDiscounts });
+                                  updateProductForm({ discounts: newDiscounts });
                                 }}
                                 className='text-red-600 hover:text-red-800'
                               >
@@ -447,8 +449,7 @@ const App = () => {
                           <button
                             type='button'
                             onClick={() => {
-                              setProductForm({
-                                ...productForm,
+                              updateProductForm({
                                 discounts: [...productForm.discounts, { quantity: 10, rate: 0.1 }],
                               });
                             }}
@@ -463,15 +464,7 @@ const App = () => {
                         <button
                           type='button'
                           onClick={() => {
-                            setEditingProduct(null);
-                            setProductForm({
-                              name: '',
-                              price: 0,
-                              stock: 0,
-                              description: '',
-                              discounts: [],
-                            });
-                            setShowProductForm(false);
+                            handleCancelProduct();
                           }}
                           className='px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50'
                         >
