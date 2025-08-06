@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect } from 'react';
-import { CartItem, Coupon, Product } from '../types';
+import { useState, useCallback } from 'react';
+import { Coupon } from '../types';
 import { ProductWithUI } from './constants/mocks';
 import {
   AdminDashboard,
@@ -16,18 +16,12 @@ import {
   formatPriceWithStock,
   calculateItemTotal,
   calculateCartTotal,
-  getRemainingStock,
   filterProducts,
   validateCouponApplication,
   validateCouponCode,
 } from './utils';
-import {
-  useCart,
-  useDebounceValue,
-  useLocalStorage,
-  useNotifications,
-  useTotalItemCount,
-} from './hooks';
+import { useCart, useDebounceValue, useNotifications, useTotalItemCount } from './hooks';
+import { INITIAL_PRODUCT_FORM, INITIAL_COUPON_FORM, EDITING_STATES } from './constants/forms';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -149,7 +143,7 @@ const App = () => {
 
   const handleProductSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (editingProduct && editingProduct !== 'new') {
+    if (editingProduct && editingProduct !== EDITING_STATES.NEW) {
       updateProduct(editingProduct, productForm);
       setEditingProduct(null);
     } else {
@@ -158,13 +152,7 @@ const App = () => {
         discounts: productForm.discounts,
       });
     }
-    setProductForm({
-      name: '',
-      price: 0,
-      stock: 0,
-      description: '',
-      discounts: [],
-    });
+    setProductForm(INITIAL_PRODUCT_FORM);
     setEditingProduct(null);
     setShowProductForm(false);
   };
@@ -172,12 +160,7 @@ const App = () => {
   const handleCouponSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     addCoupon(couponForm);
-    setCouponForm({
-      name: '',
-      code: '',
-      discountType: 'amount',
-      discountValue: 0,
-    });
+    setCouponForm(INITIAL_COUPON_FORM);
     setShowCouponForm(false);
   };
 
