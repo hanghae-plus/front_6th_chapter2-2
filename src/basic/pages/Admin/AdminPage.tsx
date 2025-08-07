@@ -4,14 +4,11 @@ import CouponManagement from "../../components/admin/CouponManagement";
 import { Tabs } from "../../components/ui/tabs";
 
 // hooks
-import { useProductForm } from "../../hooks/useProductForm";
 import { useCouponForm } from "../../hooks/useCouponForm";
-import { useProducts } from "../../hooks/useProducts";
-import { useCart } from "../../hooks/useCart";
+import { useCoupons } from "../../hooks/useCoupons";
 
 // types
 import type { Coupon, NotificationType } from "../../types/admin";
-import type { CartItem, Product } from "../../../types";
 
 import { ADMIN_TABS } from "../../constants/admin";
 interface AdminPageProps {
@@ -29,26 +26,8 @@ export default function AdminPage({
   onAddCoupon,
   addNotification,
 }: AdminPageProps) {
-  const { products, addProduct, updateProduct, deleteProduct } = useProducts();
-  const { cart } = useCart();
-  const {
-    editingProduct,
-    productForm,
-    showProductForm,
-    updateField: updateProductField,
-    startEditProduct,
-    startAddProduct,
-    cancelProductForm,
-    handleProductSubmit,
-  } = useProductForm();
-
   // Coupon Form 훅 사용
   const { couponForm, showCouponForm, updateField, showForm, hideForm, handleCouponSubmit } = useCouponForm();
-
-  // Product Form 제출 처리
-  const handleProductFormSubmit = (e: React.FormEvent) => {
-    handleProductSubmit(e, addProduct, updateProduct);
-  };
 
   // Coupon Form 제출 처리
   const handleCouponFormSubmit = (e: React.FormEvent) => {
@@ -69,20 +48,7 @@ export default function AdminPage({
 
         <Tabs.Content>
           <Tabs.Panel value={ADMIN_TABS.PRODUCTS}>
-            <ProductManagement
-              products={products}
-              cart={cart}
-              onEditProduct={startEditProduct}
-              onDeleteProduct={deleteProduct}
-              onAddProduct={startAddProduct}
-              showProductForm={showProductForm}
-              productForm={productForm}
-              updateField={updateProductField}
-              editingProduct={editingProduct}
-              onProductSubmit={handleProductFormSubmit}
-              onCancelProductForm={cancelProductForm}
-              addNotification={addNotification}
-            />
+            <ProductManagement addNotification={addNotification} />
           </Tabs.Panel>
 
           <Tabs.Panel value={ADMIN_TABS.COUPONS}>
