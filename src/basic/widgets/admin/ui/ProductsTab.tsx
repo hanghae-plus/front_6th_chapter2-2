@@ -17,7 +17,7 @@ export function ProductsTab() {
     null
   );
 
-  const handleAddProduct = useCallback(
+  const addProduct = useCallback(
     (newProduct: Omit<ProductWithUI, "id">) => {
       productStorage.addProduct(newProduct);
       addNotification("상품이 추가되었습니다.", NotificationVariant.SUCCESS);
@@ -26,7 +26,7 @@ export function ProductsTab() {
     [productStorage.addProduct, addNotification]
   );
 
-  const handleUpdateProduct = useCallback(
+  const updateProduct = useCallback(
     (updatedProduct: ProductWithUI) => {
       productStorage.updateProduct(updatedProduct);
       addNotification("상품이 수정되었습니다.", NotificationVariant.SUCCESS);
@@ -36,7 +36,7 @@ export function ProductsTab() {
     [productStorage.updateProduct, addNotification]
   );
 
-  const handleDeleteProduct = useCallback(
+  const deleteProduct = useCallback(
     (productId: string) => {
       productStorage.deleteProduct(productId);
       addNotification("상품이 삭제되었습니다.", NotificationVariant.SUCCESS);
@@ -86,18 +86,18 @@ export function ProductsTab() {
       <ProductTable
         products={productsWithDisplayInfo}
         onEdit={editProduct}
-        onDelete={handleDeleteProduct}
+        onDelete={deleteProduct}
       />
 
       {showProductForm &&
         (editingProduct ? (
           <EditProductForm
             initialProduct={editingProduct}
-            onSubmit={handleUpdateProduct}
+            onSubmit={updateProduct}
             onCancel={resetForm}
           />
         ) : (
-          <AddProductForm onSubmit={handleAddProduct} onCancel={resetForm} />
+          <AddProductForm onSubmit={addProduct} onCancel={resetForm} />
         ))}
     </section>
   );
