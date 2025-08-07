@@ -7,7 +7,7 @@ import { useProducts } from './useProducts';
 import * as cartModel from '../models/cart';
 
 export const useStore = () => {
-  const { notifications, addNotification } = useNotifications();
+  const { notifications, addNotification, dismissNotification } = useNotifications();
 
   const { products, addProduct, updateProduct, deleteProduct } = useProducts({ addNotification });
 
@@ -26,6 +26,7 @@ export const useStore = () => {
   return {
     notifications,
     addNotification,
+    dismissNotification,
     products,
     addProduct,
     updateProduct,

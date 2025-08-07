@@ -16,5 +16,10 @@ export const useNotifications = () => {
     },
     [],
   );
-  return { notifications, addNotification };
+
+  const dismissNotification = useCallback((id: string) => {
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
+  }, []);
+
+  return { notifications, addNotification, dismissNotification };
 };
