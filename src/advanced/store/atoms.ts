@@ -12,9 +12,9 @@ export const cartAtom = atomWithStorage<CartItem[]>('cart', []);
 
 // 일반 메모리 Atom들 (기존 useState 대체)
 export const notificationsAtom = atomWithStorage<Notification[]>('notifications', []);
-export const isAdminAtom = atom(false);
+export const isAdminAtom = atomWithStorage<boolean>('isAdmin', false);
 export const selectedCouponAtom = atom<Coupon | null>(null);
-export const searchTermAtom = atom('');
+export const searchTermAtom = atomWithStorage<string>('searchTerm', '');
 
 // 파생(Derived) Atom들 (기존 계산 로직 대체)
 export const totalItemCountAtom = atom((get) => {

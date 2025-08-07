@@ -3,6 +3,7 @@ import { useAtom } from 'jotai';
 
 import { Coupon, ProductWithUI } from '../types';
 import { addNotificationAtom } from './store/actions';
+import { isAdminAtom } from './store/atoms';
 import Header from './components/common/Header';
 import NotificationComponent from './components/common/Notification';
 import AdminPage from './components/pages/AdminPage';
@@ -16,16 +17,14 @@ const App = () => {
   // ===== 상태 관리 =====
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
   const [, addNotification] = useAtom(addNotificationAtom);
+  const [isAdmin] = useAtom(isAdminAtom);
 
   const {
     cart,
     selectedCoupon,
     setSelectedCoupon,
-    totalItemCount,
     calculateCartTotal,
-    addToCart,
     applyCoupon,
-    getRemainingStock,
     completeOrder,
   } = useCart();
 
@@ -39,13 +38,6 @@ const App = () => {
     [addNotification]
   );
 
-  const handleAddToCart = useCallback(
-    (product: ProductWithUI) => {
-      addToCart(product, handleAddNotification);
-    },
-    [addToCart, handleAddNotification]
-  );
-
   const handleApplyCoupon = useCallback(
     (coupon: Coupon) => {
       applyCoupon(coupon, handleAddNotification);
@@ -57,23 +49,12 @@ const App = () => {
     completeOrder(handleAddNotification);
   }, [completeOrder, handleAddNotification]);
 
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const debouncedSearchTerm = useDebounce(searchTerm, 500);
-
   const totals = calculateCartTotal();
 
   return (
     <div className='min-h-screen bg-gray-50'>
       <NotificationComponent />
-      <Header
-        isAdmin={isAdmin}
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        setIsAdmin={setIsAdmin}
-        cart={cart}
-        totalItemCount={totalItemCount}
-      />
+      <Header />
 
       <main className='max-w-7xl mx-auto px-4 py-8'>
         {isAdmin ? (
@@ -92,17 +73,13 @@ const App = () => {
           />
         ) : (
           <CartPage
-            debouncedSearchTerm={debouncedSearchTerm}
             isAdmin={isAdmin}
-            products={products}
             cart={cart}
             coupons={coupons}
             selectedCoupon={selectedCoupon}
             setSelectedCoupon={setSelectedCoupon}
-            handleAddToCart={handleAddToCart}
             handleApplyCoupon={handleApplyCoupon}
             handleCompleteOrder={handleCompleteOrder}
-            getRemainingStock={getRemainingStock}
             totals={totals}
           />
         )}

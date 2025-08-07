@@ -1,23 +1,16 @@
+import { useAtom } from 'jotai';
 import { CartItem } from '../../../types';
 import { CartIcon } from '../icons';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
+import { searchTermAtom, isAdminAtom, cartAtom, totalItemCountAtom } from '../../store/atoms';
 
-const Header = ({
-  isAdmin,
-  searchTerm,
-  setSearchTerm,
-  setIsAdmin,
-  cart,
-  totalItemCount,
-}: {
-  isAdmin: boolean;
-  searchTerm: string;
-  setSearchTerm: (searchTerm: string) => void;
-  setIsAdmin: (isAdmin: boolean) => void;
-  cart: CartItem[];
-  totalItemCount: number;
-}) => {
+const Header = () => {
+  const [searchTerm, setSearchTerm] = useAtom(searchTermAtom);
+  const [isAdmin, setIsAdmin] = useAtom(isAdminAtom);
+  const [cart] = useAtom(cartAtom);
+  const [totalItemCount] = useAtom(totalItemCountAtom);
+
   return (
     <header className='bg-white shadow-sm sticky top-0 z-40 border-b'>
       <div className='max-w-7xl mx-auto px-4'>

@@ -1,4 +1,5 @@
-import { ProductWithUI, CartItem } from '../../../types';
+import { useAtom } from 'jotai';
+import { ProductWithUI } from '../../../types';
 import { getMaxDiscountRate, formatDiscountDescription } from '../../models/discount';
 import { isRecommended } from '../../models/product';
 import { formatPrice } from '../../utils/formatters';
@@ -6,22 +7,27 @@ import { ImageIcon } from '../icons';
 import Badge from '../ui/Badge';
 import Button from '../ui/Button';
 import Card from '../ui/Card';
+import { cartAtom, productsAtom } from '../../store/atoms';
+import { addToCartAtom, addNotificationAtom } from '../../store/actions';
+import { getRemainingStock } from '../../models/cart';
 
-const ProductCard = ({
-  product,
-  isAdmin,
-  products,
-  cart,
-  handleAddToCart,
-  remainingStock,
-}: {
-  product: ProductWithUI;
-  isAdmin: boolean;
-  products: ProductWithUI[];
-  cart: CartItem[];
-  handleAddToCart: (product: ProductWithUI) => void;
-  remainingStock: number;
-}) => {
+const ProductCard = ({ product, isAdmin }: { product: ProductWithUI; isAdmin: boolean }) => {
+  const [cart] = useAtom(cartAtom);
+  const [products] = useAtom(productsAtom);
+  const [, addToCart] = useAtom(addToCartAtom);
+  const [, addNotification] = useAtom(addNotificationAtom);
+
+  const remainingStock = getRemainingStock(product, cart);
+
+  const handleAddToCart = () => {
+    addToCart({
+      product,
+      onNotification: (message: string, type?: 'success' | 'error' | 'warning') => {
+        addNotification({ message, type: type || 'success' });
+      },
+    });
+  };
+
   return (
     <Card
       key={product.id}
@@ -80,7 +86,7 @@ const ProductCard = ({
 
         {/* 장바구니 버튼 */}
         <Button
-          onClick={() => handleAddToCart(product)}
+          onClick={handleAddToCart}
           disabled={remainingStock <= 0}
           hasFontMedium
           hasTransition

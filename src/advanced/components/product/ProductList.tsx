@@ -1,24 +1,21 @@
+import { useAtom } from 'jotai';
 import ProductCard from './ProductCard';
-import { ProductWithUI, CartItem } from '../../../types';
+import { ProductWithUI } from '../../../types';
+import { productsAtom, searchTermAtom } from '../../store/atoms';
+import { useDebounce } from '../../utils/hooks/useDebounce';
 
 const ProductList = ({
-  debouncedSearchTerm,
   isAdmin,
-  products,
-  cart,
-  handleAddToCart,
-  getRemainingStock,
 }: {
-  debouncedSearchTerm: string;
   isAdmin: boolean;
-  products: ProductWithUI[];
-  cart: CartItem[];
-  handleAddToCart: (product: ProductWithUI) => void;
-  getRemainingStock: (product: ProductWithUI, cart: CartItem[]) => number;
 }) => {
+  const [products] = useAtom(productsAtom);
+  const [searchTerm] = useAtom(searchTermAtom);
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  
   const filteredProducts = debouncedSearchTerm
     ? products.filter(
-        (product) =>
+        (product: ProductWithUI) =>
           product.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
           (product.description &&
             product.description.toLowerCase().includes(debouncedSearchTerm.toLowerCase()))
@@ -36,21 +33,9 @@ const ProductList = ({
         </div>
       ) : (
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-          {filteredProducts.map((product) => {
-            const remainingStock = getRemainingStock(product, cart);
-
-            return (
-              <ProductCard
-                key={product.id}
-                product={product}
-                isAdmin={isAdmin}
-                products={products}
-                cart={cart}
-                handleAddToCart={handleAddToCart}
-                remainingStock={remainingStock}
-              />
-            );
-          })}
+          {filteredProducts.map((product) => (
+            <ProductCard key={product.id} product={product} isAdmin={isAdmin} />
+          ))}
         </div>
       )}
     </section>
