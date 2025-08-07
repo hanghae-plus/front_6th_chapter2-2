@@ -13,12 +13,15 @@
     "test:advanced": "vitest advanced.test.ts",
     "test:ui": "vitest --ui",
     "build": "tsc -b && vite build",
+    "build:gh-pages": "npm run build && cp dist/index.basic.html dist/basic.html && cp dist/index.advanced.html dist/advanced.html",
+    "deploy": "npm run build:gh-pages && gh-pages -d dist",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
   "dependencies": {
+    "gh-pages": "^6.3.0",
     "jotai": "^2.13.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
