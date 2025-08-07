@@ -4,16 +4,10 @@ import type { Coupon } from '../../../../types';
 import { CouponTab } from '../../../components/ui/CouponTab';
 import { ProductTab } from '../../../components/ui/ProductTab';
 import { TabNavigation } from '../../../components/ui/TabNavigation';
-import type { ProductWithUI } from '../../../constants';
 import { AdminHeader } from '../../../widgets/admin-header';
 
 interface AdminPageProps {
   onChangeCartPage: () => void;
-
-  products: ProductWithUI[];
-  onAddProduct: (newProduct: Omit<ProductWithUI, 'id'>) => void;
-  onUpdateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
-  onDeleteProduct: (productId: string) => void;
 
   coupons: Coupon[];
   onAddCoupon: (newCoupon: Coupon) => void;
@@ -22,11 +16,6 @@ interface AdminPageProps {
 
 export function AdminPage({
   onChangeCartPage,
-
-  products,
-  onAddProduct,
-  onUpdateProduct,
-  onDeleteProduct,
 
   coupons,
   onAddCoupon,
@@ -52,14 +41,7 @@ export function AdminPage({
 
           {(() => {
             if (activeTab === 'products') {
-              return (
-                <ProductTab
-                  products={products}
-                  onAddProduct={onAddProduct}
-                  onUpdateProduct={onUpdateProduct}
-                  onDeleteProduct={onDeleteProduct}
-                />
-              );
+              return <ProductTab />;
             }
 
             return (

@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import type { CartItem } from '../../types';
-import type { ProductWithUI } from '../constants';
+import type { ProductWithUI } from '../entities/product';
 import { useLocalStorage } from '../shared/hooks';
 
 export function useCartStore() {

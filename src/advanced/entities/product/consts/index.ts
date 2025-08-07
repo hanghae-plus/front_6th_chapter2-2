@@ -1,4 +1,4 @@
-import type { Product } from '../../types';
+import type { Product } from '../../../../types';
 
 export interface ProductWithUI extends Product {
   description?: string;
@@ -38,11 +38,3 @@ export const initialProducts: ProductWithUI[] = [
     description: '대용량과 고성능을 자랑하는 상품입니다.',
   },
 ];
-
-export const initialProductForm: Omit<ProductWithUI, 'id'> = {
-  name: '',
-  price: 0,
-  stock: 0,
-  description: '',
-  discounts: [],
-};

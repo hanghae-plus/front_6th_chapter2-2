@@ -1,7 +1,7 @@
 import { useSetAtom } from 'jotai';
 
-import type { ProductWithUI } from '../../constants';
 import { addNotificationAtom } from '../../entities/notification';
+import type { ProductWithUI } from '../../entities/product';
 import { Icon } from '../../shared/icon';
 import {
   convertPercentageToRate,

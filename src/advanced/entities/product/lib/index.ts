@@ -1,5 +1,5 @@
-import type { CartItem, Product } from '../../types';
-import type { ProductWithUI } from '../constants';
+import type { CartItem, Product } from '../../../../types';
+import type { ProductWithUI } from '../consts';
 
 /**
  * 상품 검색

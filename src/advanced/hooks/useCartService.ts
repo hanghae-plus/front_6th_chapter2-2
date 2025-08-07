@@ -2,9 +2,8 @@ import { useSetAtom } from 'jotai';
 import { useCallback } from 'react';
 
 import { useCartStore } from './useCartStore';
-import type { ProductWithUI } from '../constants';
 import { addNotificationAtom } from '../entities/notification';
-import { getRemainingStock } from '../models/product';
+import { getRemainingStock, type ProductWithUI } from '../entities/product';
 
 interface UseCartServiceProps {
   products: ProductWithUI[];

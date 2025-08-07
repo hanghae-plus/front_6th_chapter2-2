@@ -1,6 +1,6 @@
 import type { CartItem } from '../../../types';
-import type { ProductWithUI } from '../../constants';
-import { filterProducts, getRemainingStock } from '../../models/product';
+import type { ProductWithUI } from '../../entities/product';
+import { filterProducts, getRemainingStock } from '../../entities/product';
 import { Icon } from '../../shared/icon';
 import { convertRateToPercentage, formatKRWPrice } from '../../shared/lib';
 

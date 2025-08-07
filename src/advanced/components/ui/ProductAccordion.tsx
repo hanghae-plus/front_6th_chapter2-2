@@ -1,13 +1,16 @@
-import type { ProductWithUI } from '../../constants';
+import { useAtomValue } from 'jotai';
+
+import { productsAtom, type ProductWithUI } from '../../entities/product';
 import { formatKRWPrice } from '../../shared/lib';
 
 interface ProductAccordionProps {
-  products: ProductWithUI[];
   onEdit: (product: ProductWithUI) => void;
   onDelete: (productId: string) => void;
 }
 
-export function ProductAccordion({ products, onEdit, onDelete }: ProductAccordionProps) {
+export function ProductAccordion({ onEdit, onDelete }: ProductAccordionProps) {
+  const products = useAtomValue(productsAtom);
+
   return (
     <div className='overflow-x-auto'>
       <table className='w-full'>

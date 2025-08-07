@@ -1,12 +1,18 @@
 import { useSetAtom } from 'jotai';
 import { useCallback } from 'react';
 
-import type { ProductWithUI } from '../constants';
-import { useProductStore } from './useProductStore';
 import { addNotificationAtom } from '../entities/notification';
+import {
+  addProductAtom,
+  deleteProductAtom,
+  updateProductAtom,
+  type ProductWithUI,
+} from '../entities/product';
 
 export function useProductService() {
-  const { products, addProduct, updateProduct, deleteProduct } = useProductStore();
+  const addProduct = useSetAtom(addProductAtom);
+  const updateProduct = useSetAtom(updateProductAtom);
+  const deleteProduct = useSetAtom(deleteProductAtom);
   const addNotification = useSetAtom(addNotificationAtom);
 
   const onAddProduct = useCallback(
@@ -33,5 +39,5 @@ export function useProductService() {
     [addNotification, deleteProduct]
   );
 
-  return { products, onAddProduct, onUpdateProduct, onDeleteProduct };
+  return { onAddProduct, onUpdateProduct, onDeleteProduct };
 }

@@ -1,21 +1,11 @@
 import { ProductAccordion } from './ProductAccordion';
 import { ProductForm } from './ProductForm';
-import type { ProductWithUI } from '../../constants';
 import { useProductForm } from '../../hooks/useProductForm';
+import { useProductService } from '../../hooks/useProductService';
 
-interface ProductTabProps {
-  products: ProductWithUI[];
-  onAddProduct: (product: Omit<ProductWithUI, 'id'>) => void;
-  onUpdateProduct: (productId: string, product: Omit<ProductWithUI, 'id'>) => void;
-  onDeleteProduct: (productId: string) => void;
-}
+export function ProductTab() {
+  const { onAddProduct, onUpdateProduct, onDeleteProduct } = useProductService();
 
-export function ProductTab({
-  products,
-  onAddProduct,
-  onUpdateProduct,
-  onDeleteProduct,
-}: ProductTabProps) {
   const {
     showProductForm,
     editingProduct,
@@ -44,7 +34,7 @@ export function ProductTab({
         </div>
       </div>
 
-      <ProductAccordion products={products} onEdit={startEditProduct} onDelete={onDeleteProduct} />
+      <ProductAccordion onEdit={startEditProduct} onDelete={onDeleteProduct} />
 
       <ProductForm
         isOpen={showProductForm}

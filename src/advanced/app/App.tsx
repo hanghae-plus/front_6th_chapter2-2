@@ -2,12 +2,10 @@ import { useState } from 'react';
 
 import { NotificationList } from '../entities/notification';
 import { useCouponService } from '../hooks/useCouponService';
-import { useProductService } from '../hooks/useProductService';
 import { AdminPage } from '../pages/admin';
 import { CartPage } from '../pages/cart';
 
 export const App = () => {
-  const { products, onAddProduct, onUpdateProduct, onDeleteProduct } = useProductService();
   const {
     coupons,
     selectedCoupon,
@@ -26,11 +24,6 @@ export const App = () => {
       {isAdmin ? (
         <AdminPage
           onChangeCartPage={() => setIsAdmin(false)}
-          // products
-          products={products}
-          onAddProduct={onAddProduct}
-          onUpdateProduct={onUpdateProduct}
-          onDeleteProduct={onDeleteProduct}
           // coupons
           coupons={coupons}
           onAddCoupon={onAddCoupon}
@@ -39,8 +32,6 @@ export const App = () => {
       ) : (
         <CartPage
           onChangeAdminPage={() => setIsAdmin(true)}
-          // products
-          products={products}
           // coupons
           coupons={coupons}
           selectedCoupon={selectedCoupon}
