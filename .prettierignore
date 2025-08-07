@@ -1,0 +1,17 @@
+# 테스트 파일 제외
+**/__tests__/**
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# Origin 파일 제외
+src/origin/**
+
+# 기타 제외
+node_modules/
+dist/
+build/
+coverage/
+.git/
+*.md
