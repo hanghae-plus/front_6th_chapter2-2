@@ -1,12 +1,12 @@
 import { useAtom } from "jotai";
 import { isAdminAtom } from "./store";
 
-import Layout from "./components/Layout";
-import Header from "./components/Layout/Header";
+import Layout from "./components/ui/Layout";
+import Header from "./components/ui/Layout/Header";
 import AdminPage from "./components/admin/AdminPage";
 import CartSection from "./components/cart/CartSection";
-import ProductListSection from "./components/product/ProductSection";
-import NotificationToast from "./components/ui/UIToast";
+import ProductListSection from "./components/product/ProductListSection";
+import NotificationToast from "./components/ui/NotificationToast";
 
 function App() {
   const [isAdmin] = useAtom(isAdminAtom);

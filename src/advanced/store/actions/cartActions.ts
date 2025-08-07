@@ -9,7 +9,7 @@ import { addNotificationHelper } from "./notificationActions";
 import { Getter } from "jotai";
 import { Setter } from "jotai";
 
-export const addToCartAtom = atom(
+export const handleAddToCartItem = atom(
   null,
   (get: Getter, set: Setter, product: ProductWithUI) => {
     try {
@@ -62,7 +62,7 @@ export const addToCartAtom = atom(
   }
 );
 
-export const removeFromCartAtom = atom(
+export const handleRemoveCartItem = atom(
   null,
   (get: Getter, set: Setter, productId: string) => {
     try {
@@ -86,7 +86,7 @@ export const removeFromCartAtom = atom(
   }
 );
 
-export const updateQuantityAtom = atom(
+export const handleUpdateQuantityItem = atom(
   null,
   (get, set, productId: string, newQuantity: number) => {
     try {
@@ -140,28 +140,31 @@ export const updateQuantityAtom = atom(
   }
 );
 
-export const clearCartAtom = atom(null, (get: Getter, set: Setter) => {
+export const handleClearCartItem = atom(null, (get: Getter, set: Setter) => {
   set(cartAtom, []);
   addNotificationHelper(get, set, "장바구니가 비워졌습니다.", "success");
 });
 
-export const completeOrderAtom = atom(null, (get: Getter, set: Setter) => {
-  try {
-    const orderNumber = generateId("ORD");
-    addNotificationHelper(
-      get,
-      set,
-      `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
-      "success"
-    );
-    set(cartAtom, []);
-    set(selectedCouponAtom, null);
-  } catch (error) {
-    addNotificationHelper(
-      get,
-      set,
-      "주문 처리 중 오류가 발생했습니다.",
-      "error"
-    );
+export const handleCompleteOrderItem = atom(
+  null,
+  (get: Getter, set: Setter) => {
+    try {
+      const orderNumber = generateId("ORD");
+      addNotificationHelper(
+        get,
+        set,
+        `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
+        "success"
+      );
+      set(cartAtom, []);
+      set(selectedCouponAtom, null);
+    } catch (error) {
+      addNotificationHelper(
+        get,
+        set,
+        "주문 처리 중 오류가 발생했습니다.",
+        "error"
+      );
+    }
   }
-});
+);

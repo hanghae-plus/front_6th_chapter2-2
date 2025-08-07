@@ -1,65 +1,20 @@
-import { useState } from "react";
-import { useAtom } from "jotai";
 import { formatPrice } from "../../utils/formatters";
-import { ProductCreationPayload, ProductWithUI } from "../../types";
-import { productsAtom } from "../../store/atoms/productAtoms";
-import {
-  addProductAtom,
-  removeProductAtom,
-  updateProductAtom,
-} from "../../store/actions/productActions";
 
-export const ProductSection = () => {
-  const [products] = useAtom(productsAtom);
-  const [, addProduct] = useAtom(addProductAtom);
-  const [, updateProduct] = useAtom(updateProductAtom);
-  const [, removeProduct] = useAtom(removeProductAtom);
+import { useAdminProducts } from "./hooks/useAdminProducts";
 
-  const [showProductForm, setShowProductForm] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<string | null>(null);
-  const [productForm, setProductForm] = useState<ProductCreationPayload>({
-    name: "",
-    price: 0,
-    stock: 0,
-    description: "",
-    discounts: [],
-  });
-
-  const handleProductSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (editingProduct === "new") {
-      addProduct(productForm);
-    } else if (editingProduct) {
-      updateProduct(editingProduct, productForm);
-    }
-
-    setProductForm({
-      name: "",
-      price: 0,
-      stock: 0,
-      description: "",
-      discounts: [],
-    });
-    setEditingProduct(null);
-    setShowProductForm(false);
-  };
-
-  const startEditProduct = (product: ProductWithUI) => {
-    setEditingProduct(product.id);
-    setProductForm({
-      name: product.name,
-      price: product.price,
-      stock: product.stock,
-      description: product.description || "",
-      discounts: product.discounts || [],
-    });
-    setShowProductForm(true);
-  };
-
-  const handleDeleteProduct = (productId: string) => {
-    removeProduct(productId);
-  };
+export const AdminProductSection = () => {
+  const {
+    products,
+    showProductForm,
+    editingProduct,
+    productForm,
+    handleProductSubmit,
+    startEditProduct,
+    handleDeleteProduct,
+    handleFormChange,
+    startAddNewProduct,
+    cancelForm,
+  } = useAdminProducts();
 
   return (
     <section className="bg-white rounded-lg border border-gray-200">
@@ -67,17 +22,7 @@ export const ProductSection = () => {
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-semibold">상품 목록</h2>
           <button
-            onClick={() => {
-              setEditingProduct("new");
-              setProductForm({
-                name: "",
-                price: 0,
-                stock: 0,
-                description: "",
-                discounts: [],
-              });
-              setShowProductForm(true);
-            }}
+            onClick={startAddNewProduct}
             className="px-4 py-2 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800"
           >
             새 상품 추가
@@ -155,9 +100,7 @@ export const ProductSection = () => {
                 <input
                   type="text"
                   value={productForm.name}
-                  onChange={(e) =>
-                    setProductForm({ ...productForm, name: e.target.value })
-                  }
+                  onChange={(e) => handleFormChange(e, "name")}
                   className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
                   required
                 />
@@ -169,12 +112,7 @@ export const ProductSection = () => {
                 <input
                   type="text"
                   value={productForm.description}
-                  onChange={(e) =>
-                    setProductForm({
-                      ...productForm,
-                      description: e.target.value,
-                    })
-                  }
+                  onChange={(e) => handleFormChange(e, "description")}
                   className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
                 />
               </div>
@@ -185,15 +123,7 @@ export const ProductSection = () => {
                 <input
                   type="text"
                   value={productForm.price === 0 ? "" : productForm.price}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    if (value === "" || /^\d+$/.test(value)) {
-                      setProductForm({
-                        ...productForm,
-                        price: value === "" ? 0 : parseInt(value),
-                      });
-                    }
-                  }}
+                  onChange={(e) => handleFormChange(e, "price")}
                   className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
                   placeholder="숫자만 입력"
                   required
@@ -206,15 +136,7 @@ export const ProductSection = () => {
                 <input
                   type="text"
                   value={productForm.stock === 0 ? "" : productForm.stock}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    if (value === "" || /^\d+$/.test(value)) {
-                      setProductForm({
-                        ...productForm,
-                        stock: value === "" ? 0 : parseInt(value),
-                      });
-                    }
-                  }}
+                  onChange={(e) => handleFormChange(e, "stock")}
                   className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
                   placeholder="숫자만 입력"
                   required
@@ -225,17 +147,7 @@ export const ProductSection = () => {
             <div className="flex justify-end gap-3">
               <button
                 type="button"
-                onClick={() => {
-                  setEditingProduct(null);
-                  setProductForm({
-                    name: "",
-                    price: 0,
-                    stock: 0,
-                    description: "",
-                    discounts: [],
-                  });
-                  setShowProductForm(false);
-                }}
+                onClick={cancelForm}
                 className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
                 취소
@@ -254,4 +166,4 @@ export const ProductSection = () => {
   );
 };
 
-export default ProductSection;
+export default AdminProductSection;

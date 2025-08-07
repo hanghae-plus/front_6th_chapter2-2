@@ -1,120 +1,21 @@
-import { useState } from "react";
-import { useAtom } from "jotai";
-import { CouponCreationPayload } from "../../types";
-import { Coupon } from "../../../types";
-import { couponsAtom } from "../../store/atoms/couponAtoms";
-import {
-  addCouponAtom,
-  removeCouponAtom,
-} from "../../store/actions/couponActions";
+import { useAdminCoupons } from "./hooks/useAdminCoupons";
 
-export const CouponSection = () => {
-  const [coupons] = useAtom(couponsAtom);
-  const [, addCoupon] = useAtom(addCouponAtom);
-  const [, removeCoupon] = useAtom(removeCouponAtom);
-
-  const [showCouponForm, setShowCouponForm] = useState(false);
-  const [couponForm, setCouponForm] = useState<CouponCreationPayload>({
-    name: "",
-    code: "",
-    discountType: "amount",
-    discountValue: 0,
-  });
-  const [validationError, setValidationError] = useState<string>("");
-
-  const onCouponSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // 할인율 검증
-    if (
-      couponForm.discountType === "percentage" &&
-      couponForm.discountValue > 100
-    ) {
-      setValidationError("할인율은 100%를 초과할 수 없습니다");
-      return;
-    }
-
-    setValidationError("");
-
-    const newCoupon: Coupon = {
-      name: couponForm.name,
-      code: couponForm.code,
-      discountType: couponForm.discountType,
-      discountValue: couponForm.discountValue,
-    };
-
-    addCoupon(newCoupon);
-
-    setCouponForm({
-      name: "",
-      code: "",
-      discountType: "amount",
-      discountValue: 0,
-    });
-    setShowCouponForm(false);
-  };
-
-  const onDiscountValueChange = (value: string) => {
-    const numValue = value === "" ? 0 : parseInt(value);
-
-    if (couponForm.discountType === "percentage" && numValue > 100) {
-      setValidationError("할인율은 100%를 초과할 수 없습니다");
-    } else {
-      setValidationError("");
-    }
-
-    setCouponForm({
-      ...couponForm,
-      discountValue: numValue,
-    });
-  };
-
-  const onToggleCouponForm = () => {
-    setShowCouponForm(!showCouponForm);
-  };
-
-  const onCouponNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCouponForm({ ...couponForm, name: e.target.value });
-  };
-
-  const onCouponCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCouponForm({
-      ...couponForm,
-      code: e.target.value.toUpperCase(),
-    });
-  };
-
-  const onDiscountTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setCouponForm({
-      ...couponForm,
-      discountType: e.target.value as "amount" | "percentage",
-    });
-  };
-
-  const onDiscountValueInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const value = e.target.value;
-    if (value === "" || /^\d+$/.test(value)) {
-      onDiscountValueChange(value);
-    }
-  };
-
-  const onDiscountValueBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (couponForm.discountType === "percentage" && parseInt(value) > 100) {
-      setValidationError("할인율은 100%를 초과할 수 없습니다");
-    }
-  };
-
-  const onCancelClick = () => {
-    setShowCouponForm(false);
-    setValidationError("");
-  };
-
-  const handleDeleteCoupon = (couponCode: string) => {
-    removeCoupon(couponCode);
-  };
+export const AdminCouponSection = () => {
+  const {
+    coupons,
+    showCouponForm,
+    couponForm,
+    validationError,
+    onCouponSubmit,
+    handleDeleteCoupon,
+    onToggleCouponForm,
+    onCouponNameChange,
+    onCouponCodeChange,
+    onDiscountValueBlur,
+    onDiscountTypeChange,
+    onDiscountValueInputChange,
+    onCancelClick,
+  } = useAdminCoupons();
 
   return (
     <section className="bg-white rounded-lg border border-gray-200">
@@ -285,4 +186,4 @@ export const CouponSection = () => {
   );
 };
 
-export default CouponSection;
+export default AdminCouponSection;

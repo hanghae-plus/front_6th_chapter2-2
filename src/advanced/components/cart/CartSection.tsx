@@ -1,27 +1,22 @@
-import { useAtom } from "jotai";
 import CartItem from "./CartItem";
-import { cartAtom } from "../../store/atoms/cartAtoms";
-import { couponsAtom, selectedCouponAtom } from "../../store/atoms/couponAtoms";
-import {
-  completeOrderAtom,
-  removeFromCartAtom,
-  updateQuantityAtom,
-} from "../../store/actions/cartActions";
-import { cartTotalAtom } from "../../store/selectors/cartTotalSelector";
-import { applyCouponAtom } from "../../store/actions/couponActions";
+
+import { useCart } from "./hooks/useCart";
 
 export const CartSection = () => {
-  const [cart] = useAtom(cartAtom);
-  const [coupons] = useAtom(couponsAtom);
-  const [selectedCoupon] = useAtom(selectedCouponAtom);
-  const [, removeFromCart] = useAtom(removeFromCartAtom);
-  const [, updateQuantity] = useAtom(updateQuantityAtom);
-  const [, applyCoupon] = useAtom(applyCouponAtom);
-  const [, completeOrder] = useAtom(completeOrderAtom);
-  const [totals] = useAtom(cartTotalAtom);
+  const {
+    cart,
+    coupons,
+    selectedCoupon,
+    totals,
+
+    removeCartItem,
+    updateCartQuantity,
+    applyCoupon,
+    completeOrder,
+  } = useCart();
 
   const handleUpdateQuantity = (productId: string, quantity: number) => {
-    updateQuantity(productId, quantity);
+    updateCartQuantity(productId, quantity);
   };
 
   const handleApplyCoupon = (coupon: any) => {
@@ -74,7 +69,7 @@ export const CartSection = () => {
               <CartItem
                 key={item.product.id}
                 item={item}
-                onRemove={removeFromCart}
+                onRemove={removeCartItem}
                 onUpdateQuantity={handleUpdateQuantity}
               />
             ))}

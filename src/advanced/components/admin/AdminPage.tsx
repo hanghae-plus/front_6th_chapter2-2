@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
-import ProductSection from "./AdminProductSection";
-import CouponSection from "./AdminCouponSection";
+import AdminProductSection from "./AdminProductSection";
+import AdminCouponSection from "./AdminCouponSection";
 
 const AdminPage: FC = () => {
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
@@ -42,10 +42,10 @@ const AdminPage: FC = () => {
 
       {/* 상품 관리 탭 내용 */}
       {activeTab === "products" ? (
-        <ProductSection />
+        <AdminProductSection />
       ) : (
         <div className="space-y-6">
-          <CouponSection />
+          <AdminCouponSection />
         </div>
       )}
     </div>

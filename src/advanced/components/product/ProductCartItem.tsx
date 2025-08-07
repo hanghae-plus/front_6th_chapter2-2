@@ -6,7 +6,7 @@ import {
 import { ProductWithUI } from "../../types";
 import { formatPrice } from "../../utils/formatters";
 import { isAdminAtom } from "../../store";
-import { addToCartAtom } from "../../store/actions/cartActions";
+import { useCart } from "../cart/hooks/useCart";
 
 interface ProductCartItemProps {
   product: ProductWithUI;
@@ -17,11 +17,11 @@ export const ProductCartItem = ({
   product,
   remainingStock,
 }: ProductCartItemProps) => {
-  const [, addToCart] = useAtom(addToCartAtom);
+  const { addCartItem } = useCart();
   const [isAdmin] = useAtom(isAdminAtom);
 
   const handleAddToCart = () => {
-    addToCart(product);
+    addCartItem(product);
   };
 
   return (

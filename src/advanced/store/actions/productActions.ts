@@ -8,7 +8,7 @@ import { addNotificationHelper } from "./notificationActions";
 import { Getter } from "jotai";
 import { Setter } from "jotai";
 
-export const addProductAtom = atom(
+export const handleAddProductAtom = atom(
   null,
   (get: Getter, set: Setter, newProduct: Omit<ProductWithUI, "id">) => {
     try {

@@ -8,7 +8,7 @@ import { addNotificationHelper } from "./notificationActions";
 import { Getter } from "jotai";
 import { Setter } from "jotai";
 
-export const addCouponAtom = atom(
+export const handleAddCouponAtom = atom(
   null,
   (get: Getter, set: Setter, newCoupon: Coupon) => {
     try {
@@ -38,34 +38,37 @@ export const addCouponAtom = atom(
   }
 );
 
-export const removeCouponAtom = atom(null, (get, set, couponCode: string) => {
-  try {
-    const coupons = get(couponsAtom);
-    const selectedCoupon = get(selectedCouponAtom);
+export const handleRemoveCouponAtom = atom(
+  null,
+  (get, set, couponCode: string) => {
+    try {
+      const coupons = get(couponsAtom);
+      const selectedCoupon = get(selectedCouponAtom);
 
-    // 선택된 쿠폰이 삭제되는 경우 선택 해제
-    if (selectedCoupon?.code === couponCode) {
-      set(selectedCouponAtom, null);
+      // 선택된 쿠폰이 삭제되는 경우 선택 해제
+      if (selectedCoupon?.code === couponCode) {
+        set(selectedCouponAtom, null);
+      }
+
+      const updatedCoupons = coupons.filter(
+        (coupon) => coupon.code !== couponCode
+      );
+      set(couponsAtom, updatedCoupons);
+
+      addNotificationHelper(get, set, "쿠폰이 삭제되었습니다.", "success");
+    } catch (error) {
+      addNotificationHelper(
+        get,
+        set,
+        "쿠폰 삭제 중 오류가 발생했습니다.",
+        "error"
+      );
     }
-
-    const updatedCoupons = coupons.filter(
-      (coupon) => coupon.code !== couponCode
-    );
-    set(couponsAtom, updatedCoupons);
-
-    addNotificationHelper(get, set, "쿠폰이 삭제되었습니다.", "success");
-  } catch (error) {
-    addNotificationHelper(
-      get,
-      set,
-      "쿠폰 삭제 중 오류가 발생했습니다.",
-      "error"
-    );
   }
-});
+);
 
 // 쿠폰 적용 액션
-export const applyCouponAtom = atom(
+export const handleApplyCouponAtom = atom(
   null,
   (get: Getter, set: Setter, coupon: Coupon) => {
     try {

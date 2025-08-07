@@ -1,11 +1,9 @@
-import { useAtom } from "jotai";
 import { ProductCartItem } from "./ProductCartItem";
-import { filteredProductsAtom } from "../../store/selectors/filteredProductsSelector";
-import { getRemainingStockAtom } from "../../store/selectors/getRemainingStockSelector";
+
+import { useProduct } from "./hooks/useProduct";
 
 export const ProductCartList = () => {
-  const [filteredProducts] = useAtom(filteredProductsAtom);
-  const [getRemainingStock] = useAtom(getRemainingStockAtom);
+  const { filteredProducts, getRemainingStock } = useProduct();
 
   return (
     <>
