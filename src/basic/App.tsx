@@ -3,6 +3,7 @@ import { CartItem, Coupon, Product } from "../types";
 import { initialCoupons } from "./data";
 import { type ProductWithUI, useProducts } from "./hooks/useProducts";
 import { useTask } from "./hooks/useNotifyingTask";
+import { useCart } from "./hooks/useCart";
 
 interface Notification {
   id: string;
@@ -13,17 +14,8 @@ interface Notification {
 const App = () => {
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
 
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem("cart");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return [];
-      }
-    }
-    return [];
-  });
+  const { cart, addToCart, removeFromCart, updateQuantity, clearCart } =
+    useCart();
 
   const [coupons, setCoupons] = useState<Coupon[]>(() => {
     const saved = localStorage.getItem("coupons");
@@ -169,72 +161,31 @@ const App = () => {
   }, [coupons]);
 
   useEffect(() => {
-    if (cart.length > 0) {
-      localStorage.setItem("cart", JSON.stringify(cart));
-    } else {
-      localStorage.removeItem("cart");
-    }
-  }, [cart]);
-
-  useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
     }, 500);
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  const addToCart = useCallback(
+  const addToCartTask = useCallback(
     (product: ProductWithUI) => {
       const remainingStock = getRemainingStock(product);
       if (remainingStock <= 0) {
         addNotification("재고가 부족합니다!", "error");
         return;
       }
-
-      setCart((prevCart) => {
-        const existingItem = prevCart.find(
-          (item) => item.product.id === product.id
-        );
-
-        if (existingItem) {
-          const newQuantity = existingItem.quantity + 1;
-
-          if (newQuantity > product.stock) {
-            addNotification(
-              `재고는 ${product.stock}개까지만 있습니다.`,
-              "error"
-            );
-            return prevCart;
-          }
-
-          return prevCart.map((item) =>
-            item.product.id === product.id
-              ? { ...item, quantity: newQuantity }
-              : item
-          );
-        }
-
-        return [...prevCart, { product, quantity: 1 }];
-      });
-
+      addToCart(product);
       addNotification("장바구니에 담았습니다", "success");
     },
-    [cart, addNotification, getRemainingStock]
+    [addToCart, addNotification, getRemainingStock]
   );
 
-  const removeFromCart = useCallback((productId: string) => {
-    setCart((prevCart) =>
-      prevCart.filter((item) => item.product.id !== productId)
-    );
-  }, []);
-
-  const updateQuantity = useCallback(
+  const updateQuantityTask = useCallback(
     (productId: string, newQuantity: number) => {
       if (newQuantity <= 0) {
         removeFromCart(productId);
         return;
       }
-
       const product = products.find((p) => p.id === productId);
       if (!product) return;
 
@@ -243,16 +194,9 @@ const App = () => {
         addNotification(`재고는 ${maxStock}개까지만 있습니다.`, "error");
         return;
       }
-
-      setCart((prevCart) =>
-        prevCart.map((item) =>
-          item.product.id === productId
-            ? { ...item, quantity: newQuantity }
-            : item
-        )
-      );
+      updateQuantity(productId, newQuantity);
     },
-    [products, removeFromCart, addNotification, getRemainingStock]
+    [products, updateQuantity, addNotification]
   );
 
   const applyCoupon = useCallback(
@@ -279,9 +223,9 @@ const App = () => {
       `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
       "success"
     );
-    setCart([]);
+    clearCart();
     setSelectedCoupon(null);
-  }, [addNotification]);
+  }, [addNotification, clearCart]);
 
   const addProductTask = useTask(addProduct, {
     onSuccess: () => {
@@ -1185,7 +1129,7 @@ const App = () => {
 
                             {/* 장바구니 버튼 */}
                             <button
-                              onClick={() => addToCart(product)}
+                              onClick={() => addToCartTask(product)}
                               disabled={remainingStock <= 0}
                               className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
                                 remainingStock <= 0
@@ -1285,7 +1229,7 @@ const App = () => {
                               <div className="flex items-center">
                                 <button
                                   onClick={() =>
-                                    updateQuantity(
+                                    updateQuantityTask(
                                       item.product.id,
                                       item.quantity - 1
                                     )
@@ -1299,7 +1243,7 @@ const App = () => {
                                 </span>
                                 <button
                                   onClick={() =>
-                                    updateQuantity(
+                                    updateQuantityTask(
                                       item.product.id,
                                       item.quantity + 1
                                     )
