@@ -1,7 +1,6 @@
 // hooks
 import { useNotification } from "./hooks/useNotification";
 import { useAppState } from "./hooks/useAppState";
-import { useState } from "react";
 
 // components
 import { Header } from "./components/ui/header/Header";
@@ -16,14 +15,9 @@ const App = () => {
   const { notifications, addNotification, removeNotification } = useNotification();
 
   // 앱 전체 상태 관리
-  const {
-    // UI 상태
-    isAdmin,
-    toggleAdmin,
-  } = useAppState();
+  const { isAdmin, toggleAdmin, totalItemCount, setTotalItemCount } = useAppState();
 
   // 장바구니 아이템 개수 상태
-  const [totalItemCount, setTotalItemCount] = useState(0);
 
   return (
     <div className="min-h-screen bg-gray-50">
