@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { SEARCH } from "@/basic/features/search/constants/search";
+import { SEARCH } from "@/advanced/features/search/constants/search";
 
 export function useSearch() {
   const [searchTerm, setSearchTerm] = useState("");

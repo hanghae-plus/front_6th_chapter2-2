@@ -1,33 +1,29 @@
 import { useCallback } from "react";
 
-import { useCart } from "@/basic/features/cart/hooks/useCart";
-import { cartModel } from "@/basic/features/cart/models/cart.model";
-import { Coupon } from "@/basic/features/coupon/types/coupon.type";
-import { discountModel } from "@/basic/features/discount/models/discount.model";
-import { Discount } from "@/basic/features/discount/types/discount.type";
-import { AddNotification } from "@/basic/features/notification/types/notification";
-import { useProducts } from "@/basic/features/product/hooks/useProducts";
-import { productModel } from "@/basic/features/product/models/product.model";
-import { ProductWithUI } from "@/basic/features/product/types/product";
-import Icon from "@/basic/shared/components/icons/Icon";
-import { PRODUCT } from "@/basic/shared/constants/product";
+import { useCart } from "@/advanced/features/cart/hooks/useCart";
+import { cartModel } from "@/advanced/features/cart/models/cart.model";
+import { Coupon } from "@/advanced/features/coupon/types/coupon.type";
+import { discountModel } from "@/advanced/features/discount/models/discount.model";
+import { Discount } from "@/advanced/features/discount/types/discount.type";
+import { useProducts } from "@/advanced/features/product/hooks/useProducts";
+import { productModel } from "@/advanced/features/product/models/product.model";
+import { ProductWithUI } from "@/advanced/features/product/types/product";
+import Icon from "@/advanced/shared/components/icons/Icon";
+import { PRODUCT } from "@/advanced/shared/constants/product";
 
 interface ProductCardProps {
   product: ProductWithUI;
-  addNotification: AddNotification;
   selectedCoupon: Coupon | null;
   setSelectedCoupon: (coupon: Coupon | null) => void;
 }
 
 export default function ProductCard({
   product,
-  addNotification,
   selectedCoupon,
   setSelectedCoupon,
 }: ProductCardProps) {
   const { products } = useProducts();
   const { cart, addToCart } = useCart({
-    addNotification,
     selectedCoupon,
     setSelectedCoupon,
   });

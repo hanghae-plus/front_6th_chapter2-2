@@ -1,4 +1,4 @@
-import { NotificationType } from "@/basic/features/notification/types/notification";
+import { NotificationType } from "@/advanced/features/notification/types/notification";
 
 export class NotificationError extends Error {
   constructor(

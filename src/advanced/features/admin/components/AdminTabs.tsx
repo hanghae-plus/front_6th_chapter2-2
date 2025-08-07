@@ -1,7 +1,7 @@
-import CouponAdmin from "@/basic/features/admin/components/CouponAdmin";
-import ProductAdmin from "@/basic/features/admin/components/ProductAdmin";
-import { Coupon } from "@/basic/features/coupon/types/coupon.type";
-import Tabs from "@/basic/shared/components/ui/Tabs";
+import CouponAdmin from "@/advanced/features/admin/components/CouponAdmin";
+import ProductAdmin from "@/advanced/features/admin/components/ProductAdmin";
+import { Coupon } from "@/advanced/features/coupon/types/coupon.type";
+import Tabs from "@/advanced/shared/components/ui/Tabs";
 
 enum AdminTabsValue {
   PRODUCTS = "products",

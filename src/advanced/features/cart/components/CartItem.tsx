@@ -1,10 +1,10 @@
-import { useCart } from "@/basic/features/cart/hooks/useCart";
-import { cartModel } from "@/basic/features/cart/models/cart.model";
-import { CartItem as CartItemType } from "@/basic/features/cart/types/cart.type";
-import { Coupon } from "@/basic/features/coupon/types/coupon.type";
-import Icon from "@/basic/shared/components/icons/Icon";
-import { roundAmount } from "@/basic/shared/utils/calculation.util";
-import { formatPrice } from "@/basic/shared/utils/format.util";
+import { useCart } from "@/advanced/features/cart/hooks/useCart";
+import { cartModel } from "@/advanced/features/cart/models/cart.model";
+import { CartItem as CartItemType } from "@/advanced/features/cart/types/cart.type";
+import { Coupon } from "@/advanced/features/coupon/types/coupon.type";
+import Icon from "@/advanced/shared/components/icons/Icon";
+import { roundAmount } from "@/advanced/shared/utils/calculation.util";
+import { formatPrice } from "@/advanced/shared/utils/format.util";
 
 interface CartItemProps {
   item: CartItemType;

@@ -1,6 +1,6 @@
-import { Notification } from "@/basic/features/notification/types/notification";
-import Icon from "@/basic/shared/components/icons/Icon";
-import { NOTIFICATION } from "@/basic/shared/constants/notification";
+import { Notification } from "@/advanced/features/notification/types/notification";
+import Icon from "@/advanced/shared/components/icons/Icon";
+import { NOTIFICATION } from "@/advanced/shared/constants/notification";
 
 interface Props {
   notification: Notification;

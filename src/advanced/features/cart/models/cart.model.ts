@@ -1,12 +1,12 @@
-import { CartItem } from "@/basic/features/cart/types/cart.type";
-import { couponModel } from "@/basic/features/coupon/models/coupon.model";
-import { Coupon } from "@/basic/features/coupon/types/coupon.type";
-import { discountModel } from "@/basic/features/discount/models/discount.model";
-import { Product } from "@/basic/features/product/types/product";
+import { CartItem } from "@/advanced/features/cart/types/cart.type";
+import { couponModel } from "@/advanced/features/coupon/models/coupon.model";
+import { Coupon } from "@/advanced/features/coupon/types/coupon.type";
+import { discountModel } from "@/advanced/features/discount/models/discount.model";
+import { Product } from "@/advanced/features/product/types/product";
 import {
   calculateDiscountedPrice,
   roundAmount,
-} from "@/basic/shared/utils/calculation.util";
+} from "@/advanced/shared/utils/calculation.util";
 
 const calculateItemTotal = (item: CartItem, cart: CartItem[]): number => {
   const maxDiscountRate = discountModel.getMaxApplicableDiscountRate(

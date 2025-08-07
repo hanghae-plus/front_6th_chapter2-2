@@ -1,4 +1,4 @@
-import { Discount } from "@/basic/features/discount/types/discount.type";
+import { Discount } from "@/advanced/features/discount/types/discount.type";
 
 export interface Product {
   id: string;

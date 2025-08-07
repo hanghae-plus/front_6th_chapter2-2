@@ -2,12 +2,12 @@ import ProductForm from "./ProductForm";
 
 import { useState } from "react";
 
-import AdminSection from "@/basic/features/admin/components/AdminSection";
-import ProductListRow from "@/basic/features/admin/components/ProductAdmin/ProductListRow";
-import { Coupon } from "@/basic/features/coupon/types/coupon.type";
-import { useProducts } from "@/basic/features/product/hooks/useProducts";
-import { ProductWithUI } from "@/basic/features/product/types/product";
-import { DEFAULTS } from "@/basic/shared/constants/defaults";
+import AdminSection from "@/advanced/features/admin/components/AdminSection";
+import ProductListRow from "@/advanced/features/admin/components/ProductAdmin/ProductListRow";
+import { Coupon } from "@/advanced/features/coupon/types/coupon.type";
+import { useProducts } from "@/advanced/features/product/hooks/useProducts";
+import { ProductWithUI } from "@/advanced/features/product/types/product";
+import { DEFAULTS } from "@/advanced/shared/constants/defaults";
 
 interface ProductAdminProps {
   selectedCoupon: Coupon | null;

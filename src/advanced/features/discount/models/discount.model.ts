@@ -1,6 +1,6 @@
-import { CartItem } from "@/basic/features/cart/types/cart.type";
-import { DISCOUNT } from "@/basic/features/discount/constants/discount";
-import { Discount } from "@/basic/features/discount/types/discount.type";
+import { CartItem } from "@/advanced/features/cart/types/cart.type";
+import { DISCOUNT } from "@/advanced/features/discount/constants/discount";
+import { Discount } from "@/advanced/features/discount/types/discount.type";
 
 const getMaxApplicableDiscountRate = (
   item: CartItem,

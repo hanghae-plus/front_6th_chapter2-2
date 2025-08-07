@@ -1,4 +1,4 @@
-import { DiscountType } from "@/basic/features/discount/types/discount.type";
+import { DiscountType } from "@/advanced/features/discount/types/discount.type";
 
 export interface Coupon {
   name: string;

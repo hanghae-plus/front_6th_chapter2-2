@@ -1,13 +1,13 @@
 import * as React from "react";
 
-import { CartIcon } from "@/basic/shared/components/icons/CartIcon";
-import CloseIcon from "@/basic/shared/components/icons/CloseIcon";
-import ImageIcon from "@/basic/shared/components/icons/ImageIcon";
-import { MinusIcon } from "@/basic/shared/components/icons/MinusIcon";
-import PlusIcon from "@/basic/shared/components/icons/PlusIcon";
-import { ShopIcon } from "@/basic/shared/components/icons/ShopIcon";
-import { ShopThin } from "@/basic/shared/components/icons/ShopThin";
-import TrashIcon from "@/basic/shared/components/icons/TrashIcon";
+import { CartIcon } from "@/advanced/shared/components/icons/CartIcon";
+import CloseIcon from "@/advanced/shared/components/icons/CloseIcon";
+import ImageIcon from "@/advanced/shared/components/icons/ImageIcon";
+import { MinusIcon } from "@/advanced/shared/components/icons/MinusIcon";
+import PlusIcon from "@/advanced/shared/components/icons/PlusIcon";
+import { ShopIcon } from "@/advanced/shared/components/icons/ShopIcon";
+import { ShopThin } from "@/advanced/shared/components/icons/ShopThin";
+import TrashIcon from "@/advanced/shared/components/icons/TrashIcon";
 
 type IconType =
   | "cart"

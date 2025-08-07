@@ -1,7 +1,7 @@
 import {
   calculateAmountDiscount,
   calculatePercentageDiscount,
-} from "@/basic/shared/utils/calculation.util";
+} from "@/advanced/shared/utils/calculation.util";
 import { Coupon, DiscountType } from "@/types";
 
 const applyCouponDiscount = (total: number, coupon: Coupon): number => {

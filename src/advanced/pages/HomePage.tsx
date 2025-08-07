@@ -1,11 +1,11 @@
-import CartSummary from "@/basic/features/cart/components/CartSummary";
-import { useCart } from "@/basic/features/cart/hooks/useCart";
-import { Coupon } from "@/basic/features/coupon/types/coupon.type";
-import ProductList from "@/basic/features/product/components/ProductList";
-import { useSearch } from "@/basic/features/search/hooks/useSearch";
-import Header from "@/basic/shared/components/layout/Header";
-import MainLayout from "@/basic/shared/components/layout/MainLayout";
-import PageLayout from "@/basic/shared/components/layout/PageLayout";
+import CartSummary from "@/advanced/features/cart/components/CartSummary";
+import { useCart } from "@/advanced/features/cart/hooks/useCart";
+import { Coupon } from "@/advanced/features/coupon/types/coupon.type";
+import ProductList from "@/advanced/features/product/components/ProductList";
+import { useSearch } from "@/advanced/features/search/hooks/useSearch";
+import Header from "@/advanced/shared/components/layout/Header";
+import MainLayout from "@/advanced/shared/components/layout/MainLayout";
+import PageLayout from "@/advanced/shared/components/layout/PageLayout";
 
 interface HomePageProps {
   setIsAdmin: (isAdmin: boolean) => void;

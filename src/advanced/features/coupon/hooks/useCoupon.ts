@@ -1,9 +1,9 @@
 import { useCallback } from "react";
 
-import { couponData } from "@/basic/features/coupon/data/coupon.data";
-import { Coupon } from "@/basic/features/coupon/types/coupon.type";
-import { throwNotificationError } from "@/basic/features/notification/utils/notificationError.util";
-import { useLocalStorage } from "@/basic/shared/hooks/useLocalStorage";
+import { couponData } from "@/advanced/features/coupon/data/coupon.data";
+import { Coupon } from "@/advanced/features/coupon/types/coupon.type";
+import { throwNotificationError } from "@/advanced/features/notification/utils/notificationError.util";
+import { useLocalStorage } from "@/advanced/shared/hooks/useLocalStorage";
 
 interface Props {
   resetCoupon: () => void;

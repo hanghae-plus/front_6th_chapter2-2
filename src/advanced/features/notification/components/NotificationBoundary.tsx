@@ -1,9 +1,9 @@
 import { PropsWithChildren, useCallback, useEffect, useState } from "react";
 
-import NotificationItem from "@/basic/features/notification/components/NotificationItem";
-import { Notification } from "@/basic/features/notification/types/notification";
-import { NOTIFICATION } from "@/basic/shared/constants/notification";
-import { NotificationError } from "@/basic/shared/errors/NotificationError";
+import NotificationItem from "@/advanced/features/notification/components/NotificationItem";
+import { Notification } from "@/advanced/features/notification/types/notification";
+import { NOTIFICATION } from "@/advanced/shared/constants/notification";
+import { NotificationError } from "@/advanced/shared/errors/NotificationError";
 
 export function NotificationBoundary({ children }: PropsWithChildren) {
   const [notifications, setNotifications] = useState<Notification[]>([]);

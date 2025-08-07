@@ -1,5 +1,5 @@
-import { Coupon } from "@/basic/features/coupon/types/coupon.type";
-import { DiscountType } from "@/basic/features/discount/types/discount.type";
+import { Coupon } from "@/advanced/features/coupon/types/coupon.type";
+import { DiscountType } from "@/advanced/features/discount/types/discount.type";
 
 const initialCoupons: Coupon[] = [
   {

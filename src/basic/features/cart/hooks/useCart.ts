@@ -5,7 +5,6 @@ import { CartItem } from "@/basic/features/cart/types/cart.type";
 import { COUPON } from "@/basic/features/coupon/constants/coupon";
 import { Coupon } from "@/basic/features/coupon/types/coupon.type";
 import { DiscountType } from "@/basic/features/discount/types/discount.type";
-import { AddNotification } from "@/basic/features/notification/types/notification";
 import { throwNotificationError } from "@/basic/features/notification/utils/notificationError.util";
 import { useProducts } from "@/basic/features/product/hooks/useProducts";
 import { ProductWithUI } from "@/basic/features/product/types/product";
@@ -14,16 +13,11 @@ import { PRODUCT } from "@/basic/shared/constants/product";
 import { useLocalStorage } from "@/basic/shared/hooks/useLocalStorage";
 
 interface Props {
-  addNotification: AddNotification;
   selectedCoupon: Coupon | null;
   setSelectedCoupon: (coupon: Coupon | null) => void;
 }
 
-export function useCart({
-  addNotification,
-  selectedCoupon,
-  setSelectedCoupon,
-}: Props) {
+export function useCart({ selectedCoupon, setSelectedCoupon }: Props) {
   const { products } = useProducts();
   const [cart, setCart] = useLocalStorage<CartItem[]>("cart", []);
 
@@ -104,7 +98,7 @@ export function useCart({
         )
       );
     },
-    [products, removeFromCart, addNotification]
+    [products, removeFromCart]
   );
 
   const applyCoupon = useCallback(
@@ -132,7 +126,7 @@ export function useCart({
 
       throwNotificationError.success("쿠폰이 적용되었습니다.");
     },
-    [addNotification, cart, selectedCoupon]
+    [cart, selectedCoupon]
   );
 
   const resetCoupon = useCallback(() => {

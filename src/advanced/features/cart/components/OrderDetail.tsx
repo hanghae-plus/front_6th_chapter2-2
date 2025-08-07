@@ -1,9 +1,9 @@
 import { useCallback } from "react";
 
-import { useCart } from "@/basic/features/cart/hooks/useCart";
-import { cartModel } from "@/basic/features/cart/models/cart.model";
-import { Coupon } from "@/basic/features/coupon/types/coupon.type";
-import { throwNotificationError } from "@/basic/features/notification/utils/notificationError.util";
+import { useCart } from "@/advanced/features/cart/hooks/useCart";
+import { cartModel } from "@/advanced/features/cart/models/cart.model";
+import { Coupon } from "@/advanced/features/coupon/types/coupon.type";
+import { throwNotificationError } from "@/advanced/features/notification/utils/notificationError.util";
 
 interface OrderDetailProps {
   selectedCoupon: Coupon | null;

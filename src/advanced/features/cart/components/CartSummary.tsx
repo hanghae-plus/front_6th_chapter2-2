@@ -1,8 +1,8 @@
-import CartDetail from "@/basic/features/cart/components/CartDetail";
-import OrderDetail from "@/basic/features/cart/components/OrderDetail";
-import { useCart } from "@/basic/features/cart/hooks/useCart";
-import CouponDetail from "@/basic/features/coupon/components/CouponDetail";
-import { Coupon } from "@/basic/features/coupon/types/coupon.type";
+import CartDetail from "@/advanced/features/cart/components/CartDetail";
+import OrderDetail from "@/advanced/features/cart/components/OrderDetail";
+import { useCart } from "@/advanced/features/cart/hooks/useCart";
+import CouponDetail from "@/advanced/features/coupon/components/CouponDetail";
+import { Coupon } from "@/advanced/features/coupon/types/coupon.type";
 
 interface CartSummaryProps {
   selectedCoupon: Coupon | null;

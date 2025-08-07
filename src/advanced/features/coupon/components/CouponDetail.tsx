@@ -1,6 +1,6 @@
-import { useCart } from "@/basic/features/cart/hooks/useCart";
-import { useCoupon } from "@/basic/features/coupon/hooks/useCoupon";
-import { Coupon } from "@/basic/features/coupon/types/coupon.type";
+import { useCart } from "@/advanced/features/cart/hooks/useCart";
+import { useCoupon } from "@/advanced/features/coupon/hooks/useCoupon";
+import { Coupon } from "@/advanced/features/coupon/types/coupon.type";
 
 interface CouponDetailProps {
   selectedCoupon: Coupon | null;

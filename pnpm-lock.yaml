@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      jotai:
+        specifier: ^2.13.0
+        version: 2.13.0(@babel/template@7.27.2)(@types/react@19.1.9)(react@19.1.1)
       react:
         specifier: ^19.1.1
         version: 19.1.1
@@ -1519,6 +1522,24 @@ packages:
 
   javascript-natural-sort@0.7.1:
     resolution: {integrity: sha512-nO6jcEfZWQXDhOiBtG2KvKyEptz7RVbpGP4vTD2hLBdmNQSsCiicO2Ioinv6UI4y9ukqnBpy+XZ9H6uLNgJTlw==}
+
+  jotai@2.13.0:
+    resolution: {integrity: sha512-H43zXdanNTdpfOEJ4NVbm4hgmrctpXLZagjJNcqAywhUv+sTE7esvFjwm5oBg/ywT9Qw63lIkM6fjrhFuW8UDg==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      '@babel/core': '>=7.0.0'
+      '@babel/template': '>=7.0.0'
+      '@types/react': '>=17.0.0'
+      react: '>=17.0.0'
+    peerDependenciesMeta:
+      '@babel/core':
+        optional: true
+      '@babel/template':
+        optional: true
+      '@types/react':
+        optional: true
+      react:
+        optional: true
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -3680,6 +3701,12 @@ snapshots:
   isexe@2.0.0: {}
 
   javascript-natural-sort@0.7.1: {}
+
+  jotai@2.13.0(@babel/template@7.27.2)(@types/react@19.1.9)(react@19.1.1):
+    optionalDependencies:
+      '@babel/template': 7.27.2
+      '@types/react': 19.1.9
+      react: 19.1.1
 
   js-tokens@4.0.0: {}
 

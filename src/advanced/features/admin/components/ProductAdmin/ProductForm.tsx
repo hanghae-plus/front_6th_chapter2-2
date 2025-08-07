@@ -1,11 +1,11 @@
-import { throwNotificationError } from "@/basic/features/notification/utils/notificationError.util";
-import { useProducts } from "@/basic/features/product/hooks/useProducts";
-import Icon from "@/basic/shared/components/icons/Icon";
-import NumberInput from "@/basic/shared/components/ui/NumberInput";
-import TextInput from "@/basic/shared/components/ui/TextInput";
-import { DEFAULTS } from "@/basic/shared/constants/defaults";
-import { VALIDATION } from "@/basic/shared/constants/validation";
-import { regexUtils } from "@/basic/shared/utils/regex.util";
+import { throwNotificationError } from "@/advanced/features/notification/utils/notificationError.util";
+import { useProducts } from "@/advanced/features/product/hooks/useProducts";
+import Icon from "@/advanced/shared/components/icons/Icon";
+import NumberInput from "@/advanced/shared/components/ui/NumberInput";
+import TextInput from "@/advanced/shared/components/ui/TextInput";
+import { DEFAULTS } from "@/advanced/shared/constants/defaults";
+import { VALIDATION } from "@/advanced/shared/constants/validation";
+import { regexUtils } from "@/advanced/shared/utils/regex.util";
 
 interface ProductFormProps {
   editingProduct: string | null;

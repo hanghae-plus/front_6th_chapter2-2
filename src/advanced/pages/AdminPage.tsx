@@ -1,8 +1,8 @@
-import AdminTabs from "@/basic/features/admin/components/AdminTabs";
-import { Coupon } from "@/basic/features/coupon/types/coupon.type";
-import Header from "@/basic/shared/components/layout/Header";
-import MainLayout from "@/basic/shared/components/layout/MainLayout";
-import PageLayout from "@/basic/shared/components/layout/PageLayout";
+import AdminTabs from "@/advanced/features/admin/components/AdminTabs";
+import { Coupon } from "@/advanced/features/coupon/types/coupon.type";
+import Header from "@/advanced/shared/components/layout/Header";
+import MainLayout from "@/advanced/shared/components/layout/MainLayout";
+import PageLayout from "@/advanced/shared/components/layout/PageLayout";
 
 interface AdminPageProps {
   setIsAdmin: (isAdmin: boolean) => void;

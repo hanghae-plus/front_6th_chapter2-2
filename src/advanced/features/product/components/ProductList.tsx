@@ -1,8 +1,8 @@
-import { Coupon } from "@/basic/features/coupon/types/coupon.type";
-import ProductCard from "@/basic/features/product/components/ProductCard";
-import { useProducts } from "@/basic/features/product/hooks/useProducts";
-import { productModel } from "@/basic/features/product/models/product.model";
-import { ProductWithUI } from "@/basic/features/product/types/product";
+import { Coupon } from "@/advanced/features/coupon/types/coupon.type";
+import ProductCard from "@/advanced/features/product/components/ProductCard";
+import { useProducts } from "@/advanced/features/product/hooks/useProducts";
+import { productModel } from "@/advanced/features/product/models/product.model";
+import { ProductWithUI } from "@/advanced/features/product/types/product";
 
 interface ProductListProps {
   searchTerm: string;

@@ -1,10 +1,10 @@
-import { useCart } from "@/basic/features/cart/hooks/useCart";
-import { Coupon } from "@/basic/features/coupon/types/coupon.type";
-import { throwNotificationError } from "@/basic/features/notification/utils/notificationError.util";
-import { useProducts } from "@/basic/features/product/hooks/useProducts";
-import { productModel } from "@/basic/features/product/models/product.model";
-import { ProductWithUI } from "@/basic/features/product/types/product";
-import { DEFAULTS } from "@/basic/shared/constants/defaults";
+import { useCart } from "@/advanced/features/cart/hooks/useCart";
+import { Coupon } from "@/advanced/features/coupon/types/coupon.type";
+import { throwNotificationError } from "@/advanced/features/notification/utils/notificationError.util";
+import { useProducts } from "@/advanced/features/product/hooks/useProducts";
+import { productModel } from "@/advanced/features/product/models/product.model";
+import { ProductWithUI } from "@/advanced/features/product/types/product";
+import { DEFAULTS } from "@/advanced/shared/constants/defaults";
 
 interface ProductListRowProps {
   product: ProductWithUI;

@@ -1,6 +1,6 @@
-import { NotificationType } from "@/basic/features/notification/types/notification";
-import { NOTIFICATION } from "@/basic/shared/constants/notification";
-import { NotificationError } from "@/basic/shared/errors/NotificationError";
+import { NotificationType } from "@/advanced/features/notification/types/notification";
+import { NOTIFICATION } from "@/advanced/shared/constants/notification";
+import { NotificationError } from "@/advanced/shared/errors/NotificationError";
 
 export const throwNotificationError: Record<
   NotificationType,

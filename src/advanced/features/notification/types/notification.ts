@@ -1,4 +1,4 @@
-import { NOTIFICATION } from "@/basic/shared/constants/notification";
+import { NOTIFICATION } from "@/advanced/shared/constants/notification";
 
 export interface Notification {
   id: string;

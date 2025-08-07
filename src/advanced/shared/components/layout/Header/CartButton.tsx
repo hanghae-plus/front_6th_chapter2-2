@@ -1,4 +1,4 @@
-import Icon from "@/basic/shared/components/icons/Icon";
+import Icon from "@/advanced/shared/components/icons/Icon";
 
 interface Props {
   totalItemCount: number;

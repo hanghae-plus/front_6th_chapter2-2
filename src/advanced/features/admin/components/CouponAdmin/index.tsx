@@ -2,16 +2,16 @@ import { throwNotificationError } from "../../../notification/utils/notification
 
 import { useState } from "react";
 
-import AdminSection from "@/basic/features/admin/components/AdminSection";
-import { useCart } from "@/basic/features/cart/hooks/useCart";
-import { useCoupon } from "@/basic/features/coupon/hooks/useCoupon";
-import { Coupon } from "@/basic/features/coupon/types/coupon.type";
-import { DiscountType } from "@/basic/features/discount/types/discount.type";
-import Icon from "@/basic/shared/components/icons/Icon";
-import { DEFAULTS } from "@/basic/shared/constants/defaults";
-import { VALIDATION } from "@/basic/shared/constants/validation";
-import { formatPrice } from "@/basic/shared/utils";
-import { regexUtils } from "@/basic/shared/utils/regex.util";
+import AdminSection from "@/advanced/features/admin/components/AdminSection";
+import { useCart } from "@/advanced/features/cart/hooks/useCart";
+import { useCoupon } from "@/advanced/features/coupon/hooks/useCoupon";
+import { Coupon } from "@/advanced/features/coupon/types/coupon.type";
+import { DiscountType } from "@/advanced/features/discount/types/discount.type";
+import Icon from "@/advanced/shared/components/icons/Icon";
+import { DEFAULTS } from "@/advanced/shared/constants/defaults";
+import { VALIDATION } from "@/advanced/shared/constants/validation";
+import { formatPrice } from "@/advanced/shared/utils";
+import { regexUtils } from "@/advanced/shared/utils/regex.util";
 
 interface CouponAdminProps {
   selectedCoupon: Coupon | null;

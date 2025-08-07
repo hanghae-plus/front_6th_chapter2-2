@@ -1,7 +1,7 @@
-import CartItem from "@/basic/features/cart/components/CartItem";
-import { useCart } from "@/basic/features/cart/hooks/useCart";
-import { Coupon } from "@/basic/features/coupon/types/coupon.type";
-import Icon from "@/basic/shared/components/icons/Icon";
+import CartItem from "@/advanced/features/cart/components/CartItem";
+import { useCart } from "@/advanced/features/cart/hooks/useCart";
+import { Coupon } from "@/advanced/features/coupon/types/coupon.type";
+import Icon from "@/advanced/shared/components/icons/Icon";
 
 interface CartDetailProps {
   selectedCoupon: Coupon | null;

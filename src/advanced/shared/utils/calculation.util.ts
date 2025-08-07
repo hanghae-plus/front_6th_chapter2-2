@@ -1,4 +1,4 @@
-import { CALCULATION } from "@/basic/shared/constants/calculation";
+import { CALCULATION } from "@/advanced/shared/constants/calculation";
 
 /**
  * 정액 할인을 적용하여 할인된 가격을 계산합니다.

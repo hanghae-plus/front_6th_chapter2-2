@@ -1,7 +1,10 @@
-import { CartItem } from "@/basic/features/cart/types/cart.type";
-import { Product, ProductWithUI } from "@/basic/features/product/types/product";
-import { formatPrice } from "@/basic/shared/utils/format.util";
-import { filterArrayBySearchTerm } from "@/basic/shared/utils/search.util";
+import { CartItem } from "@/advanced/features/cart/types/cart.type";
+import {
+  Product,
+  ProductWithUI,
+} from "@/advanced/features/product/types/product";
+import { formatPrice } from "@/advanced/shared/utils/format.util";
+import { filterArrayBySearchTerm } from "@/advanced/shared/utils/search.util";
 
 const isProductSoldout = ({
   productId,

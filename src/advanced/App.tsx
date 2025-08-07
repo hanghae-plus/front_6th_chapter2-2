@@ -1,36 +1,33 @@
-import { NotificationBoundary } from "./features/notification/components/NotificationBoundary";
-
 import { useState } from "react";
 
-import { Coupon } from "@/basic/features/coupon/types/coupon.type";
-import { useNotification } from "@/basic/features/notification/hooks/useNotification";
-import { AdminPage, HomePage } from "@/basic/pages";
+import { Provider } from "jotai";
+
+import { Coupon } from "@/advanced/features/coupon/types/coupon.type";
+import { NotificationBoundary } from "@/advanced/features/notification/components/NotificationBoundary";
+import { AdminPage, HomePage } from "@/advanced/pages";
 
 const App = () => {
-  const { notifications, addNotification, removeNotification } =
-    useNotification();
-
   const [isAdmin, setIsAdmin] = useState(false);
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
   return (
-    <NotificationBoundary>
-      {!isAdmin ? (
-        <HomePage
-          setIsAdmin={setIsAdmin}
-          addNotification={addNotification}
-          selectedCoupon={selectedCoupon}
-          setSelectedCoupon={setSelectedCoupon}
-        />
-      ) : (
-        <AdminPage
-          setIsAdmin={setIsAdmin}
-          addNotification={addNotification}
-          selectedCoupon={selectedCoupon}
-          setSelectedCoupon={setSelectedCoupon}
-        />
-      )}
-    </NotificationBoundary>
+    <Provider>
+      <NotificationBoundary>
+        {!isAdmin ? (
+          <HomePage
+            setIsAdmin={setIsAdmin}
+            selectedCoupon={selectedCoupon}
+            setSelectedCoupon={setSelectedCoupon}
+          />
+        ) : (
+          <AdminPage
+            setIsAdmin={setIsAdmin}
+            selectedCoupon={selectedCoupon}
+            setSelectedCoupon={setSelectedCoupon}
+          />
+        )}
+      </NotificationBoundary>
+    </Provider>
   );
 };
 
