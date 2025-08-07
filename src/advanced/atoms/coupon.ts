@@ -65,3 +65,7 @@ export const applyCouponAtom = atom(
     return result;
   }
 );
+
+export const clearSelectedCouponAtom = atom(null, (get, set) => {
+  set(selectedCouponAtom, null);
+});

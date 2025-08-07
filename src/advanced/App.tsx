@@ -11,10 +11,8 @@ import { useDebounce } from './utils/hooks/useDebounce';
 
 const App = () => {
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
-  const { coupons, selectedCoupon, clearSelectedCoupon } = useCoupons();
-  const { completeOrder } = useOrder({
-    clearSelectedCoupon,
-  });
+  const { coupons } = useCoupons();
+  const { completeOrder } = useOrder();
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -48,8 +46,6 @@ const App = () => {
             searchTerm={debouncedSearchTerm}
             products={products}
             coupons={coupons}
-            selectedCoupon={selectedCoupon}
-            clearSelectedCoupon={clearSelectedCoupon}
             completeOrder={completeOrder}
           />
         )}

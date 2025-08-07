@@ -9,11 +9,11 @@
 // - removeCoupon: 쿠폰 삭제
 
 import { useAtom, useSetAtom } from 'jotai';
-import { useCallback } from 'react';
 import type { Coupon } from '../../types';
 import {
   addCouponAtom,
   applyCouponAtom,
+  clearSelectedCouponAtom,
   couponsAtom,
   deleteCouponAtom,
   selectedCouponAtom,
@@ -35,15 +35,9 @@ export function useCoupons(): UseCouponsReturn {
     initialValue: initialCoupons,
     atom: couponsAtom,
   });
-  const [selectedCoupon, setSelectedCoupon] = useAtom(selectedCouponAtom);
 
   return {
     coupons,
-    selectedCoupon,
-
-    clearSelectedCoupon: useCallback(() => {
-      setSelectedCoupon(null);
-    }, []),
   };
 }
 
@@ -84,4 +78,12 @@ export function useApplyCoupon() {
   };
 
   return applyCoupon;
+}
+
+export function useSelectedCoupon() {
+  return useAtom(selectedCouponAtom);
+}
+
+export function useClearSelectedCoupon() {
+  return useSetAtom(clearSelectedCouponAtom);
 }

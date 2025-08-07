@@ -18,7 +18,11 @@
 
 import type { Coupon, ProductWithUI } from '../../../types';
 import { useCart } from '../../hooks/useCart';
-import { useApplyCoupon } from '../../hooks/useCoupons';
+import {
+  useApplyCoupon,
+  useClearSelectedCoupon,
+  useSelectedCoupon,
+} from '../../hooks/useCoupons';
 import * as cartModel from '../../models/cart';
 import * as productModel from '../../models/product';
 import { CartItemInfo } from './cart/CartItem';
@@ -34,8 +38,6 @@ interface Props {
   searchTerm: string;
   products: ProductWithUI[];
   coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  clearSelectedCoupon: () => void;
   completeOrder: () => void;
 }
 
@@ -43,12 +45,12 @@ export function CartPage({
   searchTerm,
   products,
   coupons,
-  selectedCoupon,
-  clearSelectedCoupon,
   completeOrder,
 }: Props) {
   const cart = useCart();
   const applyCoupon = useApplyCoupon();
+  const [selectedCoupon] = useSelectedCoupon();
+  const clearSelectedCoupon = useClearSelectedCoupon();
   const filteredProducts = productModel.searchProducts({
     products,
     searchTerm,
