@@ -1,4 +1,4 @@
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { Product } from "../../types";
 import { useAutoCallback } from "../utils/hooks/useAutoCallbak";
 import { withTryNotifySuccess } from "../utils/withNotify";

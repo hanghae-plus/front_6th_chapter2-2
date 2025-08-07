@@ -1,4 +1,4 @@
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { notificationsAtom, addNotificationAtom, removeNotificationAtom } from "../stores/notificationStore";
 
 export const useNotification = () => {

@@ -41,7 +41,7 @@ export const addToCartAtom = atom(null, (get, set, product: Product) => {
 });
 
 // 장바구니에서 상품 제거하는 atom
-export const removeFromCartAtom = atom(null, (get, set, productId: string) => {
+export const removeFromCartAtom = atom(null, (_, set, productId: string) => {
   set(cartAtom, (prevCart) => prevCart.filter((item) => item.product.id !== productId));
 });
 
@@ -49,7 +49,7 @@ export const removeFromCartAtom = atom(null, (get, set, productId: string) => {
 export const updateQuantityAtom = atom(
   null,
   (
-    get,
+    _,
     set,
     {
       productId,
@@ -83,7 +83,7 @@ export const updateQuantityAtom = atom(
 );
 
 // 장바구니 비우는 atom
-export const clearCartAtom = atom(null, (get, set) => {
+export const clearCartAtom = atom(null, (_, set) => {
   set(cartAtom, []);
 });
 

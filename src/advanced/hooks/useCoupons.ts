@@ -1,4 +1,4 @@
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { Coupon } from "../../types";
 import { useAutoCallback } from "../utils/hooks/useAutoCallbak";
 import { withTryNotifySuccess } from "../utils/withNotify";
@@ -14,7 +14,7 @@ import {
 export const useCoupons = (addNotification?: (message: string, type?: "error" | "success" | "warning") => void) => {
   const [coupons] = useAtom(couponsAtom);
   const [selectedCoupon] = useAtom(selectedCouponAtom);
-  
+
   const addCouponSet = useSetAtom(addCouponAtom);
   const deleteCouponSet = useSetAtom(deleteCouponAtom);
   const applyCouponSet = useSetAtom(applyCouponAtom);
@@ -39,11 +39,11 @@ export const useCoupons = (addNotification?: (message: string, type?: "error" | 
   const handleAddCoupon = useAutoCallback(
     withTryNotifySuccess(addCoupon, "쿠폰이 추가되었습니다.", addNotification ?? (() => {}))
   );
-  
+
   const handleDeleteCoupon = useAutoCallback(
     withTryNotifySuccess(deleteCoupon, "쿠폰이 삭제되었습니다.", addNotification ?? (() => {}))
   );
-  
+
   const handleApplyCoupon = useAutoCallback(
     withTryNotifySuccess(applyCoupon, "쿠폰이 적용되었습니다.", addNotification ?? (() => {}))
   );

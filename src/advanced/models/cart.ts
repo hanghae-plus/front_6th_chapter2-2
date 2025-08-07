@@ -1,5 +1,5 @@
 import { CartItem, Coupon, Product } from "../../types";
-import { calculateItemTotalWithDiscount, calculateItemDiscount } from "./discount";
+import { calculateItemTotalWithDiscount } from "./discount";
 import { calculateCouponDiscount } from "./coupon";
 
 // 1. calculateItemTotal(item): 개별 아이템의 할인 적용 후 총액 계산
