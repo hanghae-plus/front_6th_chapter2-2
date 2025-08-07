@@ -1,11 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
-import { App, GlobalSVGProvider } from './app';
+import { App, GlobalSVGProvider, JotaiProvider } from './app';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <App />
-    <GlobalSVGProvider />
+    <JotaiProvider>
+      <App />
+      <GlobalSVGProvider />
+    </JotaiProvider>
   </React.StrictMode>
 );
