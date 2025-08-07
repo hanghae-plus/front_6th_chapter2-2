@@ -1,6 +1,6 @@
 import { CartContainer } from "../../../components/cart/CartContainer";
 import { ProductList } from "../../../components/product/ProductList";
-import { CartItem, Coupon, Product } from "../../../../types";
+import type { CartItem, Coupon, Product } from "../../../../types";
 import { getRemainingStock } from "../../../utils/formatters";
 
 interface ShopPageProps {

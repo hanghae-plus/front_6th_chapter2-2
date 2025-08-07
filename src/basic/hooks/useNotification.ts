@@ -6,6 +6,8 @@ interface Notification {
   type: "error" | "success" | "warning";
 }
 
+const TIMEOUT = 3000 as const;
+
 export const useNotification = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
@@ -15,7 +17,7 @@ export const useNotification = () => {
 
     setTimeout(() => {
       setNotifications((prev) => prev.filter((n) => n.id !== id));
-    }, 3000);
+    }, TIMEOUT);
   }, []);
 
   const removeNotification = useCallback((id: string) => {
