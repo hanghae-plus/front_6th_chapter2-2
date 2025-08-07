@@ -25,9 +25,6 @@ const CouponManagement = () => {
     e.preventDefault();
     addCoupon({
       newCoupon: couponForm,
-      onNotification: () => {
-        // 알림은 이미 addCouponAtom 내부에서 처리됨
-      },
     });
     setCouponForm(defaultCouponForm);
     setShowCouponForm(false);
@@ -36,9 +33,6 @@ const CouponManagement = () => {
   const handleRemoveCoupon = (couponCode: string) => {
     removeCoupon({
       couponCode,
-      onNotification: () => {
-        // 알림은 이미 removeCouponAtom 내부에서 처리됨
-      },
     });
     if (selectedCoupon?.code === couponCode) {
       setSelectedCoupon(null);

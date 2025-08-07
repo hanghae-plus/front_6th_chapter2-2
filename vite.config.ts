@@ -1,18 +1,17 @@
-import react from '@vitejs/plugin-react-swc';
-import { defineConfig } from 'vite';
 import { defineConfig as defineTestConfig, mergeConfig } from 'vitest/config';
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react-swc';
 
 export default mergeConfig(
   defineConfig({
     plugins: [react()],
-    base: '/front_6th_chapter2-2/',
+    base: './',
     build: {
-      outDir: 'dist',
       rollupOptions: {
         input: {
-          origin: 'index.origin.html',
-          basic: 'index.basic.html',
-          advanced: 'index.advanced.html',
+          basic: './index.basic.html',
+          advanced: './index.advanced.html',
+          origin: './index.origin.html',
         },
       },
     },
