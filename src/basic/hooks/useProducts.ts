@@ -40,7 +40,14 @@ const initialProducts: Product[] = [
   },
 ];
 
-export const useProducts = () => {
+// 고유한 ID 생성 함수
+let idCounter = 0;
+const generateUniqueId = () => {
+  idCounter += 1;
+  return `p${Date.now()}_${idCounter}`;
+};
+
+export const useProducts = (addNotification?: (message: string, type?: "error" | "success" | "warning") => void) => {
   const [products, setProducts] = useLocalStorage<Product[]>("products", initialProducts);
 
   // 상품 추가
@@ -63,11 +70,12 @@ export const useProducts = () => {
 
       const product: Product = {
         ...newProduct,
-        id: `p${Date.now()}`,
+        id: generateUniqueId(),
       };
       setProducts((prev) => [...prev, product]);
+      addNotification?.("상품이 추가되었습니다.", "success");
     },
-    [products]
+    [products, addNotification]
   );
 
   // 상품 수정
@@ -97,8 +105,9 @@ export const useProducts = () => {
       }
 
       setProducts((prev) => prev.map((product) => (product.id === productId ? { ...product, ...updates } : product)));
+      addNotification?.("상품이 수정되었습니다.", "success");
     },
-    [products]
+    [products, addNotification]
   );
 
   // 상품 삭제
@@ -111,8 +120,9 @@ export const useProducts = () => {
       }
 
       setProducts((prev) => prev.filter((p) => p.id !== productId));
+      addNotification?.("상품이 삭제되었습니다.", "success");
     },
-    [products]
+    [products, addNotification]
   );
 
   return {

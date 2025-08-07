@@ -13,7 +13,7 @@ const initCart = () => {
   return [];
 };
 
-export const useCart = () => {
+export const useCart = (addNotification?: (message: string, type?: "error" | "success" | "warning") => void) => {
   const [cart, setCart] = useLocalStorage<CartItem[]>("cart", initCart);
   const [totalItemCount, setTotalItemCount] = useState(0);
 
@@ -54,12 +54,14 @@ export const useCart = () => {
 
         return [...prevCart, { product, quantity: 1 }];
       });
+      addNotification?.("장바구니에 담았습니다.", "success");
     },
     [getRemainingStock]
   );
 
   const removeFromCart = useCallback((productId: string) => {
     setCart((prevCart) => prevCart.filter((item) => item.product.id !== productId));
+    addNotification?.("장바구니에서 제거되었습니다.", "success");
   }, []);
 
   const updateQuantity = useCallback(
@@ -82,8 +84,9 @@ export const useCart = () => {
       setCart((prevCart) =>
         prevCart.map((item) => (item.product.id === productId ? { ...item, quantity: newQuantity } : item))
       );
+      addNotification?.("수량이 업데이트되었습니다.", "success");
     },
-    [removeFromCart]
+    [removeFromCart, addNotification]
   );
 
   const clearCart = useCallback(() => {

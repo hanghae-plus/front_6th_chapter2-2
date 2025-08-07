@@ -11,7 +11,6 @@ import { useSearch } from "./utils/hooks/useSearch";
 import { calculateCartTotalAmount, calculateFinalTotal } from "./utils/calculations";
 import { calculateItemTotalWithDiscount } from "./utils/discounts";
 import { withTryNotifySuccess, withTryNotifyError } from "./utils/withNotify";
-import { useCallback } from "react";
 
 // components
 import { Header } from "./components/ui/header/Header";
@@ -26,10 +25,12 @@ import { Coupon, Product, CartItem } from "../types";
 
 const App = () => {
   // 커스텀 훅 사용
-  const { products, addProduct, updateProduct, deleteProduct } = useProducts();
-  const { cart, totalItemCount, addToCart: addToCartHook, removeFromCart, updateQuantity, clearCart } = useCart();
-  const { coupons, selectedCoupon, addCoupon, deleteCoupon, applyCoupon, setSelectedCoupon } = useCoupons();
   const { notifications, addNotification, removeNotification } = useNotification();
+
+  const { products, addProduct, updateProduct, deleteProduct } = useProducts(addNotification);
+  const { cart, totalItemCount, addToCart, removeFromCart, updateQuantity, clearCart } = useCart(addNotification);
+  const { coupons, selectedCoupon, addCoupon, deleteCoupon, applyCoupon, setSelectedCoupon } =
+    useCoupons(addNotification);
 
   // 검색 기능
   const { searchTerm, setSearchTerm, filteredProducts, searchInfo } = useSearch(products);
@@ -48,7 +49,7 @@ const App = () => {
   const getFinalTotal = useAutoCallback(() => calculateFinalTotal(cartTotals, selectedCoupon));
 
   // 장바구니에 상품 추가
-  const addToCart = useAutoCallback(withTryNotifySuccess(addToCartHook, "장바구니에 담았습니다", addNotification));
+  const handleAddToCart = useAutoCallback(withTryNotifySuccess(addToCart, "장바구니에 담았습니다", addNotification));
 
   // 수량 업데이트
   const handleUpdateQuantity = useAutoCallback(
@@ -57,52 +58,12 @@ const App = () => {
     }, addNotification)
   );
 
-  // 쿠폰 적용
-  const handleApplyCoupon = useAutoCallback(
-    withTryNotifySuccess(
-      (coupon: Coupon) => {
-        const currentTotal = calculateCartTotalAmount(cart, calculateItemTotal);
-        applyCoupon(coupon, currentTotal.totalAfterDiscount);
-      },
-      "쿠폰이 적용되었습니다.",
-      addNotification
-    )
-  );
-
-  // 주문 완료
   const completeOrder = useAutoCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
     addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, "success");
     clearCart();
     setSelectedCoupon(null);
   });
-
-  // 상품 추가
-  const handleAddProduct = useAutoCallback(withTryNotifySuccess(addProduct, "상품이 추가되었습니다.", addNotification));
-
-  // 상품 수정
-  const handleUpdateProduct = useAutoCallback(
-    withTryNotifySuccess(
-      (productId: string, updates: Partial<Product>) => {
-        updateProduct(productId, updates);
-      },
-      "상품이 수정되었습니다.",
-      addNotification
-    )
-  );
-
-  // 상품 삭제
-  const handleDeleteProduct = useAutoCallback(
-    withTryNotifySuccess(deleteProduct, "상품이 삭제되었습니다.", addNotification)
-  );
-
-  // 쿠폰 추가
-  const handleAddCoupon = useAutoCallback(withTryNotifySuccess(addCoupon, "쿠폰이 추가되었습니다.", addNotification));
-
-  // 쿠폰 삭제
-  const handleDeleteCoupon = useAutoCallback(
-    withTryNotifySuccess(deleteCoupon, "쿠폰이 삭제되었습니다.", addNotification)
-  );
 
   const totals = getFinalTotal();
 
@@ -125,14 +86,14 @@ const App = () => {
             // 상품 관련 props
             products={products}
             cart={cart}
-            onDeleteProduct={handleDeleteProduct}
-            onAddProduct={handleAddProduct}
-            onUpdateProduct={handleUpdateProduct}
+            onDeleteProduct={deleteProduct}
+            onAddProduct={addProduct}
+            onUpdateProduct={updateProduct}
             addNotification={addNotification}
             // 쿠폰 관련 props
             coupons={coupons}
-            onDeleteCoupon={handleDeleteCoupon}
-            onAddCoupon={handleAddCoupon}
+            onDeleteCoupon={deleteCoupon}
+            onAddCoupon={addCoupon}
           />
         ) : (
           <ShopPage
@@ -145,10 +106,10 @@ const App = () => {
             calculateItemTotal={calculateItemTotal}
             onRemoveFromCart={removeFromCart}
             onUpdateQuantity={handleUpdateQuantity}
-            onApplyCoupon={handleApplyCoupon}
+            onApplyCoupon={(coupon) => applyCoupon(coupon, totals.totalAfterDiscount)}
             onRemoveCoupon={() => setSelectedCoupon(null)}
             onCompleteOrder={completeOrder}
-            onAddToCart={addToCart}
+            onAddToCart={handleAddToCart}
           />
         )}
       </main>

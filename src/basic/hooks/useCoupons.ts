@@ -18,7 +18,7 @@ const initialCoupons: Coupon[] = [
   },
 ];
 
-export const useCoupons = () => {
+export const useCoupons = (addNotification?: (message: string, type?: "error" | "success" | "warning") => void) => {
   const [coupons, setCoupons] = useLocalStorage<Coupon[]>("coupons", initialCoupons);
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
@@ -30,8 +30,9 @@ export const useCoupons = () => {
         throw new DuplicateCouponCodeError(newCoupon.code);
       }
       setCoupons((prev) => [...prev, newCoupon]);
+      addNotification?.("쿠폰이 추가되었습니다.", "success");
     },
-    [coupons]
+    [coupons, addNotification]
   );
 
   const deleteCoupon = useCallback(
@@ -40,14 +41,16 @@ export const useCoupons = () => {
       if (selectedCoupon?.code === couponCode) {
         setSelectedCoupon(null);
       }
+      addNotification?.("쿠폰이 삭제되었습니다.", "success");
     },
-    [selectedCoupon]
+    [selectedCoupon, addNotification]
   );
 
   const applyCoupon = useCallback((coupon: Coupon, currentTotal: number) => {
     if (currentTotal < 10000 && coupon.discountType === "percentage") {
       throw new CouponUsageConditionError(coupon.discountType, 10000);
     }
+    addNotification?.("쿠폰이 적용되었습니다.", "success");
     setSelectedCoupon(coupon);
   }, []);
 
