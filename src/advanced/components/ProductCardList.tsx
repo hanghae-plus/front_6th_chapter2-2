@@ -1,20 +1,33 @@
-import { Product, ProductWithUI } from '../types';
+import { useAtomValue, useSetAtom } from 'jotai';
 
-interface ProductCardListProps {
-  products: ProductWithUI[];
-  debouncedSearchTerm: string;
-  getRemainingStock: (product: Product) => number;
-  getDisplayPrice: (price: number, productId?: string) => string;
-  addToCart: (product: Product) => void;
-}
+import { getRemainingStockAtom, addToCartAtom } from '../atoms/cartAtoms';
+import { productsAtom } from '../atoms/productAtoms';
+import { debouncedSearchTermAtom, isAdminAtom } from '../atoms/uiAtoms';
+import { Product } from '../types';
+import { formatPrice } from '../utils/formatters';
 
-export const ProductCardList = ({
-  products,
-  debouncedSearchTerm,
-  getRemainingStock,
-  getDisplayPrice,
-  addToCart,
-}: ProductCardListProps) => {
+export const ProductCardList = () => {
+  // atoms 직접 사용
+  const products = useAtomValue(productsAtom);
+  const debouncedSearchTerm = useAtomValue(debouncedSearchTermAtom);
+  const getRemainingStock = useAtomValue(getRemainingStockAtom);
+  const isAdmin = useAtomValue(isAdminAtom);
+  const addToCartAction = useSetAtom(addToCartAtom);
+
+  const getDisplayPrice = (price: number, productId?: string): string => {
+    if (productId) {
+      const product = products.find((p) => p.id === productId);
+      if (product && getRemainingStock(product) <= 0) {
+        return 'SOLD OUT';
+      }
+    }
+    return formatPrice(price, isAdmin);
+  };
+
+  const addToCart = (product: Product) => {
+    addToCartAction(product);
+  };
+
   const filteredProducts = debouncedSearchTerm
     ? products.filter(
         (product) =>
