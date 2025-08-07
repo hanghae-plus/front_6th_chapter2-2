@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { ProductWithUI } from '../shared/types';
 import { useSearch } from '../shared/hooks';
 import { filterProductsBySearchTerm } from '../models/productSearch';
+import { SEARCH_DELAY } from '../shared/constants/toast';
 
 /**
  * 상품 검색을 위한 전용 훅
@@ -9,7 +10,7 @@ import { filterProductsBySearchTerm } from '../models/productSearch';
  * @param delay - 디바운스 지연 시간
  * @returns 검색 관련 상태와 필터링된 상품들
  */
-export function useProductSearch(products: ProductWithUI[], delay: number = 500) {
+export function useProductSearch(products: ProductWithUI[], delay: number = SEARCH_DELAY) {
   const { searchTerm, setSearchTerm, debouncedSearchTerm, clearSearch, hasSearchTerm } = useSearch(delay);
 
   /**

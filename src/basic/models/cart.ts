@@ -1,5 +1,6 @@
 import { CartItem, Coupon, Product, Discount } from '../../types';
 import { ProductWithUI } from '../shared/types';
+import { DISCOUNT } from '../constants/discount';
 
 /**
  * 수량 기반 할인 계산
@@ -21,7 +22,7 @@ export const calculateQuantityDiscount = (item: CartItem): number => {
  * @param bulkPurchaseQuantity - 대량 구매 수량, 기본값 10
  * @returns 대량 구매 여부
  */
-export const hasBulkPurchase = (cart: CartItem[], bulkPurchaseQuantity: number = 10): boolean => {
+export const hasBulkPurchase = (cart: CartItem[], bulkPurchaseQuantity: number = DISCOUNT.BULK_THRESHOLD): boolean => {
   return cart.some((cartItem) => cartItem.quantity >= bulkPurchaseQuantity);
 };
 
@@ -35,7 +36,7 @@ export const getMaxApplicableDiscount = (item: CartItem, cart: CartItem[]): numb
   const baseDiscount = calculateQuantityDiscount(item);
 
   if (hasBulkPurchase(cart)) {
-    return Math.min(baseDiscount + 0.05, 0.5);
+    return Math.min(baseDiscount + DISCOUNT.BULK_BONUS, DISCOUNT.MAX_RATE);
   }
 
   return baseDiscount;
@@ -89,7 +90,7 @@ export const applyCouponDiscount = (amount: number, coupon: Coupon | null): numb
   if (coupon.discountType === 'amount') {
     return Math.max(0, amount - coupon.discountValue);
   } else {
-    return Math.round(amount * (1 - coupon.discountValue / 100));
+    return Math.round(amount * (1 - coupon.discountValue / DISCOUNT.MAX_PERCENTAGE));
   }
 };
 

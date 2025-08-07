@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { useDebounce } from './useDebounce';
+import { SEARCH_DELAY } from '../constants/toast';
 
 /**
  * 검색 기능을 위한 커스텀 훅
  * @param delay - 디바운스 지연 시간 (기본값: 500ms)
  * @returns 검색 관련 상태와 함수들
  */
-export function useSearch(delay: number = 500) {
+export function useSearch(delay: number = SEARCH_DELAY) {
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, delay);
 

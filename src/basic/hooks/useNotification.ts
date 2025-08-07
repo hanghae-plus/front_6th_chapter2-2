@@ -1,10 +1,6 @@
 import { useState, useCallback } from 'react';
 import { Notification } from '../shared/types';
-
-/**
- * 자동 삭제 시간 (밀리초)
- */
-const AUTO_REMOVE_DELAY = 3000;
+import { NOTIFICATION_DURATION } from '../shared/constants/toast';
 
 /**
  * 알림 관리 Hook
@@ -23,7 +19,7 @@ export function useNotification() {
 
     setTimeout(() => {
       setNotifications((prev) => prev.filter((n) => n.id !== id));
-    }, AUTO_REMOVE_DELAY);
+    }, NOTIFICATION_DURATION);
   }, []);
 
   /**

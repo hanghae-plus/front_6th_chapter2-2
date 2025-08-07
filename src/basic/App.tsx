@@ -8,6 +8,10 @@ import { useProducts } from './hooks/useProducts';
 import { useNotification } from './hooks/useNotification';
 import { useProductSearch } from './hooks/useProductSearch';
 import { formatKoreanPrice, formatPercentage } from './shared/utils';
+import { SEARCH_DELAY } from './shared/constants/toast';
+import { STOCK } from './constants/product';
+import { DISCOUNT } from './constants/discount';
+import { MESSAGES } from './constants/message';
 
 const App = () => {
   const {
@@ -34,7 +38,7 @@ const App = () => {
 
   const { notifications, addNotification, removeNotification } = useNotification();
 
-  const { searchTerm, setSearchTerm, filteredProducts } = useProductSearch(products, 500);
+  const { searchTerm, setSearchTerm, filteredProducts } = useProductSearch(products, SEARCH_DELAY);
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [showCouponForm, setShowCouponForm] = useState(false);
@@ -184,7 +188,7 @@ const App = () => {
 
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
-    addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
+    addNotification(MESSAGES.ORDER.COMPLETED(orderNumber), 'success');
     clearCart();
   }, [addNotification, clearCart]);
 
@@ -195,7 +199,7 @@ const App = () => {
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {
       addCouponHook(newCoupon);
-      addNotification('쿠폰이 추가되었습니다.', 'success');
+      addNotification(MESSAGES.COUPON.ADDED, 'success');
     },
     [coupons, addNotification],
   );
@@ -210,7 +214,7 @@ const App = () => {
       if (selectedCoupon?.code === couponCode) {
         setSelectedCoupon(null);
       }
-      addNotification('쿠폰이 삭제되었습니다.', 'success');
+      addNotification(MESSAGES.COUPON.DELETED, 'success');
     },
     [deleteCouponHook, selectedCoupon, setSelectedCoupon, addNotification],
   );
@@ -518,11 +522,11 @@ const App = () => {
                               if (value === '') {
                                 setProductForm({ ...productForm, stock: 0 });
                               } else if (parseInt(value) < 0) {
-                                addNotification('재고는 0보다 커야 합니다', 'error');
+                                addNotification(MESSAGES.STOCK.MIN, 'error');
                                 setProductForm({ ...productForm, stock: 0 });
-                              } else if (parseInt(value) > 9999) {
-                                addNotification('재고는 9999개를 초과할 수 없습니다', 'error');
-                                setProductForm({ ...productForm, stock: 9999 });
+                              } else if (parseInt(value) > STOCK.MAX_QUANTITY) {
+                                addNotification(MESSAGES.STOCK.MAX, 'error');
+                                setProductForm({ ...productForm, stock: STOCK.MAX_QUANTITY });
                               }
                             }}
                             className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
@@ -733,16 +737,16 @@ const App = () => {
                               onBlur={(e) => {
                                 const value = parseInt(e.target.value) || 0;
                                 if (couponForm.discountType === 'percentage') {
-                                  if (value > 100) {
-                                    addNotification('할인율은 100%를 초과할 수 없습니다', 'error');
-                                    setCouponForm({ ...couponForm, discountValue: 100 });
+                                  if (value > DISCOUNT.MAX_PERCENTAGE) {
+                                    addNotification(MESSAGES.DISCOUNT_PERCENTAGE.MAX, 'error');
+                                    setCouponForm({ ...couponForm, discountValue: DISCOUNT.MAX_PERCENTAGE });
                                   } else if (value < 0) {
                                     setCouponForm({ ...couponForm, discountValue: 0 });
                                   }
                                 } else {
-                                  if (value > 100000) {
-                                    addNotification('할인 금액은 100,000원을 초과할 수 없습니다', 'error');
-                                    setCouponForm({ ...couponForm, discountValue: 100000 });
+                                  if (value > DISCOUNT.MAX_COUPON_AMOUNT) {
+                                    addNotification(MESSAGES.DISCOUNT_AMOUNT.MAX, 'error');
+                                    setCouponForm({ ...couponForm, discountValue: DISCOUNT.MAX_COUPON_AMOUNT });
                                   } else if (value < 0) {
                                     setCouponForm({ ...couponForm, discountValue: 0 });
                                   }
@@ -849,10 +853,14 @@ const App = () => {
 
                             {/* 재고 상태 */}
                             <div className="mb-3">
-                              {remainingStock <= 5 && remainingStock > 0 && (
-                                <p className="text-xs text-red-600 font-medium">품절임박! {remainingStock}개 남음</p>
+                              {remainingStock <= STOCK.LOW_THRESHOLD && remainingStock > 0 && (
+                                <p className="text-xs text-red-600 font-medium">
+                                  {MESSAGES.PRODUCT.LOW_STOCK(remainingStock)}
+                                </p>
                               )}
-                              {remainingStock > 5 && <p className="text-xs text-gray-500">재고 {remainingStock}개</p>}
+                              {remainingStock > STOCK.LOW_THRESHOLD && (
+                                <p className="text-xs text-gray-500">재고 {remainingStock}개</p>
+                              )}
                             </div>
 
                             {/* 장바구니 버튼 */}

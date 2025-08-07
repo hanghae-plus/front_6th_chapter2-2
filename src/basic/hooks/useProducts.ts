@@ -2,7 +2,8 @@ import { useCallback } from 'react';
 import { useLocalStorage } from '../shared/hooks';
 import { ProductWithUI } from '../shared/types';
 import { productModel } from '../models/product';
-import { initialProducts } from '../shared/constants';
+import { initialProducts } from '../constants/initialData';
+import { MESSAGES } from '../constants/message';
 
 export function useProducts() {
   const [products, setProducts] = useLocalStorage<ProductWithUI[]>('products', initialProducts);
@@ -16,7 +17,7 @@ export function useProducts() {
     (newProduct: Omit<ProductWithUI, 'id'>, onSuccess?: (message: string) => void) => {
       const updatedProducts = productModel.addProduct(products, newProduct);
       setProducts(updatedProducts);
-      onSuccess?.('상품이 추가되었습니다.');
+      onSuccess?.(MESSAGES.PRODUCT.ADDED);
     },
     [products, setProducts],
   );
@@ -31,7 +32,7 @@ export function useProducts() {
     (productId: string, updates: Partial<ProductWithUI>, onSuccess?: (message: string) => void) => {
       const updatedProducts = productModel.updateProduct(products, productId, updates);
       setProducts(updatedProducts);
-      onSuccess?.('상품이 수정되었습니다.');
+      onSuccess?.(MESSAGES.PRODUCT.UPDATED);
     },
     [products, setProducts],
   );
@@ -45,7 +46,7 @@ export function useProducts() {
     (productId: string, onSuccess?: (message: string) => void) => {
       const updatedProducts = productModel.deleteProduct(products, productId);
       setProducts(updatedProducts);
-      onSuccess?.('상품이 삭제되었습니다.');
+      onSuccess?.(MESSAGES.PRODUCT.DELETED);
     },
     [products, setProducts],
   );

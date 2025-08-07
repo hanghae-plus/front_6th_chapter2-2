@@ -3,6 +3,8 @@ import { CartItem, Coupon, Product } from '../../types';
 import { ProductWithUI } from '../shared/types';
 import { useLocalStorage } from '../shared/hooks';
 import * as cartModel from '../models/cart';
+import { ORDER } from '../constants/order';
+import { MESSAGES } from '../constants/message';
 
 /**
  * 장바구니 관리 Hook
@@ -22,19 +24,19 @@ export function useCart() {
       const remainingStock = cartModel.getRemainingStock(product, cart);
 
       if (remainingStock <= 0) {
-        onError?.('재고가 부족합니다!');
+        onError?.(MESSAGES.PRODUCT.OUT_OF_STOCK);
         return;
       }
 
       const existingItem = cart.find((item) => item.product.id === product.id);
       if (existingItem && existingItem.quantity + 1 > product.stock) {
-        onError?.(`재고는 ${product.stock}개까지만 있습니다.`);
+        onError?.(MESSAGES.PRODUCT.MAX_STOCK(product.stock));
         return;
       }
 
       const updatedCart = cartModel.addItemToCart(cart, product);
       setCart(updatedCart);
-      onSuccess?.('장바구니에 담았습니다');
+      onSuccess?.(MESSAGES.PRODUCT.ADDED_TO_CART);
     },
     [cart, setCart],
   );
@@ -87,13 +89,13 @@ export function useCart() {
     (coupon: Coupon, onSuccess?: (message: string) => void, onError?: (message: string) => void) => {
       const currentTotal = cartModel.calculateCartTotal(cart, selectedCoupon).totalAfterDiscount;
 
-      if (currentTotal < 10000 && coupon.discountType === 'percentage') {
-        onError?.('percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.');
+      if (currentTotal < ORDER.MIN_FOR_COUPON && coupon.discountType === 'percentage') {
+        onError?.(MESSAGES.COUPON.MIN_PRICE);
         return;
       }
 
       setSelectedCoupon(coupon);
-      onSuccess?.('쿠폰이 적용되었습니다.');
+      onSuccess?.(MESSAGES.COUPON.APPLIED);
     },
     [cart, selectedCoupon],
   );

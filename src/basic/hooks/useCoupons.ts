@@ -1,5 +1,5 @@
 import { Coupon } from '../../types';
-import { initialCoupons } from '../shared/constants';
+import { initialCoupons } from '../constants/initialData';
 import { useLocalStorage } from '../shared/hooks';
 import { couponModel } from '../models/coupon';
 
