@@ -3,6 +3,7 @@ import { useCart } from '../../../hooks/useCart';
 import { useDeleteProduct, useProducts } from '../../../hooks/useProducts';
 import * as productModel from '../../../models/product';
 import { formatNumberWon } from '../../../utils/formatters';
+import { Badge } from '../../ui/Badge';
 import { Table } from '../../ui/Table';
 
 interface Props {
@@ -38,19 +39,9 @@ export function ProductsTable({ startEditProduct }: Props) {
         재고: {
           className: 'px-6 py-4 whitespace-nowrap text-sm text-gray-500',
           children: ({ stock }) => {
-            return (
-              <span
-                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                  stock > 10
-                    ? 'bg-green-100 text-green-800'
-                    : stock > 0
-                    ? 'bg-yellow-100 text-yellow-800'
-                    : 'bg-red-100 text-red-800'
-                }`}
-              >
-                {stock}개
-              </span>
-            );
+            const variant =
+              stock > 10 ? 'stock' : stock > 0 ? 'stock' : 'error';
+            return <Badge variant={variant}>{stock}개</Badge>;
           },
         },
         설명: {

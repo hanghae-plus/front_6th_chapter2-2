@@ -59,6 +59,7 @@ export function CouponsForm({
             value={name}
             onChange={handleNameChange}
             placeholder="신규 가입 쿠폰"
+            variant="coupons"
           />
 
           <InputWithLabel
@@ -66,6 +67,7 @@ export function CouponsForm({
             value={code}
             onChange={handleCodeChange}
             placeholder="WELCOME2024"
+            variant="coupons"
             required
           />
 
@@ -85,6 +87,7 @@ export function CouponsForm({
             onChange={handleDiscountValueChange}
             onBlur={handleDiscountValueBlur}
             placeholder={getDiscountPlaceholder({ discountType })}
+            variant="coupons"
             required
           />
         </div>

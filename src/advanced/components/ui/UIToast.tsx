@@ -1,17 +1,14 @@
 import { CloseIcon } from '../icons';
 
+type Type = 'error' | 'warning' | 'success';
+
 interface Props {
-  type: 'error' | 'warning' | 'success';
+  type: Type;
   message: string;
   onClose: () => void;
 }
 
-type Options = Record<
-  Props['type'],
-  {
-    className: string;
-  }
->;
+type Options = Record<Type, { className: string }>;
 
 export function UIToast({ type, message, onClose }: Props) {
   const options: Options = {

@@ -7,7 +7,7 @@ interface Props {
 
 export function ShowCouponFormCard({ onClick }: Props) {
   return (
-    <Card>
+    <Card variant="gradient">
       <button
         onClick={onClick}
         className="text-gray-400 hover:text-gray-600 flex flex-col items-center"
