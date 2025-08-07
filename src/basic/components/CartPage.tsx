@@ -11,6 +11,7 @@ import { ProductListSummary } from "./ui/ProductListSummary";
 import { CloseIcon, ImageIcon, ShoppingBagIcon } from "./icons";
 import { Search } from "./ui/Search";
 import { useCart } from "../hooks/useCart";
+import { useCoupons } from "../hooks/useCoupons";
 
 // TODO: 장바구니 페이지 컴포넌트
 // 힌트:
@@ -32,7 +33,6 @@ import { useCart } from "../hooks/useCart";
 
 interface CartPageProps {
   products: ProductWithUI[];
-  // coupons: Coupon[];
   addNotification: (
     message: string,
     type: "error" | "success" | "warning"
@@ -45,7 +45,6 @@ interface CartPageProps {
 
 export function CartPage({
   products,
-  // coupons,
   addNotification,
   selectedCoupon,
   setSelectedCoupon,
@@ -71,11 +70,11 @@ export function CartPage({
     setTotalItemCount,
   });
 
-  const savedCoupons = localStorage.getItem("coupons");
-  let coupons: Coupon[] = [];
-  if (savedCoupons) {
-    coupons = JSON.parse(savedCoupons);
-  }
+  const { coupons } = useCoupons({
+    addNotification,
+    selectedCoupon,
+    setSelectedCoupon,
+  });
 
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
@@ -324,30 +323,28 @@ export function CartPage({
                     쿠폰 등록
                   </button>
                 </div>
-                {coupons.length > 0 && (
-                  <select
-                    className="w-full text-sm border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
-                    value={selectedCoupon?.code || ""}
-                    onChange={(e) => {
-                      const coupon = coupons.find(
-                        (c) => c.code === e.target.value
-                      );
-                      if (coupon) applyCoupon({ coupon, cart });
-                      else setSelectedCoupon(null);
-                    }}
-                  >
-                    <option value="">쿠폰 선택</option>
-                    {coupons.map((coupon) => (
-                      <option key={coupon.code} value={coupon.code}>
-                        {coupon.name} (
-                        {coupon.discountType === "amount"
-                          ? `${coupon.discountValue.toLocaleString()}원`
-                          : `${coupon.discountValue}%`}
-                        )
-                      </option>
-                    ))}
-                  </select>
-                )}
+                <select
+                  className="w-full text-sm border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
+                  value={selectedCoupon?.code || ""}
+                  onChange={(e) => {
+                    const coupon = coupons.find(
+                      (c) => c.code === e.target.value
+                    );
+                    if (coupon) applyCoupon({ coupon, cart });
+                    else setSelectedCoupon(null);
+                  }}
+                >
+                  <option value="">쿠폰 선택</option>
+                  {coupons.map((coupon) => (
+                    <option key={coupon.code} value={coupon.code}>
+                      {coupon.name} (
+                      {coupon.discountType === "amount"
+                        ? `${coupon.discountValue.toLocaleString()}원`
+                        : `${coupon.discountValue}%`}
+                      )
+                    </option>
+                  ))}
+                </select>
               </section>
 
               <section className="bg-white rounded-lg border border-gray-200 p-4">

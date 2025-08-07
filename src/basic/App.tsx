@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { CartItem, Coupon, Product } from "../types";
+import { Coupon, Product } from "../types";
 import { AdminPage } from "./components/AdminPage";
 import { CartPage } from "./components/CartPage";
 import { UIToast } from "./components/ui/UIToast";
@@ -102,7 +102,6 @@ const App = () => {
         ) : (
           <CartPage
             products={products}
-            // coupons={coupons}
             addNotification={addNotification}
             selectedCoupon={selectedCoupon}
             setSelectedCoupon={setSelectedCoupon}
