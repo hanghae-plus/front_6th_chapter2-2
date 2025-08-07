@@ -2,8 +2,15 @@ import { useState, useCallback } from 'react';
 
 import { Notification } from '../../types';
 
-export const useNotifications = () => {
+export const useNotifications = (timeout = 3000) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
+
+  const dismissNotification = useCallback(
+    (id: string) => {
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
+    },
+    [setNotifications],
+  );
 
   const addNotification = useCallback(
     (message: string, type: 'error' | 'success' | 'warning' = 'success') => {
@@ -11,15 +18,11 @@ export const useNotifications = () => {
       setNotifications((prev) => [...prev, { id, message, type }]);
 
       setTimeout(() => {
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
-      }, 3000);
+        dismissNotification(id);
+      }, timeout);
     },
-    [],
+    [dismissNotification, timeout],
   );
-
-  const dismissNotification = useCallback((id: string) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
-  }, []);
 
   return { notifications, addNotification, dismissNotification };
 };
