@@ -1,0 +1,1 @@
+export { useProductSearch } from './useProductSearch';
