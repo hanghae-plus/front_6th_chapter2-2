@@ -36,5 +36,5 @@ export function useCouponApplyService() {
     [selectedCoupon, addNotification, selectCoupon]
   );
 
-  return { selectedCoupon, onApplyCoupon };
+  return { selectedCoupon, onApplyCoupon, resetSelectedCoupon };
 }

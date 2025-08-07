@@ -5,12 +5,10 @@ import {
   addToCartAtom,
   cartAtom,
   removeFromCartAtom,
-  resetCartAtom,
   updateToCartAtom,
-} from '../entities/cart';
-import { addNotificationAtom } from '../entities/notification';
-import { getRemainingStock, type ProductWithUI } from '../entities/product';
-import { useSelectedCoupon } from '../features/cart-coupon';
+} from '../../../entities/cart';
+import { addNotificationAtom } from '../../../entities/notification';
+import { getRemainingStock, type ProductWithUI } from '../../../entities/product';
 
 interface UseCartServiceProps {
   products: ProductWithUI[];
@@ -21,10 +19,8 @@ export function useCartService({ products }: UseCartServiceProps) {
   const addToCart = useSetAtom(addToCartAtom);
   const updateToCart = useSetAtom(updateToCartAtom);
   const removeFromCart = useSetAtom(removeFromCartAtom);
-  const resetCart = useSetAtom(resetCartAtom);
-  const addNotification = useSetAtom(addNotificationAtom);
 
-  const { selectedCoupon, resetSelectedCoupon } = useSelectedCoupon();
+  const addNotification = useSetAtom(addNotificationAtom);
 
   const handleAddToCart = useCallback(
     (product: ProductWithUI) => {
@@ -75,17 +71,9 @@ export function useCartService({ products }: UseCartServiceProps) {
     [products, removeFromCart, addNotification, updateToCart]
   );
 
-  const completeOrder = useCallback(() => {
-    const orderNumber = `ORD-${Date.now()}`;
+  const resetCart = useCallback(() => {
+    cart.forEach((item) => removeFromCart(item.product.id));
+  }, [cart, removeFromCart]);
 
-    if (selectedCoupon) {
-      addNotification('쿠폰이 적용되었습니다.', 'success');
-    }
-
-    addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
-    resetCart();
-    resetSelectedCoupon();
-  }, [selectedCoupon, addNotification, resetCart, resetSelectedCoupon]);
-
-  return { cart, handleAddToCart, updateQuantity, removeFromCart, completeOrder };
+  return { cart, handleAddToCart, updateQuantity, removeFromCart, resetCart };
 }

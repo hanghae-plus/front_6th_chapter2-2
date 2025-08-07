@@ -7,8 +7,9 @@ import { ProductList } from '../../../components/ui/ProductList';
 import { calculateCartTotal } from '../../../entities/cart';
 import { productsAtom } from '../../../entities/product';
 import { useCouponApplyService } from '../../../features/cart-coupon';
+import { useCartService } from '../../../features/cart-management';
+import { usePaymentService } from '../../../features/payment';
 import { useDebouncedSearch } from '../../../features/search';
-import { useCartService } from '../../../hooks/useCartService';
 import { Icon } from '../../../shared/icon';
 import { CartHeader } from '../../../widgets/cart-header';
 
@@ -19,13 +20,20 @@ interface CartPageProps {
 export function CartPage({ onChangeAdminPage }: CartPageProps) {
   const products = useAtomValue(productsAtom);
 
-  const { selectedCoupon, onApplyCoupon } = useCouponApplyService();
-  const { cart, handleAddToCart, updateQuantity, removeFromCart, completeOrder } = useCartService({
+  const { selectedCoupon, onApplyCoupon, resetSelectedCoupon } = useCouponApplyService();
+  const { cart, handleAddToCart, updateQuantity, removeFromCart, resetCart } = useCartService({
     products,
   });
+  const { completeOrder } = usePaymentService();
   const [searchTerm, debouncedSearchTerm, onChangeSearchTerm] = useDebouncedSearch();
 
   const totals = calculateCartTotal(cart, selectedCoupon);
+
+  const handleCompleteOrder = () => {
+    completeOrder(selectedCoupon);
+    resetCart();
+    resetSelectedCoupon();
+  };
 
   return (
     <>
@@ -73,7 +81,7 @@ export function CartPage({ onChangeAdminPage }: CartPageProps) {
                 <>
                   <CouponSelector onApplyCoupon={(coupon) => onApplyCoupon(cart, coupon)} />
 
-                  <PaymentSummary totals={totals} completeOrder={completeOrder} />
+                  <PaymentSummary totals={totals} completeOrder={handleCompleteOrder} />
                 </>
               )}
             </div>
