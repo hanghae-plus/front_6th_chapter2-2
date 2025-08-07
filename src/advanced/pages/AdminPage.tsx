@@ -3,13 +3,13 @@ import { useAtom } from 'jotai';
 import type { Coupon as CouponType } from '../../types';
 import type { ProductWithUI } from '../shared/types';
 import { MESSAGES } from '../constants/message';
-import { useCouponForm } from '../hooks/useCouponForm';
 import { CouponForm } from '../components/admin/CouponForm';
 import CouponList from '../components/admin/CouponList';
 import ProductForm from '../components/admin/ProductForm';
 import { ProductList } from '../components/admin/ProductList';
 import { useNotificationActions } from '../shared/hooks';
 import { showProductFormAtom, startEditProductAtom, startAddProductAtom } from '../shared/atoms/productFormAtoms';
+import { showCouponFormAtom, toggleCouponFormAtom } from '../shared/atoms/couponFormAtoms';
 
 interface AdminPageProps {
   products: ProductWithUI[];
@@ -41,21 +41,11 @@ export function AdminPage({
   const [, startEditProduct] = useAtom(startEditProductAtom);
   const [, startAddProduct] = useAtom(startAddProductAtom);
 
-  // CouponForm 관련 기존 로직 유지
-  const {
-    couponForm,
-    updateName: updateCouponName,
-    updateCode,
-    updateDiscountType,
-    updateDiscountValue,
-    validateDiscountValue,
-    submitForm: submitCouponForm,
-  } = useCouponForm();
+  // CouponForm 관련 atoms
+  const [showCouponForm] = useAtom(showCouponFormAtom);
+  const [, toggleCouponForm] = useAtom(toggleCouponFormAtom);
 
-  const [showCouponForm, setShowCouponForm] = useState(false);
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
-
-  const toggleCouponForm = () => setShowCouponForm((prev) => !prev);
 
   const addProduct = useCallback(
     (newProduct: Omit<ProductWithUI, 'id'>) => {
@@ -100,7 +90,7 @@ export function AdminPage({
     [deleteCouponHook, selectedCoupon, selectCoupon, addNotification],
   );
 
-  // 상품 폼 제출 핸들러 - 대폭 단순화!
+  // 상품 폼 제출 핸들러
   const handleProductSubmit = useCallback(
     (productData: Omit<ProductWithUI, 'id'>, productId?: string) => {
       if (productId) {
@@ -112,12 +102,12 @@ export function AdminPage({
     [addProduct, updateProduct],
   );
 
-  // 쿠폰 폼 제출 핸들러
+  // 쿠폰 폼 제출 핸들러 - 대폭 단순화!
   const handleCouponSubmit = useCallback(
-    (e: React.FormEvent) => {
-      submitCouponForm(e, addCoupon, () => setShowCouponForm(false));
+    (couponData: CouponType) => {
+      addCoupon(couponData);
     },
-    [submitCouponForm, addCoupon],
+    [addCoupon],
   );
 
   return (
@@ -183,18 +173,8 @@ export function AdminPage({
           <div className="p-6">
             <CouponList coupons={coupons} deleteCoupon={deleteCoupon} toggleCouponForm={toggleCouponForm} />
 
-            {showCouponForm && (
-              <CouponForm
-                couponForm={couponForm}
-                updateName={updateCouponName}
-                updateCode={updateCode}
-                updateDiscountType={updateDiscountType}
-                updateDiscountValue={updateDiscountValue}
-                validateDiscountValue={validateDiscountValue}
-                handleCouponSubmit={handleCouponSubmit}
-                toggleCouponForm={toggleCouponForm}
-              />
-            )}
+            {/* CouponForm - 이제 매우 단순한 인터페이스! */}
+            {showCouponForm && <CouponForm onSubmit={handleCouponSubmit} />}
           </div>
         </section>
       )}

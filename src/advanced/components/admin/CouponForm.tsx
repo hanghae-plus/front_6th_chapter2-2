@@ -1,32 +1,47 @@
-import type { CouponFormData as CouponFormDataType } from '../../../types';
+import React from 'react';
+import { useAtom } from 'jotai';
+import type { Coupon as CouponType } from '../../../types';
 import { useNotificationActions } from '../../shared/hooks';
+import {
+  couponFormAtom,
+  updateCouponNameAtom,
+  updateCouponCodeAtom,
+  updateCouponDiscountTypeAtom,
+  updateCouponDiscountValueAtom,
+  validateCouponDiscountValueAtom,
+  submitCouponFormAtom,
+  resetCouponFormAtom,
+} from '../../shared/atoms/couponFormAtoms';
 
 interface CouponFormProps {
-  couponForm: CouponFormDataType;
-  updateName: (name: string) => void;
-  updateCode: (code: string) => void;
-  updateDiscountType: (discountType: 'amount' | 'percentage') => void;
-  updateDiscountValue: (value: string) => void;
-  validateDiscountValue: (value: string, onError: (message: string) => void) => void;
-  handleCouponSubmit: (e: React.FormEvent) => void;
-  toggleCouponForm: () => void;
+  onSubmit: (coupon: CouponType) => void;
 }
 
-export function CouponForm({
-  couponForm,
-  updateName,
-  updateCode,
-  updateDiscountType,
-  updateDiscountValue,
-  validateDiscountValue,
-  handleCouponSubmit,
-  toggleCouponForm,
-}: CouponFormProps) {
+export function CouponForm({ onSubmit }: CouponFormProps) {
   const { addNotification } = useNotificationActions();
+
+  // Atoms에서 상태와 액션들 가져오기
+  const [couponForm] = useAtom(couponFormAtom);
+  const [, updateName] = useAtom(updateCouponNameAtom);
+  const [, updateCode] = useAtom(updateCouponCodeAtom);
+  const [, updateDiscountType] = useAtom(updateCouponDiscountTypeAtom);
+  const [, updateDiscountValue] = useAtom(updateCouponDiscountValueAtom);
+  const [, validateDiscountValue] = useAtom(validateCouponDiscountValueAtom);
+  const [, submitForm] = useAtom(submitCouponFormAtom);
+  const [, resetForm] = useAtom(resetCouponFormAtom);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    submitForm(onSubmit);
+  };
+
+  const handleCancel = () => {
+    resetForm();
+  };
 
   return (
     <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-      <form onSubmit={handleCouponSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <h3 className="text-md font-medium text-gray-900">새 쿠폰 생성</h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div>
@@ -46,7 +61,7 @@ export function CouponForm({
               type="text"
               value={couponForm.code}
               onChange={(e) => updateCode(e.target.value)}
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm font-mono"
+              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm  font-mono"
               placeholder="WELCOME2024"
               required
             />
@@ -82,7 +97,7 @@ export function CouponForm({
         <div className="flex justify-end gap-3">
           <button
             type="button"
-            onClick={toggleCouponForm}
+            onClick={handleCancel}
             className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
             취소
