@@ -24,17 +24,17 @@
 // - getRemainingStock: 재고 확인 함수
 // - clearCart: 장바구니 비우기 함수
 
+import { useSetAtom } from 'jotai';
 import { useCallback, useEffect } from 'react';
 import type { CartItem, Product } from '../../types';
+import { addCartAtom, cartAtom } from '../atoms/cart';
 import * as cartModel from '../models/cart';
-import * as productModel from '../models/product';
-import { useLocalStorage } from '../utils/hooks/useLocalStorage';
+import { useAtomWithLocalStorage } from '../utils/hooks/useLocalStorage';
 import { useNotify } from './useNotification';
 
 interface UseCartReturn {
   cart: CartItem[];
   totalItemCount: number;
-  addToCart: (params: { product: Product }) => void;
   removeFromCart: (params: { productId: string }) => void;
   updateQuantity: (params: {
     productId: string;
@@ -45,47 +45,23 @@ interface UseCartReturn {
 }
 
 export function useCart(): UseCartReturn {
-  const notify = useNotify();
   const LOCAL_STORAGE_KEY = 'cart';
-  const [cart, setCart] = useLocalStorage<CartItem[]>({
-    key: LOCAL_STORAGE_KEY,
+  const [cart, setCart] = useAtomWithLocalStorage<CartItem[]>({
+    key: 'cart',
     initialValue: [],
+    atom: cartAtom,
   });
+  const notify = useNotify();
 
   useEffect(() => {
     if (!cart.length) {
       localStorage.removeItem(LOCAL_STORAGE_KEY);
     }
-  }, [LOCAL_STORAGE_KEY, cart.length]);
+  }, [cart]);
 
   return {
     cart,
     totalItemCount: cartModel.calculateTotalItemCount({ cart }),
-
-    addToCart: useCallback(
-      ({ product }) => {
-        const remainingStock = productModel.getRemainingStock({
-          cart,
-          product,
-        });
-        const isSoldOut = productModel.isSoldOut({ remainingStock });
-
-        const result = cartModel.addToCartWithStockCheck({
-          cart,
-          product,
-          isSoldOut,
-        });
-
-        if (!result.success) {
-          notify({ message: result.message, type: 'error' });
-          return;
-        }
-
-        setCart(result.newCart);
-        notify({ message: result.message, type: 'success' });
-      },
-      [setCart, notify, cart]
-    ),
 
     removeFromCart: useCallback(
       ({ productId }) => {
@@ -122,4 +98,18 @@ export function useCart(): UseCartReturn {
       setCart([]);
     }, [setCart]),
   };
+}
+
+export function useAddToCart() {
+  const set = useSetAtom(addCartAtom);
+  const notify = useNotify();
+
+  const addToCart = useCallback(
+    ({ product }: { product: Product }) => {
+      set({ product, notify });
+    },
+    [set, notify]
+  );
+
+  return addToCart;
 }

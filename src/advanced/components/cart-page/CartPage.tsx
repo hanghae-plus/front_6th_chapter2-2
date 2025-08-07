@@ -32,7 +32,6 @@ interface Props {
   searchTerm: string;
   products: ProductWithUI[];
   cart: CartItem[];
-  addToCart: (params: { product: ProductWithUI }) => void;
   removeFromCart: (params: { productId: string }) => void;
   updateQuantity: (params: {
     productId: string;
@@ -51,7 +50,6 @@ export function CartPage({
   searchTerm,
   products,
   cart,
-  addToCart,
   removeFromCart,
   updateQuantity,
   coupons,
@@ -77,12 +75,7 @@ export function CartPage({
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredProducts.map((product) => {
                 return (
-                  <ProductCard
-                    key={product.id}
-                    cart={cart}
-                    addToCart={addToCart}
-                    product={product}
-                  />
+                  <ProductCard key={product.id} cart={cart} product={product} />
                 );
               })}
             </div>

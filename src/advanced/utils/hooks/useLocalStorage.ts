@@ -7,7 +7,14 @@
 //
 // 반환값: [저장된 값, 값 설정 함수]
 
-import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
+import { useAtom, type PrimitiveAtom } from 'jotai';
+import {
+  useEffect,
+  useRef,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from 'react';
 
 interface UseLocalStorageParams<T> {
   key: string;
@@ -31,6 +38,40 @@ export function useLocalStorage<T>({
     }
     return initialValue;
   });
+
+  useEffect(() => {
+    localStorage.setItem(key, JSON.stringify(value));
+  }, [key, value]);
+
+  return [value, setValue];
+}
+
+interface UseAtomWithLocalStorageParams<T> {
+  key: string;
+  initialValue: T;
+  atom: PrimitiveAtom<T>;
+}
+
+export function useAtomWithLocalStorage<T>({
+  key,
+  initialValue,
+  atom,
+}: UseAtomWithLocalStorageParams<T>): ReturnType<
+  typeof useAtom<T, [SetStateAction<T>], void>
+> {
+  const [value, setValue] = useAtom(atom);
+  const initialValueRef = useRef(initialValue);
+
+  useEffect(() => {
+    const saved = localStorage.getItem(key);
+    if (saved) {
+      try {
+        setValue(JSON.parse(saved));
+      } catch {
+        setValue(initialValueRef.current);
+      }
+    }
+  }, [key, setValue]);
 
   useEffect(() => {
     localStorage.setItem(key, JSON.stringify(value));
