@@ -128,10 +128,14 @@ export function useCart() {
     setSelectedCoupon(null);
   }, [setCart]);
 
+  const selectCoupon = (coupon: Coupon | null) => {
+    setSelectedCoupon(coupon);
+  };
+
   return {
     cart,
     selectedCoupon,
-    setSelectedCoupon,
+    selectCoupon,
     addToCart,
     removeFromCart,
     updateQuantity,
