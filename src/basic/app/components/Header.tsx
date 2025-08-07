@@ -1,9 +1,9 @@
 import CartIcon from "../../assets/icons/CartIcon.svg?react";
+import { useCart } from "../../entities/cart/hooks/useCart";
 import { SearchBar } from "../../shared/ui/SearchBar";
 
 interface HeaderProps {
   isAdmin: boolean;
-  cartItemCount: number;
   searchValue: string;
   onSearchChange: (value: string) => void;
   onAdminToggle: () => void;
@@ -11,11 +11,12 @@ interface HeaderProps {
 
 export default function Header({
   isAdmin,
-  cartItemCount,
   searchValue,
   onSearchChange,
   onAdminToggle,
 }: HeaderProps) {
+  const { cartItemCount } = useCart();
+
   return (
     <header className="bg-white shadow-sm sticky top-0 z-40 border-b">
       <div className="max-w-7xl mx-auto px-4">

@@ -1,7 +1,6 @@
 import Header from "./app/components/Header";
 
 import { useState } from "react";
-import { useCartStorage } from "./entities/cart/hooks/useCartStorage";
 import { Notification } from "./entities/notification/ui/Notification";
 import { useProductStorage } from "./entities/product/hooks/useProductStorage";
 import { useProductSearch } from "./features/search-product/hooks/useProductSearch";
@@ -11,7 +10,6 @@ import { CartPage } from "./pages/CartPage";
 
 const App = () => {
   const { products } = useProductStorage();
-  const { totalItemCount } = useCartStorage();
 
   const { filteredProducts, searchValue, searchTerm, onSearchChange } =
     useProductSearch(products);
@@ -28,7 +26,6 @@ const App = () => {
       <Header
         isAdmin={isAdmin}
         onAdminToggle={() => setIsAdmin((prev) => !prev)}
-        cartItemCount={totalItemCount}
         searchValue={searchValue}
         onSearchChange={onSearchChange}
       />

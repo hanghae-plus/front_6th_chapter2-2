@@ -51,7 +51,7 @@ export function useCart() {
   return {
     cart,
     getItemTotal,
-    getTotalItemCount,
+    cartItemCount: getTotalItemCount(),
     addItem,
     removeItem,
     updateItemQuantity,
