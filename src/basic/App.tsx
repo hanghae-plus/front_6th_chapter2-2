@@ -18,17 +18,11 @@ const App = () => {
   const {
     // 도메인별 상태
     cart,
-    coupons,
-    selectedCoupon,
 
     // 도메인별 액션
     addToCart,
     removeFromCart,
     updateQuantity,
-    addCoupon,
-    deleteCoupon,
-    applyCoupon,
-    setSelectedCoupon,
     completeOrder,
 
     // UI 상태
@@ -50,22 +44,12 @@ const App = () => {
 
       <main className="max-w-7xl mx-auto px-4 py-8">
         {isAdmin ? (
-          <AdminPage
-            // 쿠폰 관련 props
-            coupons={coupons}
-            onDeleteCoupon={deleteCoupon}
-            onAddCoupon={addCoupon}
-            addNotification={addNotification}
-          />
+          <AdminPage addNotification={addNotification} />
         ) : (
           <ShopPage
             cart={cart}
-            coupons={coupons}
-            selectedCoupon={selectedCoupon}
             onRemoveFromCart={removeFromCart}
             onUpdateQuantity={updateQuantity}
-            onApplyCoupon={applyCoupon}
-            onRemoveCoupon={() => setSelectedCoupon(null)}
             onCompleteOrder={completeOrder}
             onAddToCart={addToCart}
           />

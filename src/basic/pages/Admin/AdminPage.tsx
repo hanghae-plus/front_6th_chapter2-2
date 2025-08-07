@@ -3,36 +3,15 @@ import ProductManagement from "../../components/admin/ProductManagement";
 import CouponManagement from "../../components/admin/CouponManagement";
 import { Tabs } from "../../components/ui/tabs";
 
-// hooks
-import { useCouponForm } from "../../hooks/useCouponForm";
-import { useCoupons } from "../../hooks/useCoupons";
-
 // types
-import type { Coupon, NotificationType } from "../../types/admin";
+import type { NotificationType } from "../../types/admin";
 
 import { ADMIN_TABS } from "../../constants/admin";
 interface AdminPageProps {
-  // 쿠폰 관련
-  coupons: Coupon[];
-  onDeleteCoupon: (couponCode: string) => void;
-  onAddCoupon: (coupon: Coupon) => void;
   addNotification: (message: string, type: NotificationType) => void;
 }
 
-export default function AdminPage({
-  // 쿠폰 관련 props
-  coupons,
-  onDeleteCoupon,
-  onAddCoupon,
-  addNotification,
-}: AdminPageProps) {
-  // Coupon Form 훅 사용
-  const { couponForm, showCouponForm, updateField, showForm, hideForm, handleCouponSubmit } = useCouponForm();
-
-  // Coupon Form 제출 처리
-  const handleCouponFormSubmit = (e: React.FormEvent) => {
-    handleCouponSubmit(e, onAddCoupon);
-  };
+export default function AdminPage({ addNotification }: AdminPageProps) {
   return (
     <div className="max-w-6xl mx-auto">
       <div className="mb-8">
@@ -52,17 +31,7 @@ export default function AdminPage({
           </Tabs.Panel>
 
           <Tabs.Panel value={ADMIN_TABS.COUPONS}>
-            <CouponManagement
-              coupons={coupons}
-              onDeleteCoupon={onDeleteCoupon}
-              showCouponForm={showCouponForm}
-              showForm={showForm}
-              hideForm={hideForm}
-              couponForm={couponForm}
-              updateField={updateField}
-              onCouponSubmit={handleCouponFormSubmit}
-              addNotification={addNotification}
-            />
+            <CouponManagement addNotification={addNotification} />
           </Tabs.Panel>
         </Tabs.Content>
       </Tabs>

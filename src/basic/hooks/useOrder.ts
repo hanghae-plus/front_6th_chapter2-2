@@ -1,20 +1,17 @@
 import { useCallback } from "react";
 import { useAutoCallback } from "../utils/hooks/useAutoCallbak";
-import { Coupon } from "../../types";
 
 interface UseOrderProps {
   clearCart: () => void;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
   addNotification?: (message: string, type?: "error" | "success" | "warning") => void;
 }
 
-export const useOrder = ({ clearCart, setSelectedCoupon, addNotification }: UseOrderProps) => {
+export const useOrder = ({ clearCart, addNotification }: UseOrderProps) => {
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
     clearCart();
-    setSelectedCoupon(null);
     return orderNumber;
-  }, [clearCart, setSelectedCoupon]);
+  }, [clearCart]);
 
   const handleCompleteOrder = useAutoCallback(() => {
     try {
