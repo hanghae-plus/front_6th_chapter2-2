@@ -1,8 +1,9 @@
 import { useCallback, type Dispatch, type SetStateAction } from 'react';
 import type { Product, ProductWithUI } from '../../types';
+import { productsAtom } from '../atoms/product';
 import { initialProducts } from '../constants';
 import * as productModel from '../models/product';
-import { useLocalStorage } from '../utils/hooks/useLocalStorage';
+import { useAtomWithLocalStorage } from '../utils/hooks/useLocalStorage';
 import { useNotify } from './useNotification';
 
 interface UseProductsReturn {
@@ -18,9 +19,10 @@ interface UseProductsReturn {
 
 export function useProducts(): UseProductsReturn {
   const notify = useNotify();
-  const [products, setProducts] = useLocalStorage({
+  const [products, setProducts] = useAtomWithLocalStorage({
     key: 'products',
     initialValue: initialProducts,
+    atom: productsAtom,
   });
 
   return {
