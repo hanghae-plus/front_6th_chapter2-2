@@ -9,6 +9,7 @@ import { useCart } from './hooks/useCart';
 import { useSearchTerm } from './hooks/useSearchTerm';
 import Header from './components/ui/layout/Header';
 import Notification from './components/ui/notification/Notification';
+
 import {
   CloseIcon,
   TrashIcon,

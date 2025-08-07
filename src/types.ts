@@ -22,7 +22,7 @@ export interface Coupon {
   discountType: 'amount' | 'percentage';
   discountValue: number;
 }
-export interface Notification {
+export interface NotificationType {
   id: string;
   message: string;
   type: 'error' | 'success' | 'warning';
