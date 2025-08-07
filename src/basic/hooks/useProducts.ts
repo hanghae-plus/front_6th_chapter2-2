@@ -1,6 +1,6 @@
 import { Product } from "../../types";
 import { initialProducts } from "../data";
-import { useLocalStorage } from "./useLocalStorage";
+import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 // TODO: 상품 관리 Hook
 // 힌트:
 // 1. 상품 목록 상태 관리 (localStorage 연동 고려) ㅇ

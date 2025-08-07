@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Coupon } from "../../types";
 import { initialCoupons } from "../data";
-import { useLocalStorage } from "./useLocalStorage";
+import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 
 export const useCoupons = () => {
   const [coupons, setCoupons] = useLocalStorage<Coupon[]>({

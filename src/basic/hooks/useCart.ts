@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { CartItem, Product } from "../../types";
-import { useLocalStorage } from "./useLocalStorage";
+import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 
 export const useCart = () => {
   const [cart, setCart] = useLocalStorage<CartItem[]>({
