@@ -1,13 +1,13 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Coupon } from '../types';
-import { initialProducts, initialCoupons } from './shared/constants';
+import { initialCoupons } from './shared/constants';
 import { ProductWithUI, Notification } from './shared/types';
 import { useLocalStorage } from './shared/hooks';
 import { useCart } from './hooks/useCart';
 import * as cartModel from './models/cart';
+import { useProducts } from './hooks/useProducts';
 
 const App = () => {
-  const [products, setProducts] = useLocalStorage('products', initialProducts);
   const [coupons, setCoupons] = useLocalStorage('coupons', initialCoupons);
 
   const {
@@ -22,6 +22,13 @@ const App = () => {
     getRemainingStock,
     clearCart,
   } = useCart();
+
+  const {
+    products,
+    addProduct: addProductHook,
+    updateProduct: updateProductHook,
+    deleteProduct: deleteProductHook,
+  } = useProducts();
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -152,6 +159,36 @@ const App = () => {
   );
 
   /**
+   * 상품 추가 로직
+   */
+  const addProduct = useCallback(
+    (newProduct: Omit<ProductWithUI, 'id'>) => {
+      addProductHook(newProduct, (message) => addNotification(message, 'success'));
+    },
+    [addProductHook, addNotification],
+  );
+
+  /**
+   * 상품 수정 로직
+   */
+  const updateProduct = useCallback(
+    (productId: string, updates: Partial<ProductWithUI>) => {
+      updateProductHook(productId, updates, (message) => addNotification(message, 'success'));
+    },
+    [updateProductHook, addNotification],
+  );
+
+  /**
+   * 상품 삭제 로직
+   */
+  const deleteProduct = useCallback(
+    (productId: string) => {
+      deleteProductHook(productId, (message) => addNotification(message, 'success'));
+    },
+    [deleteProductHook, addNotification],
+  );
+
+  /**
    * 쿠폰 적용 로직
    * @param coupon - 쿠폰
    */
@@ -171,47 +208,6 @@ const App = () => {
     addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
     clearCart();
   }, [addNotification, clearCart]);
-
-  /**
-   * 상품 추가 로직
-   * @param newProduct - 추가할 상품
-   */
-  const addProduct = useCallback(
-    (newProduct: Omit<ProductWithUI, 'id'>) => {
-      const product: ProductWithUI = {
-        ...newProduct,
-        id: `p${Date.now()}`,
-      };
-      setProducts((prev) => [...prev, product]);
-      addNotification('상품이 추가되었습니다.', 'success');
-    },
-    [addNotification],
-  );
-
-  /**
-   * 상품 수정 로직
-   * @param productId - 상품 ID
-   * @param updates - 수정할 상품 정보
-   */
-  const updateProduct = useCallback(
-    (productId: string, updates: Partial<ProductWithUI>) => {
-      setProducts((prev) => prev.map((product) => (product.id === productId ? { ...product, ...updates } : product)));
-      addNotification('상품이 수정되었습니다.', 'success');
-    },
-    [addNotification],
-  );
-
-  /**
-   * 상품 삭제 로직
-   * @param productId - 상품 ID
-   */
-  const deleteProduct = useCallback(
-    (productId: string) => {
-      setProducts((prev) => prev.filter((p) => p.id !== productId));
-      addNotification('상품이 삭제되었습니다.', 'success');
-    },
-    [addNotification],
-  );
 
   /**
    * 쿠폰 추가 로직
@@ -255,10 +251,7 @@ const App = () => {
       updateProduct(editingProduct, productForm);
       setEditingProduct(null);
     } else {
-      addProduct({
-        ...productForm,
-        discounts: productForm.discounts,
-      });
+      addProduct(productForm);
     }
     setProductForm({ name: '', price: 0, stock: 0, description: '', discounts: [] });
     setEditingProduct(null);
