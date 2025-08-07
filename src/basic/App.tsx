@@ -5,7 +5,7 @@ import { useProducts } from './hooks/useProducts';
 import { useNotification } from './hooks/useNotification';
 import { useProductSearch } from './hooks/useProductSearch';
 import { SEARCH_DELAY } from './shared/constants/toast';
-import { CloseIcon } from './components/icons';
+import { ToastContainer } from './components/ui/UIToast';
 import Header from './components/Header';
 import { AdminPage } from './pages/AdminPage';
 import { CartPage } from './pages/CartPage';
@@ -65,24 +65,7 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* 전역 알림 */}
-      {notifications.length > 0 && (
-        <div className="fixed top-20 right-4 z-50 space-y-2 max-w-sm">
-          {notifications.map((notif) => (
-            <div
-              key={notif.id}
-              className={`p-4 rounded-md shadow-md text-white flex justify-between items-center ${
-                notif.type === 'error' ? 'bg-red-600' : notif.type === 'warning' ? 'bg-yellow-600' : 'bg-green-600'
-              }`}
-            >
-              <span className="mr-2">{notif.message}</span>
-              <button onClick={() => removeNotification(notif.id)} className="text-white hover:text-gray-200">
-                <CloseIcon />
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
+      <ToastContainer notifications={notifications} onRemove={removeNotification} position="top-right" />
 
       <Header
         isAdmin={isAdmin}
