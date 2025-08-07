@@ -1,13 +1,9 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { Dispatch, SetStateAction, useCallback } from "react";
 import { CartItem, Coupon, Product } from "../../../types";
 import { useNotification } from "../../___features/notification/use-notification";
 import { useCoupons } from "../../___features/coupon/use-coupons";
+import { useProducts } from "../../___features/product/use-products";
+import { useDebounce } from "../../_shared/utility-hooks/use-debounce";
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -15,7 +11,6 @@ interface ProductWithUI extends Product {
 }
 
 interface ShopPageProps {
-  products: ProductWithUI[];
   cart: CartItem[];
   setCart: Dispatch<SetStateAction<CartItem[]>>;
   searchTerm: string;
@@ -24,30 +19,20 @@ interface ShopPageProps {
 }
 
 function ShopPage({
-  products,
   cart,
   setCart,
   searchTerm,
   selectedCoupon,
   setSelectedCoupon,
 }: ShopPageProps) {
-  const { coupons } = useCoupons();
-
   const { addNotification } = useNotification();
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
 
-  const filteredProducts = debouncedSearchTerm
-    ? products.filter(
-        (product) =>
-          product.name
-            .toLowerCase()
-            .includes(debouncedSearchTerm.toLowerCase()) ||
-          (product.description &&
-            product.description
-              .toLowerCase()
-              .includes(debouncedSearchTerm.toLowerCase()))
-      )
-    : products;
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  const { coupons } = useCoupons();
+  const { products } = useProducts({
+    searchTerm: debouncedSearchTerm,
+  });
 
   const getRemainingStock = (product: Product): number => {
     const cartItem = cart.find((item) => item.product.id === product.id);
@@ -230,13 +215,6 @@ function ShopPage({
 
   const totals = calculateCartTotal();
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
-
   const formatPrice = (price: number, productId?: string): string => {
     if (productId) {
       const product = products.find((p) => p.id === productId);
@@ -262,15 +240,15 @@ function ShopPage({
                 총 {products.length}개 상품
               </div>
             </div>
-            {filteredProducts.length === 0 ? (
+            {products.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-gray-500">
-                  "{debouncedSearchTerm}"에 대한 검색 결과가 없습니다.
+                  "{searchTerm}"에 대한 검색 결과가 없습니다.
                 </p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredProducts.map((product) => {
+                {products.map((product) => {
                   const remainingStock = getRemainingStock(product);
 
                   return (

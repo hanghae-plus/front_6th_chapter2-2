@@ -6,6 +6,7 @@ import ProductsContent from "./ProductsContent";
 import CouponsContent from "./CouponsContent";
 import { useTab } from "../../_shared/utility-hooks/use-tab";
 import { cn } from "../../_shared/tw-utility/cn";
+import { useProducts } from "../../___features/product/use-products";
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -13,75 +14,19 @@ interface ProductWithUI extends Product {
 }
 
 interface AdminPageProps {
-  products: ProductWithUI[];
-  setProducts: Dispatch<SetStateAction<ProductWithUI[]>>;
   selectedCoupon: Coupon | null;
   setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
 }
 
-function AdminPage({
-  products,
-  setProducts,
-  selectedCoupon,
-  setSelectedCoupon,
-}: AdminPageProps) {
+function AdminPage({ selectedCoupon, setSelectedCoupon }: AdminPageProps) {
   const { addCoupon, removeCoupon, coupons } = useCoupons();
-  const { addNotification } = useNotification();
-
-  const addProduct = useCallback(
-    (newProduct: Omit<ProductWithUI, "id">) => {
-      const product: ProductWithUI = {
-        ...newProduct,
-        id: `p${Date.now()}`,
-      };
-      setProducts((prev) => [...prev, product]);
-      addNotification({
-        text: "상품이 추가되었습니다.",
-        type: "success",
-      });
-    },
-    [setProducts, addNotification]
-  );
-
-  const updateProduct = useCallback(
-    (productId: string, updates: Partial<ProductWithUI>) => {
-      setProducts((prev) =>
-        prev.map((product) =>
-          product.id === productId ? { ...product, ...updates } : product
-        )
-      );
-      addNotification({
-        text: "상품이 수정되었습니다.",
-        type: "success",
-      });
-    },
-    [setProducts, addNotification]
-  );
-
-  const deleteProduct = useCallback(
-    (productId: string) => {
-      setProducts((prev) => prev.filter((p) => p.id !== productId));
-      addNotification({
-        text: "상품이 삭제되었습니다.",
-        type: "success",
-      });
-    },
-    [setProducts, addNotification]
-  );
 
   const adminTabs = useTab({
     tabs: [
       {
         id: "products",
         label: "상품 관리",
-        content: (
-          <ProductsContent
-            products={products}
-            addProduct={addProduct}
-            updateProduct={updateProduct}
-            deleteProduct={deleteProduct}
-          />
-        ),
+        content: <ProductsContent />,
       },
       {
         id: "coupons",

@@ -2,12 +2,8 @@ import { useState } from "react";
 import { Product } from "../../../types";
 import { useNotification } from "../../___features/notification/use-notification";
 import ProductTable from "./ProductTable";
-import ProductForm from "./ProductForm";
-
-interface ProductWithUI extends Product {
-  description?: string;
-  isRecommended?: boolean;
-}
+import { useProducts } from "../../___features/product/use-products";
+import { ProductWithUI } from "../../___features/product/types";
 
 interface ProductForm {
   name: string;
@@ -17,20 +13,10 @@ interface ProductForm {
   discounts: Array<{ quantity: number; rate: number }>;
 }
 
-interface Props {
-  products: ProductWithUI[];
-  addProduct: (product: ProductForm) => void;
-  updateProduct: (productId: string, product: ProductForm) => void;
-  deleteProduct: (productId: string) => void;
-}
-
-function ProductsContent({
-  products,
-  addProduct,
-  updateProduct,
-  deleteProduct,
-}: Props) {
+function ProductsContent() {
   const { addNotification } = useNotification();
+
+  const { products, updateProduct, addProduct, deleteProduct } = useProducts();
 
   const [showProductForm, setShowProductForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
@@ -56,7 +42,7 @@ function ProductsContent({
     });
   };
 
-  const startEditProduct = (product: ProductWithUI) => {
+  const startEditProduct = (product: Product & { description?: string }) => {
     setEditingProduct(product.id);
     updateProductForm({
       name: product.name,
@@ -68,13 +54,43 @@ function ProductsContent({
     setShowProductForm(true);
   };
 
+  const handleAddProduct = (newProduct: Omit<ProductWithUI, "id">) => {
+    addProduct(newProduct);
+
+    addNotification({
+      text: "상품이 추가되었습니다.",
+      type: "success",
+    });
+  };
+
+  const handleUpdateProduct = (
+    productId: string,
+    updates: Partial<ProductWithUI>
+  ) => {
+    updateProduct(productId, updates);
+
+    addNotification({
+      text: "상품이 수정되었습니다.",
+      type: "success",
+    });
+  };
+
+  const handleDeleteProduct = (productId: string) => {
+    deleteProduct(productId);
+
+    addNotification({
+      text: "상품이 삭제되었습니다.",
+      type: "success",
+    });
+  };
+
   const handleProductSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (editingProduct && editingProduct !== "new") {
-      updateProduct(editingProduct, productForm);
+      handleUpdateProduct(editingProduct, productForm);
       setEditingProduct(null);
     } else {
-      addProduct(productForm);
+      handleAddProduct(productForm);
     }
     resetProductForm();
     setEditingProduct(null);
@@ -103,7 +119,7 @@ function ProductsContent({
         <ProductTable
           products={products}
           onEditProduct={startEditProduct}
-          onDeleteProduct={deleteProduct}
+          onDeleteProduct={handleDeleteProduct}
         />
       </div>
       {showProductForm && (
