@@ -30,3 +30,14 @@ export interface NotificationType {
   message: string;
   type: 'error' | 'success' | 'warning';
 }
+
+export interface ProductFormType {
+  name: string;
+  price: number;
+  stock: number;
+  description: string;
+  discounts: Array<{
+    quantity: number;
+    rate: number;
+  }>;
+}
