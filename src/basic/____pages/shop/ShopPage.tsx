@@ -7,7 +7,7 @@ import {
 } from "react";
 import { CartItem, Coupon, Product } from "../../../types";
 import { useNotification } from "../../___features/notification/use-notification";
-import { useCoupons } from "../../___features/coupon/useCoupons";
+import { useCoupons } from "../../___features/coupon/use-coupons";
 
 interface ProductWithUI extends Product {
   description?: string;

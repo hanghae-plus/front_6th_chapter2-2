@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useCallback } from "react";
 import { Coupon, Product } from "../../../types";
 import { useNotification } from "../../___features/notification/use-notification";
-import { useCoupons } from "../../___features/coupon/useCoupons";
+import { useCoupons } from "../../___features/coupon/use-coupons";
 import ProductsContent from "./ProductsContent";
 import CouponsContent from "./CouponsContent";
 import { useTab } from "../../_shared/utility-hooks/use-tab";
