@@ -1,6 +1,8 @@
 import { atom } from 'jotai';
 
 import { CouponForm, ProductForm, ProductWithUI } from '../types';
+import { addCouponAtom } from './couponAtoms';
+import { addProductAtom, updateProductAtom } from './productAtoms';
 
 // Product Form atoms
 export const productFormAtom = atom<ProductForm>({
@@ -16,8 +18,22 @@ export const editingProductAtom = atom<string | null>(null);
 
 // Product Form action atoms
 
-// 상품 폼 초기화 및 닫기
-export const handleProductFormSubmitAtom = atom(null, (get, set) => {
+// 상품 폼 제출 및 처리
+export const handleProductFormSubmitAtom = atom(null, (get, set, e?: React.FormEvent) => {
+  if (e) e.preventDefault();
+
+  const productForm = get(productFormAtom);
+  const editingProduct = get(editingProductAtom);
+
+  if (editingProduct && editingProduct !== 'new') {
+    // 기존 상품 업데이트
+    set(updateProductAtom, { id: editingProduct, productForm });
+  } else {
+    // 새 상품 추가
+    set(addProductAtom, productForm);
+  }
+
+  // 폼 초기화 및 닫기
   set(productFormAtom, {
     name: '',
     price: 0,
@@ -26,12 +42,22 @@ export const handleProductFormSubmitAtom = atom(null, (get, set) => {
     discounts: [],
   });
   set(showProductFormAtom, false);
+  set(editingProductAtom, null);
 });
 
 // 상품 편집 시작
 export const startEditProductAtom = atom(null, (get, set, product: ProductWithUI | string) => {
   if (typeof product === 'string') {
     set(editingProductAtom, product);
+    if (product === 'new') {
+      set(productFormAtom, {
+        name: '',
+        price: 0,
+        stock: 0,
+        description: '',
+        discounts: [],
+      });
+    }
   } else {
     set(editingProductAtom, product.id);
     set(productFormAtom, {
@@ -86,8 +112,16 @@ export const showCouponFormAtom = atom<boolean>(false);
 
 // Coupon Form action atoms
 
-// 쿠폰 폼 초기화 및 닫기
-export const handleCouponFormSubmitAtom = atom(null, (get, set) => {
+// 쿠폰 폼 제출 및 처리
+export const handleCouponFormSubmitAtom = atom(null, (get, set, e?: React.FormEvent) => {
+  if (e) e.preventDefault();
+
+  const couponForm = get(couponFormAtom);
+
+  // 새 쿠폰 추가
+  set(addCouponAtom, couponForm);
+
+  // 폼 초기화 및 닫기
   set(couponFormAtom, {
     name: '',
     code: '',

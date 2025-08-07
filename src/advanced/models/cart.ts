@@ -39,9 +39,16 @@ const getMaxApplicableDiscount = (item: CartItem, cart: CartItem[]): number => {
     0,
   );
 
+  // 대량 구매 추가 할인 로직
   const hasBulkPurchase = cart.some((cartItem) => cartItem.quantity >= 10);
+  const hasMassivePurchase = cart.some((cartItem) => cartItem.quantity >= 20);
+
+  if (hasMassivePurchase) {
+    return Math.min(baseDiscount + 0.1, 0.5); // 20개 이상 시 추가 10% 할인 (최대 30%)
+  }
+
   if (hasBulkPurchase) {
-    return Math.min(baseDiscount + 0.05, 0.5); // 대량 구매 시 추가 5% 할인
+    return Math.min(baseDiscount + 0.05, 0.5); // 10개 이상 시 추가 5% 할인 (최대 25%)
   }
 
   return baseDiscount;
