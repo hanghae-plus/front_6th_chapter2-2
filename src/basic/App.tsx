@@ -1,45 +1,36 @@
 // src/basic/App.tsx
 import { useState } from 'react';
 import { useProducts } from './hooks/useProducts';
-import { useCoupons } from './hooks/useCoupons';
 import { useCart } from './hooks/useCart';
 import { ProductList } from './components/ProductList';
 import { Cart } from './components/Cart';
 import { Admin } from './components/Admin';
-import { useToast } from './utils/hooks/useToast';
+import { useAtom } from 'jotai';
+import { toastMessageAtom } from './store/atoms';
+import { useEffect } from 'react';
 
 type Page = 'shop' | 'admin';
 
 function App() {
   const [page, setPage] = useState<Page>('shop');
-  const { toastMessage, showToast } = useToast();
+  const [toastMessage, setToastMessage] = useAtom(toastMessageAtom);
   const [orderCompleteMessage, setOrderCompleteMessage] = useState<
     string | null
   >(null);
 
-  const {
-    products,
-    addProduct,
-    updateProduct,
-    removeProduct,
-    setSearchKeyword,
-  } = useProducts();
-  const { coupons, addCoupon, removeCoupon } = useCoupons();
-  const {
-    cart,
-    addToCart,
-    removeFromCart,
-    updateQuantity,
-    applyCoupon,
-    selectedCoupon,
-    cartTotal,
-    clearCart,
-    totalQuantity,
-  } = useCart(showToast);
+  // Toast 메시지가 표시되면 3초 후에 자동으로 사라지도록 설정
+  useEffect(() => {
+    if (toastMessage) {
+      const timer = setTimeout(() => setToastMessage(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toastMessage, setToastMessage]);
+
+  const { setSearchKeyword } = useProducts();
+  const { totalQuantity } = useCart();
 
   const handleCheckout = () => {
     setOrderCompleteMessage('주문이 완료되었습니다.');
-    clearCart();
     setTimeout(() => {
       setOrderCompleteMessage(null);
     }, 3000);
@@ -99,7 +90,7 @@ function App() {
                       d='M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z'
                     />
                   </svg>
-                  {cart.length > 0 && (
+                  {totalQuantity > 0 && (
                     <span className='absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center'>
                       {totalQuantity}
                     </span>
@@ -115,33 +106,16 @@ function App() {
         {page === 'shop' ? (
           <div className='grid grid-cols-1 lg:grid-cols-4 gap-6'>
             <div className='lg:col-span-3'>
-              <ProductList products={products} onAddToCart={addToCart} />
+              <ProductList />
             </div>
             <div className='lg:col-span-1'>
               <div className='sticky top-24 space-y-4'>
-                <Cart
-                  cart={cart}
-                  coupons={coupons}
-                  selectedCoupon={selectedCoupon}
-                  onUpdateQuantity={updateQuantity}
-                  onRemoveFromCart={removeFromCart}
-                  onApplyCoupon={applyCoupon}
-                  cartTotal={cartTotal}
-                  onCheckout={handleCheckout}
-                />
+                <Cart onCheckout={handleCheckout} />
               </div>
             </div>
           </div>
         ) : (
-          <Admin
-            products={products}
-            coupons={coupons}
-            onAddProduct={addProduct}
-            onUpdateProduct={updateProduct}
-            onRemoveProduct={removeProduct}
-            onAddCoupon={addCoupon}
-            onRemoveCoupon={removeCoupon}
-          />
+          <Admin />
         )}
       </main>
     </div>
