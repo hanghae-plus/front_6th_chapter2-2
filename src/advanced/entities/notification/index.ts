@@ -1,2 +1,2 @@
 export { NotificationList } from './ui/NotificationList';
-export { addNotificationAtom } from './store/atom';
+export { addNotificationAtom } from './model/atom';

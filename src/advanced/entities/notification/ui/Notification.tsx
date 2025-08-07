@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { Icon } from '../../../shared/icon';
 import type { Notification as NotificationType } from '../consts';
 import { getToastBgColorByVariant } from '../lib';
-import { removeNotificationAtom } from '../store/atom';
+import { removeNotificationAtom } from '../model/atom';
 
 interface NotificationProps {
   notification: NotificationType;

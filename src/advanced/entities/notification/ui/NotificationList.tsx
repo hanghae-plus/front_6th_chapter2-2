@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai';
 
 import { Notification } from './Notification';
-import { notificationsAtom } from '../store/atom';
+import { notificationsAtom } from '../model/atom';
 
 export function NotificationList() {
   const notifications = useAtomValue(notificationsAtom);
