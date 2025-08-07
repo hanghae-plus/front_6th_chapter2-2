@@ -1,13 +1,14 @@
 import { useCallback } from 'react';
+import { useClearCart } from './useCart';
 import { useNotify } from './useNotification';
 
 interface UseOrderParams {
-  clearCart: () => void;
   clearSelectedCoupon: () => void;
 }
 
-export function useOrder({ clearCart, clearSelectedCoupon }: UseOrderParams) {
+export function useOrder({ clearSelectedCoupon }: UseOrderParams) {
   const notify = useNotify();
+  const clearCart = useClearCart();
 
   return {
     completeOrder: useCallback(() => {

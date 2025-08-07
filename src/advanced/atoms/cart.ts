@@ -75,3 +75,7 @@ export const updateQuantityAtom = atom(
     return result;
   }
 );
+
+export const clearCartAtom = atom(null, (get, set) => {
+  set(cartAtom, []);
+});

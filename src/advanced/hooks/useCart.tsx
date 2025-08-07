@@ -4,6 +4,7 @@ import type { CartItem, Product } from '../../types';
 import {
   addCartAtom,
   cartAtom,
+  clearCartAtom,
   removeFromCartAtom,
   updateQuantityAtom,
 } from '../atoms/cart';
@@ -14,12 +15,11 @@ import { useNotify } from './useNotification';
 interface UseCartReturn {
   cart: CartItem[];
   totalItemCount: number;
-  clearCart: () => void;
 }
 
 export function useCart(): UseCartReturn {
   const LOCAL_STORAGE_KEY = 'cart';
-  const [cart, setCart] = useAtomWithLocalStorage<CartItem[]>({
+  const [cart] = useAtomWithLocalStorage<CartItem[]>({
     key: 'cart',
     initialValue: [],
     atom: cartAtom,
@@ -34,10 +34,6 @@ export function useCart(): UseCartReturn {
   return {
     cart,
     totalItemCount: cartModel.calculateTotalItemCount({ cart }),
-
-    clearCart: useCallback(() => {
-      setCart([]);
-    }, [setCart]),
   };
 }
 
@@ -90,4 +86,8 @@ export function useUpdateQuantity() {
   };
 
   return updateQuantity;
+}
+
+export function useClearCart() {
+  return useSetAtom(clearCartAtom);
 }
