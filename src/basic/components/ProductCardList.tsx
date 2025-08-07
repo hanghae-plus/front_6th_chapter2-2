@@ -1,8 +1,7 @@
-import { Product } from '../types';
+import { Product, ProductWithUI } from '../types';
 
 interface ProductCardListProps {
-  products: Product[];
-  filteredProducts: Product[];
+  products: ProductWithUI[];
   debouncedSearchTerm: string;
   getRemainingStock: (product: Product) => number;
   getDisplayPrice: (price: number, productId?: string) => string;

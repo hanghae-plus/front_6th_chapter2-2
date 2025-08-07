@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import { Coupon } from '../../types';
+
 const useCouponForm = () => {
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [couponForm, setCouponForm] = useState({

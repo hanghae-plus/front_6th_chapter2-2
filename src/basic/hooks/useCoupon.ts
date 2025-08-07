@@ -14,6 +14,7 @@ import { Coupon } from '../types';
 
 const useCoupon = (
   selectedCoupon: Coupon | null,
+  applyCoupon: (coupon: Coupon | null) => void,
   addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void,
 ) => {
   const [coupons, setCoupons] = useState<Coupon[]>(() => {
@@ -53,7 +54,7 @@ const useCoupon = (
       }
       addNotification('쿠폰이 삭제되었습니다.', 'success');
     },
-    [selectedCoupon, addNotification],
+    [selectedCoupon, applyCoupon, addNotification],
   );
 
   return { coupons, addCoupon, deleteCoupon };

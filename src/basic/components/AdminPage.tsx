@@ -1,4 +1,4 @@
-import { Product, Coupon, ProductWithUI } from '../types';
+import { Coupon, ProductWithUI, ProductForm, CouponForm, Notification } from '../types';
 
 interface AdminPageProps {
   activeTab: 'products' | 'coupons';
@@ -10,17 +10,17 @@ interface AdminPageProps {
   deleteProduct: (id: string) => void;
   deleteCoupon: (code: string) => void;
   showProductForm: boolean;
-  productForm: any;
-  editingProduct: Product | 'new' | null;
+  productForm: ProductForm;
+  editingProduct: string | null;
   handleProductSubmit: (e: React.FormEvent) => void;
-  updateProductForm: (updates: any) => void;
+  updateProductForm: (updates: Partial<ProductForm>) => void;
   handleCancelProduct: () => void;
-  addNotification: (message: string, type: 'success' | 'error' | 'info') => void;
+  addNotification: (message: string, type: Notification['type']) => void;
   showCouponForm: boolean;
   updateShowCouponForm: (show: boolean) => void;
-  couponForm: any;
+  couponForm: CouponForm;
   handleCouponSubmit: (e: React.FormEvent) => void;
-  updateCouponForm: (updates: any) => void;
+  updateCouponForm: (updates: Partial<CouponForm>) => void;
   handleAddProduct: () => void;
 }
 
