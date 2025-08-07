@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
-
 import { CartItem, Coupon, Product } from "../types";
+
+import { useCallback, useEffect, useState } from "react";
 
 interface ProductWithUI extends Product {
   description?: string;

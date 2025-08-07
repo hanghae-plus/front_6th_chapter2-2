@@ -4,7 +4,6 @@ import { useCart } from "@/basic/features/cart/hooks/useCart";
 import CouponDetail from "@/basic/features/coupon/components/CouponDetail";
 import { Coupon } from "@/basic/features/coupon/types/coupon.type";
 import { AddNotification } from "@/basic/features/notification/types/notification";
-import { useProducts } from "@/basic/features/product/hooks/useProducts";
 
 interface CartSummaryProps {
   addNotification: AddNotification;
@@ -17,12 +16,8 @@ export default function CartSummary({
   selectedCoupon,
   setSelectedCoupon,
 }: CartSummaryProps) {
-  const { products } = useProducts({
-    addNotification,
-  });
   const { cart } = useCart({
     addNotification,
-    products,
     selectedCoupon,
     setSelectedCoupon,
   });
@@ -31,7 +26,11 @@ export default function CartSummary({
 
   return (
     <div className="sticky top-24 space-y-4">
-      <CartDetail addNotification={addNotification} />
+      <CartDetail
+        addNotification={addNotification}
+        selectedCoupon={selectedCoupon}
+        setSelectedCoupon={setSelectedCoupon}
+      />
 
       {hasCart && (
         <>
@@ -44,6 +43,7 @@ export default function CartSummary({
           <OrderDetail
             addNotification={addNotification}
             selectedCoupon={selectedCoupon}
+            setSelectedCoupon={setSelectedCoupon}
           />
         </>
       )}

@@ -1,27 +1,32 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { cartModel } from "@/basic/features/cart/models/cart.model";
+import { CartItem } from "@/basic/features/cart/types/cart.type";
 import { COUPON } from "@/basic/features/coupon/constants/coupon";
+import { Coupon } from "@/basic/features/coupon/types/coupon.type";
+import { DiscountType } from "@/basic/features/discount/types/discount.type";
 import { AddNotification } from "@/basic/features/notification/types/notification";
+import { useProducts } from "@/basic/features/product/hooks/useProducts";
+import { ProductWithUI } from "@/basic/features/product/types/product";
 import { DEFAULTS } from "@/basic/shared/constants/defaults";
 import { NOTIFICATION } from "@/basic/shared/constants/notification";
 import { PRODUCT } from "@/basic/shared/constants/product";
 import { useLocalStorage } from "@/basic/shared/hooks/useLocalStorage";
-import { CartItem, Coupon, DiscountType, ProductWithUI } from "@/types";
 
 interface Props {
   addNotification: AddNotification;
-  products: ProductWithUI[];
   selectedCoupon: Coupon | null;
   setSelectedCoupon: (coupon: Coupon | null) => void;
 }
 
 export function useCart({
   addNotification,
-  products,
   selectedCoupon,
   setSelectedCoupon,
 }: Props) {
+  const { products } = useProducts({
+    addNotification,
+  });
   const [cart, setCart] = useLocalStorage<CartItem[]>("cart", []);
 
   const [totalItemCount, setTotalItemCount] = useState<number>(DEFAULTS.TOTAL);

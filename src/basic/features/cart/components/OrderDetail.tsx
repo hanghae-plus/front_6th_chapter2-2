@@ -4,24 +4,23 @@ import { useCart } from "@/basic/features/cart/hooks/useCart";
 import { cartModel } from "@/basic/features/cart/models/cart.model";
 import { Coupon } from "@/basic/features/coupon/types/coupon.type";
 import { AddNotification } from "@/basic/features/notification/types/notification";
-import { useProducts } from "@/basic/features/product/hooks/useProducts";
 import { NOTIFICATION } from "@/basic/shared/constants/notification";
 
 interface OrderDetailProps {
   addNotification: AddNotification;
   selectedCoupon: Coupon | null;
+  setSelectedCoupon: (coupon: Coupon | null) => void;
 }
 
 export default function OrderDetail({
   addNotification,
   selectedCoupon,
+  setSelectedCoupon,
 }: OrderDetailProps) {
-  const { products } = useProducts({
-    addNotification,
-  });
   const { clearCart, resetCoupon, cart } = useCart({
     addNotification,
-    products,
+    selectedCoupon,
+    setSelectedCoupon,
   });
 
   const completeOrder = useCallback(() => {

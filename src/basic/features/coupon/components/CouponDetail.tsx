@@ -2,7 +2,6 @@ import { useCart } from "@/basic/features/cart/hooks/useCart";
 import { useCoupon } from "@/basic/features/coupon/hooks/useCoupon";
 import { Coupon } from "@/basic/features/coupon/types/coupon.type";
 import { AddNotification } from "@/basic/features/notification/types/notification";
-import { useProducts } from "@/basic/features/product/hooks/useProducts";
 
 interface CouponDetailProps {
   addNotification: AddNotification;
@@ -15,12 +14,8 @@ export default function CouponDetail({
   selectedCoupon,
   setSelectedCoupon,
 }: CouponDetailProps) {
-  const { products } = useProducts({
-    addNotification,
-  });
   const { applyCoupon, resetCoupon } = useCart({
     addNotification,
-    products,
     selectedCoupon,
     setSelectedCoupon,
   });

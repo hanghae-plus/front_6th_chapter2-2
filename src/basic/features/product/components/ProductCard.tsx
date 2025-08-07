@@ -1,5 +1,6 @@
 import { useCart } from "@/basic/features/cart/hooks/useCart";
 import { cartModel } from "@/basic/features/cart/models/cart.model";
+import { Coupon } from "@/basic/features/coupon/types/coupon.type";
 import { discountModel } from "@/basic/features/discount/models/discount.model";
 import { Discount } from "@/basic/features/discount/types/discount.type";
 import { AddNotification } from "@/basic/features/notification/types/notification";
@@ -11,18 +12,23 @@ import { PRODUCT } from "@/basic/shared/constants/product";
 interface ProductCardProps {
   product: ProductWithUI;
   addNotification: AddNotification;
+  selectedCoupon: Coupon | null;
+  setSelectedCoupon: (coupon: Coupon | null) => void;
 }
 
 export default function ProductCard({
   product,
   addNotification,
+  selectedCoupon,
+  setSelectedCoupon,
 }: ProductCardProps) {
   const { products } = useProducts({
     addNotification,
   });
   const { cart, addToCart } = useCart({
     addNotification,
-    products,
+    selectedCoupon,
+    setSelectedCoupon,
   });
 
   const handleClickAddToCart = () => addToCart(product);

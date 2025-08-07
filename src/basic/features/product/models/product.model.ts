@@ -26,7 +26,7 @@ const formatProductPrice = ({
   price: number;
   isAdmin?: boolean;
 }): string => {
-  return isAdmin ? `${price.toLocaleString()}원` : formatPrice(price);
+  return isAdmin ? formatPrice.unit(price) : formatPrice.currency(price);
 };
 
 const getFormattedProductPrice = ({

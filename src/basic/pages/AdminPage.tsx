@@ -1,38 +1,97 @@
 import { useState } from "react";
 
 import { useCart } from "@/basic/features/cart/hooks/useCart";
+import { useCoupon } from "@/basic/features/coupon/hooks/useCoupon";
+import { Coupon } from "@/basic/features/coupon/types/coupon.type";
+import { DiscountType } from "@/basic/features/discount/types/discount.type";
+import { useNotification } from "@/basic/features/notification/hooks/useNotification";
+import { AddNotification } from "@/basic/features/notification/types/notification";
+import { useProducts } from "@/basic/features/product/hooks/useProducts";
+import { productModel } from "@/basic/features/product/models/product.model";
+import { ProductWithUI } from "@/basic/features/product/types/product";
 import Header from "@/basic/shared/components/layout/Header";
+import MainLayout from "@/basic/shared/components/layout/MainLayout";
 import PageLayout from "@/basic/shared/components/layout/PageLayout";
+import { DEFAULTS } from "@/basic/shared/constants/defaults";
+import { NOTIFICATION } from "@/basic/shared/constants/notification";
+import { VALIDATION } from "@/basic/shared/constants/validation";
 
 interface AdminPageProps {
   setIsAdmin: (isAdmin: boolean) => void;
+  selectedCoupon: Coupon | null;
+  setSelectedCoupon: (coupon: Coupon | null) => void;
+  addNotification: AddNotification;
 }
 
-export default function AdminPage({ setIsAdmin }: AdminPageProps) {
-  const {
-    cart,
-    setCart,
-    totalItemCount,
-    addToCart,
-    removeFromCart,
-    updateQuantity,
-    selectedCoupon,
-    resetCoupon,
-    applyCoupon,
-  } = useCart({
-    addNotification,
-    products,
-  });
-
+export default function AdminPage({
+  setIsAdmin,
+  selectedCoupon,
+  setSelectedCoupon,
+  addNotification,
+}: AdminPageProps) {
+  const [editingProduct, setEditingProduct] = useState<string | null>(null);
+  const [productForm, setProductForm] = useState(DEFAULTS.PRODUCT_FORM);
+  const [couponForm, setCouponForm] = useState(DEFAULTS.COUPON_FORM);
+  const [showProductForm, setShowProductForm] = useState(false);
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
     "products"
   );
+  const [showCouponForm, setShowCouponForm] = useState(false);
+
+  const { products, addProduct, updateProduct, deleteProduct } = useProducts({
+    addNotification,
+  });
+  const { cart, resetCoupon } = useCart({
+    addNotification,
+    selectedCoupon,
+    setSelectedCoupon,
+  });
+  const { coupons, addCoupon, deleteCoupon } = useCoupon({
+    addNotification,
+    resetCoupon,
+    selectedCoupon,
+  });
+
+  const startEditProduct = (product: ProductWithUI) => {
+    setEditingProduct(product.id);
+    setProductForm({
+      name: product.name,
+      price: product.price,
+      stock: product.stock,
+      description: product.description || "",
+      discounts: product.discounts || [],
+    });
+    setShowProductForm(true);
+  };
+
+  const handleProductSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editingProduct && editingProduct !== "new") {
+      updateProduct(editingProduct, productForm);
+      setEditingProduct(null);
+    } else {
+      addProduct({
+        ...productForm,
+        discounts: productForm.discounts,
+      });
+    }
+    setProductForm(DEFAULTS.PRODUCT_FORM);
+    setEditingProduct(null);
+    setShowProductForm(false);
+  };
+
+  const handleCouponSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    addCoupon(couponForm);
+    setCouponForm(DEFAULTS.COUPON_FORM);
+    setShowCouponForm(false);
+  };
 
   return (
     <PageLayout>
       <Header.Admin setIsAdmin={setIsAdmin} />
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <MainLayout>
         <div className="max-w-6xl mx-auto">
           <div className="mb-8">
             <h1 className="text-2xl font-bold text-gray-900">
@@ -118,7 +177,7 @@ export default function AdminPage({ setIsAdmin }: AdminPageProps) {
                               productId: product.id,
                               products,
                               cart,
-                              isAdmin,
+                              isAdmin: true,
                             })}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -669,7 +728,7 @@ export default function AdminPage({ setIsAdmin }: AdminPageProps) {
             </section>
           )}
         </div>
-      </main>
+      </MainLayout>
     </PageLayout>
   );
 }

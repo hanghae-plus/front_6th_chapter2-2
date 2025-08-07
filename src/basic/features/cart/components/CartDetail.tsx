@@ -1,20 +1,24 @@
 import { useCart } from "@/basic/features/cart/hooks/useCart";
 import { cartModel } from "@/basic/features/cart/models/cart.model";
+import { Coupon } from "@/basic/features/coupon/types/coupon.type";
 import { AddNotification } from "@/basic/features/notification/types/notification";
-import { useProducts } from "@/basic/features/product/hooks/useProducts";
 import Icon from "@/basic/shared/components/icons/Icon";
 
 interface CartDetailProps {
   addNotification: AddNotification;
+  selectedCoupon: Coupon | null;
+  setSelectedCoupon: (coupon: Coupon | null) => void;
 }
 
-export default function CartDetail({ addNotification }: CartDetailProps) {
-  const { products } = useProducts({
-    addNotification,
-  });
+export default function CartDetail({
+  addNotification,
+  selectedCoupon,
+  setSelectedCoupon,
+}: CartDetailProps) {
   const { cart, removeFromCart, updateQuantity } = useCart({
     addNotification,
-    products,
+    selectedCoupon,
+    setSelectedCoupon,
   });
 
   const handleClickDecrease = (productId: string, newQuantity: number) => {
