@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://jun17183.github.io/front_6th_chapter2-2",
+  "homepage": "https://JHeeJinDev.github.io/front_6th_chapter2-2",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
