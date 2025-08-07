@@ -1,58 +1,23 @@
-import { useState, useCallback } from "react";
-import { Product, ProductWithUI } from "../../../entities/product/types";
-import { NotificationVariant } from "../../../entities/notification/types";
+import { Product } from "../../../entities/product/types";
 import { ProductTable } from "../../../features/view-product-list/ui/ProductTable";
 import { formatPrice } from "../../../shared/libs/price";
 import { getStockDisplay } from "../../../entities/product/libs/stock";
-import { AddProductForm } from "../../../features/add-product/ui/AddProductForm";
-import { EditProductForm } from "../../../features/edit-product/ui/EditProductForm";
-import { useProductStorage } from "../../../entities/product/hooks/useProductStorage";
-import { useGlobalNotification } from "../../../entities/notification/hooks/useGlobalNotification";
+import { AddProductForm } from "../../../features/manage-products/ui/AddProductForm";
+import { EditProductForm } from "../../../features/manage-products/ui/EditProductForm";
+import { useManageProducts } from "../../../features/manage-products/hooks/useManageProducts";
 
 export function ProductsTab() {
-  const productStorage = useProductStorage();
-  const { addNotification } = useGlobalNotification();
-  const [showProductForm, setShowProductForm] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<ProductWithUI | null>(
-    null
-  );
-
-  const addProduct = useCallback(
-    (newProduct: Omit<ProductWithUI, "id">) => {
-      productStorage.addProduct(newProduct);
-      addNotification("상품이 추가되었습니다.", NotificationVariant.SUCCESS);
-      setShowProductForm(false);
-    },
-    [productStorage.addProduct, addNotification]
-  );
-
-  const updateProduct = useCallback(
-    (updatedProduct: ProductWithUI) => {
-      productStorage.updateProduct(updatedProduct);
-      addNotification("상품이 수정되었습니다.", NotificationVariant.SUCCESS);
-      setEditingProduct(null);
-      setShowProductForm(false);
-    },
-    [productStorage.updateProduct, addNotification]
-  );
-
-  const deleteProduct = useCallback(
-    (productId: string) => {
-      productStorage.deleteProduct(productId);
-      addNotification("상품이 삭제되었습니다.", NotificationVariant.SUCCESS);
-    },
-    [productStorage.deleteProduct, addNotification]
-  );
-
-  const editProduct = (product: ProductWithUI) => {
-    setEditingProduct(product);
-    setShowProductForm(true);
-  };
-
-  const resetForm = () => {
-    setEditingProduct(null);
-    setShowProductForm(false);
-  };
+  const {
+    products,
+    showProductForm,
+    editingProduct,
+    addProduct,
+    updateProduct,
+    deleteProduct,
+    startAddingProduct,
+    startEditingProduct,
+    cancelProductForm,
+  } = useManageProducts();
 
   const displayPrice = (product: Product) => {
     const stockStatus = getStockDisplay(product.stock, 0);
@@ -61,7 +26,7 @@ export function ProductsTab() {
     return `${formattedPrice}원`;
   };
 
-  const productsWithDisplayInfo = productStorage.products.map((product) => ({
+  const productsWithDisplayInfo = products.map((product) => ({
     ...product,
     displayedPrice: displayPrice(product),
   }));
@@ -72,10 +37,7 @@ export function ProductsTab() {
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-semibold">상품 목록</h2>
           <button
-            onClick={() => {
-              setEditingProduct(null);
-              setShowProductForm(true);
-            }}
+            onClick={startAddingProduct}
             className="px-4 py-2 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800"
           >
             새 상품 추가
@@ -85,7 +47,7 @@ export function ProductsTab() {
 
       <ProductTable
         products={productsWithDisplayInfo}
-        onEdit={editProduct}
+        onEdit={startEditingProduct}
         onDelete={deleteProduct}
       />
 
@@ -94,10 +56,10 @@ export function ProductsTab() {
           <EditProductForm
             initialProduct={editingProduct}
             onSubmit={updateProduct}
-            onCancel={resetForm}
+            onCancel={cancelProductForm}
           />
         ) : (
-          <AddProductForm onSubmit={addProduct} onCancel={resetForm} />
+          <AddProductForm onSubmit={addProduct} onCancel={cancelProductForm} />
         ))}
     </section>
   );
