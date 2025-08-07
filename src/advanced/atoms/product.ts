@@ -40,3 +40,14 @@ export const updateProductAtom = atom(
     set(productsAtom, newProducts);
   }
 );
+
+export const deleteProductAtom = atom(
+  null,
+  (get, set, { productId }: { productId: string }) => {
+    const products = get(productsAtom);
+
+    const newProducts = productModel.deleteProduct({ productId, products });
+
+    set(productsAtom, newProducts);
+  }
+);

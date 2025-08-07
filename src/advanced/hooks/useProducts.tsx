@@ -1,20 +1,19 @@
 import { useSetAtom } from 'jotai';
-import { useCallback, type Dispatch, type SetStateAction } from 'react';
+import { type Dispatch, type SetStateAction } from 'react';
 import type { Product, ProductWithUI } from '../../types';
 import {
   addProductAtom,
+  deleteProductAtom,
   productsAtom,
   updateProductAtom,
 } from '../atoms/product';
 import { initialProducts } from '../constants';
-import * as productModel from '../models/product';
 import { useAtomWithLocalStorage } from '../utils/hooks/useLocalStorage';
 import { useNotify } from './useNotification';
 
 interface UseProductsReturn {
   products: ProductWithUI[];
   setProducts: Dispatch<SetStateAction<Product[]>>;
-  deleteProduct: (params: { productId: string }) => void;
 }
 
 export function useProducts(): UseProductsReturn {
@@ -28,22 +27,6 @@ export function useProducts(): UseProductsReturn {
   return {
     products,
     setProducts,
-
-    deleteProduct: useCallback(
-      ({ productId }) => {
-        const newProducts = productModel.deleteProduct({
-          productId,
-          products,
-        });
-
-        setProducts(newProducts);
-        notify({
-          message: '상품이 삭제되었습니다.',
-          type: 'success',
-        });
-      },
-      [setProducts, notify, products]
-    ),
   };
 }
 
@@ -90,4 +73,19 @@ export function useUpdateProduct() {
   };
 
   return updateProduct;
+}
+
+export function useDeleteProduct() {
+  const notify = useNotify();
+  const _deleteProduct = useSetAtom(deleteProductAtom);
+
+  const deleteProduct = ({ productId }: { productId: string }) => {
+    _deleteProduct({ productId });
+    notify({
+      message: '상품이 삭제되었습니다.',
+      type: 'success',
+    });
+  };
+
+  return deleteProduct;
 }
