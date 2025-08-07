@@ -1,0 +1,3 @@
+echo "커밋 컨밴션 검사 실행!"
+pnpm exec commitlint --edit "$1"
+echo "커밋 컨밴션 검사 성공!"

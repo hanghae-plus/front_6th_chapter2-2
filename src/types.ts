@@ -22,3 +22,24 @@ export interface Coupon {
   discountType: 'amount' | 'percentage';
   discountValue: number;
 }
+
+export type ToastType = 'error' | 'success' | 'warning';
+
+export interface OperationSuccess {
+  type: string;
+  message: string;
+}
+
+export interface OperationError {
+  type: string;
+  message: string;
+}
+
+export interface OperationResult<TData = void> {
+  success?: OperationSuccess;
+  error?: OperationError;
+  data?: TData;
+}
+
+export type CartOperationResult = OperationResult<{ cart: CartItem[] }>;
+export type CouponOperationResult = OperationResult;
