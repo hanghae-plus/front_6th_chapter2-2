@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
-import { AdminPage } from '../components/AdminPage';
-import { CartPage } from '../components/CartPage';
 import { Notifications } from '../components/ui/Notifications';
 import { useCouponService } from '../hooks/useCouponService';
 import { useNotificationStore } from '../hooks/useNotificationStore';
 import { useProductService } from '../hooks/useProductService';
+import { AdminPage } from '../pages/admin';
+import { CartPage } from '../pages/cart';
 
 export const App = () => {
   const { notifications, addNotification, removeNotification } = useNotificationStore();

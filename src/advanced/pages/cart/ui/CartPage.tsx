@@ -1,14 +1,14 @@
-import type { CartItem, Coupon } from '../../types';
-import type { NotificationVariant, ProductWithUI } from '../constants';
-import { calculateCartTotal } from '../models/cart';
-import { CartHeader } from './ui/CartHeader';
-import { CartItemList } from './ui/CartItemList';
-import { CouponSelector } from './ui/CouponSelector';
-import { PaymentSummary } from './ui/PaymentSummary';
-import { ProductList } from './ui/ProductList';
-import { useCartService } from '../hooks/useCartService';
-import { useDebouncedSearch } from '../hooks/useDebouncedSearch';
-import { Icon } from '../shared/icon';
+import type { CartItem, Coupon } from '../../../../types';
+import { CartHeader } from '../../../components/ui/CartHeader';
+import { CartItemList } from '../../../components/ui/CartItemList';
+import { CouponSelector } from '../../../components/ui/CouponSelector';
+import { PaymentSummary } from '../../../components/ui/PaymentSummary';
+import { ProductList } from '../../../components/ui/ProductList';
+import type { NotificationVariant, ProductWithUI } from '../../../constants';
+import { useCartService } from '../../../hooks/useCartService';
+import { useDebouncedSearch } from '../../../hooks/useDebouncedSearch';
+import { calculateCartTotal } from '../../../models/cart';
+import { Icon } from '../../../shared/icon';
 
 interface CartPageProps {
   onChangeAdminPage: () => void;

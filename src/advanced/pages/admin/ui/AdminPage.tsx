@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
-import type { Coupon } from '../../types';
-import type { NotificationVariant, ProductWithUI } from '../constants';
-import { AdminHeader } from './ui/AdminHeader';
-import { CouponTab } from './ui/CouponTab';
-import { ProductTab } from './ui/ProductTab';
-import { TabNavigation } from './ui/TabNavigation';
+import type { Coupon } from '../../../../types';
+import { AdminHeader } from '../../../components/ui/AdminHeader';
+import { CouponTab } from '../../../components/ui/CouponTab';
+import { ProductTab } from '../../../components/ui/ProductTab';
+import { TabNavigation } from '../../../components/ui/TabNavigation';
+import type { NotificationVariant, ProductWithUI } from '../../../constants';
 
 interface AdminPageProps {
   onChangeCartPage: () => void;
