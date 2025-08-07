@@ -4,11 +4,10 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   className?: string;
 
-  // 옵션 설정들
-  hasTransition?: boolean; // transition-colors
-  hasFontMedium?: boolean; // font-medium
-  hasTextSm?: boolean; // text-sm
-  hasRounded?: boolean; // rounded
+  hasTransition?: boolean;
+  hasFontMedium?: boolean;
+  hasTextSm?: boolean;
+  hasRounded?: boolean;
 }
 
 export default function Button({
@@ -20,10 +19,8 @@ export default function Button({
   hasRounded = false,
   ...props
 }: ButtonProps) {
-  // 기본 공통 클래스
   const baseClasses = 'focus:outline-none';
 
-  // 옵션별 클래스 추가
   const optionClasses = [
     hasTransition && 'transition-colors',
     hasFontMedium && 'font-medium',
@@ -31,7 +28,6 @@ export default function Button({
     hasRounded && 'rounded',
   ].filter(Boolean);
 
-  // 최종 클래스 조합
   const finalClasses = [baseClasses, ...optionClasses, className].filter(Boolean).join(' ');
 
   return (

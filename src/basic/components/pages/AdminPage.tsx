@@ -6,10 +6,10 @@ import {
   Coupon,
   ProductForm as ProductFormType,
   CouponForm as CouponFormType,
-} from '../../types';
-import AdminTabs from '../components/admin/AdminTabs';
-import CouponManagement from '../components/admin/CouponManagement';
-import ProductManagement from '../components/admin/ProductManagement';
+} from '../../../types';
+import AdminTabs from '../admin/AdminTabs';
+import CouponManagement from '../admin/CouponManagement';
+import ProductManagement from '../admin/ProductManagement';
 
 interface AdminPageProps {
   products: ProductWithUI[];

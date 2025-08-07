@@ -1,7 +1,7 @@
 import { CartItem as CartItemType } from '../../../types';
 import { CartHeaderIcon, EmptyCartIcon } from '../icons';
-import Card from '../ui/Card';
 import CartItem from './CartItem';
+import Card from '../ui/Card';
 
 interface CartItemsProps {
   cart: CartItemType[];

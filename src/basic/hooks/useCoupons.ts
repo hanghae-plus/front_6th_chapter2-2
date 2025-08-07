@@ -6,10 +6,8 @@ import { validateCouponCode, calculateCouponDiscount } from '../models/coupon';
 import { useLocalStorage } from '../utils/hooks/useLocalStorage';
 
 export function useCoupons() {
-  // useLocalStorage 훅 사용
   const [coupons, setCoupons] = useLocalStorage<Coupon[]>('coupons', initialCoupons);
 
-  // addCoupon 함수
   const addCoupon = useCallback(
     (newCoupon: Coupon, onNotification?: NotificationCallback) => {
       if (!validateCouponCode(newCoupon.code, coupons)) {
@@ -19,16 +17,17 @@ export function useCoupons() {
       setCoupons((prev) => [...prev, newCoupon]);
       onNotification?.('쿠폰이 추가되었습니다.', 'success');
     },
-    [coupons]
+    [coupons, setCoupons]
   );
 
-  // removeCoupon 함수
-  const removeCoupon = useCallback((couponCode: string, onNotification?: NotificationCallback) => {
-    setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
-    onNotification?.('쿠폰이 삭제되었습니다.', 'success');
-  }, []);
+  const removeCoupon = useCallback(
+    (couponCode: string, onNotification?: NotificationCallback) => {
+      setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
+      onNotification?.('쿠폰이 삭제되었습니다.', 'success');
+    },
+    [setCoupons]
+  );
 
-  // calculateCouponDiscount 활용 함수
   const getCouponDiscountAmount = useCallback((coupon: Coupon, cartTotal: number): number => {
     return calculateCouponDiscount(coupon, cartTotal);
   }, []);

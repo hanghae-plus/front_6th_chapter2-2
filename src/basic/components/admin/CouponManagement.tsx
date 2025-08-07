@@ -73,7 +73,6 @@ const CouponManagement = ({
                 <Button
                   onClick={() => {
                     removeCoupon(coupon.code, addNotification);
-                    // 선택된 쿠폰이 삭제되면 선택 해제
                     if (selectedCoupon?.code === coupon.code) {
                       setSelectedCoupon(null);
                     }

@@ -25,7 +25,6 @@ export default function Card({
     md: 'p-6',
   };
 
-  // 헤더가 있고 contentPadding이 false면 전체 패딩 없음
   const finalPadding = header && !contentPadding ? 'none' : padding;
   const classes = [baseClasses, paddingClasses[finalPadding], className].filter(Boolean).join(' ');
 

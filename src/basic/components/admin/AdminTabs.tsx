@@ -5,6 +5,7 @@ interface AdminTabsProps {
   setActiveTab: (tab: 'products' | 'coupons') => void;
 }
 
+// 관리자 탭 네비게이션 컴포넌트
 const AdminTabs = ({ activeTab, setActiveTab }: AdminTabsProps) => {
   return (
     <div className='border-b border-gray-200 mb-6'>
