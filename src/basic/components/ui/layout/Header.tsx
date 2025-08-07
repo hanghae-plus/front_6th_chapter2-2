@@ -1,4 +1,4 @@
-import { CartIcon } from '../../icons/cart';
+import { CartIcon } from '../../icons/CartIcon';
 
 interface HeaderProps {
   isAdmin: boolean;
