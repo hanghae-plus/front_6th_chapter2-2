@@ -1,6 +1,5 @@
 import { FormEvent, useCallback, useEffect, useState } from "react";
 
-import type { Coupon, Product } from "../../types";
 import {
   calculateCartTotal,
   calculateItemTotal,
@@ -8,55 +7,24 @@ import {
   getRemainingStock,
   useCartActions
 } from "../domains/cart";
-import { INITIAL_COUPONS, useCouponActions } from "../domains/coupon";
+import { type Coupon, INITIAL_COUPONS, useCouponActions } from "../domains/coupon";
+import {
+  filterProducts,
+  formatPrice,
+  INITIAL_PRODUCTS,
+  type Product,
+  type ProductForm,
+  type ProductWithUI,
+  useProductActions
+} from "../domains/product";
 import { Header } from "./components";
 import { AdminPage, CartPage } from "./pages";
-
-interface ProductWithUI extends Product {
-  description?: string;
-  isRecommended?: boolean;
-}
 
 interface Notification {
   id: string;
   message: string;
   type: "error" | "success" | "warning";
 }
-
-// 초기 데이터
-const initialProducts: ProductWithUI[] = [
-  {
-    id: "p1",
-    name: "상품1",
-    price: 10000,
-    stock: 20,
-    discounts: [
-      { quantity: 10, rate: 0.1 },
-      { quantity: 20, rate: 0.2 }
-    ],
-    description: "최고급 품질의 프리미엄 상품입니다."
-  },
-  {
-    id: "p2",
-    name: "상품2",
-    price: 20000,
-    stock: 20,
-    discounts: [{ quantity: 10, rate: 0.15 }],
-    description: "다양한 기능을 갖춘 실용적인 상품입니다.",
-    isRecommended: true
-  },
-  {
-    id: "p3",
-    name: "상품3",
-    price: 30000,
-    stock: 20,
-    discounts: [
-      { quantity: 10, rate: 0.2 },
-      { quantity: 30, rate: 0.25 }
-    ],
-    description: "대용량과 고성능을 자랑하는 상품입니다."
-  }
-];
 
 export function App() {
   const [products, setProducts] = useState<ProductWithUI[]>(() => {
@@ -65,10 +33,10 @@ export function App() {
       try {
         return JSON.parse(saved);
       } catch {
-        return initialProducts;
+        return INITIAL_PRODUCTS;
       }
     }
-    return initialProducts;
+    return INITIAL_PRODUCTS;
   });
 
   const [cart, setCart] = useState<CartItem[]>(() => {
@@ -106,12 +74,12 @@ export function App() {
 
   // Admin
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
-  const [productForm, setProductForm] = useState({
+  const [productForm, setProductForm] = useState<ProductForm>({
     name: "",
     price: 0,
     stock: 0,
     description: "",
-    discounts: [] as Array<{ quantity: number; rate: number }>
+    discounts: []
   });
 
   const [couponForm, setCouponForm] = useState<Coupon>({
@@ -121,20 +89,12 @@ export function App() {
     discountValue: 0
   });
 
-  const formatPrice = (price: number, productId?: string): string => {
-    if (productId) {
-      const product = products.find((p) => p.id === productId);
-      if (product && getRemainingStock(product, cart) <= 0) {
-        return "SOLD OUT";
-      }
-    }
-
-    if (isAdmin) {
-      return `${price.toLocaleString()}원`;
-    }
-
-    return `₩${price.toLocaleString()}`;
-  };
+  const formatPriceWithContext = useCallback(
+    (price: number, productId?: string) => {
+      return formatPrice(price, productId, products, cart, isAdmin);
+    },
+    [products, cart, isAdmin]
+  );
 
   const addNotification = useCallback(
     (message: string, type: "error" | "success" | "warning" = "success") => {
@@ -181,6 +141,12 @@ export function App() {
     [applyCouponBase, cart, selectedCoupon]
   );
 
+  // Product actions using domain hook
+  const { deleteProduct, handleProductSubmit, startEditProduct } = useProductActions({
+    setProducts,
+    addNotification
+  });
+
   useEffect(() => {
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);
     setTotalItemCount(count);
@@ -209,50 +175,15 @@ export function App() {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  const addProduct = useCallback(
-    (newProduct: Omit<ProductWithUI, "id">) => {
-      const product: ProductWithUI = {
-        ...newProduct,
-        id: `p${Date.now()}`
-      };
-      setProducts((prev) => [...prev, product]);
-      addNotification("상품이 추가되었습니다.", "success");
-    },
-    [addNotification]
-  );
-
-  const updateProduct = useCallback(
-    (productId: string, updates: Partial<ProductWithUI>) => {
-      setProducts((prev) =>
-        prev.map((product) => (product.id === productId ? { ...product, ...updates } : product))
-      );
-      addNotification("상품이 수정되었습니다.", "success");
-    },
-    [addNotification]
-  );
-
-  const deleteProduct = useCallback(
-    (productId: string) => {
-      setProducts((prev) => prev.filter((p) => p.id !== productId));
-      addNotification("상품이 삭제되었습니다.", "success");
-    },
-    [addNotification]
-  );
-
-  const handleProductSubmit = (e: FormEvent) => {
+  const handleProductSubmitWrapper = (e: FormEvent) => {
     e.preventDefault();
-    if (editingProduct && editingProduct !== "new") {
-      updateProduct(editingProduct, productForm);
-      setEditingProduct(null);
-    } else {
-      addProduct({
-        ...productForm,
-        discounts: productForm.discounts
-      });
-    }
-    setProductForm({ name: "", price: 0, stock: 0, description: "", discounts: [] });
-    setEditingProduct(null);
-    setShowProductForm(false);
+    handleProductSubmit(
+      productForm,
+      editingProduct,
+      () => setProductForm({ name: "", price: 0, stock: 0, description: "", discounts: [] }),
+      setEditingProduct,
+      setShowProductForm
+    );
   };
 
   const handleCouponSubmitWrapper = (e: FormEvent) => {
@@ -270,28 +201,13 @@ export function App() {
     );
   };
 
-  const startEditProduct = (product: ProductWithUI) => {
-    setEditingProduct(product.id);
-    setProductForm({
-      name: product.name,
-      price: product.price,
-      stock: product.stock,
-      description: product.description || "",
-      discounts: product.discounts || []
-    });
-    setShowProductForm(true);
+  const startEditProductWrapper = (product: ProductWithUI) => {
+    startEditProduct(product, setEditingProduct, setProductForm, setShowProductForm);
   };
 
   const totals = calculateCartTotal(cart, selectedCoupon);
 
-  const filteredProducts = debouncedSearchTerm
-    ? products.filter(
-        (product) =>
-          product.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-          (product.description &&
-            product.description.toLowerCase().includes(debouncedSearchTerm.toLowerCase()))
-      )
-    : products;
+  const filteredProducts = filterProducts(products, debouncedSearchTerm);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -314,9 +230,9 @@ export function App() {
             deleteCoupon={deleteCoupon}
             deleteProduct={deleteProduct}
             editingProduct={editingProduct}
-            formatPrice={formatPrice}
+            formatPrice={formatPriceWithContext}
             handleCouponSubmit={handleCouponSubmitWrapper}
-            handleProductSubmit={handleProductSubmit}
+            handleProductSubmit={handleProductSubmitWrapper}
             productForm={productForm}
             products={products}
             setActiveTab={setActiveTab}
@@ -327,7 +243,7 @@ export function App() {
             setShowProductForm={setShowProductForm}
             showCouponForm={showCouponForm}
             showProductForm={showProductForm}
-            startEditProduct={startEditProduct}
+            startEditProduct={startEditProductWrapper}
           />
         ) : (
           <CartPage
@@ -339,7 +255,7 @@ export function App() {
             coupons={coupons}
             debouncedSearchTerm={debouncedSearchTerm}
             filteredProducts={filteredProducts}
-            formatPrice={formatPrice}
+            formatPrice={formatPriceWithContext}
             getRemainingStock={(product: Product) => getRemainingStock(product, cart)}
             products={products}
             removeFromCart={removeFromCart}
