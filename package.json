@@ -20,7 +20,7 @@
     "predeploy": "npm run build:advanced",
     "deploy": "npm run build:gh-pages && gh-pages -d dist",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "build:gh-pages": "npm run build && cp dist/index.basic.html dist/basic.html && cp dist/index.advanced.html dist/advanced.html"
+    "build:gh-pages": "rm -rf src/refactoring\\(hint\\) && npm run build && cp dist/index.basic.html dist/basic.html && cp dist/index.advanced.html dist/advanced.html"
   },
   "dependencies": {
     "jotai": "^2.13.0",
