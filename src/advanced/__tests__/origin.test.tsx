@@ -1,6 +1,8 @@
 // @ts-nocheck
 import { render, screen, fireEvent, within, waitFor } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
 import { vi } from 'vitest';
+
 import { App } from '../app/App';
 import '../../setupTests';
 
@@ -511,7 +513,7 @@ describe('쇼핑몰 앱 통합 테스트', () => {
     });
 
     test('알림 메시지가 자동으로 사라진다', async () => {
-      render(<App />);
+      render(<JotaiProvider><App /></JotaiProvider>);
       
       // 상품 추가하여 알림 발생
       fireEvent.click(screen.getAllByText('장바구니 담기')[0]);
