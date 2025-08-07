@@ -61,3 +61,19 @@ export interface CouponFormData {
   discountType: 'amount' | 'percentage';
   discountValue: number;
 }
+
+/**
+ * @interface ProductFormData
+ * @property {string} name - 상품 이름
+ * @property {number} price - 상품 가격
+ * @property {number} stock - 상품 재고
+ * @property {string} description - 상품 설명
+ * @property {Array<{ quantity: number; rate: number }>} discounts - 상품 할인 정보
+ */
+export interface ProductFormData {
+  name: string;
+  price: number;
+  stock: number;
+  description: string;
+  discounts: Array<{ quantity: number; rate: number }>;
+}
