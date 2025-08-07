@@ -39,3 +39,13 @@ export const addCartAtom = atom(
     set(cartAtom, newCart);
   }
 );
+
+export const removeFromCartAtom = atom(
+  null,
+  (get, set, { productId }: { productId: string }) => {
+    const cart = get(cartAtom);
+    const newCart = cartModel.removeItemFromCart({ cart, productId });
+
+    set(cartAtom, newCart);
+  }
+);

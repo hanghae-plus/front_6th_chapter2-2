@@ -27,7 +27,7 @@
 import { useSetAtom } from 'jotai';
 import { useCallback, useEffect } from 'react';
 import type { CartItem, Product } from '../../types';
-import { addCartAtom, cartAtom } from '../atoms/cart';
+import { addCartAtom, cartAtom, removeFromCartAtom } from '../atoms/cart';
 import * as cartModel from '../models/cart';
 import { useAtomWithLocalStorage } from '../utils/hooks/useLocalStorage';
 import { useNotify } from './useNotification';
@@ -35,7 +35,6 @@ import { useNotify } from './useNotification';
 interface UseCartReturn {
   cart: CartItem[];
   totalItemCount: number;
-  removeFromCart: (params: { productId: string }) => void;
   updateQuantity: (params: {
     productId: string;
     newQuantity: number;
@@ -62,17 +61,6 @@ export function useCart(): UseCartReturn {
   return {
     cart,
     totalItemCount: cartModel.calculateTotalItemCount({ cart }),
-
-    removeFromCart: useCallback(
-      ({ productId }) => {
-        const newCart = cartModel.removeItemFromCart({
-          cart,
-          productId: productId,
-        });
-        setCart(newCart);
-      },
-      [setCart, cart]
-    ),
 
     updateQuantity: useCallback(
       ({ productId, newQuantity, products }) => {
@@ -112,4 +100,8 @@ export function useAddToCart() {
   );
 
   return addToCart;
+}
+
+export function useRemoveFromCart() {
+  return useSetAtom(removeFromCartAtom);
 }

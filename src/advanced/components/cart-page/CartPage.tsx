@@ -32,7 +32,6 @@ interface Props {
   searchTerm: string;
   products: ProductWithUI[];
   cart: CartItem[];
-  removeFromCart: (params: { productId: string }) => void;
   updateQuantity: (params: {
     productId: string;
     newQuantity: number;
@@ -50,7 +49,6 @@ export function CartPage({
   searchTerm,
   products,
   cart,
-  removeFromCart,
   updateQuantity,
   coupons,
   selectedCoupon,
@@ -112,7 +110,6 @@ export function CartPage({
                       products={products}
                       discountRate={discountRate}
                       itemTotal={itemTotal}
-                      removeFromCart={removeFromCart}
                       updateQuantity={updateQuantity}
                     />
                   );
