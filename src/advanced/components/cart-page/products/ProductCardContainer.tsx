@@ -9,10 +9,10 @@ interface Props {
   product: ProductWithUI;
 }
 
-export function ProductCard({ product }: Props) {
+export function ProductCardContainer({ product }: Props) {
   const cart = useCart();
   const addToCart = useAddToCart();
-  const { name, description, discounts, isRecommended } = product;
+  const { name, description, discounts, isRecommended = false } = product;
 
   // 데이터 가공
   const maxDiscountRate = discountModel.getMaxDiscountRate({ discounts });
@@ -48,7 +48,7 @@ export function ProductCard({ product }: Props) {
       description={description}
       price={formattedPrice}
       discountRate={formattedDiscountRate}
-      isRecommended={isRecommended || false}
+      isRecommended={isRecommended}
       stockStatus={stockStatus}
       remainingStock={remainingStock}
       onAddToCart={() => addToCart({ product })}

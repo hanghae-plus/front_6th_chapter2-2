@@ -1,20 +1,26 @@
 import type { ProductWithUI } from '../../../../types';
-import { useCart } from '../../../hooks/useCart';
-import { useDeleteProduct, useProducts } from '../../../hooks/useProducts';
-import * as productModel from '../../../models/product';
-import { formatNumberWon } from '../../../utils/formatters';
 import { Badge } from '../../ui/Badge';
 import { Table } from '../../ui/Table';
 
-interface Props {
-  startEditProduct: (params: { product: ProductWithUI }) => void;
+interface ProductsTableUIProps {
+  products: Array<{
+    id: string;
+    name: string;
+    formattedPrice: string;
+    stock: number;
+    stockVariant: 'stock' | 'yellow' | 'error';
+    description: string;
+    originalProduct: ProductWithUI; // 원본 데이터 보존
+  }>;
+  onEditProduct: (product: ProductWithUI) => void;
+  onDeleteProduct: (productId: string) => void;
 }
 
-export function ProductsTable({ startEditProduct }: Props) {
-  const cart = useCart();
-  const products = useProducts();
-  const deleteProduct = useDeleteProduct();
-
+export function ProductsTableUI({
+  products,
+  onEditProduct,
+  onDeleteProduct,
+}: ProductsTableUIProps) {
   return (
     <Table
       datas={products}
@@ -28,21 +34,15 @@ export function ProductsTable({ startEditProduct }: Props) {
         },
         가격: {
           className: 'px-6 py-4 whitespace-nowrap text-sm text-gray-500',
-          children: (product) => {
-            return productModel.formatPrice({
-              cart,
-              product,
-              formatter: formatNumberWon,
-            });
+          children: ({ formattedPrice }) => {
+            return formattedPrice;
           },
         },
         재고: {
           className: 'px-6 py-4 whitespace-nowrap text-sm text-gray-500',
-          children: ({ stock }) => {
-            const variant =
-              stock > 10 ? 'stock' : stock > 0 ? 'yellow' : 'error';
+          children: ({ stock, stockVariant }) => {
             return (
-              <Badge variant={variant} size="md">
+              <Badge variant={stockVariant} size="md">
                 {stock}개
               </Badge>
             );
@@ -51,7 +51,7 @@ export function ProductsTable({ startEditProduct }: Props) {
         설명: {
           className: 'px-6 py-4 text-sm text-gray-500 max-w-xs truncate',
           children: ({ description }) => {
-            return description || '-';
+            return description;
           },
         },
         작업: {
@@ -63,13 +63,13 @@ export function ProductsTable({ startEditProduct }: Props) {
             return (
               <>
                 <button
-                  onClick={() => startEditProduct({ product })}
+                  onClick={() => onEditProduct(product.originalProduct)}
                   className="text-indigo-600 hover:text-indigo-900 mr-3"
                 >
                   수정
                 </button>
                 <button
-                  onClick={() => deleteProduct({ productId: id })}
+                  onClick={() => onDeleteProduct(id)}
                   className="text-red-600 hover:text-red-900"
                 >
                   삭제

@@ -6,7 +6,10 @@ export interface ProductForm {
   price: number;
   stock: number;
   description: string;
-  discounts: { quantity: number; rate: number }[];
+  discounts: Array<{
+    quantity: number;
+    rate: number;
+  }>;
 }
 
 interface Props {
@@ -37,7 +40,7 @@ interface Props {
   getDiscountRateDisplay: ({ rate }: { rate: number }) => number;
 }
 
-export function ProductsForm({
+export function ProductsFormContainer({
   onSubmit,
   editingProduct,
   productForm,

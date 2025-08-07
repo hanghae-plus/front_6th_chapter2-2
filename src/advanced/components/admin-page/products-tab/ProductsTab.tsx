@@ -1,7 +1,7 @@
 import { TabTitle } from '../../ui/TabTitle';
 import { useProductsForm } from './hooks/useProductsForm';
-import { ProductsForm } from './ProductsForm';
-import { ProductsTable } from './ProductsTable';
+import { ProductsFormContainer } from './ProductsFormContainer';
+import { ProductsTableContainer } from './ProductsTableContainer';
 import { Button } from './ui/Button';
 
 export function ProductsTab() {
@@ -37,10 +37,10 @@ export function ProductsTab() {
         </div>
       </div>
 
-      <ProductsTable startEditProduct={editProductForm} />
+      <ProductsTableContainer startEditProduct={editProductForm} />
 
       {showProductForm && (
-        <ProductsForm
+        <ProductsFormContainer
           onSubmit={handleSubmitProductForm}
           editingProduct={editingProduct}
           productForm={productForm}

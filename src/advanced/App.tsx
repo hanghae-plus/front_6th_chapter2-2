@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react';
 import { AdminPage } from './components/admin-page/AdminPage';
 import { AdminPageHeader } from './components/admin-page/AdminPageHeader';
-import { CartPage } from './components/cart-page/CartPage';
+import { CartPageContainer } from './components/cart-page/CartPageContainer';
 import { CartPageHeader } from './components/cart-page/CartPageHeader';
 import { Notifications } from './components/Notifications';
 import { usePage } from './hooks/usePage';
@@ -22,7 +22,7 @@ const App = () => {
       <>
         <CartPageHeader />
         <main className="max-w-7xl mx-auto px-4 py-8">
-          <CartPage />
+          <CartPageContainer />
         </main>
       </>
     ),
