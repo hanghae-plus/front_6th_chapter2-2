@@ -3,29 +3,34 @@ import { ProductList } from "../../../components/product/ProductList";
 import { getRemainingStock } from "../../../utils/formatters";
 import { useProducts } from "../../../hooks/useProducts";
 import { useCoupons } from "../../../hooks/useCoupons";
+import { useCart } from "../../../hooks/useCart";
+import { useOrder } from "../../../hooks/useOrder";
 import { useSearch } from "../../../utils/hooks/useSearch";
-import type { CartItem, Product } from "../../../../types";
+import type { Product } from "../../../../types";
+import React from "react";
 
 interface ShopPageProps {
-  cart: CartItem[];
-  onRemoveFromCart: (productId: string) => void;
-  onUpdateQuantity: (productId: string, quantity: number) => void;
-  onCompleteOrder: () => void;
-  onAddToCart: (product: Product) => void;
+  addNotification: (message: string, type?: "error" | "success" | "warning") => void;
+  onTotalItemCountChange?: (count: number) => void;
 }
 
-export default function ShopPage({
-  cart,
-  onRemoveFromCart,
-  onUpdateQuantity,
-  onCompleteOrder,
-  onAddToCart,
-}: ShopPageProps) {
+export default function ShopPage({ addNotification, onTotalItemCountChange }: ShopPageProps) {
   const { products } = useProducts();
   const { searchTerm, setSearchTerm, filteredProducts, searchInfo } = useSearch(products);
 
   // 쿠폰 관련 로직을 ShopPage에서 직접 관리
-  const { coupons, selectedCoupon, applyCoupon, setSelectedCoupon } = useCoupons();
+  const { coupons, selectedCoupon, applyCoupon, setSelectedCoupon } = useCoupons(addNotification);
+
+  // 장바구니 관련 로직을 ShopPage에서 직접 관리
+  const { cart, addToCart, removeFromCart, updateQuantity, clearCart, totalItemCount } = useCart(addNotification);
+
+  // 주문 관련 로직을 ShopPage에서 직접 관리
+  const { completeOrder } = useOrder({ clearCart, addNotification });
+
+  // totalItemCount가 변경될 때마다 부모에게 알림
+  React.useEffect(() => {
+    onTotalItemCountChange?.(totalItemCount);
+  }, [totalItemCount, onTotalItemCountChange]);
 
   // 쿠폰 적용 핸들러
   const handleApplyCoupon = (coupon: any, currentTotal: number) => {
@@ -39,7 +44,7 @@ export default function ShopPage({
 
   // 주문 완료 핸들러 (쿠폰도 초기화)
   const handleCompleteOrder = () => {
-    onCompleteOrder();
+    completeOrder();
     setSelectedCoupon(null); // 주문 완료 시 쿠폰도 초기화
   };
 
@@ -62,7 +67,7 @@ export default function ShopPage({
             products={filteredProducts}
             searchInfo={searchInfo}
             getRemainingStock={(product) => getRemainingStock(product, cart)}
-            addToCart={onAddToCart}
+            addToCart={addToCart}
           />
         </section>
       </div>
@@ -73,8 +78,8 @@ export default function ShopPage({
             cart={cart}
             coupons={coupons}
             selectedCoupon={selectedCoupon}
-            onRemoveFromCart={onRemoveFromCart}
-            onUpdateQuantity={onUpdateQuantity}
+            onRemoveFromCart={removeFromCart}
+            onUpdateQuantity={updateQuantity}
             onApplyCoupon={handleApplyCoupon}
             onRemoveCoupon={handleRemoveCoupon}
             onCompleteOrder={handleCompleteOrder}

@@ -1,6 +1,7 @@
 // hooks
 import { useNotification } from "./hooks/useNotification";
 import { useAppState } from "./hooks/useAppState";
+import { useState } from "react";
 
 // components
 import { Header } from "./components/ui/header/Header";
@@ -16,43 +17,25 @@ const App = () => {
 
   // 앱 전체 상태 관리
   const {
-    // 도메인별 상태
-    cart,
-
-    // 도메인별 액션
-    addToCart,
-    removeFromCart,
-    updateQuantity,
-    completeOrder,
-
     // UI 상태
     isAdmin,
     toggleAdmin,
-    totalItemCount,
-  } = useAppState(addNotification);
+  } = useAppState();
+
+  // 장바구니 아이템 개수 상태
+  const [totalItemCount, setTotalItemCount] = useState(0);
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Notification notifications={notifications} onRemove={removeNotification} />
 
-      <Header
-        isAdmin={isAdmin}
-        totalItemCount={totalItemCount}
-        cartItemCount={cart.length}
-        onToggleAdmin={toggleAdmin}
-      />
+      <Header isAdmin={isAdmin} onToggleAdmin={toggleAdmin} totalItemCount={totalItemCount} />
 
       <main className="max-w-7xl mx-auto px-4 py-8">
         {isAdmin ? (
           <AdminPage addNotification={addNotification} />
         ) : (
-          <ShopPage
-            cart={cart}
-            onRemoveFromCart={removeFromCart}
-            onUpdateQuantity={updateQuantity}
-            onCompleteOrder={completeOrder}
-            onAddToCart={addToCart}
-          />
+          <ShopPage addNotification={addNotification} onTotalItemCountChange={setTotalItemCount} />
         )}
       </main>
     </div>
