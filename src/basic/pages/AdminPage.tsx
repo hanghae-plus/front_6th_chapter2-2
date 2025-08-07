@@ -1,12 +1,13 @@
 import { useState, useCallback } from 'react';
 import { Coupon } from '../../types';
 import { ProductWithUI } from '../shared/types';
-import { formatKoreanPrice, formatPercentage } from '../shared/utils';
+import { formatKoreanPrice } from '../shared/utils';
 import { validator } from '../shared/utils/validators';
 import { MESSAGES } from '../constants/message';
-import { CloseIcon, TrashIcon, PlusIcon } from '../components/icons';
+import { CloseIcon } from '../components/icons';
 import { useCouponForm } from '../hooks/useCouponForm';
 import { CouponForm } from '../components/admin/CouponForm';
+import CouponList from '../components/admin/CouponList';
 
 interface AdminPageProps {
   products: ProductWithUI[];
@@ -175,7 +176,7 @@ export function AdminPage({
                 onClick={() => {
                   setEditingProduct('new');
                   setProductForm({ name: '', price: 0, stock: 0, description: '', discounts: [] });
-                  setShowProductForm(true);
+                  toggleProductForm();
                 }}
                 className="px-4 py-2 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800"
               >
@@ -394,7 +395,7 @@ export function AdminPage({
                     onClick={() => {
                       setEditingProduct(null);
                       setProductForm({ name: '', price: 0, stock: 0, description: '', discounts: [] });
-                      setShowProductForm(false);
+                      toggleProductForm();
                     }}
                     className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
                   >
@@ -417,44 +418,7 @@ export function AdminPage({
             <h2 className="text-lg font-semibold">쿠폰 관리</h2>
           </div>
           <div className="p-6">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {coupons.map((coupon) => (
-                <div
-                  key={coupon.code}
-                  className="relative bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200"
-                >
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900">{coupon.name}</h3>
-                      <p className="text-sm text-gray-600 mt-1 font-mono">{coupon.code}</p>
-                      <div className="mt-2">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white text-indigo-700">
-                          {coupon.discountType === 'amount'
-                            ? `${formatKoreanPrice(coupon.discountValue)} 할인`
-                            : `${formatPercentage(coupon.discountValue / 100)} 할인`}
-                        </span>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => deleteCoupon(coupon.code)}
-                      className="text-gray-400 hover:text-red-600 transition-colors"
-                    >
-                      <TrashIcon />
-                    </button>
-                  </div>
-                </div>
-              ))}
-
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 flex items-center justify-center hover:border-gray-400 transition-colors">
-                <button
-                  onClick={() => setShowCouponForm(!showCouponForm)}
-                  className="text-gray-400 hover:text-gray-600 flex flex-col items-center"
-                >
-                  <PlusIcon />
-                  <p className="mt-2 text-sm font-medium">새 쿠폰 추가</p>
-                </button>
-              </div>
-            </div>
+            <CouponList coupons={coupons} deleteCoupon={deleteCoupon} toggleCouponForm={toggleCouponForm} />
 
             {showCouponForm && (
               <CouponForm
