@@ -2,7 +2,8 @@ import { initialCoupons } from '@/basic/constants/mocks';
 import { useLocalStorage } from '@/basic/hooks';
 import { Coupon, CartItem } from '@/types';
 import { useCallback, useState } from 'react';
-import { validateCouponCode, calculateCartTotal, validateCouponApplication } from '@/basic/utils';
+import { CouponModel } from '@/basic/models/coupon';
+import { CartModel } from '@/basic/models/cart';
 import { INITIAL_COUPON_FORM } from '@/basic/constants/forms';
 
 interface UseCouponsProps {
@@ -17,7 +18,8 @@ export function useCoupons({ addNotification }: UseCouponsProps) {
 
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {
-      const validation = validateCouponCode(newCoupon.code, coupons);
+      const couponModel = new CouponModel(coupons);
+      const validation = couponModel.validateCouponCode(newCoupon.code);
       if (!validation.isValid) {
         addNotification(validation.errorMessage!, 'error');
         return;
@@ -51,8 +53,11 @@ export function useCoupons({ addNotification }: UseCouponsProps) {
 
   const applyCoupon = useCallback(
     (coupon: Coupon, cart: CartItem[]) => {
-      const currentTotal = calculateCartTotal(cart, selectedCoupon).totalAfterDiscount;
-      const validation = validateCouponApplication(coupon, currentTotal);
+      const cartModel = new CartModel(cart);
+      const couponModel = new CouponModel();
+      
+      const currentTotal = cartModel.calculateTotal(selectedCoupon || undefined).totalAfterDiscount;
+      const validation = couponModel.validateCouponApplication(coupon, currentTotal);
 
       if (!validation.isValid) {
         addNotification(validation.errorMessage!, 'error');

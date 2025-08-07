@@ -1,8 +1,8 @@
 import { CartItem, Coupon, Product } from '@/types';
 import { useLocalStorage } from './use-local-storage';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { ProductWithUI } from '../constants/mocks';
-import { getRemainingStock, validateCouponApplication } from '../utils';
+import { CartModel } from '../models/cart';
 
 interface UseCartProps {
   products: ProductWithUI[];
@@ -12,11 +12,11 @@ interface UseCartProps {
 
 export function useCart({ products, addNotification, setSelectedCoupon }: UseCartProps) {
   const [cart, setCart] = useLocalStorage<CartItem[]>('cart', []);
-  const [totalItemCount, setTotalItemCount] = useState(0);
 
   const getStock = useCallback(
     (product: Product): number => {
-      return getRemainingStock(product, cart);
+      const cartModel = new CartModel(cart);
+      return cartModel.getRemainingStock(product);
     },
     [cart]
   );

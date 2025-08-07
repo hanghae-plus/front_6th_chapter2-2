@@ -1,6 +1,6 @@
 import { CartItem } from '../../types';
 import { CloseIcon, EmptyBagIcon, ShoppingBagIcon } from './icons';
-import { calculateItemTotal } from '../utils';
+import { CartModel } from '../models/cart';
 
 interface CartProps {
   cart: CartItem[];
@@ -9,6 +9,8 @@ interface CartProps {
 }
 
 export function Cart({ cart, removeFromCart, updateQuantity }: CartProps) {
+  const cartModel = new CartModel(cart);
+
   return (
     <section className='bg-white rounded-lg border border-gray-200 p-4'>
       <h2 className='text-lg font-semibold mb-4 flex items-center'>
@@ -23,7 +25,7 @@ export function Cart({ cart, removeFromCart, updateQuantity }: CartProps) {
       ) : (
         <div className='space-y-3'>
           {cart.map((item) => {
-            const itemTotal = calculateItemTotal(item, cart);
+            const itemTotal = cartModel.calculateItemTotal(item);
             const originalPrice = item.product.price * item.quantity;
             const hasDiscount = itemTotal < originalPrice;
             const discountRate = hasDiscount

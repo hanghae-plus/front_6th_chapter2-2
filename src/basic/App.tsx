@@ -2,7 +2,8 @@ import { useState, useMemo } from 'react';
 import { AdminDashboard, Header, NotificationItem, UserDashboard } from './ui';
 import { useCoupons } from './entities/coupons';
 import { useProducts } from './entities/products';
-import { calculateCartTotal, filterProducts } from './utils';
+import { CartModel } from './models/cart';
+import { ProductModel } from './models/product';
 import { useCart, useDebounceValue, useNotifications, useTotalItemCount } from './hooks';
 
 const App = () => {
@@ -40,12 +41,15 @@ const App = () => {
 
   const debouncedSearchTerm = useDebounceValue(searchTerm, 500);
 
-  const totals = useMemo(() => calculateCartTotal(cart, selectedCoupon), [cart, selectedCoupon]);
+  const totals = useMemo(() => {
+    const cartModel = new CartModel(cart);
+    return cartModel.calculateTotal(selectedCoupon || undefined);
+  }, [cart, selectedCoupon]);
 
-  const filteredProducts = useMemo(
-    () => filterProducts(products, debouncedSearchTerm),
-    [products, debouncedSearchTerm]
-  );
+  const filteredProducts = useMemo(() => {
+    const productModel = new ProductModel(products);
+    return productModel.filter(debouncedSearchTerm);
+  }, [products, debouncedSearchTerm]);
 
   return (
     <div className='min-h-screen bg-gray-50'>
