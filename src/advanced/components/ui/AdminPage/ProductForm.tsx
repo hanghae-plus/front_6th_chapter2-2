@@ -3,6 +3,11 @@ import { ProductWithUI } from "../../../App";
 import { CloseIcon } from "../../icons";
 import { useNotification } from "../../../utils/hooks/useNotification";
 import { useProducts } from "../../../hooks/useProducts";
+import {
+  extractNumbers,
+  isValidPrice,
+  isValidStock,
+} from "../../../utils/validators";
 
 export function ProductForm({
   editingProduct,
@@ -87,21 +92,14 @@ export function ProductForm({
               value={productForm.price === 0 ? "" : productForm.price}
               onChange={(e) => {
                 const value = e.target.value;
-                if (value === "" || /^\d+$/.test(value)) {
-                  setProductForm({
-                    ...productForm,
-                    price: value === "" ? 0 : parseInt(value),
-                  });
-                }
+                const { isValid, value: price } = extractNumbers(value);
+                if (isValid) setProductForm({ ...productForm, price });
               }}
               onBlur={(e) => {
                 const value = e.target.value;
-                if (value === "") {
-                  setProductForm({ ...productForm, price: 0 });
-                } else if (parseInt(value) < 0) {
-                  addNotification("가격은 0보다 커야 합니다", "error");
-                  setProductForm({ ...productForm, price: 0 });
-                }
+                const { isValid, price, message } = isValidPrice(value);
+                if (!isValid) addNotification(message, "error");
+                setProductForm({ ...productForm, price: price });
               }}
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
               placeholder="숫자만 입력"
@@ -117,27 +115,14 @@ export function ProductForm({
               value={productForm.stock === 0 ? "" : productForm.stock}
               onChange={(e) => {
                 const value = e.target.value;
-                if (value === "" || /^\d+$/.test(value)) {
-                  setProductForm({
-                    ...productForm,
-                    stock: value === "" ? 0 : parseInt(value),
-                  });
-                }
+                const { isValid, value: stock } = extractNumbers(value);
+                if (isValid) setProductForm({ ...productForm, stock });
               }}
               onBlur={(e) => {
                 const value = e.target.value;
-                if (value === "") {
-                  setProductForm({ ...productForm, stock: 0 });
-                } else if (parseInt(value) < 0) {
-                  addNotification("재고는 0보다 커야 합니다", "error");
-                  setProductForm({ ...productForm, stock: 0 });
-                } else if (parseInt(value) > 9999) {
-                  addNotification(
-                    "재고는 9999개를 초과할 수 없습니다",
-                    "error"
-                  );
-                  setProductForm({ ...productForm, stock: 9999 });
-                }
+                const { isValid, stock, message } = isValidStock(value);
+                if (!isValid) addNotification(message, "error");
+                setProductForm({ ...productForm, stock: stock });
               }}
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
               placeholder="숫자만 입력"
