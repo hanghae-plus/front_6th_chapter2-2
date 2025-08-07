@@ -1,7 +1,13 @@
-import { useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { useCallback } from 'react';
 
-import { useCartStore } from './useCartStore';
+import {
+  addToCartAtom,
+  cartAtom,
+  removeFromCartAtom,
+  resetCartAtom,
+  updateToCartAtom,
+} from '../entities/cart';
 import { addNotificationAtom } from '../entities/notification';
 import { getRemainingStock, type ProductWithUI } from '../entities/product';
 
@@ -11,7 +17,11 @@ interface UseCartServiceProps {
 }
 
 export function useCartService({ products, onResetSelectedCoupon }: UseCartServiceProps) {
-  const { cart, addToCart, updateToCart, removeFromCart, resetCart } = useCartStore();
+  const cart = useAtomValue(cartAtom);
+  const addToCart = useSetAtom(addToCartAtom);
+  const updateToCart = useSetAtom(updateToCartAtom);
+  const removeFromCart = useSetAtom(removeFromCartAtom);
+  const resetCart = useSetAtom(resetCartAtom);
   const addNotification = useSetAtom(addNotificationAtom);
 
   const handleAddToCart = useCallback(

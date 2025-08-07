@@ -1,5 +1,5 @@
 import type { CartItem } from '../../../../types';
-import { calculateItemTotalQuantity } from '../../../models/cart';
+import { calculateItemTotalQuantity } from '../../../entities/cart';
 import { Icon } from '../../../shared/icon';
 
 interface CartHeaderProps {
