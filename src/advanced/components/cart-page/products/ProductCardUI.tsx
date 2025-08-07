@@ -30,12 +30,12 @@ export function ProductCardUI({
           <ImagePlaceholderIcon />
         </div>
         {isRecommended && (
-          <Badge variant="error" className="absolute top-2 right-2">
+          <Badge variant="red" className="absolute top-2 right-2">
             BEST
           </Badge>
         )}
         {discountRate && (
-          <Badge variant="stock" className="absolute top-2 left-2">
+          <Badge variant="orange" className="absolute top-2 left-2">
             ~{discountRate}
           </Badge>
         )}

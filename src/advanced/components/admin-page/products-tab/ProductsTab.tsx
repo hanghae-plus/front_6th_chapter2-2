@@ -1,4 +1,4 @@
-import { TabTitle } from '../ui/TabTitle';
+import { TabTitle } from '../../ui/TabTitle';
 import { useProductsForm } from './hooks/useProductsForm';
 import { ProductsForm } from './ProductsForm';
 import { ProductsTable } from './ProductsTable';

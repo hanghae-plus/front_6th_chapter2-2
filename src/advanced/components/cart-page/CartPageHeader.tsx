@@ -36,7 +36,7 @@ export function CartPageHeader() {
             <CartIcon />
             {totalItemCount > 0 && (
               <Badge
-                variant="error"
+                variant="red"
                 className="absolute -top-2 -right-2 w-5 h-5 flex items-center justify-center"
               >
                 {totalItemCount}

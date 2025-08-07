@@ -40,8 +40,12 @@ export function ProductsTable({ startEditProduct }: Props) {
           className: 'px-6 py-4 whitespace-nowrap text-sm text-gray-500',
           children: ({ stock }) => {
             const variant =
-              stock > 10 ? 'stock' : stock > 0 ? 'stock' : 'error';
-            return <Badge variant={variant}>{stock}개</Badge>;
+              stock > 10 ? 'stock' : stock > 0 ? 'yellow' : 'error';
+            return (
+              <Badge variant={variant} size="md">
+                {stock}개
+              </Badge>
+            );
           },
         },
         설명: {

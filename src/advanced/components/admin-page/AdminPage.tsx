@@ -1,9 +1,8 @@
 import { useState, type ReactNode } from 'react';
+import { PageHeader } from '../ui/PageHeader';
 import { AdminTabs, type AdminTab } from './AdminTabs';
 import { CouponsTab } from './coupons-tab/CouponsTab';
 import { ProductsTab } from './products-tab/ProductsTab';
-import { PageInfo } from './ui/PageInfo';
-import { PageTitle } from './ui/PageTItle';
 
 export function AdminPage() {
   const [activeTab, setActiveTab] = useState<AdminTab>('products');
@@ -16,8 +15,10 @@ export function AdminPage() {
   return (
     <div className="max-w-6xl mx-auto">
       <div className="mb-8">
-        <PageTitle />
-        <PageInfo />
+        <PageHeader
+          title="관리자 대시보드"
+          description="상품과 쿠폰을 관리할 수 있습니다"
+        />
       </div>
 
       <AdminTabs

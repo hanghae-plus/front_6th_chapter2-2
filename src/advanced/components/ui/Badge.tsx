@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-type Variant = 'error' | 'discount' | 'stock';
+type Variant = 'error' | 'discount' | 'stock' | 'yellow' | 'red' | 'orange';
 
 type Size = 'md' | 'lg';
 
@@ -14,12 +14,15 @@ interface BadgeProps {
 const badgeVariants: Record<Variant, string> = {
   error: 'bg-red-100 text-red-800',
   discount: 'bg-white text-indigo-700',
-  stock: 'bg-orange-100 text-orange-800',
+  stock: 'bg-green-100 text-green-800',
+  yellow: 'bg-yellow-100 text-yellow-800',
+  red: 'bg-red-500 text-white',
+  orange: 'bg-orange-500 text-white',
 };
 
 const badgeSizes: Record<Size, string> = {
-  md: 'px-3 py-1 text-sm',
-  lg: 'px-4 py-2 text-base',
+  md: 'px-2.5 py-0.5 text-xs',
+  lg: 'px-3 py-1 text-sm',
 };
 
 export function Badge({
