@@ -23,6 +23,7 @@ import {
   useCoupons,
   useSelectedCoupon,
 } from '../../hooks/useCoupons';
+import { useCompleteOrder } from '../../hooks/useOrder';
 import { useProducts } from '../../hooks/useProducts';
 import * as cartModel from '../../models/cart';
 import * as productModel from '../../models/product';
@@ -37,16 +38,16 @@ import { TotalCount } from './products/TotalCount';
 
 interface Props {
   searchTerm: string;
-  completeOrder: () => void;
 }
 
-export function CartPage({ searchTerm, completeOrder }: Props) {
+export function CartPage({ searchTerm }: Props) {
   const cart = useCart();
   const applyCoupon = useApplyCoupon();
   const [selectedCoupon] = useSelectedCoupon();
   const clearSelectedCoupon = useClearSelectedCoupon();
   const coupons = useCoupons();
   const products = useProducts();
+  const { completeOrder } = useCompleteOrder();
   const filteredProducts = productModel.searchProducts({
     products,
     searchTerm,

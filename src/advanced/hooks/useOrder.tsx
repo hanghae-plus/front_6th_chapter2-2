@@ -3,7 +3,7 @@ import { useClearCart } from './useCart';
 import { useClearSelectedCoupon } from './useCoupons';
 import { useNotify } from './useNotification';
 
-export function useOrder() {
+export function useCompleteOrder() {
   const notify = useNotify();
   const clearCart = useClearCart();
   const clearSelectedCoupon = useClearSelectedCoupon();

@@ -4,12 +4,9 @@ import { AdminPageHeader } from './components/admin-page/AdminPageHeader';
 import { CartPage } from './components/cart-page/CartPage';
 import { CartPageHeader } from './components/cart-page/CartPageHeader';
 import { Notifications } from './components/Notifications';
-import { useOrder } from './hooks/useOrder';
 import { useDebounce } from './utils/hooks/useDebounce';
 
 const App = () => {
-  const { completeOrder } = useOrder();
-
   const [isAdmin, setIsAdmin] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce({ delay: 500, value: searchTerm });
@@ -32,10 +29,7 @@ const App = () => {
         {isAdmin ? (
           <AdminPage />
         ) : (
-          <CartPage
-            searchTerm={debouncedSearchTerm}
-            completeOrder={completeOrder}
-          />
+          <CartPage searchTerm={debouncedSearchTerm} />
         )}
       </main>
     </div>
