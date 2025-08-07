@@ -23,10 +23,10 @@ const ToastItem = ({ notification, onRemove }: ToastItemProps) => {
   }, []);
 
   useEffect(() => {
-    // 5초 후 자동 제거
+    // 3초 후 자동 제거
     const autoRemoveTimer = setTimeout(() => {
       handleRemove();
-    }, 5000);
+    }, 3000);
 
     return () => clearTimeout(autoRemoveTimer);
   }, []);

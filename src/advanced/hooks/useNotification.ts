@@ -1,25 +1,31 @@
-import { useCallback, useState } from 'react';
+import { useAtom, useSetAtom } from 'jotai';
+import { useCallback } from 'react';
 
-import { Notification } from '../types';
+import {
+  notificationsAtom,
+  addNotificationAtom,
+  removeNotificationAtom,
+} from '../atoms/notificationAtoms';
 
 const useNotification = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifications] = useAtom(notificationsAtom);
+  const addNotificationAction = useSetAtom(addNotificationAtom);
+  const removeNotificationAction = useSetAtom(removeNotificationAtom);
 
   const addNotification = useCallback(
     (message: string, type: 'error' | 'success' | 'warning' = 'success') => {
       const id = Date.now().toString();
-      setNotifications((prev) => [...prev, { id, message, type }]);
-
-      setTimeout(() => {
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
-      }, 3000);
+      addNotificationAction({ id, message, type });
     },
-    [],
+    [addNotificationAction],
   );
 
-  const removeNotification = useCallback((id: string) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
-  }, []);
+  const removeNotification = useCallback(
+    (id: string) => {
+      removeNotificationAction(id);
+    },
+    [removeNotificationAction],
+  );
 
   return {
     notifications,

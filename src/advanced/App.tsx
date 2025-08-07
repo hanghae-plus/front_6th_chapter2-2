@@ -32,7 +32,7 @@ const App = () => {
     cart,
     selectedCoupon,
     totalItemCount,
-  } = useCart(products, addNotification);
+  } = useCart();
   const { coupons, addCoupon, deleteCoupon } = useCoupon(
     selectedCoupon,
     applyCoupon,
@@ -95,7 +95,7 @@ const App = () => {
     handleCouponFormSubmit();
   };
 
-  const totals = calculateTotal();
+  const totals = calculateTotal;
 
   const handleAddProduct = () => {
     startEditProduct('new');
