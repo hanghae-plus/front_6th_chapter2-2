@@ -3,7 +3,8 @@ import { CartSummary } from "./CartSummary";
 import { CartCoupon } from "./CartCoupon";
 import CartEmpty from "./CartEmpty";
 import { CartItem as CartItemType, Coupon } from "../../../types";
-import { calculateItemDiscount } from "../../utils/calculations";
+import { calculateItemDiscount, calculateCartTotalAmount, calculateFinalTotal } from "../../utils/calculations";
+import { calculateItemTotalWithDiscount } from "../../utils/discounts";
 
 // 장바구니 아이콘 컴포넌트
 const CartIcon = () => (
@@ -16,12 +17,9 @@ interface CartContainerProps {
   cart: CartItemType[];
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
-  totalBeforeDiscount: number;
-  totalAfterDiscount: number;
-  calculateItemTotal: (item: CartItemType) => number;
   onRemoveFromCart: (productId: string) => void;
   onUpdateQuantity: (productId: string, quantity: number) => void;
-  onApplyCoupon: (coupon: Coupon) => void;
+  onApplyCoupon: (coupon: Coupon, currentTotal: number) => void;
   onRemoveCoupon: () => void;
   onCompleteOrder: () => void;
 }
@@ -30,15 +28,20 @@ export const CartContainer = ({
   cart,
   coupons,
   selectedCoupon,
-  totalBeforeDiscount,
-  totalAfterDiscount,
-  calculateItemTotal,
   onRemoveFromCart,
   onUpdateQuantity,
   onApplyCoupon,
   onRemoveCoupon,
   onCompleteOrder,
 }: CartContainerProps) => {
+  // 여기서 직접 계산
+  const calculateItemTotal = (item: CartItemType): number => {
+    return calculateItemTotalWithDiscount(item, cart);
+  };
+
+  const cartTotals = calculateCartTotalAmount(cart, calculateItemTotal);
+  const finalTotals = calculateFinalTotal(cartTotals, selectedCoupon);
+
   const cartItemsWithDiscount = cart.map((item) => {
     const itemTotal = calculateItemTotal(item);
     const { hasDiscount, discountRate } = calculateItemDiscount(item, itemTotal);
@@ -80,13 +83,13 @@ export const CartContainer = ({
       <CartCoupon
         coupons={coupons}
         selectedCoupon={selectedCoupon}
-        onApplyCoupon={onApplyCoupon}
+        onApplyCoupon={(coupon) => onApplyCoupon(coupon, finalTotals.totalAfterDiscount)}
         onRemoveCoupon={onRemoveCoupon}
       />
 
       <CartSummary
-        totalBeforeDiscount={totalBeforeDiscount}
-        totalAfterDiscount={totalAfterDiscount}
+        totalBeforeDiscount={finalTotals.totalBeforeDiscount}
+        totalAfterDiscount={finalTotals.totalAfterDiscount}
         onCompleteOrder={onCompleteOrder}
       />
     </div>

@@ -1,22 +1,20 @@
 import { CartContainer } from "../../../components/cart/CartContainer";
 import { ProductList } from "../../../components/product/ProductList";
-import type { CartItem, Coupon, Product } from "../../../../types";
 import { getRemainingStock } from "../../../utils/formatters";
+import type { CartItem, Coupon, Product } from "../../../../types";
 
 interface ShopPageProps {
   products: Product[];
   cart: CartItem[];
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
-  totals: { totalBeforeDiscount: number; totalAfterDiscount: number };
   searchInfo: {
     isSearching: boolean;
     searchTerm: string;
   };
-  calculateItemTotal: (item: CartItem) => number;
   onRemoveFromCart: (productId: string) => void;
   onUpdateQuantity: (productId: string, quantity: number) => void;
-  onApplyCoupon: (coupon: Coupon) => void;
+  onApplyCoupon: (coupon: Coupon, currentTotal: number) => void;
   onRemoveCoupon: () => void;
   onCompleteOrder: () => void;
   onAddToCart: (product: Product) => void;
@@ -27,9 +25,7 @@ export default function ShopPage({
   cart,
   coupons,
   selectedCoupon,
-  totals,
   searchInfo,
-  calculateItemTotal,
   onRemoveFromCart,
   onUpdateQuantity,
   onApplyCoupon,
@@ -56,9 +52,6 @@ export default function ShopPage({
             cart={cart}
             coupons={coupons}
             selectedCoupon={selectedCoupon}
-            totalBeforeDiscount={totals.totalBeforeDiscount}
-            totalAfterDiscount={totals.totalAfterDiscount}
-            calculateItemTotal={calculateItemTotal}
             onRemoveFromCart={onRemoveFromCart}
             onUpdateQuantity={onUpdateQuantity}
             onApplyCoupon={onApplyCoupon}

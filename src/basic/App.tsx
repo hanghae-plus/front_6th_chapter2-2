@@ -8,9 +8,6 @@ import { useAutoCallback } from "./utils/hooks/useAutoCallbak";
 
 // utils
 import { useSearch } from "./utils/hooks/useSearch";
-import { calculateCartTotalAmount, calculateFinalTotal } from "./utils/calculations";
-import { calculateItemTotalWithDiscount } from "./utils/discounts";
-import { withTryNotifySuccess, withTryNotifyError } from "./utils/withNotify";
 
 // components
 import { Header } from "./components/ui/header/Header";
@@ -21,7 +18,6 @@ import AdminPage from "./pages/Admin/AdminPage";
 import ShopPage from "./pages/Main/ShopPage/ShopPage";
 
 // type
-import { Coupon, Product, CartItem } from "../types";
 
 const App = () => {
   // 커스텀 훅 사용
@@ -32,21 +28,10 @@ const App = () => {
   const { coupons, selectedCoupon, addCoupon, deleteCoupon, applyCoupon, setSelectedCoupon } =
     useCoupons(addNotification);
 
-  // 검색 기능
   const { searchTerm, setSearchTerm, filteredProducts, searchInfo } = useSearch(products);
 
   // 로컬 UI 상태
   const [isAdmin, setIsAdmin] = useState(false);
-
-  // calculateItemTotal 함수를 App.tsx에서 생성
-  const calculateItemTotal = (item: CartItem): number => {
-    return calculateItemTotalWithDiscount(item, cart);
-  };
-
-  const cartTotals = calculateCartTotalAmount(cart, calculateItemTotal);
-
-  // 쿠폰 적용된 총합 계산
-  const getFinalTotal = useAutoCallback(() => calculateFinalTotal(cartTotals, selectedCoupon));
 
   const completeOrder = useAutoCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
@@ -54,8 +39,6 @@ const App = () => {
     clearCart();
     setSelectedCoupon(null);
   });
-
-  const totals = getFinalTotal();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -91,12 +74,10 @@ const App = () => {
             cart={cart}
             coupons={coupons}
             selectedCoupon={selectedCoupon}
-            totals={totals}
             searchInfo={searchInfo}
-            calculateItemTotal={calculateItemTotal}
             onRemoveFromCart={removeFromCart}
             onUpdateQuantity={(productId, quantity) => updateQuantity(productId, quantity, products)}
-            onApplyCoupon={(coupon) => applyCoupon(coupon, totals.totalAfterDiscount)}
+            onApplyCoupon={applyCoupon}
             onRemoveCoupon={() => setSelectedCoupon(null)}
             onCompleteOrder={completeOrder}
             onAddToCart={addToCart}
