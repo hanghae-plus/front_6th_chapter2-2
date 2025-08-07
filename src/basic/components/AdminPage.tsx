@@ -20,12 +20,13 @@ import type { ProductWithUI } from "../App";
 import { Coupon } from "../../types";
 import { formatPrice } from "../utils/formatters";
 import { CloseIcon, PlusIcon, TrashIcon } from "./icons";
+import { useCoupons } from "../hooks/useCoupons";
 
 interface AdminPageProps {
   products: ProductWithUI[];
   setProducts: Dispatch<SetStateAction<ProductWithUI[]>>;
-  coupons: Coupon[];
-  setCoupons: Dispatch<SetStateAction<Coupon[]>>;
+  // coupons: Coupon[];
+  // setCoupons: Dispatch<SetStateAction<Coupon[]>>;
   addNotification: (
     message: string,
     type: "error" | "success" | "warning"
@@ -37,8 +38,8 @@ interface AdminPageProps {
 export function AdminPage({
   products,
   setProducts,
-  coupons,
-  setCoupons,
+  // coupons,
+  // setCoupons,
   addNotification,
   selectedCoupon,
   setSelectedCoupon,
@@ -63,6 +64,12 @@ export function AdminPage({
     code: "",
     discountType: "amount" as "amount" | "percentage",
     discountValue: 0,
+  });
+
+  const { coupons, applyAddCoupon, applyDeleteCoupon } = useCoupons({
+    addNotification,
+    selectedCoupon,
+    setSelectedCoupon,
   });
 
   const addProduct = useCallback(
@@ -97,29 +104,29 @@ export function AdminPage({
     [addNotification]
   );
 
-  const addCoupon = useCallback(
-    (newCoupon: Coupon) => {
-      const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
-      if (existingCoupon) {
-        addNotification("이미 존재하는 쿠폰 코드입니다.", "error");
-        return;
-      }
-      setCoupons((prev) => [...prev, newCoupon]);
-      addNotification("쿠폰이 추가되었습니다.", "success");
-    },
-    [coupons, addNotification]
-  );
+  // const addCoupon = useCallback(
+  //   (newCoupon: Coupon) => {
+  //     const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
+  //     if (existingCoupon) {
+  //       addNotification("이미 존재하는 쿠폰 코드입니다.", "error");
+  //       return;
+  //     }
+  //     setCoupons((prev) => [...prev, newCoupon]);
+  //     addNotification("쿠폰이 추가되었습니다.", "success");
+  //   },
+  //   [coupons, addNotification]
+  // );
 
-  const deleteCoupon = useCallback(
-    (couponCode: string) => {
-      setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
-      if (selectedCoupon?.code === couponCode) {
-        setSelectedCoupon(null);
-      }
-      addNotification("쿠폰이 삭제되었습니다.", "success");
-    },
-    [selectedCoupon, addNotification]
-  );
+  // const deleteCoupon = useCallback(
+  //   (couponCode: string) => {
+  //     setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
+  //     if (selectedCoupon?.code === couponCode) {
+  //       setSelectedCoupon(null);
+  //     }
+  //     addNotification("쿠폰이 삭제되었습니다.", "success");
+  //   },
+  //   [selectedCoupon, addNotification]
+  // );
 
   const handleProductSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -145,7 +152,7 @@ export function AdminPage({
 
   const handleCouponSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    addCoupon(couponForm);
+    applyAddCoupon(couponForm);
     setCouponForm({
       name: "",
       code: "",
@@ -537,7 +544,7 @@ export function AdminPage({
                       </div>
                     </div>
                     <button
-                      onClick={() => deleteCoupon(coupon.code)}
+                      onClick={() => applyDeleteCoupon(coupon.code)}
                       className="text-gray-400 hover:text-red-600 transition-colors"
                     >
                       <TrashIcon />

@@ -4,7 +4,7 @@ import { AdminPage } from "./components/AdminPage";
 import { CartPage } from "./components/CartPage";
 import { UIToast } from "./components/ui/UIToast";
 import { Layout } from "./components/layout/Layout";
-import { initialProducts, initialCoupons } from "./constants";
+import { initialProducts } from "./constants";
 
 export interface ProductWithUI extends Product {
   description?: string;
@@ -30,17 +30,17 @@ const App = () => {
     return initialProducts;
   });
 
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem("coupons");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialCoupons;
-      }
-    }
-    return initialCoupons;
-  });
+  // const [coupons, setCoupons] = useState<Coupon[]>(() => {
+  //   const saved = localStorage.getItem("coupons");
+  //   if (saved) {
+  //     try {
+  //       return JSON.parse(saved);
+  //     } catch {
+  //       return initialCoupons;
+  //     }
+  //   }
+  //   return initialCoupons;
+  // });
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -64,9 +64,9 @@ const App = () => {
     localStorage.setItem("products", JSON.stringify(products));
   }, [products]);
 
-  useEffect(() => {
-    localStorage.setItem("coupons", JSON.stringify(coupons));
-  }, [coupons]);
+  // useEffect(() => {
+  //   localStorage.setItem("coupons", JSON.stringify(coupons));
+  // }, [coupons]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -93,8 +93,8 @@ const App = () => {
           <AdminPage
             products={products}
             setProducts={setProducts}
-            coupons={coupons}
-            setCoupons={setCoupons}
+            // coupons={coupons}
+            // setCoupons={setCoupons}
             addNotification={addNotification}
             selectedCoupon={selectedCoupon}
             setSelectedCoupon={setSelectedCoupon}
@@ -102,7 +102,7 @@ const App = () => {
         ) : (
           <CartPage
             products={products}
-            coupons={coupons}
+            // coupons={coupons}
             addNotification={addNotification}
             selectedCoupon={selectedCoupon}
             setSelectedCoupon={setSelectedCoupon}

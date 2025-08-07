@@ -32,7 +32,7 @@ import { useCart } from "../hooks/useCart";
 
 interface CartPageProps {
   products: ProductWithUI[];
-  coupons: Coupon[];
+  // coupons: Coupon[];
   addNotification: (
     message: string,
     type: "error" | "success" | "warning"
@@ -45,7 +45,7 @@ interface CartPageProps {
 
 export function CartPage({
   products,
-  coupons,
+  // coupons,
   addNotification,
   selectedCoupon,
   setSelectedCoupon,
@@ -70,6 +70,12 @@ export function CartPage({
     setSelectedCoupon,
     setTotalItemCount,
   });
+
+  const savedCoupons = localStorage.getItem("coupons");
+  let coupons: Coupon[] = [];
+  if (savedCoupons) {
+    coupons = JSON.parse(savedCoupons);
+  }
 
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
