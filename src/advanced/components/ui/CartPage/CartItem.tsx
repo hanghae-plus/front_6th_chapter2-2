@@ -1,42 +1,32 @@
 import { CartItem as CartItemType } from "../../../../types";
 import { ProductWithUI } from "../../../App";
+import { useCart } from "../../../hooks/useCart";
+import { useProducts } from "../../../hooks/useProducts";
+import {
+  calculateItemTotal,
+  getMaxApplicableDiscount,
+  hasBulkPurchase,
+} from "../../../models/cart";
 import { CloseIcon } from "../../icons";
 
-export function CartItem({
-  item,
-  itemTotal,
-  hasDiscount,
-  discountRate,
-  removeFromCart,
-  updateQuantity,
-  cart,
-  products,
-}: {
-  item: CartItemType;
-  itemTotal: number;
-  hasDiscount: boolean;
-  discountRate: number;
-  removeFromCart: ({
-    productId,
-    cart,
-  }: {
-    productId: string;
-    cart: CartItemType[];
-  }) => void;
-  updateQuantity: ({
-    productId,
-    newQuantity,
-    cart,
-    products,
-  }: {
-    productId: string;
-    newQuantity: number;
-    cart: CartItemType[];
-    products: ProductWithUI[];
-  }) => void;
-  cart: CartItemType[];
-  products: ProductWithUI[];
-}) {
+export function CartItem({ item }: { item: CartItemType }) {
+  const { cart, removeFromCart, updateQuantity } = useCart();
+  const { products } = useProducts();
+  const discount = getMaxApplicableDiscount({
+    discounts: cart.flatMap((item) => item.product.discounts),
+    quantity: cart.reduce((acc, item) => acc + item.quantity, 0),
+    hasBulkPurchase: hasBulkPurchase(cart),
+  });
+  const itemTotal = calculateItemTotal({
+    item,
+    discount,
+  });
+  const originalPrice = item.product.price * item.quantity;
+  const hasDiscount = itemTotal < originalPrice;
+  const discountRate = hasDiscount
+    ? Math.round((1 - itemTotal / originalPrice) * 100)
+    : 0;
+
   return (
     <div key={item.product.id} className="border-b pb-3 last:border-b-0">
       <div className="flex justify-between items-start mb-2">
