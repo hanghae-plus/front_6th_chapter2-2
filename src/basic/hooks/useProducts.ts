@@ -2,20 +2,11 @@ import { useCallback, useState } from 'react';
 
 import { ProductWithUI, NotificationCallback } from '../../types';
 import { initialProducts } from '../constants';
+import { useLocalStorage } from '../utils/hooks/useLocalStorage';
 
 export function useProducts() {
-  // localStorage에서 초기값 가져오기 (원본 패턴과 동일)
-  const [products, setProducts] = useState<ProductWithUI[]>(() => {
-    const saved = localStorage.getItem('products');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialProducts;
-      }
-    }
-    return initialProducts;
-  });
+  // useLocalStorage 훅 사용
+  const [products, setProducts] = useLocalStorage<ProductWithUI[]>('products', initialProducts);
 
   // addProduct 함수
   const addProduct = useCallback(

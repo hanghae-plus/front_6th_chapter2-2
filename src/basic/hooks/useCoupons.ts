@@ -1,22 +1,13 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 
 import { Coupon, NotificationCallback } from '../../types';
 import { initialCoupons } from '../constants';
 import { validateCouponCode, calculateCouponDiscount } from '../models/coupon';
+import { useLocalStorage } from '../utils/hooks/useLocalStorage';
 
 export function useCoupons() {
-  // localStorage에서 초기값 가져오기 (원본 패턴과 동일)
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem('coupons');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialCoupons;
-      }
-    }
-    return initialCoupons;
-  });
+  // useLocalStorage 훅 사용
+  const [coupons, setCoupons] = useLocalStorage<Coupon[]>('coupons', initialCoupons);
 
   // addCoupon 함수
   const addCoupon = useCallback(

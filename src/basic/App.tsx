@@ -127,13 +127,9 @@ const App = () => {
   const [productForm, setProductForm] = useState<ProductForm>(defaultProductForm);
 
   // ===== localStorage 동기화 =====
-  useEffect(() => {
-    localStorage.setItem('products', JSON.stringify(products));
-  }, [products]);
+  // products는 useLocalStorage에서 자동으로 처리되므로 제거
 
-  useEffect(() => {
-    localStorage.setItem('coupons', JSON.stringify(coupons));
-  }, [coupons]);
+  // coupons는 useLocalStorage에서 자동으로 처리되므로 제거
 
   useEffect(() => {
     if (cart.length > 0) {
