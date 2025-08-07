@@ -1,16 +1,17 @@
-import { useState, useCallback } from 'react';
-import { CartItem, Coupon, Product } from '../../types';
+import { useAtom } from 'jotai';
+import { useCallback } from 'react';
+import { Coupon, Product } from '../../types';
 import { Products } from '../constants/products';
 import { cartModel } from '../models/cart';
 import { useProducts } from './useProducts';
-import { useLocalStorage } from '../utils/hooks/useLocalStorage';
+import { cartAtom, selectedCouponAtom } from '../store/atoms';
 
 export function useCart(addNotification: any) {
   // 장바구니 상태 관리
-  const [cart, setCart] = useLocalStorage<CartItem[]>('cart', []);
+  const [cart, setCart] = useAtom(cartAtom);
 
   // 선택된 쿠폰 상태 관리
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+  const [selectedCoupon, setSelectedCoupon] = useAtom(selectedCouponAtom);
 
   // 상품 목록 관리
   const { products } = useProducts();

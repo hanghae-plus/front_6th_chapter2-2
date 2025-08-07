@@ -1,24 +1,13 @@
-// TODO: 쿠폰 관리 Hook
-// 힌트:
-// 1. 쿠폰 목록 상태 관리 (localStorage 연동 고려)
-// 2. 쿠폰 추가/삭제
-//
-// 반환할 값:
-// - coupons: 쿠폰 배열
-// - addCoupon: 새 쿠폰 추가
-// - removeCoupon: 쿠폰 삭제
-
-import { useCallback, useState } from 'react';
-import { Coupons } from '../constants/coupons';
+import { useAtom } from 'jotai';
+import { useCallback } from 'react';
 import { Coupon } from '../../types';
 import { useNotification } from './useNotification';
-import { useLocalStorage } from '../utils/hooks/useLocalStorage';
+import { couponsAtom, selectedCouponAtom } from '../store/atoms';
 
 export function useCoupons() {
-  // TODO: 구현
   const { addNotification } = useNotification();
-  const [coupons, setCoupons] = useLocalStorage<typeof Coupons>('coupons', Coupons);
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+  const [coupons, setCoupons] = useAtom(couponsAtom);
+  const [selectedCoupon, setSelectedCoupon] = useAtom(selectedCouponAtom);
 
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {
