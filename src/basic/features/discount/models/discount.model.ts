@@ -1,5 +1,6 @@
 import { CartItem } from "@/basic/features/cart/types/cart.type";
 import { DISCOUNT } from "@/basic/features/discount/constants/discount";
+import { Discount } from "@/basic/features/discount/types/discount.type";
 
 const getMaxApplicableDiscountRate = (
   item: CartItem,
@@ -26,6 +27,16 @@ const getMaxApplicableDiscountRate = (
   return maxApplicableDiscountRate;
 };
 
+const getMaxDiscountRate = (discounts: Discount[]): number => {
+  return discounts.reduce((max, discount) => Math.max(max, discount.rate), 0);
+};
+
+const getMaxDiscountPercentage = (discounts: Discount[]): number => {
+  return getMaxDiscountRate(discounts) * 100;
+};
+
 export const discountModel = {
   getMaxApplicableDiscountRate,
+  getMaxDiscountRate,
+  getMaxDiscountPercentage,
 };

@@ -2,12 +2,12 @@ import { useCallback } from "react";
 
 import { couponData } from "@/basic/features/coupon/data/coupon.data";
 import { Coupon } from "@/basic/features/coupon/types/coupon.type";
-import { NotificationType } from "@/basic/features/notification/types/notification";
+import { AddNotification } from "@/basic/features/notification/types/notification";
 import { NOTIFICATION } from "@/basic/shared/constants/notification";
 import { useLocalStorage } from "@/basic/shared/hooks/useLocalStorage";
 
 interface Props {
-  addNotification: (message: string, type: NotificationType) => void;
+  addNotification: AddNotification;
   resetCoupon: () => void;
   selectedCoupon: Coupon | null;
 }

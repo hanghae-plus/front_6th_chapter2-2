@@ -30,6 +30,38 @@ const setLocalStorageItem = <T>(key: string, value: T): boolean => {
   }
 };
 
+const storageEventListeners = new Map<string, Set<(value: any) => void>>();
+
+const subscribeToStorageChange = (
+  key: string,
+  callback: (value: any) => void
+) => {
+  if (!storageEventListeners.has(key)) {
+    storageEventListeners.set(key, new Set());
+  }
+  storageEventListeners.get(key)!.add(callback);
+
+  return () => {
+    const listeners = storageEventListeners.get(key);
+
+    if (listeners) {
+      listeners.delete(callback);
+
+      if (listeners.size === 0) {
+        storageEventListeners.delete(key);
+      }
+    }
+  };
+};
+
+const notifyStorageChange = (key: string, value: any) => {
+  const listeners = storageEventListeners.get(key);
+
+  if (listeners) {
+    listeners.forEach((callback) => callback(value));
+  }
+};
+
 export function useLocalStorage<T>(
   key: string,
   defaultValue: T
@@ -37,6 +69,14 @@ export function useLocalStorage<T>(
   const [storedValue, setStoredValue] = useState<T>(() =>
     getLocalStorageItem(key, defaultValue)
   );
+
+  useEffect(() => {
+    const unsubscribe = subscribeToStorageChange(key, (newValue) => {
+      setStoredValue(newValue);
+    });
+
+    return unsubscribe;
+  }, [key]);
 
   useEffect(() => {
     setLocalStorageItem(key, storedValue);
@@ -47,7 +87,8 @@ export function useLocalStorage<T>(
       if (e.key === key && e.newValue !== null) {
         try {
           const newValue = JSON.parse(e.newValue);
-          setStoredValue(newValue);
+
+          notifyStorageChange(key, newValue);
         } catch (error) {
           console.error(`로컬스토리지 파싱 실패 (키: ${key}):`, error);
         }
@@ -58,13 +99,20 @@ export function useLocalStorage<T>(
     return () => window.removeEventListener("storage", handleStorageChange);
   }, [key]);
 
-  const setValue = useCallback((value: T | ((prev: T) => T)) => {
-    setStoredValue((prev) => {
-      const valueToStore =
-        typeof value === "function" ? (value as (prev: T) => T)(prev) : value;
-      return valueToStore;
-    });
-  }, []);
+  const setValue = useCallback(
+    (value: T | ((prev: T) => T)) => {
+      setStoredValue((prev) => {
+        const valueToStore =
+          typeof value === "function" ? (value as (prev: T) => T)(prev) : value;
+
+        setLocalStorageItem(key, valueToStore);
+        notifyStorageChange(key, valueToStore);
+
+        return valueToStore;
+      });
+    },
+    [key]
+  );
 
   return [storedValue, setValue];
 }

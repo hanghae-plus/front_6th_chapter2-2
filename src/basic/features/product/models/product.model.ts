@@ -1,6 +1,7 @@
 import { CartItem } from "@/basic/features/cart/types/cart.type";
 import { Product, ProductWithUI } from "@/basic/features/product/types/product";
 import { formatPrice } from "@/basic/shared/utils/format.util";
+import { filterArrayBySearchTerm } from "@/basic/shared/utils/search.util";
 
 const isProductSoldout = ({
   productId,
@@ -53,8 +54,26 @@ const getFormattedProductPrice = ({
   return price;
 };
 
+function extractProductSearchFields(
+  product: ProductWithUI
+): (string | undefined)[] {
+  return [product.name, product.description];
+}
+
+const searchProducts = (
+  products: ProductWithUI[],
+  searchTerm: string
+): ProductWithUI[] => {
+  return filterArrayBySearchTerm(
+    products,
+    searchTerm,
+    extractProductSearchFields
+  );
+};
+
 export const productModel = {
   isProductSoldout,
   formatProductPrice,
   getFormattedProductPrice,
+  searchProducts,
 };

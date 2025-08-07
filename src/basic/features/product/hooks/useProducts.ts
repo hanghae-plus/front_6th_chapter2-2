@@ -1,13 +1,13 @@
 import { useCallback } from "react";
 
-import { NotificationType } from "@/basic/features/notification/types/notification";
+import { AddNotification } from "@/basic/features/notification/types/notification";
 import { productData } from "@/basic/features/product/data/product.data";
 import { ProductWithUI } from "@/basic/features/product/types/product";
 import { NOTIFICATION } from "@/basic/shared/constants/notification";
 import { useLocalStorage } from "@/basic/shared/hooks/useLocalStorage";
 
 interface Props {
-  addNotification: (message: string, type: NotificationType) => void;
+  addNotification: AddNotification;
 }
 
 export function useProducts({ addNotification }: Props) {

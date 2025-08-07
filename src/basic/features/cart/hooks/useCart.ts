@@ -2,20 +2,15 @@ import { useCallback, useEffect, useState } from "react";
 
 import { cartModel } from "@/basic/features/cart/models/cart.model";
 import { COUPON } from "@/basic/features/coupon/constants/coupon";
+import { AddNotification } from "@/basic/features/notification/types/notification";
 import { DEFAULTS } from "@/basic/shared/constants/defaults";
 import { NOTIFICATION } from "@/basic/shared/constants/notification";
 import { PRODUCT } from "@/basic/shared/constants/product";
 import { useLocalStorage } from "@/basic/shared/hooks/useLocalStorage";
-import {
-  CartItem,
-  Coupon,
-  DiscountType,
-  NotificationType,
-  ProductWithUI,
-} from "@/types";
+import { CartItem, Coupon, DiscountType, ProductWithUI } from "@/types";
 
 interface Props {
-  addNotification: (message: string, type: NotificationType) => void;
+  addNotification: AddNotification;
   products: ProductWithUI[];
 }
 
