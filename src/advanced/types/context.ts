@@ -1,4 +1,4 @@
-import { ProductWithUI } from '../../basic/types'
+import { ProductWithUI } from '../types'
 import { CartItem, Coupon } from '../../types'
 
 export interface CartItemContext {
