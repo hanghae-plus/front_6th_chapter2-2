@@ -12,7 +12,73 @@
 // - updateProductStock: 재고 수정
 // - addProductDiscount: 할인 규칙 추가
 // - removeProductDiscount: 할인 규칙 삭제
+import { useCallback, useEffect, useState } from "react";
+import { ProductWithUI } from "../App";
+import { initialProducts } from "../constants";
+import { addProduct, deleteProduct, updateProduct } from "../models/product";
 
-export function useProducts() {
+export function useProducts({
+  addNotification,
+}: {
+  addNotification: (
+    message: string,
+    type: "error" | "success" | "warning"
+  ) => void;
+}) {
   // TODO: 구현
+  const [products, setProducts] = useState<ProductWithUI[]>(() => {
+    const saved = localStorage.getItem("products");
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return initialProducts;
+      }
+    }
+    return initialProducts;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("products", JSON.stringify(products));
+  }, [products]);
+
+  const applyAddProduct = useCallback(
+    (newProduct: Omit<ProductWithUI, "id">) => {
+      const result = addProduct({ newProduct, products });
+      if (result.success) {
+        setProducts(result.newProducts);
+        addNotification(result.message, "success");
+      }
+    },
+    [addNotification]
+  );
+
+  const applyUpdateProduct = useCallback(
+    (productId: string, updates: Partial<ProductWithUI>) => {
+      const result = updateProduct({ productId, updates, products });
+      if (result.success) {
+        setProducts(result.newProducts);
+        addNotification(result.message, "success");
+      }
+    },
+    [addNotification]
+  );
+
+  const applyDeleteProduct = useCallback(
+    (productId: string) => {
+      const result = deleteProduct({ productId, products });
+      if (result.success) {
+        setProducts(result.newProducts);
+        addNotification(result.message, "success");
+      }
+    },
+    [addNotification]
+  );
+
+  return {
+    products,
+    applyAddProduct,
+    applyUpdateProduct,
+    applyDeleteProduct,
+  };
 }

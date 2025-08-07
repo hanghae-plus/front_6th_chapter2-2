@@ -1,6 +1,5 @@
 import { Dispatch, SetStateAction, useCallback } from "react";
-import { ProductWithUI } from "../App";
-import { CartItem, Coupon } from "../../types";
+import { Coupon } from "../../types";
 import { formatPrice } from "../utils/formatters";
 import {
   getMaxApplicableDiscount,
@@ -12,6 +11,7 @@ import { CloseIcon, ImageIcon, ShoppingBagIcon } from "./icons";
 import { Search } from "./ui/Search";
 import { useCart } from "../hooks/useCart";
 import { useCoupons } from "../hooks/useCoupons";
+import { useProducts } from "../hooks/useProducts";
 
 // TODO: 장바구니 페이지 컴포넌트
 // 힌트:
@@ -32,7 +32,6 @@ import { useCoupons } from "../hooks/useCoupons";
 // - Cart: 장바구니 표시 및 결제
 
 interface CartPageProps {
-  products: ProductWithUI[];
   addNotification: (
     message: string,
     type: "error" | "success" | "warning"
@@ -44,7 +43,6 @@ interface CartPageProps {
 }
 
 export function CartPage({
-  products,
   addNotification,
   selectedCoupon,
   setSelectedCoupon,
@@ -52,6 +50,10 @@ export function CartPage({
   setTotalItemCount,
 }: CartPageProps) {
   // TODO: 구현
+
+  const { products } = useProducts({
+    addNotification,
+  });
 
   const {
     cart,

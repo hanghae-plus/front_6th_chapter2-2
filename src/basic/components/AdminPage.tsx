@@ -15,18 +15,15 @@
 // - CouponForm: 새 쿠폰 추가 폼
 // - CouponList: 쿠폰 목록 표시
 
-import { Dispatch, SetStateAction, useCallback, useState } from "react";
+import { useState } from "react";
 import type { ProductWithUI } from "../App";
 import { Coupon } from "../../types";
 import { formatPrice } from "../utils/formatters";
 import { CloseIcon, PlusIcon, TrashIcon } from "./icons";
 import { useCoupons } from "../hooks/useCoupons";
+import { useProducts } from "../hooks/useProducts";
 
 interface AdminPageProps {
-  products: ProductWithUI[];
-  setProducts: Dispatch<SetStateAction<ProductWithUI[]>>;
-  // coupons: Coupon[];
-  // setCoupons: Dispatch<SetStateAction<Coupon[]>>;
   addNotification: (
     message: string,
     type: "error" | "success" | "warning"
@@ -36,10 +33,6 @@ interface AdminPageProps {
 }
 
 export function AdminPage({
-  products,
-  setProducts,
-  // coupons,
-  // setCoupons,
   addNotification,
   selectedCoupon,
   setSelectedCoupon,
@@ -72,69 +65,18 @@ export function AdminPage({
     setSelectedCoupon,
   });
 
-  const addProduct = useCallback(
-    (newProduct: Omit<ProductWithUI, "id">) => {
-      const product: ProductWithUI = {
-        ...newProduct,
-        id: `p${Date.now()}`,
-      };
-      setProducts((prev) => [...prev, product]);
-      addNotification("상품이 추가되었습니다.", "success");
-    },
-    [addNotification]
-  );
-
-  const updateProduct = useCallback(
-    (productId: string, updates: Partial<ProductWithUI>) => {
-      setProducts((prev) =>
-        prev.map((product) =>
-          product.id === productId ? { ...product, ...updates } : product
-        )
-      );
-      addNotification("상품이 수정되었습니다.", "success");
-    },
-    [addNotification]
-  );
-
-  const deleteProduct = useCallback(
-    (productId: string) => {
-      setProducts((prev) => prev.filter((p) => p.id !== productId));
-      addNotification("상품이 삭제되었습니다.", "success");
-    },
-    [addNotification]
-  );
-
-  // const addCoupon = useCallback(
-  //   (newCoupon: Coupon) => {
-  //     const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
-  //     if (existingCoupon) {
-  //       addNotification("이미 존재하는 쿠폰 코드입니다.", "error");
-  //       return;
-  //     }
-  //     setCoupons((prev) => [...prev, newCoupon]);
-  //     addNotification("쿠폰이 추가되었습니다.", "success");
-  //   },
-  //   [coupons, addNotification]
-  // );
-
-  // const deleteCoupon = useCallback(
-  //   (couponCode: string) => {
-  //     setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
-  //     if (selectedCoupon?.code === couponCode) {
-  //       setSelectedCoupon(null);
-  //     }
-  //     addNotification("쿠폰이 삭제되었습니다.", "success");
-  //   },
-  //   [selectedCoupon, addNotification]
-  // );
+  const { products, applyAddProduct, applyUpdateProduct, applyDeleteProduct } =
+    useProducts({
+      addNotification,
+    });
 
   const handleProductSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (editingProduct && editingProduct !== "new") {
-      updateProduct(editingProduct, productForm);
+      applyUpdateProduct(editingProduct, productForm);
       setEditingProduct(null);
     } else {
-      addProduct({
+      applyAddProduct({
         ...productForm,
         discounts: productForm.discounts,
       });
@@ -290,7 +232,7 @@ export function AdminPage({
                           수정
                         </button>
                         <button
-                          onClick={() => deleteProduct(product.id)}
+                          onClick={() => applyDeleteProduct(product.id)}
                           className="text-red-600 hover:text-red-900"
                         >
                           삭제
