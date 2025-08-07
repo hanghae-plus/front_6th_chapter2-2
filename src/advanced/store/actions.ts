@@ -123,9 +123,21 @@ export const applyCouponAtom = atom(
 
 export const completeOrderAtom = atom(
   null,
-  (get, set, onNotification?: (message: string, type?: 'success' | 'error' | 'warning') => void) => {
+  (get, set) => {
     const orderNumber = `ORD-${Date.now()}`;
-    onNotification?.(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
+    const newNotification = {
+      id: Date.now().toString(),
+      message: `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
+      type: 'success' as const,
+    };
+    
+    set(notificationsAtom, (prev) => [...prev, newNotification]);
+    
+    // 3초 후 자동 제거
+    setTimeout(() => {
+      set(notificationsAtom, (prev) => prev.filter((n) => n.id !== newNotification.id));
+    }, 3000);
+    
     set(cartAtom, []);
     set(selectedCouponAtom, null);
   }
