@@ -29,6 +29,6 @@ export const removeFromCartAtom = atom(null, (get, set, productId: string) => {
   );
 });
 
-export const resetCartAtom = atom(null, (get, set) => {
+export const resetCartAtom = atom(null, (_, set) => {
   set(cartAtom, []);
 });
