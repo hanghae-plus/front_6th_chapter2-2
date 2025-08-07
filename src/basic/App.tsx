@@ -1,12 +1,10 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState } from 'react';
 
 import { Header } from './components/Header';
 import { Toast } from './components/Toast';
 import { AdminPage } from './components/AdminPage';
 import { CartPage } from './components/CartList';
 import { ProductCardList } from './components/ProductCardList';
-import { initialProducts, initialCoupons } from './constants';
-import { ProductWithUI, Notification, CartItem, Coupon, Product } from './types';
 import { useCart } from './hooks/useCart';
 import { useNotification } from './hooks/useNotification';
 import { useCoupon } from './hooks/useCoupon';

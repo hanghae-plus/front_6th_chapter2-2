@@ -10,7 +10,7 @@
     "test": "vitest",
     "test:origin": "vitest src/origin",
     "test:basic": "vitest basic.test.ts",
-    "test:advanced": "vitest advanced.test.js",
+    "test:advanced": "vitest advanced.test.ts",
     "test:ui": "vitest --ui",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
