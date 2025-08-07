@@ -1,36 +1,39 @@
-import { useCallback } from 'react';
+import { useAtom } from 'jotai';
 
 import { Coupon, NotificationCallback } from '../../types';
-import { initialCoupons } from '../constants';
-import { validateCouponCode, calculateCouponDiscount } from '../models/coupon';
-import { useLocalStorage } from '../utils/hooks/useLocalStorage';
+import { couponsAtom } from '../store/atoms';
+import { addCouponAtom, removeCouponAtom } from '../store/actions';
+import { calculateCouponDiscount } from '../models/coupon';
 
 export function useCoupons() {
-  const [coupons, setCoupons] = useLocalStorage<Coupon[]>('coupons', initialCoupons);
+  const [coupons, setCoupons] = useAtom(couponsAtom);
 
-  const addCoupon = useCallback(
-    (newCoupon: Coupon, onNotification?: NotificationCallback) => {
-      if (!validateCouponCode(newCoupon.code, coupons)) {
-        onNotification?.('이미 존재하는 쿠폰 코드입니다.', 'error');
-        return;
-      }
-      setCoupons((prev) => [...prev, newCoupon]);
-      onNotification?.('쿠폰이 추가되었습니다.', 'success');
-    },
-    [coupons, setCoupons]
-  );
+  // Jotai action atoms 사용
+  const [, addCouponAction] = useAtom(addCouponAtom);
+  const [, removeCouponAction] = useAtom(removeCouponAtom);
 
-  const removeCoupon = useCallback(
-    (couponCode: string, onNotification?: NotificationCallback) => {
-      setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
-      onNotification?.('쿠폰이 삭제되었습니다.', 'success');
-    },
-    [setCoupons]
-  );
+  // 기존 인터페이스 유지를 위한 래퍼 함수들
+  const addCoupon = (newCoupon: Coupon, onNotification?: NotificationCallback) => {
+    addCouponAction({
+      newCoupon,
+      onNotification: onNotification as
+        | ((message: string, type?: 'success' | 'error' | 'warning') => void)
+        | undefined,
+    });
+  };
 
-  const getCouponDiscountAmount = useCallback((coupon: Coupon, cartTotal: number): number => {
+  const removeCoupon = (couponCode: string, onNotification?: NotificationCallback) => {
+    removeCouponAction({
+      couponCode,
+      onNotification: onNotification as
+        | ((message: string, type?: 'success' | 'error' | 'warning') => void)
+        | undefined,
+    });
+  };
+
+  const getCouponDiscountAmount = (coupon: Coupon, cartTotal: number): number => {
     return calculateCouponDiscount(coupon, cartTotal);
-  }, []);
+  };
 
   return {
     coupons,

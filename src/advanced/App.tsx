@@ -39,7 +39,7 @@ const App = () => {
     applyCoupon,
     getRemainingStock,
     completeOrder,
-  } = useCart(products);
+  } = useCart();
 
   const { coupons, addCoupon, removeCoupon } = useCoupons();
 
