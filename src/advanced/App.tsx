@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useAdminMode } from "./hooks/useAdminMode";
 import Header from "./components/Header";
 import NotificationList from "./components/notification/NotificationList";
 import AdminPage from "./pages/AdminPage";
@@ -6,7 +6,7 @@ import CartPage from "./pages/CartPage";
 
 const App = () => {
   // 페이지 처리
-  const [isAdmin, setIsAdmin] = useState(false);
+  const { isAdmin, toggleAdmin } = useAdminMode();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -14,7 +14,7 @@ const App = () => {
       <NotificationList />
 
       {/* 헤더 */}
-      <Header isAdmin={isAdmin} setIsAdmin={setIsAdmin} />
+      <Header isAdmin={isAdmin} toggleAdmin={toggleAdmin} />
 
       <main className="max-w-7xl mx-auto px-4 py-8">
         {isAdmin ? (

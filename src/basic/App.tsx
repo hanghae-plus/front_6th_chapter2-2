@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useAdminMode } from "./hooks/useAdminMode";
 import { useProducts } from "./hooks/useProducts";
 import { useCoupons } from "./hooks/useCoupons";
 import { useCart } from "./hooks/useCart";
@@ -33,12 +33,13 @@ const App = () => {
 
   // 검색 처리
   const { searchTerm, debouncedSearchTerm, handleSearchTerm } = useSearchTerm();
+
   // 알림 처리
   const { notifications, addNotification, removeNotification } =
     useNotification();
 
   // 페이지 처리
-  const [isAdmin, setIsAdmin] = useState(false);
+  const { isAdmin, toggleAdmin } = useAdminMode();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -51,7 +52,7 @@ const App = () => {
       {/* 헤더 */}
       <Header
         isAdmin={isAdmin}
-        setIsAdmin={setIsAdmin}
+        toggleAdmin={toggleAdmin}
         searchTerm={searchTerm}
         handleSearchTerm={handleSearchTerm}
         cartTotalItem={cartTotalItem}

@@ -5,13 +5,10 @@ import SearchBar from "./SearchBar";
 
 interface HeaderProps {
   isAdmin: boolean;
-  setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>;
+  toggleAdmin: () => void;
 }
 
-const Header = ({
-  isAdmin,
-  setIsAdmin,
-}: HeaderProps) => {
+const Header = ({ isAdmin, toggleAdmin }: HeaderProps) => {
   const { cartTotalItem } = useCart();
   const { searchTerm, handleSearchTerm } = useSearchTerm();
 
@@ -32,7 +29,7 @@ const Header = ({
           </div>
           <nav className="flex items-center space-x-4">
             <button
-              onClick={() => setIsAdmin(!isAdmin)}
+              onClick={toggleAdmin}
               className={`px-3 py-1.5 text-sm rounded transition-colors ${
                 isAdmin
                   ? "bg-gray-800 text-white"
