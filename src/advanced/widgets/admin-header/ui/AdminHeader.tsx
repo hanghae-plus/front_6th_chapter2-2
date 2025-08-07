@@ -1,8 +1,8 @@
 interface AdminHeaderProps {
-  onBackShop: () => void;
+  onChangeCartPage: () => void;
 }
 
-export function AdminHeader({ onBackShop }: AdminHeaderProps) {
+export function AdminHeader({ onChangeCartPage }: AdminHeaderProps) {
   return (
     <header className='bg-white shadow-sm sticky top-0 z-40 border-b'>
       <div className='max-w-7xl mx-auto px-4'>
@@ -12,7 +12,7 @@ export function AdminHeader({ onBackShop }: AdminHeaderProps) {
           </div>
           <nav className='flex items-center space-x-4'>
             <button
-              onClick={onBackShop}
+              onClick={onChangeCartPage}
               className='px-3 py-1.5 text-sm rounded transition-colors bg-gray-800 text-white'
             >
               쇼핑몰로 돌아가기
