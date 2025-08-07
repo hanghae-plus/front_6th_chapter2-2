@@ -2,8 +2,8 @@ import { useState } from 'react';
 
 import { CouponTab } from '../../../components/ui/CouponTab';
 import { ProductTab } from '../../../components/ui/ProductTab';
-import { TabNavigation } from '../../../components/ui/TabNavigation';
 import { AdminHeader } from '../../../widgets/admin-header';
+import { TabNavigation } from '../../../widgets/tab-navigation';
 
 interface AdminPageProps {
   onChangeCartPage: () => void;
