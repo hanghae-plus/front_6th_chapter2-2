@@ -1,62 +1,66 @@
-import { useState } from 'react';
+import { useAtom, useSetAtom } from 'jotai';
+import { useCallback } from 'react';
 
-import { ProductWithUI } from '../../types';
+import {
+  productFormAtom,
+  showProductFormAtom,
+  editingProductAtom,
+  handleProductFormSubmitAtom,
+  startEditProductAtom,
+  handleCancelProductAtom,
+  resetEditingProductAtom,
+  updateProductFormAtom,
+  updateShowProductFormAtom,
+} from '../../atoms/formAtoms';
+import { ProductWithUI, ProductForm } from '../../types';
 
 const useProductForm = () => {
-  const [showProductForm, setShowProductForm] = useState(false);
-  const [productForm, setProductForm] = useState({
-    name: '',
-    price: 0,
-    stock: 0,
-    description: '',
-    discounts: [] as Array<{ quantity: number; rate: number }>,
-  });
-  const [editingProduct, setEditingProduct] = useState<string | null>(null);
+  // atoms 구독
+  const [productForm] = useAtom(productFormAtom);
+  const [showProductForm] = useAtom(showProductFormAtom);
+  const [editingProduct] = useAtom(editingProductAtom);
 
-  const handleProductFormSubmit = () => {
-    setProductForm({ name: '', price: 0, stock: 0, description: '', discounts: [] });
-    setShowProductForm(false);
-  };
+  // action atoms
+  const handleProductFormSubmitAction = useSetAtom(handleProductFormSubmitAtom);
+  const startEditProductAction = useSetAtom(startEditProductAtom);
+  const handleCancelProductAction = useSetAtom(handleCancelProductAtom);
+  const resetEditingProductAction = useSetAtom(resetEditingProductAtom);
+  const updateProductFormAction = useSetAtom(updateProductFormAtom);
+  const updateShowProductFormAction = useSetAtom(updateShowProductFormAtom);
 
-  const startEditProduct = (product: ProductWithUI | string) => {
-    if (typeof product === 'string') {
-      setEditingProduct(product);
-    } else {
-      setEditingProduct(product.id);
-      setProductForm({
-        name: product.name,
-        price: product.price,
-        stock: product.stock,
-        description: product.description || '',
-        discounts: product.discounts || [],
-      });
-    }
-    setShowProductForm(true);
-  };
+  // wrapper 함수들
+  const handleProductFormSubmit = useCallback(() => {
+    handleProductFormSubmitAction();
+  }, [handleProductFormSubmitAction]);
 
-  const handleCancelProduct = () => {
-    setEditingProduct(null);
-    setProductForm({
-      name: '',
-      price: 0,
-      stock: 0,
-      description: '',
-      discounts: [],
-    });
-    setShowProductForm(false);
-  };
+  const startEditProduct = useCallback(
+    (product: ProductWithUI | string) => {
+      startEditProductAction(product);
+    },
+    [startEditProductAction],
+  );
 
-  const resetEditingProduct = () => {
-    setEditingProduct(null);
-  };
+  const handleCancelProduct = useCallback(() => {
+    handleCancelProductAction();
+  }, [handleCancelProductAction]);
 
-  const updateProductForm = (form: Partial<ProductWithUI>) => {
-    setProductForm((prev) => ({ ...prev, ...form }));
-  };
+  const resetEditingProduct = useCallback(() => {
+    resetEditingProductAction();
+  }, [resetEditingProductAction]);
 
-  const updateShowProductForm = (show: boolean) => {
-    setShowProductForm(show);
-  };
+  const updateProductForm = useCallback(
+    (form: Partial<ProductForm>) => {
+      updateProductFormAction(form);
+    },
+    [updateProductFormAction],
+  );
+
+  const updateShowProductForm = useCallback(
+    (show: boolean) => {
+      updateShowProductFormAction(show);
+    },
+    [updateShowProductFormAction],
+  );
 
   return {
     productForm,
