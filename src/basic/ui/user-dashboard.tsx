@@ -15,7 +15,6 @@ interface UserDashboardProps {
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, newQuantity: number) => void;
   getStock: (product: Product) => number;
-  calculateItemTotal: (item: CartItem) => number;
 
   // 쿠폰 & 결제
   coupons: Coupon[];
@@ -36,7 +35,6 @@ export function UserDashboard({
   removeFromCart,
   updateQuantity,
   getStock,
-  calculateItemTotal,
   coupons,
   selectedCoupon,
   applyCoupon,
@@ -61,7 +59,6 @@ export function UserDashboard({
         <div className='sticky top-24 space-y-4'>
           <Cart
             cart={cart}
-            calculateItemTotal={calculateItemTotal}
             removeFromCart={removeFromCart}
             updateQuantity={updateQuantity}
           />

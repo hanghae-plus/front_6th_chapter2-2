@@ -1,9 +1,8 @@
-import { useState, useCallback, useMemo } from 'react';
-import { Coupon } from '@/types';
+import { useState, useMemo } from 'react';
 import { AdminDashboard, Header, NotificationItem, UserDashboard } from './ui';
 import { useCoupons } from './entities/coupons';
 import { useProducts } from './entities/products';
-import { calculateItemTotal, calculateCartTotal, filterProducts } from './utils';
+import { calculateCartTotal, filterProducts } from './utils';
 import { useCart, useDebounceValue, useNotifications, useTotalItemCount } from './hooks';
 
 const App = () => {
@@ -40,11 +39,6 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const debouncedSearchTerm = useDebounceValue(searchTerm, 500);
-
-  const applyCoupon = useCallback(
-    (coupon: Coupon) => applyCouponFromHook(coupon, cart),
-    [applyCouponFromHook, cart]
-  );
 
   const totals = useMemo(() => calculateCartTotal(cart, selectedCoupon), [cart, selectedCoupon]);
 
@@ -108,10 +102,9 @@ const App = () => {
             removeFromCart={removeFromCart}
             updateQuantity={updateQuantity}
             getStock={getStock}
-            calculateItemTotal={(item) => calculateItemTotal(item, cart)}
             coupons={coupons}
             selectedCoupon={selectedCoupon}
-            applyCoupon={applyCoupon}
+            applyCoupon={(coupon) => applyCouponFromHook(coupon, cart)}
             setSelectedCoupon={setSelectedCoupon}
             totals={totals}
             completeOrder={completeOrder}
