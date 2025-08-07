@@ -11,7 +11,7 @@ import { SEARCH_DELAY } from '../shared/constants/toast';
  * @returns 검색 관련 상태와 필터링된 상품들
  */
 export function useProductSearch(products: ProductWithUI[], delay: number = SEARCH_DELAY) {
-  const { searchTerm, setSearchTerm, debouncedSearchTerm, clearSearch, hasSearchTerm } = useSearch(delay);
+  const { searchTerm, handleSearchTermChange, debouncedSearchTerm, clearSearch, hasSearchTerm } = useSearch(delay);
 
   /**
    * 검색어로 필터링된 상품 목록
@@ -22,7 +22,7 @@ export function useProductSearch(products: ProductWithUI[], delay: number = SEAR
 
   return {
     searchTerm,
-    setSearchTerm,
+    handleSearchTermChange,
     debouncedSearchTerm,
     clearSearch,
     hasSearchTerm,

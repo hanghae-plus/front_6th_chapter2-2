@@ -11,6 +11,10 @@ export function useSearch(delay: number = SEARCH_DELAY) {
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, delay);
 
+  const handleSearchTermChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
   /**
    * 검색어 초기화
    */
@@ -25,7 +29,7 @@ export function useSearch(delay: number = SEARCH_DELAY) {
 
   return {
     searchTerm,
-    setSearchTerm,
+    handleSearchTermChange,
     debouncedSearchTerm,
     clearSearch,
     hasSearchTerm,
