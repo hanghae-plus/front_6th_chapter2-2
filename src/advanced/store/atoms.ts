@@ -11,7 +11,7 @@ export const couponsAtom = atomWithStorage<Coupon[]>('coupons', initialCoupons);
 export const cartAtom = atomWithStorage<CartItem[]>('cart', []);
 
 // 일반 메모리 Atom들 (기존 useState 대체)
-export const notificationsAtom = atom<Notification[]>([]);
+export const notificationsAtom = atomWithStorage<Notification[]>('notifications', []);
 export const isAdminAtom = atom(false);
 export const selectedCouponAtom = atom<Coupon | null>(null);
 export const searchTermAtom = atom('');

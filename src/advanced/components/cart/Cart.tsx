@@ -15,8 +15,6 @@ const Cart = ({
   setSelectedCoupon,
   handleApplyCoupon,
   handleCompleteOrder,
-  handleUpdateQuantity,
-  removeFromCart,
   totals,
 }: {
   cart: CartItemType[];
@@ -25,17 +23,11 @@ const Cart = ({
   setSelectedCoupon: (coupon: Coupon | null) => void;
   handleApplyCoupon: (coupon: Coupon) => void;
   handleCompleteOrder: () => void;
-  handleUpdateQuantity: (productId: string, quantity: number) => void;
-  removeFromCart: (productId: string) => void;
   totals: CartTotal;
 }) => {
   return (
     <div className='sticky top-24 space-y-4'>
-      <CartItems
-        cart={cart}
-        handleUpdateQuantity={handleUpdateQuantity}
-        removeFromCart={removeFromCart}
-      />
+      <CartItems cart={cart} />
 
       {cart.length > 0 && (
         <>

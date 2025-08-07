@@ -1,6 +1,8 @@
 import { useState, useCallback } from 'react';
+import { useAtom } from 'jotai';
 
-import { Coupon, ProductWithUI, Notification } from '../types';
+import { Coupon, ProductWithUI } from '../types';
+import { addNotificationAtom } from './store/actions';
 import Header from './components/common/Header';
 import NotificationComponent from './components/common/Notification';
 import AdminPage from './components/pages/AdminPage';
@@ -13,19 +15,7 @@ import { useDebounce } from './utils/hooks/useDebounce';
 const App = () => {
   // ===== 상태 관리 =====
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-
-  const addNotification = useCallback(
-    (message: string, type: 'success' | 'error' | 'warning' = 'success') => {
-      const id = Date.now().toString();
-      setNotifications((prev) => [...prev, { id, message, type }]);
-
-      setTimeout(() => {
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
-      }, 3000);
-    },
-    []
-  );
+  const [, addNotification] = useAtom(addNotificationAtom);
 
   const {
     cart,
@@ -34,8 +24,6 @@ const App = () => {
     totalItemCount,
     calculateCartTotal,
     addToCart,
-    removeFromCart,
-    updateQuantity,
     applyCoupon,
     getRemainingStock,
     completeOrder,
@@ -44,30 +32,30 @@ const App = () => {
   const { coupons, addCoupon, removeCoupon } = useCoupons();
 
   // ===== 이벤트 핸들러 =====
-  const handleAddToCart = useCallback(
-    (product: ProductWithUI) => {
-      addToCart(product, addNotification);
+  const handleAddNotification = useCallback(
+    (message: string, type: 'success' | 'error' | 'warning' = 'success') => {
+      addNotification({ message, type });
     },
-    [addToCart, addNotification]
+    [addNotification]
   );
 
-  const handleUpdateQuantity = useCallback(
-    (productId: string, newQuantity: number) => {
-      updateQuantity(productId, newQuantity, addNotification);
+  const handleAddToCart = useCallback(
+    (product: ProductWithUI) => {
+      addToCart(product, handleAddNotification);
     },
-    [updateQuantity, addNotification]
+    [addToCart, handleAddNotification]
   );
 
   const handleApplyCoupon = useCallback(
     (coupon: Coupon) => {
-      applyCoupon(coupon, addNotification);
+      applyCoupon(coupon, handleAddNotification);
     },
-    [applyCoupon, addNotification]
+    [applyCoupon, handleAddNotification]
   );
 
   const handleCompleteOrder = useCallback(() => {
-    completeOrder(addNotification);
-  }, [completeOrder, addNotification]);
+    completeOrder(handleAddNotification);
+  }, [completeOrder, handleAddNotification]);
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -77,10 +65,7 @@ const App = () => {
 
   return (
     <div className='min-h-screen bg-gray-50'>
-      <NotificationComponent
-        notifications={notifications}
-        onRemoveNotification={(id) => setNotifications((prev) => prev.filter((n) => n.id !== id))}
-      />
+      <NotificationComponent />
       <Header
         isAdmin={isAdmin}
         searchTerm={searchTerm}
@@ -103,7 +88,7 @@ const App = () => {
             deleteProduct={deleteProduct}
             addCoupon={addCoupon}
             removeCoupon={removeCoupon}
-            addNotification={addNotification}
+            addNotification={handleAddNotification}
           />
         ) : (
           <CartPage
@@ -117,8 +102,6 @@ const App = () => {
             handleAddToCart={handleAddToCart}
             handleApplyCoupon={handleApplyCoupon}
             handleCompleteOrder={handleCompleteOrder}
-            handleUpdateQuantity={handleUpdateQuantity}
-            removeFromCart={removeFromCart}
             getRemainingStock={getRemainingStock}
             totals={totals}
           />

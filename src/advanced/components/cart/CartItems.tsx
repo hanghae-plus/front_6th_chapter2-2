@@ -5,11 +5,9 @@ import Card from '../ui/Card';
 
 interface CartItemsProps {
   cart: CartItemType[];
-  handleUpdateQuantity: (productId: string, quantity: number) => void;
-  removeFromCart: (productId: string) => void;
 }
 
-const CartItems = ({ cart, handleUpdateQuantity, removeFromCart }: CartItemsProps) => {
+const CartItems = ({ cart }: CartItemsProps) => {
   return (
     <Card
       padding='sm'
@@ -29,13 +27,7 @@ const CartItems = ({ cart, handleUpdateQuantity, removeFromCart }: CartItemsProp
       ) : (
         <div className='space-y-3'>
           {cart.map((item) => (
-            <CartItem
-              key={item.product.id}
-              item={item}
-              cart={cart}
-              handleUpdateQuantity={handleUpdateQuantity}
-              removeFromCart={removeFromCart}
-            />
+            <CartItem key={item.product.id} item={item} />
           ))}
         </div>
       )}

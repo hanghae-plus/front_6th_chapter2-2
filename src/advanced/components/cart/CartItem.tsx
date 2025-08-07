@@ -1,29 +1,48 @@
+import { useAtom } from 'jotai';
 import { CartItem as CartItemType } from '../../../types';
 import { calculateItemTotal, calculateOriginalPrice } from '../../models/cart';
 import { hasDiscount, calculateDiscountRate } from '../../models/discount';
 import { CloseIcon } from '../icons';
 import Badge from '../ui/Badge';
 import Button from '../ui/Button';
+import { cartAtom } from '../../store/atoms';
+import { updateQuantityAtom, removeFromCartAtom, addNotificationAtom } from '../../store/actions';
 
 interface CartItemProps {
   item: CartItemType;
-  cart: CartItemType[];
-  handleUpdateQuantity: (productId: string, quantity: number) => void;
-  removeFromCart: (productId: string) => void;
 }
 
-const CartItem = ({ item, cart, handleUpdateQuantity, removeFromCart }: CartItemProps) => {
+const CartItem = ({ item }: CartItemProps) => {
+  const [cart] = useAtom(cartAtom);
+  const [, updateQuantity] = useAtom(updateQuantityAtom);
+  const [, removeFromCart] = useAtom(removeFromCartAtom);
+  const [, addNotification] = useAtom(addNotificationAtom);
+
   const itemTotal = calculateItemTotal(item, cart);
   const originalPrice = calculateOriginalPrice(item);
   const hasDiscountValue = hasDiscount(itemTotal, originalPrice);
   const discountRate = calculateDiscountRate(itemTotal, originalPrice);
+
+  const handleUpdateQuantity = (productId: string, quantity: number) => {
+    updateQuantity({
+      productId,
+      newQuantity: quantity,
+      onNotification: (message: string, type?: 'success' | 'error' | 'warning') => {
+        addNotification({ message, type: type || 'success' });
+      },
+    });
+  };
+
+  const handleRemoveFromCart = (productId: string) => {
+    removeFromCart(productId);
+  };
 
   return (
     <div className='border-b pb-3 last:border-b-0'>
       <div className='flex justify-between items-start mb-2'>
         <h4 className='text-sm font-medium text-gray-900 flex-1'>{item.product.name}</h4>
         <Button
-          onClick={() => removeFromCart(item.product.id)}
+          onClick={() => handleRemoveFromCart(item.product.id)}
           className='text-gray-400 hover:text-red-500 ml-2'
         >
           <CloseIcon />

@@ -13,8 +13,6 @@ interface CartPageProps {
   handleAddToCart: (product: ProductWithUI) => void;
   handleApplyCoupon: (coupon: Coupon) => void;
   handleCompleteOrder: () => void;
-  handleUpdateQuantity: (productId: string, quantity: number) => void;
-  removeFromCart: (productId: string) => void;
   getRemainingStock: (product: ProductWithUI, cart: CartItem[]) => number;
   totals: {
     totalBeforeDiscount: number;
@@ -33,8 +31,6 @@ const CartPage = ({
   handleAddToCart,
   handleApplyCoupon,
   handleCompleteOrder,
-  handleUpdateQuantity,
-  removeFromCart,
   getRemainingStock,
   totals,
 }: CartPageProps) => {
@@ -58,8 +54,6 @@ const CartPage = ({
           setSelectedCoupon={setSelectedCoupon}
           handleApplyCoupon={handleApplyCoupon}
           handleCompleteOrder={handleCompleteOrder}
-          handleUpdateQuantity={handleUpdateQuantity}
-          removeFromCart={removeFromCart}
           totals={totals}
         />
       </div>

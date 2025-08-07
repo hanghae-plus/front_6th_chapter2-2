@@ -1,17 +1,19 @@
+import { useAtom } from 'jotai';
 import { Notification } from '../../../types';
 import { CloseIcon } from '../icons';
 import Button from '../ui/Button';
+import { notificationsAtom } from '../../store/atoms';
+import { removeNotificationAtom } from '../../store/actions';
 
-interface NotificationComponentProps {
-  notifications: Notification[];
-  onRemoveNotification: (id: string) => void;
-}
+const NotificationComponent = () => {
+  const [notifications] = useAtom(notificationsAtom);
+  const [, removeNotification] = useAtom(removeNotificationAtom);
 
-const NotificationComponent = ({
-  notifications,
-  onRemoveNotification,
-}: NotificationComponentProps) => {
-  if (notifications.length === 0) return null;
+  if (!notifications || notifications.length === 0) return null;
+
+  const handleRemoveNotification = (id: string) => {
+    removeNotification(id);
+  };
 
   return (
     <div className='fixed top-20 right-4 z-50 space-y-2 max-w-sm'>
@@ -28,7 +30,7 @@ const NotificationComponent = ({
         >
           <span className='mr-2'>{notif.message}</span>
           <Button
-            onClick={() => onRemoveNotification(notif.id)}
+            onClick={() => handleRemoveNotification(notif.id)}
             className='text-white hover:text-gray-200'
           >
             <CloseIcon />

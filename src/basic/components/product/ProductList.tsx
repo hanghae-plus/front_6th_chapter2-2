@@ -41,6 +41,7 @@ const ProductList = ({
 
             return (
               <ProductCard
+                key={product.id}
                 product={product}
                 isAdmin={isAdmin}
                 products={products}
