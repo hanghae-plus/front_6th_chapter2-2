@@ -1,16 +1,16 @@
-import { CloseIcon, CartHeaderIcon, EmptyCartIcon } from './icons';
-import Badge from './ui/Badge';
-import Button from './ui/Button';
-import Card from './ui/Card';
-import Select from './ui/Selector';
-import { CartItem, Coupon } from '../../types';
-import { calculateItemTotal, calculateOriginalPrice } from '../models/cart';
+import { CartItem, Coupon } from '../../../types';
+import { calculateItemTotal, calculateOriginalPrice } from '../../models/cart';
 import {
   hasDiscount,
   calculateDiscountRate,
   hasTotalDiscount,
   calculateTotalDiscountAmount,
-} from '../models/discount';
+} from '../../models/discount';
+import { CloseIcon, CartHeaderIcon, EmptyCartIcon } from '../icons';
+import Badge from '../ui/Badge';
+import Button from '../ui/Button';
+import Card from '../ui/Card';
+import Select from '../ui/Selector';
 
 interface CartTotal {
   totalBeforeDiscount: number;

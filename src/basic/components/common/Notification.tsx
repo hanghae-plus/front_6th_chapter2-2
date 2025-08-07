@@ -1,6 +1,6 @@
-import { CloseIcon } from './icons';
-import { Notification } from '../../types';
-import Button from './ui/Button';
+import { CloseIcon } from '../icons';
+import { Notification } from '../../../types';
+import Button from '../ui/Button';
 
 interface NotificationComponentProps {
   notifications: Notification[];

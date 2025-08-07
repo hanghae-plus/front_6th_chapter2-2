@@ -1,7 +1,7 @@
-import { CartIcon } from './icons';
-import Button from './ui/Button';
-import { CartItem } from '../../types';
-import Input from './ui/Input';
+import { CartItem } from '../../../types';
+import { CartIcon } from '../icons';
+import Button from '../ui/Button';
+import Input from '../ui/Input';
 
 const Header = ({
   isAdmin,

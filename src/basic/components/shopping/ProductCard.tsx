@@ -1,11 +1,11 @@
-import { ImageIcon } from './icons';
-import Badge from './ui/Badge';
-import Button from './ui/Button';
-import Card from './ui/Card';
-import { ProductWithUI, CartItem } from '../../types';
-import { getMaxDiscountRate, formatDiscountDescription } from '../models/discount';
-import { isRecommended } from '../models/product';
-import { formatPrice } from '../utils/formatters';
+import { ImageIcon } from '../icons';
+import Badge from '../ui/Badge';
+import Button from '../ui/Button';
+import Card from '../ui/Card';
+import { ProductWithUI, CartItem } from '../../../types';
+import { getMaxDiscountRate, formatDiscountDescription } from '../../models/discount';
+import { isRecommended } from '../../models/product';
+import { formatPrice } from '../../utils/formatters';
 
 const ProductCard = ({
   product,

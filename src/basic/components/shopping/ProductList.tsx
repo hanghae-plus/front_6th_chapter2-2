@@ -1,5 +1,5 @@
+import { ProductWithUI, CartItem } from '../../../types';
 import ProductCard from './ProductCard';
-import { ProductWithUI, CartItem } from '../../types';
 
 const ProductList = ({
   debouncedSearchTerm,
