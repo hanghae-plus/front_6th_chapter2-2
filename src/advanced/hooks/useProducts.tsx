@@ -1,6 +1,7 @@
+import { useSetAtom } from 'jotai';
 import { useCallback, type Dispatch, type SetStateAction } from 'react';
 import type { Product, ProductWithUI } from '../../types';
-import { productsAtom } from '../atoms/product';
+import { addProductAtom, productsAtom } from '../atoms/product';
 import { initialProducts } from '../constants';
 import * as productModel from '../models/product';
 import { useAtomWithLocalStorage } from '../utils/hooks/useLocalStorage';
@@ -9,7 +10,6 @@ import { useNotify } from './useNotification';
 interface UseProductsReturn {
   products: ProductWithUI[];
   setProducts: Dispatch<SetStateAction<Product[]>>;
-  addProduct: (params: { newProduct: Omit<ProductWithUI, 'id'> }) => void;
   updateProduct: (params: {
     productId: string;
     updates: Partial<ProductWithUI>;
@@ -28,23 +28,6 @@ export function useProducts(): UseProductsReturn {
   return {
     products,
     setProducts,
-
-    addProduct: useCallback(
-      (params) => {
-        const newProducts = productModel.addProduct({
-          id: `p${Date.now()}`,
-          newProduct: params.newProduct,
-          products,
-        });
-
-        setProducts(newProducts);
-        notify({
-          message: '상품이 추가되었습니다.',
-          type: 'success',
-        });
-      },
-      [setProducts, notify, products]
-    ),
 
     updateProduct: useCallback(
       ({ productId, updates }) => {
@@ -79,4 +62,28 @@ export function useProducts(): UseProductsReturn {
       [setProducts, notify, products]
     ),
   };
+}
+
+export function useAddProduct() {
+  const notify = useNotify();
+  const _addProduct = useSetAtom(addProductAtom);
+
+  const addProduct = ({
+    newProduct,
+  }: {
+    newProduct: Omit<ProductWithUI, 'id'>;
+  }) => {
+    const productWithId: ProductWithUI = {
+      ...newProduct,
+      id: `p${Date.now()}`,
+    };
+
+    _addProduct({ newProduct: productWithId });
+    notify({
+      message: '상품이 추가되었습니다.',
+      type: 'success',
+    });
+  };
+
+  return addProduct;
 }

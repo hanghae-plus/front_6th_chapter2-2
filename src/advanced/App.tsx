@@ -9,7 +9,7 @@ import { useProducts } from './hooks/useProducts';
 import { useDebounce } from './utils/hooks/useDebounce';
 
 const App = () => {
-  const { products, addProduct, updateProduct, deleteProduct } = useProducts();
+  const { products, updateProduct, deleteProduct } = useProducts();
   const { completeOrder } = useOrder();
 
   const [isAdmin, setIsAdmin] = useState(false);
@@ -34,7 +34,6 @@ const App = () => {
         {isAdmin ? (
           <AdminPage
             products={products}
-            addProduct={addProduct}
             deleteProduct={deleteProduct}
             updateProduct={updateProduct}
           />

@@ -37,20 +37,13 @@ export function formatPrice({ cart, product, formatter }: FormatPriceParams) {
 }
 
 interface AddProductParams {
-  id: string;
-  newProduct: Omit<ProductWithUI, 'id'>;
+  newProduct: ProductWithUI;
   products: ProductWithUI[];
 }
 
 // 상품 추가
-export function addProduct({ id, newProduct, products }: AddProductParams) {
-  return [
-    ...products,
-    {
-      ...newProduct,
-      id,
-    },
-  ];
+export function addProduct({ newProduct, products }: AddProductParams) {
+  return [...products, newProduct];
 }
 
 interface UpdateProductParams {
