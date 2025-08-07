@@ -48,8 +48,6 @@ const AppContent = () => {
       <Header
         isAdmin={isAdmin}
         searchTerm={searchTerm}
-        totalItemCount={totalItemCount}
-        cartItemCount={cart.length}
         onSearchChange={setSearchTerm}
         onToggleAdmin={() => setIsAdmin(!isAdmin)}
       />
@@ -58,31 +56,16 @@ const AppContent = () => {
         {isAdmin ? (
           <AdminPage
             // 상품 관련 props
-            products={products}
-            cart={cart}
             onDeleteProduct={deleteProduct}
             onAddProduct={addProduct}
             onUpdateProduct={updateProduct}
             addNotification={addNotification}
             // 쿠폰 관련 props
-            coupons={coupons}
             onDeleteCoupon={deleteCoupon}
             onAddCoupon={addCoupon}
           />
         ) : (
-          <ShopPage
-            products={filteredProducts}
-            cart={cart}
-            coupons={coupons}
-            selectedCoupon={selectedCoupon}
-            searchInfo={searchInfo}
-            onRemoveFromCart={removeFromCart}
-            onUpdateQuantity={(productId, quantity) => updateQuantity(productId, quantity, products)}
-            onApplyCoupon={applyCoupon}
-            onRemoveCoupon={() => setSelectedCoupon(null)}
-            onCompleteOrder={completeOrder}
-            onAddToCart={addToCart}
-          />
+          <ShopPage products={filteredProducts} searchInfo={searchInfo} onCompleteOrder={completeOrder} />
         )}
       </main>
     </div>
