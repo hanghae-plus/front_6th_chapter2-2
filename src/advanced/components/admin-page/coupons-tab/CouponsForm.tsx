@@ -72,11 +72,11 @@ export function CouponsForm({
           />
 
           <InputWithLabel
-            label={getDiscountLabel(discountType)}
-            value={getDisplayValue(discountValue)}
+            label={getDiscountLabel({ discountType })}
+            value={getDisplayValue({ value: discountValue })}
             onChange={handleDiscountValueChange}
             onBlur={handleDiscountValueBlur}
-            placeholder={getDiscountPlaceholder(discountType)}
+            placeholder={getDiscountPlaceholder({ discountType })}
             required
           />
         </div>

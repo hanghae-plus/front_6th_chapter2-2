@@ -1,6 +1,7 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react';
 import { useAddCoupon } from '../../../../hooks/useCoupons';
 import { useNotify } from '../../../../hooks/useNotification';
+import { useCouponFormValidation } from '../../../../utils/hooks/useValidate';
 
 export interface CouponForm {
   name: string;
@@ -12,6 +13,9 @@ export interface CouponForm {
 export function useCouponsForm() {
   const notify = useNotify();
   const addCoupon = useAddCoupon();
+  const { validateDiscountValue, validateCode, displayValues } =
+    useCouponFormValidation();
+
   const defaultValue: CouponForm = {
     name: '',
     code: '',
@@ -41,6 +45,7 @@ export function useCouponsForm() {
 
   const handleSubmitCouponForm = (e: FormEvent) => {
     e.preventDefault();
+
     addCoupon({
       newCoupon: couponForm,
     });
@@ -53,7 +58,7 @@ export function useCouponsForm() {
   };
 
   const handleCodeChange = (e: ChangeEvent<HTMLInputElement>) => {
-    updateCouponForm({ code: e.target.value.toUpperCase() });
+    updateCouponForm({ code: validateCode.normalizeCode(e.target.value) });
   };
 
   const handleDiscountTypeChange = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -64,9 +69,9 @@ export function useCouponsForm() {
 
   const handleDiscountValueChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (value === '' || /^\d+$/.test(value)) {
+    if (validateDiscountValue.validateDiscountInput(value)) {
       updateCouponForm({
-        discountValue: value === '' ? 0 : parseInt(value),
+        discountValue: validateDiscountValue.normalizeDiscountValue(value),
       });
     }
   };
@@ -75,38 +80,36 @@ export function useCouponsForm() {
     const value = parseInt(e.target.value) || 0;
     const { discountType } = couponForm;
 
-    if (discountType === 'percentage') {
-      if (value > 100) {
-        notify({
-          message: '할인율은 100%를 초과할 수 없습니다',
-          type: 'error',
-        });
-        updateCouponForm({ discountValue: 100 });
-      } else if (value < 0) {
-        updateCouponForm({ discountValue: 0 });
-      }
-    } else {
-      if (value > 100000) {
-        notify({
-          message: '할인 금액은 100,000원을 초과할 수 없습니다',
-          type: 'error',
-        });
-        updateCouponForm({ discountValue: 100000 });
-      } else if (value < 0) {
-        updateCouponForm({ discountValue: 0 });
-      }
+    const result = validateDiscountValue.normalizeDiscountValueWithLimits(
+      value,
+      discountType
+    );
+
+    updateCouponForm({ discountValue: result.normalizedValue });
+
+    if (result.errorMessage) {
+      notify({
+        message: result.errorMessage,
+        type: 'error',
+      });
     }
   };
 
   // 표시용 값들
-  const getDisplayValue = (value: number) =>
-    value === 0 ? '' : value.toString();
+  const getDisplayValue = ({ value }: { value: number }) =>
+    displayValues.getDisplayValue(value);
 
-  const getDiscountLabel = (discountType: 'amount' | 'percentage') =>
-    discountType === 'amount' ? '할인 금액' : '할인율(%)';
+  const getDiscountLabel = ({
+    discountType,
+  }: {
+    discountType: 'amount' | 'percentage';
+  }) => (discountType === 'amount' ? '할인 금액' : '할인율(%)');
 
-  const getDiscountPlaceholder = (discountType: 'amount' | 'percentage') =>
-    discountType === 'amount' ? '5000' : '10';
+  const getDiscountPlaceholder = ({
+    discountType,
+  }: {
+    discountType: 'amount' | 'percentage';
+  }) => (discountType === 'amount' ? '5000' : '10');
 
   return {
     showCouponForm,

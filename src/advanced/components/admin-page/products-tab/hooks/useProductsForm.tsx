@@ -2,6 +2,7 @@ import { useState, type ChangeEvent, type FormEvent } from 'react';
 import type { ProductWithUI } from '../../../../../types';
 import { useNotify } from '../../../../hooks/useNotification';
 import { useAddProduct, useUpdateProduct } from '../../../../hooks/useProducts';
+import { useProductFormValidation } from '../../../../utils/hooks/useValidate';
 
 export interface ProductForm {
   name: string;
@@ -15,6 +16,9 @@ export function useProductsForm() {
   const notify = useNotify();
   const addProduct = useAddProduct();
   const updateProduct = useUpdateProduct();
+  const { validatePrice, validateStock, validateRate, displayValues } =
+    useProductFormValidation();
+
   const defaultValue: ProductForm = {
     name: '',
     price: 0,
@@ -59,6 +63,7 @@ export function useProductsForm() {
 
   const handleSubmitProductForm = (e: FormEvent) => {
     e.preventDefault();
+
     if (editingProduct && editingProduct !== 'new') {
       updateProduct({
         productId: editingProduct,
@@ -87,9 +92,9 @@ export function useProductsForm() {
 
   const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (value === '' || /^\d+$/.test(value)) {
+    if (validatePrice.validatePriceInput(value)) {
       updateProductForm({
-        price: value === '' ? 0 : parseInt(value),
+        price: validatePrice.normalizePrice(value),
       });
     }
   };
@@ -98,20 +103,26 @@ export function useProductsForm() {
     const value = e.target.value;
     if (value === '') {
       updateProductForm({ price: 0 });
-    } else if (parseInt(value) < 0) {
-      notify({
-        message: '가격은 0보다 커야 합니다',
-        type: 'error',
-      });
-      updateProductForm({ price: 0 });
+    } else {
+      const normalizedPrice = validatePrice.normalizePrice(value);
+      const priceValidation =
+        validatePrice.validatePriceIndividual(normalizedPrice);
+
+      if (!priceValidation.isValid) {
+        notify({
+          message: priceValidation.errorMessage!,
+          type: 'error',
+        });
+        updateProductForm({ price: 0 });
+      }
     }
   };
 
   const handleStockChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (value === '' || /^\d+$/.test(value)) {
+    if (validateStock.validateStockInput(value)) {
       updateProductForm({
-        stock: value === '' ? 0 : parseInt(value),
+        stock: validateStock.normalizeStock(value),
       });
     }
   };
@@ -120,24 +131,25 @@ export function useProductsForm() {
     const value = e.target.value;
     if (value === '') {
       updateProductForm({ stock: 0 });
-    } else if (parseInt(value) < 0) {
-      notify({
-        message: '재고는 0보다 커야 합니다',
-        type: 'error',
-      });
-      updateProductForm({ stock: 0 });
-    } else if (parseInt(value) > 9999) {
-      notify({
-        message: '재고는 9999개를 초과할 수 없습니다',
-        type: 'error',
-      });
-      updateProductForm({ stock: 9999 });
+    } else {
+      const normalizedStock = validateStock.normalizeStock(value);
+      const stockValidation =
+        validateStock.validateStockIndividual(normalizedStock);
+
+      if (!stockValidation.isValid) {
+        notify({
+          message: stockValidation.errorMessage!,
+          type: 'error',
+        });
+        updateProductForm({ stock: stockValidation.correctedValue! });
+      }
     }
   };
 
   // 할인 관련 핸들러들
   const handleDiscountQuantityChange =
-    (index: number) => (e: ChangeEvent<HTMLInputElement>) => {
+    ({ index }: { index: number }) =>
+    (e: ChangeEvent<HTMLInputElement>) => {
       const newDiscounts = [...productForm.discounts];
       newDiscounts[index].quantity = parseInt(e.target.value) || 0;
       updateProductForm({
@@ -146,20 +158,23 @@ export function useProductsForm() {
     };
 
   const handleDiscountRateChange =
-    (index: number) => (e: ChangeEvent<HTMLInputElement>) => {
+    ({ index }: { index: number }) =>
+    (e: ChangeEvent<HTMLInputElement>) => {
       const newDiscounts = [...productForm.discounts];
-      newDiscounts[index].rate = (parseInt(e.target.value) || 0) / 100;
+      newDiscounts[index].rate = validateRate.normalizeRate(e.target.value);
       updateProductForm({
         discounts: newDiscounts,
       });
     };
 
-  const handleRemoveDiscount = (index: number) => () => {
-    const newDiscounts = productForm.discounts.filter((_, i) => i !== index);
-    updateProductForm({
-      discounts: newDiscounts,
-    });
-  };
+  const handleRemoveDiscount =
+    ({ index }: { index: number }) =>
+    () => {
+      const newDiscounts = productForm.discounts.filter((_, i) => i !== index);
+      updateProductForm({
+        discounts: newDiscounts,
+      });
+    };
 
   const handleAddDiscount = () => {
     updateProductForm({
@@ -168,9 +183,10 @@ export function useProductsForm() {
   };
 
   // 표시용 값들
-  const getDisplayValue = (value: number) =>
-    value === 0 ? '' : value.toString();
-  const getDiscountRateDisplay = (rate: number) => rate * 100;
+  const getDisplayValue = ({ value }: { value: number }) =>
+    displayValues.getDisplayValue(value);
+  const getDiscountRateDisplay = ({ rate }: { rate: number }) =>
+    displayValues.getDiscountRateDisplay(rate);
 
   return {
     showProductForm,

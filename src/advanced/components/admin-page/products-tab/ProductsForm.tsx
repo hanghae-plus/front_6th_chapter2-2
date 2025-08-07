@@ -80,7 +80,7 @@ export function ProductsForm({
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <InputWithLabel
             label="가격"
-            value={getDisplayValue(price)}
+            value={getDisplayValue({ value: price })}
             onChange={handlePriceChange}
             onBlur={handlePriceBlur}
             placeholder="숫자만 입력"
@@ -89,7 +89,7 @@ export function ProductsForm({
 
           <InputWithLabel
             label="재고"
-            value={getDisplayValue(stock)}
+            value={getDisplayValue({ value: stock })}
             onChange={handleStockChange}
             onBlur={handleStockBlur}
             placeholder="숫자만 입력"
@@ -113,7 +113,7 @@ export function ProductsForm({
                     text: '개 이상 구매 시',
                     min: '1',
                     value: discount.quantity,
-                    onChange: handleDiscountQuantityChange(index),
+                    onChange: handleDiscountQuantityChange({ index }),
                   },
                   {
                     key: 'discount',
@@ -121,8 +121,8 @@ export function ProductsForm({
                     text: '할인',
                     min: '0',
                     max: '100',
-                    value: getDiscountRateDisplay(discount.rate),
-                    onChange: handleDiscountRateChange(index),
+                    value: getDiscountRateDisplay({ rate: discount.rate }),
+                    onChange: handleDiscountRateChange({ index }),
                   },
                 ].map(({ key, text, ...inputOptions }) => {
                   return (
@@ -139,7 +139,7 @@ export function ProductsForm({
 
                 <button
                   type="button"
-                  onClick={handleRemoveDiscount(index)}
+                  onClick={handleRemoveDiscount({ index })}
                   className="text-red-600 hover:text-red-800"
                 >
                   {/* icon */}
