@@ -5,6 +5,8 @@ import { useCart } from './hooks/useCart';
 import { useProducts } from './hooks/useProducts';
 import { useCoupons } from './hooks/useCoupons';
 import { useDebounce } from './hooks/useDebounce';
+import ProductCard from './components/ProductCard';
+import CartItem from './components/CartItem';
 import { calculateCartTotal, calculateItemTotal } from './utils/cart';
 
 interface ProductWithUI extends Product {
