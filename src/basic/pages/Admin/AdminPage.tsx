@@ -1,13 +1,18 @@
+// components
 import ProductManagement from "../../components/admin/ProductManagement";
 import CouponManagement from "../../components/admin/CouponManagement";
 import { Tabs } from "../../components/ui/tabs";
-import { ADMIN_TABS } from "../../types/admin";
+
+// hooks
 import { useProductForm } from "../../hooks/useProductForm";
 import { useCouponForm } from "../../hooks/useCouponForm";
+
+// types
+import { ADMIN_TABS } from "../../types/admin";
 import type { Coupon, NotificationType } from "../../types/admin";
 import type { CartItem, Product } from "../../../types";
 interface AdminPageProps {
-  // 상품 관련 - 외부에서 받아야 하는 것들
+  // 상품 관련
   products: Product[];
   cart: CartItem[];
   onDeleteProduct: (productId: string) => void;

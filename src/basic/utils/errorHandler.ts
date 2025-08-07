@@ -1,7 +1,7 @@
 /**
  * 시도해서 성공하면 알림을 보내는 Higher Order Function
  */
-export const withTryNotifySuccess = <T extends any[], R>(
+export const withTryNotifySuccess = <T extends unknown[], R>(
   action: (...args: T) => R,
   successMessage: string,
   addNotification: (message: string, type: "success" | "error") => void
@@ -21,7 +21,7 @@ export const withTryNotifySuccess = <T extends any[], R>(
 /**
  * 비동기 함수용: 시도해서 성공하면 알림
  */
-export const withAsyncTryNotifySuccess = <T extends any[], R>(
+export const withAsyncTryNotifySuccess = <T extends unknown[], R>(
   action: (...args: T) => Promise<R>,
   successMessage: string,
   addNotification: (message: string, type: "success" | "error") => void
@@ -41,7 +41,7 @@ export const withAsyncTryNotifySuccess = <T extends any[], R>(
 /**
  * 시도해서 에러만 알림 (성공 알림 없음)
  */
-export const withTryNotifyError = <T extends any[], R>(
+export const withTryNotifyError = <T extends unknown[], R>(
   action: (...args: T) => R,
   addNotification: (message: string, type: "success" | "error") => void
 ) => {
