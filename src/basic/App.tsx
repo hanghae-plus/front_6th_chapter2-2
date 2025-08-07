@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect } from 'react';
-import { CartItem, Product } from '../types';
+import { useState, useEffect } from 'react';
+import { CartItem } from '../types';
 import { useNotification } from './hooks/useNotification';
 import { useProducts } from './hooks/useProducts';
 import { useCoupons } from './hooks/useCoupons';
@@ -7,17 +7,9 @@ import { useCart } from './hooks/useCart';
 import { useSearchTerm } from './hooks/useSearchTerm';
 import Header from './components/ui/layout/Header';
 import Notification from './components/ui/notification/Notification';
-import ProductList from './components/ui/product/ProductList';
 
-import { PlusIcon } from './components/icons';
-import { TabLayout } from './components/ui/layout/TabLayout';
-import CouponGrid from './components/ui/coupon/CouponCard';
-import CouponForm from './components/ui/coupon/CouponForm';
-import CouponSelector from './components/ui/coupon/CouponSelector';
-import ProductTab from './components/ui/product/ProductTab';
-import CartList from './components/ui/cart/CartList';
-import OrderSummary from './components/ui/cart/OrderSummary';
 import AdminPage from './components/AdminPage';
+import ShopPage from './components/ShopPage';
 
 const App = () => {
   const { notifications, addNotification, setNotifications } = useNotification();
@@ -30,7 +22,6 @@ const App = () => {
     addToCart,
     removeFromCart,
     updateQuantity,
-    applyCoupon,
     calculateCartTotal,
     getRemainingStock,
     clearCart,
@@ -38,8 +29,6 @@ const App = () => {
 
   const { searchTerm, handleSearchTerm, debouncedSearchTerm } = useSearchTerm();
   const [isAdmin, setIsAdmin] = useState(false);
-  const [showCouponForm, setShowCouponForm] = useState(false);
-  const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
 
   const getMaxApplicableDiscount = (item: CartItem): number => {
     const { discounts } = item.product;
@@ -74,18 +63,6 @@ const App = () => {
     setTotalItemCount(count);
   }, [cart]);
 
-  const completeOrder = useCallback(() => {
-    const orderNumber = `ORD-${Date.now()}`;
-    addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
-    clearCart();
-  }, [addNotification]);
-
-  const handleActiveTab = (value: 'products' | 'coupons') => {
-    setActiveTab(value);
-  };
-
-  const totals = calculateCartTotal();
-
   return (
     <div className='min-h-screen bg-gray-50'>
       <Notification notifications={notifications} setNotifications={setNotifications} />
@@ -113,41 +90,22 @@ const App = () => {
             addNotification={addNotification}
           />
         ) : (
-          <div className='grid grid-cols-1 lg:grid-cols-4 gap-6'>
-            <div className='lg:col-span-3'>
-              {/* 상품 목록 */}
-              <ProductList
-                products={products as Product[]}
-                getRemainingStock={getRemainingStock}
-                addToCart={addToCart}
-                debouncedSearchTerm={debouncedSearchTerm}
-              />
-            </div>
-
-            <div className='lg:col-span-1'>
-              <div className='sticky top-24 space-y-4'>
-                <CartList
-                  cart={cart}
-                  calculateItemTotal={calculateItemTotal}
-                  removeItemFromCart={removeFromCart}
-                  updateItemQuantity={updateQuantity}
-                />
-
-                {cart.length > 0 && (
-                  <>
-                    <CouponSelector
-                      coupons={coupons}
-                      selectedCoupon={selectedCoupon}
-                      setSelectedCoupon={setSelectedCoupon}
-                      applyCoupon={applyCoupon}
-                    />
-
-                    <OrderSummary cartTotalPrice={totals} completeOrder={completeOrder} />
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
+          <ShopPage
+            products={products}
+            getRemainingStock={getRemainingStock}
+            updateQuantity={updateQuantity}
+            addToCart={addToCart}
+            removeFromCart={removeFromCart}
+            cart={cart}
+            cartTotalPrice={calculateCartTotal()}
+            calculateItemTotal={calculateItemTotal}
+            clearCart={clearCart}
+            coupons={coupons}
+            selectedCoupon={selectedCoupon}
+            setSelectedCoupon={setSelectedCoupon}
+            debouncedSearchTerm={debouncedSearchTerm}
+            addNotification={addNotification}
+          />
         )}
       </main>
     </div>

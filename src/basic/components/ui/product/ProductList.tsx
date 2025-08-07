@@ -17,7 +17,7 @@ const ProductList = ({
   // 검색어 반영된 상품 목록
   const filteredProducts = debouncedSearchTerm
     ? products.filter(
-        (product: { name: string; description: string }) =>
+        (product: Product) =>
           product.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
           (product.description &&
             product.description.toLowerCase().includes(debouncedSearchTerm.toLowerCase())),
