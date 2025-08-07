@@ -13,6 +13,8 @@
     "test:advanced": "vitest src/advanced",
     "test:ui": "vitest --ui",
     "build": "tsc -b && vite build",
+    "build:gh-pages": "npm run build && cp dist/index.basic.html dist/basic.html && cp dist/index.advanced.html dist/advanced.html",
+    "deploy": "npm run build:gh-pages && gh-pages -d dist",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
