@@ -5,7 +5,7 @@ import { defineConfig as defineTestConfig, mergeConfig } from 'vitest/config';
 export default mergeConfig(
   defineConfig({
     plugins: [react()],
-    base: '/front_6th_chapter2-1/',
+    base: '/front_6th_chapter2-2/',
     build: {
       rollupOptions: {
         input: 'index.advanced.html',
