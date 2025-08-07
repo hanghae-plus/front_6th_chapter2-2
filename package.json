@@ -7,6 +7,7 @@
     "start:origin": "vite serve --open ./index.origin.html",
     "start:basic": "vite serve --open ./index.basic.html",
     "start:advanced": "vite serve --open ./index.advanced.html",
+    "deploy": "vite build && cp dist/index.advanced.html dist/index.html && gh-pages -d dist",
     "test": "vitest",
     "test:origin": "vitest src/origin",
     "test:basic": "vitest src/basic",
@@ -16,6 +17,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
+    "gh-pages": "^6.3.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
