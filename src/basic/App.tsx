@@ -10,11 +10,15 @@ import {
   calculateItemTotal,
 } from "../basic/models/cart";
 import { canApplyCoupon, validateCoupon } from "../basic/models/discount";
-
-interface ProductWithUI extends Product {
-  description?: string;
-  isRecommended?: boolean;
-}
+import {
+  formatPrice as _formatPrice,
+  addProduct as _addProduct,
+  updateProduct as _updateProduct,
+  deleteProduct as _deleteProduct,
+  filterProducts,
+  getMaxDiscountRate,
+  ProductWithUI,
+} from "../basic/models/product";
 
 interface Notification {
   id: string;
@@ -116,16 +120,13 @@ const App = () => {
   const formatPrice = (price: number, productId?: string): string => {
     if (productId) {
       const product = products.find((p) => p.id === productId);
-      if (product && getRemainingStock(cart, product) <= 0) {
-        return "SOLD OUT";
+      if (product) {
+        const isSoldOut = getRemainingStock(cart, product) <= 0;
+        return _formatPrice(price, isAdmin, isSoldOut);
       }
     }
 
-    if (isAdmin) {
-      return `${price.toLocaleString()}원`;
-    }
-
-    return `₩${price.toLocaleString()}`;
+    return _formatPrice(price, isAdmin);
   };
 
   const addNotification = useCallback(
@@ -212,11 +213,7 @@ const App = () => {
 
   const addProduct = useCallback(
     (newProduct: Omit<ProductWithUI, "id">) => {
-      const product: ProductWithUI = {
-        ...newProduct,
-        id: `p${Date.now()}`,
-      };
-      setProducts((prev) => [...prev, product]);
+      setProducts((prev) => _addProduct(prev, newProduct));
       addNotification("상품이 추가되었습니다.", "success");
     },
     [addNotification]
@@ -224,11 +221,7 @@ const App = () => {
 
   const updateProduct = useCallback(
     (productId: string, updates: Partial<ProductWithUI>) => {
-      setProducts((prev) =>
-        prev.map((product) =>
-          product.id === productId ? { ...product, ...updates } : product
-        )
-      );
+      setProducts((prev) => _updateProduct(prev, productId, updates));
       addNotification("상품이 수정되었습니다.", "success");
     },
     [addNotification]
@@ -236,7 +229,7 @@ const App = () => {
 
   const deleteProduct = useCallback(
     (productId: string) => {
-      setProducts((prev) => prev.filter((p) => p.id !== productId));
+      setProducts((prev) => _deleteProduct(prev, productId));
       addNotification("상품이 삭제되었습니다.", "success");
     },
     [addNotification]
@@ -314,18 +307,7 @@ const App = () => {
 
   const totals = calculateCartTotal(cart, selectedCoupon);
 
-  const filteredProducts = debouncedSearchTerm
-    ? products.filter(
-        (product) =>
-          product.name
-            .toLowerCase()
-            .includes(debouncedSearchTerm.toLowerCase()) ||
-          (product.description &&
-            product.description
-              .toLowerCase()
-              .includes(debouncedSearchTerm.toLowerCase()))
-      )
-    : products;
+  const filteredProducts = filterProducts(products, debouncedSearchTerm);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -1050,11 +1032,7 @@ const App = () => {
                             )}
                             {product.discounts.length > 0 && (
                               <span className="absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded">
-                                ~
-                                {Math.max(
-                                  ...product.discounts.map((d) => d.rate)
-                                ) * 100}
-                                %
+                                ~{getMaxDiscountRate(product) * 100}%
                               </span>
                             )}
                           </div>
