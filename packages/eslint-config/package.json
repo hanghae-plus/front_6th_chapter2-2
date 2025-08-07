@@ -1,0 +1,37 @@
+{
+  "name": "@clean-code/eslint",
+  "version": "1.0.0",
+  "description": "ESLint configurations for clean code projects",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./eslint.config.js",
+    "./js": "./js.config.js",
+    "./ts": "./ts.config.js",
+    "./react": "./react.config.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "eslint",
+    "config",
+    "clean-code"
+  ],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.13.1",
+  "dependencies": {
+    "@eslint/js": "^9.32.0",
+    "@typescript-eslint/eslint-plugin": "^8.38.0",
+    "@typescript-eslint/parser": "^8.38.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.3.0"
+  },
+  "peerDependencies": {
+    "eslint": "^9.0.0"
+  }
+}
