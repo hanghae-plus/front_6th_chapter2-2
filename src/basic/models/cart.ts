@@ -18,6 +18,7 @@
 import { CartItem, Coupon, Product } from '../../types.ts';
 import { ProductWithUI } from '../constants';
 
+// 개별 아이템의 할인 적용 후 총액 계산
 export const calculateItemTotal = (item: CartItem, cart: CartItem[]): number => {
   const { price } = item.product;
   const { quantity } = item;
@@ -26,6 +27,7 @@ export const calculateItemTotal = (item: CartItem, cart: CartItem[]): number => 
   return Math.round(price * quantity * (1 - discount));
 };
 
+// 적용 가능한 최대 할인율 계산
 export const getMaxApplicableDiscount = (item: CartItem, cart: CartItem[]): number => {
   const { discounts } = item.product;
   const { quantity } = item;
@@ -42,6 +44,7 @@ export const getMaxApplicableDiscount = (item: CartItem, cart: CartItem[]): numb
   return baseDiscount;
 };
 
+// 장바구니 총액 계산 (할인 전/후, 할인액)
 export const calculateCartTotal = (
   cart: CartItem[],
   selectedCoupon: Coupon | null
@@ -72,6 +75,7 @@ export const calculateCartTotal = (
   };
 };
 
+// 남은 재고 계산
 export const getRemainingStock = (product: Product, cart: CartItem[]): number => {
   const cartItem = cart.find((item) => item.product.id === product.id);
   const remaining = product.stock - (cartItem?.quantity || 0);
@@ -79,32 +83,22 @@ export const getRemainingStock = (product: Product, cart: CartItem[]): number =>
   return remaining;
 };
 
-export const updateCartItemQuantity = (
-  cart: CartItem[],
-  productId: string,
-  quantity: number,
+// 상품 추가
+export const addItemToCart = (product: ProductWithUI, cart: CartItem[]) => {
+  return [...cart, { product, quantity: 1 }];
+};
 
-): CartItem[] => {
-  if (quantity <= 0) {
-    return removeItemFromCart(productId, cart);
-  }
+// 수량 변경
+export const updateCartItemQuantity = (cart: CartItem[], productId: string, quantity: number): CartItem[] => {
   return cart.map((item) => (item.product.id === productId ? { ...item, quantity: quantity } : item));
 };
 
+// 상품 제거
 export const removeItemFromCart = (productId: string, cart: CartItem[]) => {
   return cart.filter((item) => item.product.id !== productId);
 };
 
-export const addItemToCart = (product: ProductWithUI, cart: CartItem[]) => {
-  const existingItem = cart.find((item) => item.product.id === product.id);
-
-  if (existingItem) {
-    return cart.map((item) =>
-      item.product.id === product.id
-        ? { ...item, quantity: item.quantity + 1 }
-        : item
-    );
-  }
-
-  return [...cart, { product, quantity: 1 }];
+// 장바구니 비우기 (추가)
+export const clearCart = () => {
+  return [];
 };
