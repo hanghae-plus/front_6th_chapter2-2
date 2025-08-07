@@ -1,37 +1,21 @@
-import { throwNotificationError } from "../../../notification/utils/notificationError.util";
-
 import { useState } from "react";
 
 import AdminSection from "@/advanced/features/admin/components/AdminSection";
-import { useCart } from "@/advanced/features/cart/hooks/useCart";
 import { useCoupon } from "@/advanced/features/coupon/hooks/useCoupon";
 import { Coupon } from "@/advanced/features/coupon/types/coupon.type";
 import { DiscountType } from "@/advanced/features/discount/types/discount.type";
+import { throwNotificationError } from "@/advanced/features/notification/utils/notificationError.util";
 import Icon from "@/advanced/shared/components/icons/Icon";
 import { DEFAULTS } from "@/advanced/shared/constants/defaults";
 import { VALIDATION } from "@/advanced/shared/constants/validation";
 import { formatPrice } from "@/advanced/shared/utils";
 import { regexUtils } from "@/advanced/shared/utils/regex.util";
 
-interface CouponAdminProps {
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
-}
-
-export default function CouponAdmin({
-  selectedCoupon,
-  setSelectedCoupon,
-}: CouponAdminProps) {
+export default function CouponAdmin() {
   const [couponForm, setCouponForm] = useState(DEFAULTS.COUPON_FORM);
   const [showCouponForm, setShowCouponForm] = useState(false);
-  const { resetCoupon } = useCart({
-    selectedCoupon,
-    setSelectedCoupon,
-  });
-  const { coupons, addCoupon, deleteCoupon } = useCoupon({
-    resetCoupon,
-    selectedCoupon,
-  });
+
+  const { coupons, addCoupon, deleteCoupon } = useCoupon();
 
   const handleCouponSubmit = (e: React.FormEvent) => {
     e.preventDefault();

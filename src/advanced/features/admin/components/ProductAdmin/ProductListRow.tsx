@@ -1,5 +1,4 @@
 import { useCart } from "@/advanced/features/cart/hooks/useCart";
-import { Coupon } from "@/advanced/features/coupon/types/coupon.type";
 import { throwNotificationError } from "@/advanced/features/notification/utils/notificationError.util";
 import { useProducts } from "@/advanced/features/product/hooks/useProducts";
 import { productModel } from "@/advanced/features/product/models/product.model";
@@ -8,8 +7,6 @@ import { DEFAULTS } from "@/advanced/shared/constants/defaults";
 
 interface ProductListRowProps {
   product: ProductWithUI;
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
   setEditingProduct: (productId: string | null) => void;
   setProductForm: (productForm: typeof DEFAULTS.PRODUCT_FORM) => void;
   setShowProductForm: (showProductForm: boolean) => void;
@@ -17,17 +14,12 @@ interface ProductListRowProps {
 
 export default function ProductListRow({
   product,
-  selectedCoupon,
-  setSelectedCoupon,
   setEditingProduct,
   setProductForm,
   setShowProductForm,
 }: ProductListRowProps) {
   const { products, deleteProduct } = useProducts();
-  const { cart } = useCart({
-    selectedCoupon,
-    setSelectedCoupon,
-  });
+  const { cart } = useCart();
 
   const startEditProduct = (product: ProductWithUI) => {
     setEditingProduct(product.id);

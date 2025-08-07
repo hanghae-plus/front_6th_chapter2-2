@@ -1,17 +1,17 @@
 import { useAtomValue, useSetAtom } from "jotai";
 
-import {
-  addProductAtom,
-  deleteProductAtom,
-  productsAtom,
-  updateProductAtom,
-} from "@/advanced/features/product/atoms/products.atom";
+import productsAtom from "@/advanced/features/product/atoms/products.atom";
 
 export function useProducts() {
+  const products = useAtomValue(productsAtom.products);
+  const addProduct = useSetAtom(productsAtom.addProduct);
+  const updateProduct = useSetAtom(productsAtom.updateProduct);
+  const deleteProduct = useSetAtom(productsAtom.deleteProduct);
+
   return {
-    products: useAtomValue(productsAtom),
-    addProduct: useSetAtom(addProductAtom),
-    updateProduct: useSetAtom(updateProductAtom),
-    deleteProduct: useSetAtom(deleteProductAtom),
+    products,
+    addProduct,
+    updateProduct,
+    deleteProduct,
   };
 }

@@ -1,26 +1,16 @@
 import { useCart } from "@/advanced/features/cart/hooks/useCart";
 import { cartModel } from "@/advanced/features/cart/models/cart.model";
 import { CartItem as CartItemType } from "@/advanced/features/cart/types/cart.type";
-import { Coupon } from "@/advanced/features/coupon/types/coupon.type";
 import Icon from "@/advanced/shared/components/icons/Icon";
 import { roundAmount } from "@/advanced/shared/utils/calculation.util";
 import { formatPrice } from "@/advanced/shared/utils/format.util";
 
 interface CartItemProps {
   item: CartItemType;
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
 }
 
-export default function CartItem({
-  item,
-  selectedCoupon,
-  setSelectedCoupon,
-}: CartItemProps) {
-  const { removeFromCart, updateQuantity, cart } = useCart({
-    selectedCoupon,
-    setSelectedCoupon,
-  });
+export default function CartItem({ item }: CartItemProps) {
+  const { removeFromCart, updateQuantity, cart } = useCart();
 
   const handleClickDecrease = (productId: string, newQuantity: number) => {
     updateQuantity(productId, newQuantity);

@@ -28,20 +28,26 @@ export default function ProductForm({
     e.preventDefault();
 
     if (editingProduct && editingProduct !== "new") {
-      updateProduct(editingProduct, productForm);
+      updateProduct({ id: editingProduct, updates: productForm });
       setEditingProduct(null);
 
+      setProductForm(DEFAULTS.PRODUCT_FORM);
+      setEditingProduct(null);
+      setShowProductForm(false);
+
       throwNotificationError.success("상품이 수정되었습니다.");
-    } else {
-      addProduct({
-        ...productForm,
-        discounts: productForm.discounts,
-      });
+      return;
     }
+    addProduct({
+      ...productForm,
+      discounts: productForm.discounts,
+    });
 
     setProductForm(DEFAULTS.PRODUCT_FORM);
     setEditingProduct(null);
     setShowProductForm(false);
+
+    throwNotificationError.success("상품이 추가되었습니다.");
   };
 
   const handleChangeProductName = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -1,21 +1,9 @@
 import CartItem from "@/advanced/features/cart/components/CartItem";
 import { useCart } from "@/advanced/features/cart/hooks/useCart";
-import { Coupon } from "@/advanced/features/coupon/types/coupon.type";
 import Icon from "@/advanced/shared/components/icons/Icon";
 
-interface CartDetailProps {
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
-}
-
-export default function CartDetail({
-  selectedCoupon,
-  setSelectedCoupon,
-}: CartDetailProps) {
-  const { cart } = useCart({
-    selectedCoupon,
-    setSelectedCoupon,
-  });
+export default function CartDetail() {
+  const { cart } = useCart();
 
   const isEmptyCart = cart.length === 0;
 
@@ -35,12 +23,7 @@ export default function CartDetail({
       ) : (
         <div className="space-y-3">
           {cart.map((item) => (
-            <CartItem
-              key={item.product.id}
-              item={item}
-              selectedCoupon={selectedCoupon}
-              setSelectedCoupon={setSelectedCoupon}
-            />
+            <CartItem key={item.product.id} item={item} />
           ))}
         </div>
       )}

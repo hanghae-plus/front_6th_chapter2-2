@@ -1,23 +1,13 @@
-import ProductForm from "./ProductForm";
-
 import { useState } from "react";
 
 import AdminSection from "@/advanced/features/admin/components/AdminSection";
+import ProductForm from "@/advanced/features/admin/components/ProductAdmin/ProductForm";
 import ProductListRow from "@/advanced/features/admin/components/ProductAdmin/ProductListRow";
-import { Coupon } from "@/advanced/features/coupon/types/coupon.type";
 import { useProducts } from "@/advanced/features/product/hooks/useProducts";
 import { ProductWithUI } from "@/advanced/features/product/types/product";
 import { DEFAULTS } from "@/advanced/shared/constants/defaults";
 
-interface ProductAdminProps {
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
-}
-
-export default function ProductAdmin({
-  selectedCoupon,
-  setSelectedCoupon,
-}: ProductAdminProps) {
+export default function ProductAdmin() {
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [productForm, setProductForm] = useState(DEFAULTS.PRODUCT_FORM);
   const [showProductForm, setShowProductForm] = useState(false);
@@ -70,8 +60,6 @@ export default function ProductAdmin({
               <ProductListRow
                 key={product.id}
                 product={product}
-                selectedCoupon={selectedCoupon}
-                setSelectedCoupon={setSelectedCoupon}
                 setEditingProduct={setEditingProduct}
                 setProductForm={setProductForm}
                 setShowProductForm={setShowProductForm}

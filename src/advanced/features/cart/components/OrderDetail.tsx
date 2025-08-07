@@ -2,22 +2,12 @@ import { useCallback } from "react";
 
 import { useCart } from "@/advanced/features/cart/hooks/useCart";
 import { cartModel } from "@/advanced/features/cart/models/cart.model";
-import { Coupon } from "@/advanced/features/coupon/types/coupon.type";
+import { useCoupon } from "@/advanced/features/coupon/hooks/useCoupon";
 import { throwNotificationError } from "@/advanced/features/notification/utils/notificationError.util";
 
-interface OrderDetailProps {
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
-}
-
-export default function OrderDetail({
-  selectedCoupon,
-  setSelectedCoupon,
-}: OrderDetailProps) {
-  const { clearCart, resetCoupon, cart } = useCart({
-    selectedCoupon,
-    setSelectedCoupon,
-  });
+export default function OrderDetail() {
+  const { clearCart, cart } = useCart();
+  const { resetCoupon, selectedCoupon } = useCoupon();
 
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;

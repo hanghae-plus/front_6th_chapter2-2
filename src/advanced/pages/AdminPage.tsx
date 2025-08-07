@@ -1,20 +1,13 @@
 import AdminTabs from "@/advanced/features/admin/components/AdminTabs";
-import { Coupon } from "@/advanced/features/coupon/types/coupon.type";
 import Header from "@/advanced/shared/components/layout/Header";
 import MainLayout from "@/advanced/shared/components/layout/MainLayout";
 import PageLayout from "@/advanced/shared/components/layout/PageLayout";
 
 interface AdminPageProps {
   setIsAdmin: (isAdmin: boolean) => void;
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
 }
 
-export default function AdminPage({
-  setIsAdmin,
-  selectedCoupon,
-  setSelectedCoupon,
-}: AdminPageProps) {
+export default function AdminPage({ setIsAdmin }: AdminPageProps) {
   return (
     <PageLayout>
       <Header.Admin setIsAdmin={setIsAdmin} />
@@ -30,10 +23,7 @@ export default function AdminPage({
             </p>
           </div>
 
-          <AdminTabs
-            selectedCoupon={selectedCoupon}
-            setSelectedCoupon={setSelectedCoupon}
-          />
+          <AdminTabs />
         </div>
       </MainLayout>
     </PageLayout>

@@ -2,23 +2,9 @@ import { useCart } from "@/advanced/features/cart/hooks/useCart";
 import { useCoupon } from "@/advanced/features/coupon/hooks/useCoupon";
 import { Coupon } from "@/advanced/features/coupon/types/coupon.type";
 
-interface CouponDetailProps {
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
-}
-
-export default function CouponDetail({
-  selectedCoupon,
-  setSelectedCoupon,
-}: CouponDetailProps) {
-  const { applyCoupon, resetCoupon } = useCart({
-    selectedCoupon,
-    setSelectedCoupon,
-  });
-  const { coupons } = useCoupon({
-    resetCoupon,
-    selectedCoupon,
-  });
+export default function CouponDetail() {
+  const { applyCoupon } = useCart();
+  const { coupons, selectedCoupon, resetCoupon } = useCoupon();
 
   return (
     <section className="bg-white rounded-lg border border-gray-200 p-4">

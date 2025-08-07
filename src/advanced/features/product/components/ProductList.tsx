@@ -1,4 +1,3 @@
-import { Coupon } from "@/advanced/features/coupon/types/coupon.type";
 import ProductCard from "@/advanced/features/product/components/ProductCard";
 import { useProducts } from "@/advanced/features/product/hooks/useProducts";
 import { productModel } from "@/advanced/features/product/models/product.model";
@@ -6,15 +5,9 @@ import { ProductWithUI } from "@/advanced/features/product/types/product";
 
 interface ProductListProps {
   searchTerm: string;
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
 }
 
-export default function ProductList({
-  searchTerm,
-  selectedCoupon,
-  setSelectedCoupon,
-}: ProductListProps) {
+export default function ProductList({ searchTerm }: ProductListProps) {
   const { products } = useProducts();
 
   const filteredProducts = productModel.searchProducts(products, searchTerm);
@@ -38,12 +31,7 @@ export default function ProductList({
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredProducts.map((product: ProductWithUI) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              selectedCoupon={selectedCoupon}
-              setSelectedCoupon={setSelectedCoupon}
-            />
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       )}

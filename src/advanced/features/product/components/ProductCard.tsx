@@ -2,7 +2,6 @@ import { useCallback } from "react";
 
 import { useCart } from "@/advanced/features/cart/hooks/useCart";
 import { cartModel } from "@/advanced/features/cart/models/cart.model";
-import { Coupon } from "@/advanced/features/coupon/types/coupon.type";
 import { discountModel } from "@/advanced/features/discount/models/discount.model";
 import { Discount } from "@/advanced/features/discount/types/discount.type";
 import { useProducts } from "@/advanced/features/product/hooks/useProducts";
@@ -13,20 +12,11 @@ import { PRODUCT } from "@/advanced/shared/constants/product";
 
 interface ProductCardProps {
   product: ProductWithUI;
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
 }
 
-export default function ProductCard({
-  product,
-  selectedCoupon,
-  setSelectedCoupon,
-}: ProductCardProps) {
+export default function ProductCard({ product }: ProductCardProps) {
   const { products } = useProducts();
-  const { cart, addToCart } = useCart({
-    selectedCoupon,
-    setSelectedCoupon,
-  });
+  const { cart, addToCart } = useCart();
 
   const handleClickAddToCart = useCallback(() => {
     addToCart(product);
