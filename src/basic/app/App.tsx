@@ -17,14 +17,9 @@ import {
   type ProductWithUI,
   useProductActions
 } from "../domains/product";
+import { NotificationList, useNotifications } from "../shared";
 import { Header } from "./components";
 import { AdminPage, CartPage } from "./pages";
-
-interface Notification {
-  id: string;
-  message: string;
-  type: "error" | "success" | "warning";
-}
 
 export function App() {
   const [products, setProducts] = useState<ProductWithUI[]>(() => {
@@ -65,7 +60,6 @@ export function App() {
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [activeTab, setActiveTab] = useState<"products" | "coupons">("products");
   const [showProductForm, setShowProductForm] = useState(false);
@@ -89,23 +83,14 @@ export function App() {
     discountValue: 0
   });
 
+  // Notification management
+  const { notifications, addNotification, removeNotification } = useNotifications();
+
   const formatPriceWithContext = useCallback(
     (price: number, productId?: string) => {
       return formatPrice(price, productId, products, cart, isAdmin);
     },
     [products, cart, isAdmin]
-  );
-
-  const addNotification = useCallback(
-    (message: string, type: "error" | "success" | "warning" = "success") => {
-      const id = Date.now().toString();
-      setNotifications((prev) => [...prev, { id, message, type }]);
-
-      setTimeout(() => {
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
-      }, 3000);
-    },
-    []
   );
 
   const [totalItemCount, setTotalItemCount] = useState(0);
@@ -267,37 +252,7 @@ export function App() {
         )}
       </main>
 
-      {notifications.length > 0 && (
-        <div className="fixed right-4 top-20 z-50 max-w-sm space-y-2">
-          {notifications.map((notif) => (
-            <div
-              key={notif.id}
-              className={`flex items-center justify-between rounded-md p-4 text-white shadow-md ${
-                notif.type === "error"
-                  ? "bg-red-600"
-                  : notif.type === "warning"
-                    ? "bg-yellow-600"
-                    : "bg-green-600"
-              }`}
-            >
-              <span className="mr-2">{notif.message}</span>
-              <button
-                onClick={() => setNotifications((prev) => prev.filter((n) => n.id !== notif.id))}
-                className="text-white hover:text-gray-200"
-              >
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
+      <NotificationList notifications={notifications} onRemove={removeNotification} />
     </div>
   );
 }
