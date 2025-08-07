@@ -18,3 +18,25 @@ export const addProductAtom = atom(
     set(productsAtom, newProducts);
   }
 );
+
+export const updateProductAtom = atom(
+  null,
+  (
+    get,
+    set,
+    {
+      productId,
+      updates,
+    }: { productId: string; updates: Partial<ProductWithUI> }
+  ) => {
+    const products = get(productsAtom);
+
+    const newProducts = productModel.updateProduct({
+      productId,
+      updates,
+      products,
+    });
+
+    set(productsAtom, newProducts);
+  }
+);

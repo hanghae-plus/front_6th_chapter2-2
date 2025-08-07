@@ -1,7 +1,11 @@
 import { useSetAtom } from 'jotai';
 import { useCallback, type Dispatch, type SetStateAction } from 'react';
 import type { Product, ProductWithUI } from '../../types';
-import { addProductAtom, productsAtom } from '../atoms/product';
+import {
+  addProductAtom,
+  productsAtom,
+  updateProductAtom,
+} from '../atoms/product';
 import { initialProducts } from '../constants';
 import * as productModel from '../models/product';
 import { useAtomWithLocalStorage } from '../utils/hooks/useLocalStorage';
@@ -10,10 +14,6 @@ import { useNotify } from './useNotification';
 interface UseProductsReturn {
   products: ProductWithUI[];
   setProducts: Dispatch<SetStateAction<Product[]>>;
-  updateProduct: (params: {
-    productId: string;
-    updates: Partial<ProductWithUI>;
-  }) => void;
   deleteProduct: (params: { productId: string }) => void;
 }
 
@@ -28,23 +28,6 @@ export function useProducts(): UseProductsReturn {
   return {
     products,
     setProducts,
-
-    updateProduct: useCallback(
-      ({ productId, updates }) => {
-        const newProducts = productModel.updateProduct({
-          productId,
-          updates,
-          products,
-        });
-
-        setProducts(newProducts);
-        notify({
-          message: '상품이 수정되었습니다.',
-          type: 'success',
-        });
-      },
-      [setProducts, notify, products]
-    ),
 
     deleteProduct: useCallback(
       ({ productId }) => {
@@ -86,4 +69,25 @@ export function useAddProduct() {
   };
 
   return addProduct;
+}
+
+export function useUpdateProduct() {
+  const notify = useNotify();
+  const _updateProduct = useSetAtom(updateProductAtom);
+
+  const updateProduct = ({
+    productId,
+    updates,
+  }: {
+    productId: string;
+    updates: Partial<ProductWithUI>;
+  }) => {
+    _updateProduct({ productId, updates });
+    notify({
+      message: '상품이 수정되었습니다.',
+      type: 'success',
+    });
+  };
+
+  return updateProduct;
 }

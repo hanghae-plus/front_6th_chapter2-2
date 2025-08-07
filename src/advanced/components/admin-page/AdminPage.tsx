@@ -22,7 +22,7 @@ import {
   useCoupons,
   useDeleteCoupon,
 } from '../../hooks/useCoupons';
-import { useAddProduct } from '../../hooks/useProducts';
+import { useAddProduct, useUpdateProduct } from '../../hooks/useProducts';
 import { AdminTabs, type AdminTab } from './AdminTabs';
 import { CouponsTab } from './coupons-tab/CouponsTab';
 import { ProductsTab } from './products-tab/ProductsTab';
@@ -32,18 +32,15 @@ import { PageTitle } from './ui/PageTItle';
 interface Props {
   products: ProductWithUI[];
   deleteProduct: (params: { productId: string }) => void;
-  updateProduct: (params: {
-    productId: string;
-    updates: Partial<ProductWithUI>;
-  }) => void;
 }
 
-export function AdminPage({ products, deleteProduct, updateProduct }: Props) {
+export function AdminPage({ products, deleteProduct }: Props) {
   const [activeTab, setActiveTab] = useState<AdminTab>('products');
   const addCoupon = useAddCoupon();
   const deleteCoupon = useDeleteCoupon();
   const coupons = useCoupons();
   const addProduct = useAddProduct();
+  const updateProduct = useUpdateProduct();
 
   const tabContent: Record<AdminTab, ReactNode> = {
     coupons: (
