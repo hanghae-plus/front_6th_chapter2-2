@@ -1,3 +1,2 @@
-export { useCouponService } from './model/useCouponService';
-export { useCouponForm } from './ui/useCouponForm';
-export { useSelectedCoupon } from './ui/useSelectedCoupon';
+export { useAdminCouponService } from './model/useAdminCouponService';
+export { useCouponFormVisibility } from './ui/useCouponFormVisibility';

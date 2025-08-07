@@ -1,25 +1,34 @@
 import { useSetAtom } from 'jotai';
 
+import { initialCouponForm } from '../../../basic/constants';
 import type { Coupon } from '../../../types';
 import { addNotificationAtom } from '../../entities/notification';
-import { isEmptyValue, isNumber } from '../../shared/lib';
+import { useForm } from '../../shared/hooks';
+import { isEmptyValue, isNumber, isValidCouponCode } from '../../shared/lib';
 
 interface CouponFormProps {
-  isOpen: boolean;
-  form: Coupon;
-  updateForm: (updates: Partial<Coupon>) => void;
-  onSubmit: (e: React.FormEvent) => void;
+  onSubmit: (form: Coupon) => void;
   onCancel: () => void;
 }
 
-export function CouponForm({ isOpen, form, updateForm, onSubmit, onCancel }: CouponFormProps) {
+export function CouponForm({ onSubmit, onCancel }: CouponFormProps) {
+  const [form, updateForm] = useForm<Coupon>(initialCouponForm);
   const addNotification = useSetAtom(addNotificationAtom);
 
-  if (!isOpen) return null;
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!isValidCouponCode(form.code)) {
+      addNotification('쿠폰 코드는 4-12자 영문 대문자와 숫자만 사용할 수 있습니다.', 'error');
+      return;
+    }
+
+    onSubmit(form);
+  };
 
   return (
     <div className='mt-6 p-4 bg-gray-50 rounded-lg'>
-      <form onSubmit={onSubmit} className='space-y-4'>
+      <form onSubmit={handleSubmit} className='space-y-4'>
         <h3 className='text-md font-medium text-gray-900'>새 쿠폰 생성</h3>
         <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4'>
           <div>
@@ -67,7 +76,9 @@ export function CouponForm({ isOpen, form, updateForm, onSubmit, onCancel }: Cou
               onChange={(e) => {
                 const { value } = e.target;
                 if (isEmptyValue(value) || isNumber(value)) {
-                  updateForm({ discountValue: isEmptyValue(value) ? 0 : parseInt(value) });
+                  updateForm({
+                    discountValue: isEmptyValue(value) ? 0 : parseInt(value),
+                  });
                 }
               }}
               onBlur={(e) => {

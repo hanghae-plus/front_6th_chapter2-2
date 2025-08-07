@@ -6,7 +6,7 @@ import { PaymentSummary } from '../../../components/ui/PaymentSummary';
 import { ProductList } from '../../../components/ui/ProductList';
 import { calculateCartTotal } from '../../../entities/cart';
 import { productsAtom } from '../../../entities/product';
-import { useCouponService } from '../../../features/coupon-management';
+import { useCouponApplyService } from '../../../features/cart-coupon';
 import { useDebouncedSearch } from '../../../features/search';
 import { useCartService } from '../../../hooks/useCartService';
 import { Icon } from '../../../shared/icon';
@@ -19,7 +19,7 @@ interface CartPageProps {
 export function CartPage({ onChangeAdminPage }: CartPageProps) {
   const products = useAtomValue(productsAtom);
 
-  const { selectedCoupon, onApplyCoupon } = useCouponService();
+  const { selectedCoupon, onApplyCoupon } = useCouponApplyService();
   const { cart, handleAddToCart, updateQuantity, removeFromCart, completeOrder } = useCartService({
     products,
   });

@@ -10,7 +10,7 @@ import {
 } from '../entities/cart';
 import { addNotificationAtom } from '../entities/notification';
 import { getRemainingStock, type ProductWithUI } from '../entities/product';
-import { useSelectedCoupon } from '../features/coupon-management';
+import { useSelectedCoupon } from '../features/cart-coupon';
 
 interface UseCartServiceProps {
   products: ProductWithUI[];
@@ -24,7 +24,7 @@ export function useCartService({ products }: UseCartServiceProps) {
   const resetCart = useSetAtom(resetCartAtom);
   const addNotification = useSetAtom(addNotificationAtom);
 
-  const { resetSelectedCoupon } = useSelectedCoupon();
+  const { selectedCoupon, resetSelectedCoupon } = useSelectedCoupon();
 
   const handleAddToCart = useCallback(
     (product: ProductWithUI) => {
@@ -77,16 +77,15 @@ export function useCartService({ products }: UseCartServiceProps) {
 
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
+
+    if (selectedCoupon) {
+      addNotification('쿠폰이 적용되었습니다.', 'success');
+    }
+
     addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
     resetCart();
     resetSelectedCoupon();
-  }, [addNotification, resetCart, resetSelectedCoupon]);
+  }, [selectedCoupon, addNotification, resetCart, resetSelectedCoupon]);
 
-  return {
-    cart,
-    handleAddToCart,
-    updateQuantity,
-    removeFromCart,
-    completeOrder,
-  };
+  return { cart, handleAddToCart, updateQuantity, removeFromCart, completeOrder };
 }

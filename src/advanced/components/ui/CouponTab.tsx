@@ -1,19 +1,17 @@
 import { CouponAddButton } from './CouponAddButton';
 import { CouponForm } from './CouponForm';
 import { CouponList } from './CouponList';
-import { useCouponForm, useCouponService } from '../../features/coupon-management';
+import { Coupon } from '../../../types';
+import { useCouponFormVisibility, useAdminCouponService } from '../../features/coupon-management';
 
 export function CouponTab() {
-  const { onAddCoupon, onDeleteCoupon } = useCouponService();
+  const { onAddCoupon, onDeleteCoupon } = useAdminCouponService();
+  const { isVisible, handleShowCouponForm, handleHideCouponForm } = useCouponFormVisibility();
 
-  const {
-    showCouponForm,
-    couponFormData,
-    updateCouponFormData,
-    handleCouponSubmit,
-    handleShowCouponForm,
-    handleHideCouponForm,
-  } = useCouponForm({ onAddCoupon });
+  const onCouponSubmit = (form: Coupon) => {
+    onAddCoupon(form);
+    handleHideCouponForm();
+  };
 
   return (
     <section className='bg-white rounded-lg border border-gray-200'>
@@ -27,13 +25,7 @@ export function CouponTab() {
           <CouponAddButton onAddNew={handleShowCouponForm} />
         </div>
 
-        <CouponForm
-          isOpen={showCouponForm}
-          form={couponFormData}
-          updateForm={updateCouponFormData}
-          onSubmit={handleCouponSubmit}
-          onCancel={handleHideCouponForm}
-        />
+        {isVisible && <CouponForm onSubmit={onCouponSubmit} onCancel={handleHideCouponForm} />}
       </div>
     </section>
   );

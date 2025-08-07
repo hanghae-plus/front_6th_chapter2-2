@@ -15,5 +15,9 @@ export const useSelectedCoupon = () => {
     setSelectedCoupon(null);
   };
 
-  return { selectedCoupon, selectCoupon, resetSelectedCoupon };
+  const isValidCoupon = (selectedCoupon: Coupon | null, coupons: Coupon[]) => {
+    return coupons.some((coupon) => coupon.code === selectedCoupon?.code);
+  };
+
+  return { selectedCoupon, selectCoupon, resetSelectedCoupon, isValidCoupon };
 };
