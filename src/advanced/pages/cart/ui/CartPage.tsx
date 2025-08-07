@@ -1,12 +1,12 @@
 import { useAtomValue } from 'jotai';
 
-import type { CartItem, Coupon } from '../../../../types';
 import { CartItemList } from '../../../components/ui/CartItemList';
 import { CouponSelector } from '../../../components/ui/CouponSelector';
 import { PaymentSummary } from '../../../components/ui/PaymentSummary';
 import { ProductList } from '../../../components/ui/ProductList';
 import { productsAtom } from '../../../entities/product';
 import { useCartService } from '../../../hooks/useCartService';
+import { useCouponService } from '../../../hooks/useCouponService';
 import { useDebouncedSearch } from '../../../hooks/useDebouncedSearch';
 import { calculateCartTotal } from '../../../models/cart';
 import { Icon } from '../../../shared/icon';
@@ -14,22 +14,12 @@ import { CartHeader } from '../../../widgets/cart-header';
 
 interface CartPageProps {
   onChangeAdminPage: () => void;
-
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  onResetSelectedCoupon: () => void;
-  onApplyCoupon: (cart: CartItem[], coupon: Coupon) => void;
 }
 
-export function CartPage({
-  onChangeAdminPage,
-
-  coupons,
-  selectedCoupon,
-  onResetSelectedCoupon,
-  onApplyCoupon,
-}: CartPageProps) {
+export function CartPage({ onChangeAdminPage }: CartPageProps) {
   const products = useAtomValue(productsAtom);
+
+  const { selectedCoupon, onResetSelectedCoupon, onApplyCoupon } = useCouponService();
   const { cart, handleAddToCart, updateQuantity, removeFromCart, completeOrder } = useCartService({
     products,
     onResetSelectedCoupon,
@@ -83,7 +73,6 @@ export function CartPage({
               {cart.length > 0 && (
                 <>
                   <CouponSelector
-                    coupons={coupons}
                     selectedCoupon={selectedCoupon}
                     onApplyCoupon={(coupon) => onApplyCoupon(cart, coupon)}
                     onResetSelectedCoupon={onResetSelectedCoupon}

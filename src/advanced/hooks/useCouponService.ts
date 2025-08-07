@@ -1,16 +1,19 @@
-import { useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { useCallback, useState } from 'react';
 
-import { useCouponStore } from './useCouponStore';
 import type { CartItem, Coupon } from '../../types';
 import { MINIMUM_ORDER_AMOUNT } from '../constants';
+import { addCouponAtom, couponsAtom, deleteCouponAtom } from '../entities/coupon';
 import { addNotificationAtom } from '../entities/notification';
 import { calculateCartTotal } from '../models/cart';
 
 export function useCouponService() {
-  const { coupons, addCoupon, deleteCoupon } = useCouponStore();
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+  const coupons = useAtomValue(couponsAtom);
+  const addCoupon = useSetAtom(addCouponAtom);
+  const deleteCoupon = useSetAtom(deleteCouponAtom);
   const addNotification = useSetAtom(addNotificationAtom);
+
+  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
   const onResetSelectedCoupon = useCallback(() => {
     setSelectedCoupon(null);

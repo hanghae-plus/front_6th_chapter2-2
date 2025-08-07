@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-import type { Coupon } from '../../../../types';
 import { CouponTab } from '../../../components/ui/CouponTab';
 import { ProductTab } from '../../../components/ui/ProductTab';
 import { TabNavigation } from '../../../components/ui/TabNavigation';
@@ -8,19 +7,9 @@ import { AdminHeader } from '../../../widgets/admin-header';
 
 interface AdminPageProps {
   onChangeCartPage: () => void;
-
-  coupons: Coupon[];
-  onAddCoupon: (newCoupon: Coupon) => void;
-  onDeleteCoupon: (couponCode: string) => void;
 }
 
-export function AdminPage({
-  onChangeCartPage,
-
-  coupons,
-  onAddCoupon,
-  onDeleteCoupon,
-}: AdminPageProps) {
+export function AdminPage({ onChangeCartPage }: AdminPageProps) {
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
 
   return (
@@ -44,13 +33,7 @@ export function AdminPage({
               return <ProductTab />;
             }
 
-            return (
-              <CouponTab
-                coupons={coupons}
-                onAddCoupon={onAddCoupon}
-                onDeleteCoupon={onDeleteCoupon}
-              />
-            );
+            return <CouponTab />;
           })()}
         </div>
       </main>

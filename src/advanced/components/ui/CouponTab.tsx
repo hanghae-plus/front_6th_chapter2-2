@@ -1,16 +1,12 @@
 import { CouponAddButton } from './CouponAddButton';
 import { CouponForm } from './CouponForm';
 import { CouponList } from './CouponList';
-import type { Coupon } from '../../../types';
 import { useCouponForm } from '../../hooks/useCouponForm';
+import { useCouponService } from '../../hooks/useCouponService';
 
-interface CouponTabProps {
-  coupons: Coupon[];
-  onAddCoupon: (coupon: Coupon) => void;
-  onDeleteCoupon: (couponCode: string) => void;
-}
+export function CouponTab() {
+  const { onAddCoupon, onDeleteCoupon } = useCouponService();
 
-export function CouponTab({ coupons, onAddCoupon, onDeleteCoupon }: CouponTabProps) {
   const {
     showCouponForm,
     couponFormData,
@@ -27,7 +23,7 @@ export function CouponTab({ coupons, onAddCoupon, onDeleteCoupon }: CouponTabPro
       </div>
       <div className='p-6'>
         <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
-          <CouponList coupons={coupons} onDelete={onDeleteCoupon} />
+          <CouponList onDelete={onDeleteCoupon} />
 
           <CouponAddButton onAddNew={handleShowCouponForm} />
         </div>

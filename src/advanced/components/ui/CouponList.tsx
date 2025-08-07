@@ -1,12 +1,15 @@
-import type { Coupon } from '../../../types';
+import { useAtomValue } from 'jotai';
+
+import { couponsAtom } from '../../entities/coupon';
 import { Icon } from '../../shared/icon';
 
 interface CouponListProps {
-  coupons: Coupon[];
   onDelete: (couponCode: string) => void;
 }
 
-export function CouponList({ coupons, onDelete }: CouponListProps) {
+export function CouponList({ onDelete }: CouponListProps) {
+  const coupons = useAtomValue(couponsAtom);
+
   if (coupons.length === 0) {
     return null;
   }

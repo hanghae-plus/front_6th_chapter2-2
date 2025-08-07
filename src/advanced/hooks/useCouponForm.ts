@@ -2,10 +2,16 @@ import { useSetAtom } from 'jotai';
 import { useState } from 'react';
 
 import type { Coupon } from '../../types';
-import { initialCouponForm } from '../constants';
 import { addNotificationAtom } from '../entities/notification';
 import { useForm } from '../shared/hooks';
 import { isValidCouponCode } from '../shared/lib';
+
+const initialCouponForm: Coupon = {
+  name: '',
+  code: '',
+  discountType: 'amount',
+  discountValue: 0,
+};
 
 interface UseCouponFormProps {
   onAddCoupon: (coupon: Coupon) => void;

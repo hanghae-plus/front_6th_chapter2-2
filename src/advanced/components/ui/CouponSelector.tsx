@@ -1,18 +1,20 @@
+import { useAtomValue } from 'jotai';
+
 import type { Coupon } from '../../../types';
+import { couponsAtom } from '../../entities/coupon';
 
 interface CouponSelectorProps {
-  coupons: Coupon[];
   selectedCoupon: Coupon | null;
   onApplyCoupon: (coupon: Coupon) => void;
   onResetSelectedCoupon: () => void;
 }
 
 export function CouponSelector({
-  coupons,
   selectedCoupon,
   onApplyCoupon,
   onResetSelectedCoupon,
 }: CouponSelectorProps) {
+  const coupons = useAtomValue(couponsAtom);
   const hasCoupons = coupons.length > 0;
 
   return (
