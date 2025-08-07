@@ -44,61 +44,52 @@ export function useProducts(): UseProductsReturn {
 
     addProduct: useCallback(
       (params) => {
-        setProducts((prevProducts) => {
-          const newProducts = productModel.addProduct({
-            id: `p${Date.now()}`,
-            newProduct: params.newProduct,
-            products: prevProducts,
-          });
+        const newProducts = productModel.addProduct({
+          id: `p${Date.now()}`,
+          newProduct: params.newProduct,
+          products,
+        });
 
-          notify({
-            message: '상품이 추가되었습니다.',
-            type: 'success',
-          });
-
-          return newProducts;
+        setProducts(newProducts);
+        notify({
+          message: '상품이 추가되었습니다.',
+          type: 'success',
         });
       },
-      [setProducts, notify]
+      [setProducts, notify, products]
     ),
 
     updateProduct: useCallback(
       ({ productId, updates }) => {
-        setProducts((prevProducts) => {
-          const newProducts = productModel.updateProduct({
-            productId,
-            updates,
-            products: prevProducts,
-          });
+        const newProducts = productModel.updateProduct({
+          productId,
+          updates,
+          products,
+        });
 
-          notify({
-            message: '상품이 수정되었습니다.',
-            type: 'success',
-          });
-
-          return newProducts;
+        setProducts(newProducts);
+        notify({
+          message: '상품이 수정되었습니다.',
+          type: 'success',
         });
       },
-      [setProducts, notify]
+      [setProducts, notify, products]
     ),
 
     deleteProduct: useCallback(
       ({ productId }) => {
-        setProducts((prevProducts) => {
-          const newProducts = productModel.deleteProduct({
-            productId,
-            products: prevProducts,
-          });
+        const newProducts = productModel.deleteProduct({
+          productId,
+          products,
+        });
 
-          notify({
-            message: '상품이 삭제되었습니다.',
-            type: 'success',
-          });
-
-          return newProducts;
+        setProducts(newProducts);
+        notify({
+          message: '상품이 삭제되었습니다.',
+          type: 'success',
         });
       },
-      [setProducts, notify]
+      [setProducts, notify, products]
     ),
   };
 }

@@ -39,63 +39,57 @@ export function useCoupons(): UseCouponsReturn {
 
     addCoupon: useCallback(
       ({ newCoupon }) => {
-        setCoupons((prevCoupons) => {
-          const result = couponModel.addCoupon({
-            newCoupon,
-            coupons: prevCoupons,
-          });
-
-          if (!result.success) {
-            notify({ message: result.message, type: 'error' });
-            return prevCoupons;
-          }
-
-          notify({ message: result.message, type: 'success' });
-          return result.newCoupons;
+        const result = couponModel.addCoupon({
+          newCoupon,
+          coupons,
         });
+
+        if (!result.success) {
+          notify({ message: result.message, type: 'error' });
+          return;
+        }
+
+        setCoupons(result.newCoupons);
+        notify({ message: result.message, type: 'success' });
       },
-      [setCoupons, notify]
+      [setCoupons, notify, coupons]
     ),
 
     deleteCoupon: useCallback(
       ({ couponCode }) => {
-        setCoupons((prevCoupons) => {
-          const result = couponModel.deleteCoupon({
-            coupons: prevCoupons,
-            couponCode,
-          });
-
-          notify({ message: result.message, type: 'success' });
-          return result.newCoupons;
+        const result = couponModel.deleteCoupon({
+          coupons,
+          couponCode,
         });
+
+        setCoupons(result.newCoupons);
+        notify({ message: result.message, type: 'success' });
       },
-      [setCoupons, notify]
+      [setCoupons, notify, coupons]
     ),
 
     applyCoupon: useCallback(
       ({ cart, coupon }) => {
-        setSelectedCoupon((prevCoupon) => {
-          const { totalAfterDiscount } = cartModel.calculateCartTotal({
-            cart,
-            applyCoupon: couponModel.getCouponApplier({ coupon }),
-          });
-
-          const result = couponModel.applyCoupon({
-            coupon,
-            prevCoupon,
-            cartTotal: totalAfterDiscount,
-          });
-
-          if (!result.success) {
-            notify({ message: result.message, type: 'error' });
-            return prevCoupon;
-          }
-
-          notify({ message: result.message, type: 'success' });
-          return result.selectedCoupon;
+        const { totalAfterDiscount } = cartModel.calculateCartTotal({
+          cart,
+          applyCoupon: couponModel.getCouponApplier({ coupon }),
         });
+
+        const result = couponModel.applyCoupon({
+          coupon,
+          prevCoupon: selectedCoupon,
+          cartTotal: totalAfterDiscount,
+        });
+
+        if (!result.success) {
+          notify({ message: result.message, type: 'error' });
+          return;
+        }
+
+        setSelectedCoupon(result.selectedCoupon);
+        notify({ message: result.message, type: 'success' });
       },
-      [notify]
+      [notify, selectedCoupon]
     ),
 
     clearSelectedCoupon: useCallback(() => {

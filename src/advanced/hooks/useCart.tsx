@@ -64,63 +64,58 @@ export function useCart(): UseCartReturn {
 
     addToCart: useCallback(
       ({ product }) => {
-        setCart((prevCart) => {
-          const remainingStock = productModel.getRemainingStock({
-            cart: prevCart,
-            product,
-          });
-          const isSoldOut = productModel.isSoldOut({ remainingStock });
-
-          const result = cartModel.addToCartWithStockCheck({
-            cart: prevCart,
-            product,
-            isSoldOut,
-          });
-
-          if (!result.success) {
-            notify({ message: result.message, type: 'error' });
-            return prevCart;
-          }
-
-          notify({ message: result.message, type: 'success' });
-          return result.newCart;
+        const remainingStock = productModel.getRemainingStock({
+          cart,
+          product,
         });
+        const isSoldOut = productModel.isSoldOut({ remainingStock });
+
+        const result = cartModel.addToCartWithStockCheck({
+          cart,
+          product,
+          isSoldOut,
+        });
+
+        if (!result.success) {
+          notify({ message: result.message, type: 'error' });
+          return;
+        }
+
+        setCart(result.newCart);
+        notify({ message: result.message, type: 'success' });
       },
-      [setCart, notify]
+      [setCart, notify, cart]
     ),
 
     removeFromCart: useCallback(
       ({ productId }) => {
-        setCart((prevCart) => {
-          return cartModel.removeItemFromCart({
-            cart: prevCart,
-            productId: productId,
-          });
+        const newCart = cartModel.removeItemFromCart({
+          cart,
+          productId: productId,
         });
+        setCart(newCart);
       },
-      [setCart]
+      [setCart, cart]
     ),
 
     updateQuantity: useCallback(
       ({ productId, newQuantity, products }) => {
-        setCart((prevCart) => {
-          const result = cartModel.updateCartQuantityWithValidation({
-            cart: prevCart,
-            newQuantity,
-            productId,
-            products,
-          });
-
-          if (!result.success) {
-            notify({ message: result.message, type: 'error' });
-            return prevCart;
-          }
-
-          notify({ message: result.message, type: 'success' });
-          return result.newCart;
+        const result = cartModel.updateCartQuantityWithValidation({
+          cart,
+          newQuantity,
+          productId,
+          products,
         });
+
+        if (!result.success) {
+          notify({ message: result.message, type: 'error' });
+          return;
+        }
+
+        setCart(result.newCart);
+        notify({ message: result.message, type: 'success' });
       },
-      [setCart, notify]
+      [setCart, notify, cart]
     ),
 
     clearCart: useCallback(() => {
