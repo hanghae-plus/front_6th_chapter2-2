@@ -1,30 +1,11 @@
 // src/basic/components/Admin.tsx
 import React, { useState } from 'react';
-import { Product, Coupon } from '../types';
 import { ProductAdmin } from './ProductAdmin';
 import { CouponAdmin } from './CouponAdmin';
 
 type AdminPageTab = 'products' | 'coupons';
 
-interface Props {
-  products: Product[];
-  coupons: Coupon[];
-  onAddProduct: (product: Omit<Product, 'id'>) => void;
-  onUpdateProduct: (product: Product) => void;
-  onRemoveProduct: (productId: string) => void;
-  onAddCoupon: (coupon: Coupon) => void;
-  onRemoveCoupon: (couponCode: string) => void;
-}
-
-export const Admin = ({
-  products,
-  coupons,
-  onAddProduct,
-  onUpdateProduct,
-  onRemoveProduct,
-  onAddCoupon,
-  onRemoveCoupon,
-}: Props) => {
+export const Admin = () => {
   const [activeTab, setActiveTab] = useState<AdminPageTab>('products');
 
   return (
@@ -58,20 +39,7 @@ export const Admin = ({
         </nav>
       </div>
 
-      {activeTab === 'products' ? (
-        <ProductAdmin 
-          products={products}
-          onAddProduct={onAddProduct}
-          onUpdateProduct={onUpdateProduct}
-          onRemoveProduct={onRemoveProduct}
-        />
-      ) : (
-        <CouponAdmin 
-          coupons={coupons}
-          onAddCoupon={onAddCoupon}
-          onRemoveCoupon={onRemoveCoupon}
-        />
-      )}
+      {activeTab === 'products' ? <ProductAdmin /> : <CouponAdmin />}
     </div>
   );
 };

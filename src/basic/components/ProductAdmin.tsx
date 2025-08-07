@@ -3,15 +3,10 @@ import React, { useState } from 'react';
 import { Product } from '../types';
 import { formatCurrency } from '../utils/formatters';
 import { ProductForm } from './ProductForm';
+import { useProducts } from '../hooks/useProducts';
 
-interface Props {
-  products: Product[];
-  onAddProduct: (product: Omit<Product, 'id'>) => void;
-  onUpdateProduct: (product: Product) => void;
-  onRemoveProduct: (productId: string) => void;
-}
-
-export const ProductAdmin = ({ products, onAddProduct, onUpdateProduct, onRemoveProduct }: Props) => {
+export const ProductAdmin = () => {
+  const { products, addProduct, updateProduct, removeProduct } = useProducts();
   const [showProductForm, setShowProductForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
@@ -32,9 +27,9 @@ export const ProductAdmin = ({ products, onAddProduct, onUpdateProduct, onRemove
 
   const handleSubmit = (productData: Omit<Product, 'id'> | Product) => {
     if ('id' in productData) {
-      onUpdateProduct(productData);
+      updateProduct(productData);
     } else {
-      onAddProduct(productData);
+      addProduct(productData);
     }
     handleCancel();
   };
@@ -107,7 +102,7 @@ export const ProductAdmin = ({ products, onAddProduct, onUpdateProduct, onRemove
                     수정
                   </button>
                   <button
-                    onClick={() => onRemoveProduct(product.id)}
+                    onClick={() => removeProduct(product.id)}
                     className='text-red-600 hover:text-red-900'
                     aria-label={`${product.name} 삭제`}
                   >

@@ -1,20 +1,15 @@
 // src/basic/components/CouponAdmin.tsx
 import React, { useState } from 'react';
-import { Coupon } from '../types';
 import { TrashIcon } from './icons/TrashIcon';
 import { CouponForm } from './CouponForm';
+import { useCoupons } from '../hooks/useCoupons';
 
-interface Props {
-  coupons: Coupon[];
-  onAddCoupon: (coupon: Coupon) => void;
-  onRemoveCoupon: (couponCode: string) => void;
-}
-
-export const CouponAdmin = ({ coupons, onAddCoupon, onRemoveCoupon }: Props) => {
+export const CouponAdmin = () => {
+  const { coupons, addCoupon, removeCoupon } = useCoupons();
   const [showCouponForm, setShowCouponForm] = useState(false);
 
-  const handleAddCoupon = (coupon: Coupon) => {
-    onAddCoupon(coupon);
+  const handleAddCoupon = (coupon) => {
+    addCoupon(coupon);
     setShowCouponForm(false);
   }
 
@@ -47,7 +42,7 @@ export const CouponAdmin = ({ coupons, onAddCoupon, onRemoveCoupon }: Props) => 
                   </div>
                 </div>
                 <button
-                  onClick={() => onRemoveCoupon(coupon.code)}
+                  onClick={() => removeCoupon(coupon.code)}
                   className='text-gray-400 hover:text-red-600 transition-colors'
                   aria-label={`${coupon.name} 삭제`}
                 >
