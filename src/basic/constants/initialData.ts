@@ -1,5 +1,5 @@
-import type { Coupon } from '../../../types';
-import type { ProductWithUI } from '../types';
+import type { Coupon } from '../../types';
+import type { ProductWithUI } from '../shared/types';
 
 const initialProducts: ProductWithUI[] = [
   {
