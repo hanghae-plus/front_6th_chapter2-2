@@ -19,7 +19,7 @@ import {
 } from "../domains/product";
 import {
   NotificationList,
-  useDebounceValue,
+  useDebounceState,
   useLocalStorageState,
   useNotifications
 } from "../shared";
@@ -42,14 +42,18 @@ export function App() {
     initialState: INITIAL_COUPONS
   });
 
+  const [searchTerm, setSearchTerm, debouncedSearchTerm] = useDebounceState({
+    delay: 500,
+    initialValue: ""
+  });
+
+  const { notifications, addNotification, removeNotification } = useNotifications();
+
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [activeTab, setActiveTab] = useState<"products" | "coupons">("products");
   const [showProductForm, setShowProductForm] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const debouncedSearchTerm = useDebounceValue({ delay: 500, value: searchTerm });
 
   // Admin
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
@@ -67,9 +71,6 @@ export function App() {
     discountType: "amount",
     discountValue: 0
   });
-
-  // Notification management
-  const { notifications, addNotification, removeNotification } = useNotifications();
 
   const formatPriceWithContext = useCallback(
     (price: number, productId?: string) => {
