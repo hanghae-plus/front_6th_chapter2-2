@@ -447,8 +447,11 @@ describe('쇼핑몰 앱 통합 테스트', () => {
 
       // localStorage 확인
       await waitFor(() => {
-        expect(localStorage.getItem('cart')).toBeTruthy();
-        expect(JSON.parse(localStorage.getItem('cart'))).toHaveLength(1);
+        const cartItem = localStorage.getItem('cart');
+        expect(cartItem).toBeTruthy();
+        // atomWithStorage가 값을 문자열로 한 번 더 감싸므로, 두 번 파싱해야 합니다.
+        const parsedCart = JSON.parse(JSON.parse(cartItem!));
+        expect(parsedCart).toHaveLength(1);
       });
 
       // 관리자 모드로 전환하여 새 상품 추가
@@ -468,9 +471,10 @@ describe('쇼핑몰 앱 통합 테스트', () => {
 
       // localStorage에 products가 저장되었는지 확인
       await waitFor(() => {
-        expect(localStorage.getItem('products')).toBeTruthy();
-        const products = JSON.parse(localStorage.getItem('products'));
-        expect(products.some(p => p.name === '저장 테스트')).toBe(true);
+        const productsItem = localStorage.getItem('products');
+        expect(productsItem).toBeTruthy();
+        const products = JSON.parse(JSON.parse(productsItem!));
+        expect(products.some((p: any) => p.name === '저장 테스트')).toBe(true);
       });
     });
 
