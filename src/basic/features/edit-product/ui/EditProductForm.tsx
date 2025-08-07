@@ -1,26 +1,22 @@
+import { useProductForm } from "../../../entities/product/hooks/useProductForm";
 import { ProductWithUI } from "../../../entities/product/types";
 import { ProductFormFields } from "../../../entities/product/ui/ProductFormFields";
-import { NotificationVariant } from "../../../entities/notification/types";
-import { useProductForm } from "../../../entities/product/hooks/useProductForm";
 
 interface EditProductFormProps {
   initialProduct: ProductWithUI;
   onSubmit: (product: ProductWithUI) => void;
   onCancel: () => void;
-  addNotification: (message: string, variant?: NotificationVariant) => void;
 }
 
 export function EditProductForm({
   initialProduct,
   onSubmit,
   onCancel,
-  addNotification,
 }: EditProductFormProps) {
-  const { product, errors, handleFieldChange, handleSubmit } =
-    useProductForm<ProductWithUI>({
-      initialProduct,
-      onSubmit,
-    });
+  const { product, errors, handleFieldChange, handleSubmit } = useProductForm({
+    onSubmit,
+    initialProduct,
+  });
 
   return (
     <div className="p-6 border-t border-gray-200 bg-gray-50">
@@ -31,7 +27,6 @@ export function EditProductForm({
           product={product}
           onChange={handleFieldChange}
           errors={errors}
-          addNotification={addNotification}
         />
 
         <div className="flex justify-end gap-3">

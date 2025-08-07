@@ -7,23 +7,21 @@ import { getProductStockStatus } from "../../../features/check-stock/libs";
 import { AddProductForm } from "../../../features/add-product/ui/AddProductForm";
 import { EditProductForm } from "../../../features/edit-product/ui/EditProductForm";
 import { useProductStorage } from "../../../entities/product/hooks/useProductStorage";
+import { useGlobalNotification } from "../../../entities/notification/hooks/useGlobalNotification";
 
 interface ProductWithDisplayInfo extends ProductWithUI {
   displayedPrice: string;
 }
 
-interface ProductsTabProps {
-  addNotification: (message: string, variant?: NotificationVariant) => void;
-}
-
-export function ProductsTab({ addNotification }: ProductsTabProps) {
+export function ProductsTab() {
   const productStorage = useProductStorage();
+  const { addNotification } = useGlobalNotification();
   const [showProductForm, setShowProductForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<ProductWithUI | null>(
     null
   );
 
-  const addProduct = useCallback(
+  const handleAddProduct = useCallback(
     (newProduct: Omit<ProductWithUI, "id">) => {
       productStorage.addProduct(newProduct);
       addNotification("상품이 추가되었습니다.", NotificationVariant.SUCCESS);
@@ -32,7 +30,7 @@ export function ProductsTab({ addNotification }: ProductsTabProps) {
     [productStorage.addProduct, addNotification]
   );
 
-  const updateProduct = useCallback(
+  const handleUpdateProduct = useCallback(
     (updatedProduct: ProductWithUI) => {
       productStorage.updateProduct(updatedProduct);
       addNotification("상품이 수정되었습니다.", NotificationVariant.SUCCESS);
@@ -42,7 +40,7 @@ export function ProductsTab({ addNotification }: ProductsTabProps) {
     [productStorage.updateProduct, addNotification]
   );
 
-  const deleteProduct = useCallback(
+  const handleDeleteProduct = useCallback(
     (productId: string) => {
       productStorage.deleteProduct(productId);
       addNotification("상품이 삭제되었습니다.", NotificationVariant.SUCCESS);
@@ -93,23 +91,18 @@ export function ProductsTab({ addNotification }: ProductsTabProps) {
       <ProductTable
         products={productsWithDisplayInfo}
         onEdit={editProduct}
-        onDelete={deleteProduct}
+        onDelete={handleDeleteProduct}
       />
 
       {showProductForm &&
         (editingProduct ? (
           <EditProductForm
             initialProduct={editingProduct}
-            onSubmit={updateProduct}
+            onSubmit={handleUpdateProduct}
             onCancel={resetForm}
-            addNotification={addNotification}
           />
         ) : (
-          <AddProductForm
-            onSubmit={addProduct}
-            onCancel={resetForm}
-            addNotification={addNotification}
-          />
+          <AddProductForm onSubmit={handleAddProduct} onCancel={resetForm} />
         ))}
     </section>
   );

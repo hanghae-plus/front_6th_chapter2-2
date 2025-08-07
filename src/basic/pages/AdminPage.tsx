@@ -1,22 +1,8 @@
 import { useState } from "react";
-import { Coupon } from "../../types";
-import { Product } from "../entities/product/types";
-import { NotificationVariant } from "../entities/notification/types";
 import { ProductsTab } from "../widgets/admin/ui/ProductsTab";
 import { CouponsTab } from "../widgets/admin/ui/CouponsTab";
 
-interface AdminPageProps {
-  coupons: Coupon[];
-  setCoupons: (coupons: Coupon[]) => void;
-  addNotification: (message: string, type?: NotificationVariant) => void;
-  getProductRemainingStock: (product: Product) => number;
-}
-
-export function AdminPage({
-  coupons,
-  setCoupons,
-  addNotification,
-}: AdminPageProps) {
+export function AdminPage() {
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
     "products"
   );
@@ -52,15 +38,7 @@ export function AdminPage({
         </nav>
       </div>
 
-      {activeTab === "products" ? (
-        <ProductsTab addNotification={addNotification} />
-      ) : (
-        <CouponsTab
-          coupons={coupons}
-          setCoupons={setCoupons}
-          addNotification={addNotification}
-        />
-      )}
+      {activeTab === "products" ? <ProductsTab /> : <CouponsTab />}
     </div>
   );
 }

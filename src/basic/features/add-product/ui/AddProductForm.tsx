@@ -1,19 +1,13 @@
+import { useProductForm } from "../../../entities/product/hooks/useProductForm";
 import { ProductWithUI } from "../../../entities/product/types";
 import { ProductFormFields } from "../../../entities/product/ui/ProductFormFields";
-import { NotificationVariant } from "../../../entities/notification/types";
-import { useProductForm } from "../../../entities/product/hooks/useProductForm";
 
 interface AddProductFormProps {
   onSubmit: (product: Omit<ProductWithUI, "id">) => void;
   onCancel: () => void;
-  addNotification: (message: string, variant?: NotificationVariant) => void;
 }
 
-export function AddProductForm({
-  onSubmit,
-  onCancel,
-  addNotification,
-}: AddProductFormProps) {
+export function AddProductForm({ onSubmit, onCancel }: AddProductFormProps) {
   const { product, errors, handleFieldChange, handleSubmit } = useProductForm({
     onSubmit,
   });
@@ -27,7 +21,6 @@ export function AddProductForm({
           product={product}
           onChange={handleFieldChange}
           errors={errors}
-          addNotification={addNotification}
         />
 
         <div className="flex justify-end gap-3">

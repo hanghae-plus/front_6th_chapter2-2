@@ -1,47 +1,24 @@
-import { useState, useCallback } from "react";
-import { Coupon } from "../../../../types";
+import { useState } from "react";
 import PlusIcon from "../../../assets/icons/PlusIcon.svg?react";
-import { NotificationVariant } from "../../../entities/notification/types";
 import { CouponCard } from "../../../entities/coupon/ui/CouponCard";
 import { AddCouponForm } from "../../../features/add-coupon/ui/AddCouponForm";
+import { useCoupon } from "../../../entities/coupon/hooks/useCoupon";
+import { useGlobalNotification } from "../../../entities/notification/hooks/useGlobalNotification";
+import { NotificationVariant } from "../../../entities/notification/types";
 
-interface CouponsTabProps {
-  coupons: Coupon[];
-  setCoupons: (coupons: Coupon[]) => void;
-  addNotification: (message: string, variant?: NotificationVariant) => void;
-}
-
-export function CouponsTab({
-  coupons,
-  setCoupons,
-  addNotification,
-}: CouponsTabProps) {
+export function CouponsTab() {
   const [showCouponForm, setShowCouponForm] = useState(false);
+  const { addNotification } = useGlobalNotification();
 
-  const addCoupon = useCallback(
-    (newCoupon: Omit<Coupon, "id">) => {
-      const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
-      if (existingCoupon) {
-        addNotification(
-          "이미 존재하는 쿠폰 코드입니다.",
-          NotificationVariant.ERROR
-        );
-        return;
-      }
-      const couponWithId = { ...newCoupon, id: Date.now().toString() };
-      setCoupons([...coupons, couponWithId]);
-      addNotification("쿠폰이 추가되었습니다.", NotificationVariant.SUCCESS);
+  const { coupons, addCoupon, deleteCoupon } = useCoupon({
+    onAddCoupon: () => setShowCouponForm(false),
+    onDeleteCoupon: () => {
+      // 필요시 추가 로직
     },
-    [coupons, setCoupons, addNotification]
-  );
-
-  const deleteCoupon = useCallback(
-    (couponCode: string) => {
-      setCoupons(coupons.filter((c) => c.code !== couponCode));
-      addNotification("쿠폰이 삭제되었습니다.", NotificationVariant.SUCCESS);
-    },
-    [coupons, setCoupons, addNotification]
-  );
+    onSuccess: (message) =>
+      addNotification(message, NotificationVariant.SUCCESS),
+    onError: (message) => addNotification(message, NotificationVariant.ERROR),
+  });
 
   return (
     <section className="bg-white rounded-lg border border-gray-200">
@@ -73,7 +50,6 @@ export function CouponsTab({
           <AddCouponForm
             onSubmit={addCoupon}
             onCancel={() => setShowCouponForm(false)}
-            addNotification={addNotification}
           />
         )}
       </div>

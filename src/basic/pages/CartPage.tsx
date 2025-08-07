@@ -13,6 +13,8 @@ import CartBagIcon from "../assets/icons/CartBagIcon.svg?react";
 import { NotificationVariant } from "../entities/notification/types";
 import { getProductStockStatus } from "../features/check-stock/libs";
 import { calculateStock } from "../entities/product/libs/stock";
+import { useGlobalNotification } from "../entities/notification/hooks/useGlobalNotification";
+import { useCoupon } from "../entities/coupon/hooks/useCoupon";
 
 interface CartPageProps {
   products: ProductWithUI[];
@@ -20,10 +22,8 @@ interface CartPageProps {
   searchValue: string;
   cart: CartItemType[];
   setCart: (cart: CartItemType[]) => void;
-  coupons: Coupon[];
   selectedCoupon: Coupon | null;
   setSelectedCoupon: (coupon: Coupon | null) => void;
-  addNotification: (message: string, type?: NotificationVariant) => void;
 }
 
 export function CartPage({
@@ -32,11 +32,16 @@ export function CartPage({
   searchValue,
   cart,
   setCart,
-  coupons,
   selectedCoupon,
   setSelectedCoupon,
-  addNotification,
 }: CartPageProps) {
+  const { addNotification } = useGlobalNotification();
+  const { coupons, applyCoupon: applyCouponLogic } = useCoupon({
+    onSuccess: (message) =>
+      addNotification(message, NotificationVariant.SUCCESS),
+    onError: (message) => addNotification(message, NotificationVariant.ERROR),
+  });
+
   const displayPrice = (product: Product) => {
     const stockStatus = getProductStockStatus({ product, cartQuantity: 0 });
     if (stockStatus) return stockStatus;
@@ -190,18 +195,11 @@ export function CartPage({
     (coupon: Coupon) => {
       const currentTotal = calculateCartTotal().totalAfterDiscount;
 
-      if (currentTotal < 10000 && coupon.discountType === "percentage") {
-        addNotification(
-          "percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.",
-          NotificationVariant.ERROR
-        );
-        return;
-      }
-
-      setSelectedCoupon(coupon);
-      addNotification("쿠폰이 적용되었습니다.", NotificationVariant.SUCCESS);
+      applyCouponLogic(coupon, currentTotal, (appliedCoupon) => {
+        setSelectedCoupon(appliedCoupon);
+      });
     },
-    [addNotification, setSelectedCoupon]
+    [applyCouponLogic, setSelectedCoupon]
   );
 
   const completeOrder = useCallback(() => {
