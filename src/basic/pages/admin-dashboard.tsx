@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ProductWithUI } from '../constants/mocks';
-import { Coupon } from '../../types';
+import { Coupon } from '@/types';
 import { CloseIcon, DeleteIcon, PlusIcon } from '../ui/icons';
 import { formatPrice } from '../utils';
 

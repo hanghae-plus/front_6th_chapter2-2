@@ -1,4 +1,4 @@
-import { CartItem } from '../../types';
+import { CartItem } from '@/types';
 import { CartIcon } from './icons';
 import { SearchInput } from './search-input';
 

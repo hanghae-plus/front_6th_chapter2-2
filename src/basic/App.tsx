@@ -2,8 +2,7 @@ import { useState, useMemo } from 'react';
 import { Header, NotificationItem } from './ui';
 import { useCoupons } from './entities/coupons';
 import { useProducts } from './entities/products';
-import { CartModel } from './models/cart';
-import { ProductModel } from './models/product';
+import { CartModel, ProductModel } from './models';
 import { useCart, useDebounceValue, useNotifications, useTotalItemCount } from './hooks';
 import { AdminDashboard, UserDashboard } from './pages';
 

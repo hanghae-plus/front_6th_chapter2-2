@@ -2,8 +2,7 @@ import { initialCoupons } from '@/basic/constants/mocks';
 import { useLocalStorage } from '@/basic/hooks';
 import { Coupon, CartItem } from '@/types';
 import { useCallback, useState } from 'react';
-import { CouponModel } from '@/basic/models/coupon';
-import { CartModel } from '@/basic/models/cart';
+import { CouponModel, CartModel } from '@/basic/models';
 import { INITIAL_COUPON_FORM } from '@/basic/constants/forms';
 
 interface UseCouponsProps {
@@ -55,7 +54,7 @@ export function useCoupons({ addNotification }: UseCouponsProps) {
     (coupon: Coupon, cart: CartItem[]) => {
       const cartModel = new CartModel(cart);
       const couponModel = new CouponModel();
-      
+
       const currentTotal = cartModel.calculateTotal(selectedCoupon || undefined).totalAfterDiscount;
       const validation = couponModel.validateCouponApplication(coupon, currentTotal);
 
