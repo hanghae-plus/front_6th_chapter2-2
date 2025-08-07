@@ -4,10 +4,12 @@ import CouponSelector from "../components/coupon/CouponSelector";
 import OrderSummary from "../components/OrderSummary";
 import { useCart } from "../hooks/useCart";
 import { useProducts } from "../hooks/useProducts";
+import { useCoupons } from "../hooks/useCoupons";
 
 const CartPage = () => {
   const { products } = useProducts();
   const { cart } = useCart();
+  const { coupons } = useCoupons();
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -25,7 +27,7 @@ const CartPage = () => {
           {cart.length > 0 && (
             <>
               {/* 쿠폰 선택 */}
-              <CouponSelector />
+              <CouponSelector coupons={coupons} />
 
               {/* 결제 정보 */}
               <OrderSummary />

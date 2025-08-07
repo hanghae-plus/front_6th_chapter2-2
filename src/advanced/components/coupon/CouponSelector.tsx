@@ -1,13 +1,15 @@
 import { ICoupon } from "../../type";
-import { useCoupons } from "../../hooks/useCoupons";
 import { useCallback } from "react";
 import { ORDER } from "../../constants/business";
 import { MESSAGES } from "../../constants/messages";
 import { useNotification } from "../../hooks/useNotification";
 import { useCart } from "../../hooks/useCart";
 
-const CouponSelector = () => {
-  const { coupons } = useCoupons();
+interface CouponSelectorProps {
+  coupons: ICoupon[];
+}
+
+const CouponSelector = ({ coupons }: CouponSelectorProps) => {
   const { selectedCoupon, setSelectedCoupon, cartTotalPrice } = useCart();
   const { addNotification } = useNotification();
 
