@@ -4,6 +4,19 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>장바구니로 학습하는 디자인패턴</title>
+  <script>
+    // 404.html에서 저장한 경로를 복원합니다.
+    (function() {
+      const redirectPath = sessionStorage.getItem('redirectPath');
+      if (redirectPath) {
+        sessionStorage.removeItem('redirectPath');
+        // 현재 경로가 루트가 아닐 경우에만 경로를 변경합니다.
+        if (window.location.pathname.replace(/\/$/, '') !== '/front_6th_chapter2-2'.replace(/\/$/, '')) {
+           history.replaceState(null, '', '/front_6th_chapter2-2/' + redirectPath);
+        }
+      }
+    })();
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100">

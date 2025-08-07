@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Redirecting...</title>
+    <script>
+      // 현재 경로를 sessionStorage에 저장하고 루트로 리디렉션합니다.
+      // vite.config.ts의 base 경로와 일치해야 합니다.
+      const redirectUrl = '/front_6th_chapter2-2/';
+      sessionStorage.setItem('redirectPath', window.location.pathname.replace(redirectUrl, ''));
+      window.location.href = redirectUrl;
+    </script>
+  </head>
+  <body>
+    <p>If you are not redirected automatically, follow this <a href="/front_6th_chapter2-2/">link to the homepage</a>.</p>
+  </body>
+</html>
