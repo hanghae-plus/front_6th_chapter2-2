@@ -18,9 +18,9 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json}\"",
     "deploy:advanced": "pnpm run build:advanced && gh-pages -d dist",
     "build:advanced": "tsc --noEmit --skipLibCheck && vite build --config vite.config.advanced.ts && cp dist/index.advanced.html dist/index.html"
-
   },
   "dependencies": {
+    "jotai": "^2.13.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
