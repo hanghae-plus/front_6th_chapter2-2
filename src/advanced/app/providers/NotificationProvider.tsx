@@ -1,9 +1,9 @@
 import { useAtomValue } from 'jotai';
 
-import { Notification } from './Notification';
-import { notificationsAtom } from '../model/atom';
+import { Notification } from '../../entities/notification';
+import { notificationsAtom } from '../../entities/notification/model/atom';
 
-export function NotificationList() {
+export function NotificationProvider() {
   const notifications = useAtomValue(notificationsAtom);
 
   if (notifications.length === 0) return null;

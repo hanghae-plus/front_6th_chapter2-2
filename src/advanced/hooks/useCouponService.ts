@@ -2,8 +2,8 @@ import { useAtomValue, useSetAtom } from 'jotai';
 import { useCallback, useState } from 'react';
 
 import type { CartItem, Coupon } from '../../types';
-import { MINIMUM_ORDER_AMOUNT } from '../constants';
 import { calculateCartTotal } from '../entities/cart';
+import { MINIMUM_ORDER_AMOUNT } from '../entities/coupon';
 import { addCouponAtom, couponsAtom, deleteCouponAtom } from '../entities/coupon';
 import { addNotificationAtom } from '../entities/notification';
 
