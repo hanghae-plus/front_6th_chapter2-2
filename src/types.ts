@@ -1,9 +1,12 @@
 export interface Product {
+  filter: any;
   id: string;
   name: string;
   price: number;
   stock: number;
   discounts: Discount[];
+  isRecommended: boolean;
+  description: string;
 }
 
 export interface Discount {

@@ -11,14 +11,29 @@
  * @param isAdmin - 관리자 모드 여부
  * @returns 포맷팅된 가격 문자열
  */
-export const formatPrice = (price: number, isSoldOut: boolean, isAdmin: boolean): string => {
+
+// 고객용 포맷팅
+export const formatPrice = (price: number): string => {
+  return `₩${price.toLocaleString()}`;
+};
+
+// 관리자용 포맷팅
+export const formatPriceForAdmin = (price: number): string => {
+  return `${price.toLocaleString()}원`;
+};
+
+export const formatPriceWithStock = (
+  price: number,
+  isSoldOut: boolean,
+  isAdmin: boolean,
+): string => {
   if (isSoldOut) {
     return 'SOLD OUT';
   }
 
   if (isAdmin) {
-    return `${price.toLocaleString()}원`;
+    return formatPriceForAdmin(price);
   }
 
-  return `₩${price.toLocaleString()}`;
+  return formatPrice(price);
 };
