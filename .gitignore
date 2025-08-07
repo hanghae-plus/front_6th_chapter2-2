@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Example/refactoring files (not for deployment)
+src/refactoring(hint)/

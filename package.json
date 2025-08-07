@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://adds9810.github.io/front_6th_chapter2-2/",
   "scripts": {
     "start:origin": "vite serve --open ./index.origin.html",
     "start:basic": "vite serve --open ./index.basic.html",
@@ -13,9 +14,16 @@
     "test:advanced": "vitest src/advanced",
     "test:ui": "vitest --ui",
     "build": "tsc -b && vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+    "build:origin": "vite build --mode origin",
+    "build:basic": "vite build --mode basic",
+    "build:advanced": "vite build --mode advanced",
+    "predeploy": "npm run build:advanced",
+    "deploy": "npm run build:gh-pages && gh-pages -d dist",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "build:gh-pages": "rm -rf src/refactoring\\(hint\\) && npm run build && cp dist/index.basic.html dist/basic.html && cp dist/index.advanced.html dist/advanced.html"
   },
   "dependencies": {
+    "jotai": "^2.13.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
@@ -30,8 +38,14 @@
     "@vitejs/plugin-react-swc": "^3.11.0",
     "@vitest/ui": "^3.2.4",
     "eslint": "^9.32.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-compat": "^6.0.2",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-prettier": "^5.5.3",
+    "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
+    "gh-pages": "^6.3.0",
     "jsdom": "^26.1.0",
     "typescript": "^5.9.2",
     "vite": "^7.0.6",
