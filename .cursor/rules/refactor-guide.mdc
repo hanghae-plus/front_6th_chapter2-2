@@ -1,0 +1,371 @@
+---
+alwaysApply: true
+---
+
+# React Clean Code Rules
+
+## Core Principles
+
+- Write self-documenting code that explains its intent without comments
+- Follow single responsibility principle for components and hooks
+- Embrace React's unidirectional data flow and immutability
+- Use modern React patterns (hooks, functional components)
+- Structure code for reusability, testability, and maintainability
+
+## Code Formatting & Style
+
+- Use Prettier for consistent formatting with React-specific rules
+- Use ESLint with React hooks rules
+- Add blank lines to separate JSX blocks and logical sections
+
+## Naming Conventions
+
+- Use PascalCase for components: `UserProfile`, `DataTable`
+- Use camelCase for props, variables, and functions: `userData`, `handleSubmit`
+- Use UPPER_SNAKE_CASE for constants: `API_BASE_URL`, `MAX_RETRY_COUNT`
+- Prefix custom hooks with `use`: `useUserData`, `useLocalStorage`
+- Prefix boolean props/variables with `is`, `has`, `should`: `isLoading`, `hasError`
+- Use descriptive event handler names: `handleUserSubmit` not `onSubmit`
+
+## Component Design
+
+- Keep components small and focused (< 150 lines ideally)
+- One component, one responsibility
+- Prefer functional components over class components
+- Extract complex logic into custom hooks
+- Use composition over inheritance
+
+```jsx
+// Good - Small, focused component
+function UserCard({ user, onEdit }) {
+  if (!user) return <div>No user data</div>;
+
+  return (
+    <div className="user-card">
+      <h3>{user.name}</h3>
+      <p>{user.email}</p>
+      <button onClick={() => onEdit(user.id)}>Edit</button>
+    </div>
+  );
+}
+```
+
+## Props and State Management
+
+- Use TypeScript or PropTypes for type safety
+- Keep component state minimal and local
+- Lift state up only when necessary
+- Use context sparingly (avoid prop drilling for 2-3 levels)
+- Prefer derived state over storing computed values
+
+```jsx
+// Good - Computed values instead of stored state
+function ProductList({ products, searchTerm }) {
+  const filteredProducts = useMemo(() => products.filter((product) => product.name.toLowerCase().includes(searchTerm.toLowerCase())), [products, searchTerm]);
+
+  return (
+    <div>
+      {filteredProducts.map((product) => (
+        <ProductCard key={product.id} product={product} />
+      ))}
+    </div>
+  );
+}
+```
+
+## Custom Hooks
+
+- Extract reusable logic into custom hooks
+- Follow the Rules of Hooks
+- Keep hooks focused on single responsibility
+- Return objects for multiple values, arrays for ordered pairs
+
+```jsx
+// Good - Custom hook for API data fetching
+function useUserData(userId) {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function fetchUser() {
+      try {
+        setLoading(true);
+        const userData = await userService.getUser(userId);
+        if (!cancelled) {
+          setData(userData);
+          setError(null);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError(err.message);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    fetchUser();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
+
+  return { data, loading, error };
+}
+```
+
+## Modern React Patterns
+
+- Use functional components with hooks
+- Prefer `const` for component declarations
+- Use destructuring for props and state
+- Use template literals for dynamic className
+- Leverage optional chaining and nullish coalescing
+- Use React.memo for performance optimization when needed
+
+```jsx
+// Good - Modern React patterns
+const UserProfile = React.memo(({ user, className }) => {
+  const { data: preferences, loading } = useUserPreferences(user?.id);
+
+  const containerClass = `user-profile ${className ?? ""}`.trim();
+
+  if (loading) return <LoadingSpinner />;
+
+  return (
+    <div className={containerClass}>
+      <h2>{user?.name ?? "Unknown User"}</h2>
+      <UserPreferences preferences={preferences} />
+    </div>
+  );
+});
+```
+
+## State Updates and Side Effects
+
+- Always use functional updates for state that depends on previous state
+- Clean up side effects in useEffect
+- Use dependency arrays correctly
+- Separate concerns in different useEffect hooks
+
+```jsx
+// Good - Proper state updates and effects
+function Counter({ initialValue = 0 }) {
+  const [count, setCount] = useState(initialValue);
+  const [history, setHistory] = useState([]);
+
+  // Functional state update
+  const increment = useCallback(() => {
+    setCount((prev) => prev + 1);
+  }, []);
+
+  // Separate effect for tracking history
+  useEffect(() => {
+    setHistory((prev) => [...prev, count]);
+  }, [count]);
+
+  // Cleanup effect
+  useEffect(() => {
+    const timer = setInterval(() => {
+      console.log(`Current count: ${count}`);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [count]);
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={increment}>+1</button>
+    </div>
+  );
+}
+```
+
+## Error Handling
+
+- Use Error Boundaries for component tree error catching
+- Handle async errors in components gracefully
+- Provide meaningful error states to users
+- Log errors appropriately
+
+```jsx
+// Error Boundary
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("Error caught by boundary:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <ErrorFallback error={this.state.error} />;
+    }
+
+    return this.props.children;
+  }
+}
+
+// Component with error handling
+function DataComponent({ userId }) {
+  const { data, loading, error } = useUserData(userId);
+
+  if (loading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage message={error} />;
+  if (!data) return <EmptyState message="No data available" />;
+
+  return <UserDisplay data={data} />;
+}
+```
+
+## File Organization
+
+- Group related components in folders
+- Use index.js for clean imports
+- Separate concerns: components, hooks, utils, services
+- Keep test files alongside components
+
+```
+src/
+├── components/
+│   ├── UserProfile/
+│   │   ├── index.js
+│   │   ├── UserProfile.jsx
+│   │   ├── UserProfile.test.js
+│   │   └── UserProfile.module.css
+│   └── common/
+├── hooks/
+│   ├── useUserData.js
+│   └── useLocalStorage.js
+├── services/
+│   └── userService.js
+└── utils/
+    └── validation.js
+```
+
+## Performance Optimization
+
+- Use React.memo for expensive components
+- Implement useCallback for function props
+- Use useMemo for expensive calculations
+- Avoid creating objects/functions in render
+- Use lazy loading for large components
+
+```jsx
+// Good - Performance optimized component
+const ExpensiveList = React.memo(({ items, onItemClick }) => {
+  const sortedItems = useMemo(() => items.sort((a, b) => a.priority - b.priority), [items]);
+
+  const handleItemClick = useCallback(
+    (item) => {
+      onItemClick(item.id);
+    },
+    [onItemClick]
+  );
+
+  return (
+    <div>
+      {sortedItems.map((item) => (
+        <ExpensiveItem key={item.id} item={item} onClick={handleItemClick} />
+      ))}
+    </div>
+  );
+});
+```
+
+## Testing Best Practices
+
+- Write components that are easy to test
+- Use React Testing Library for user-centric tests
+- Test behavior, not implementation details
+- Mock external dependencies
+
+```jsx
+// Testable component
+function UserForm({ onSubmit, initialData = {} }) {
+  const [formData, setFormData] = useState(initialData);
+  const [errors, setErrors] = useState({});
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const validationErrors = validateUserForm(formData);
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    try {
+      await onSubmit(formData);
+    } catch (error) {
+      setErrors({ submit: error.message });
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} data-testid="user-form">
+      {/* form fields */}
+    </form>
+  );
+}
+```
+
+## Code Review Checklist
+
+- [ ] Components follow single responsibility principle
+- [ ] Props are properly typed (TypeScript/PropTypes)
+- [ ] State is kept minimal and local
+- [ ] Effects have proper dependencies and cleanup
+- [ ] Event handlers use useCallback when passed as props
+- [ ] No unnecessary re-renders or expensive calculations
+- [ ] Error states are handled gracefully
+- [ ] Components are reusable and composable
+- [ ] Tests cover main user interactions
+- [ ] Accessibility considerations implemented
+
+## React Anti-Patterns to Avoid
+
+- ❌ Mutating state directly
+- ❌ Using array indices as keys for dynamic lists
+- ❌ Creating functions/objects inside render
+- ❌ Overusing useEffect (prefer derived state)
+- ❌ Prop drilling more than 2-3 levels
+- ❌ Using refs to imperatively change UI
+- ❌ Mixing logic with presentation in components
+- ❌ Not cleaning up subscriptions/timers
+- ❌ Using class components for new code
+- ❌ Ignoring React DevTools warnings
+
+## Context and State Management
+
+- Use Context for truly global state only
+- Consider state management libraries for complex apps
+- Keep context values stable to prevent unnecessary re-renders
+- Split contexts by concern
+
+```jsx
+// Good - Stable context value
+const UserContext = createContext();
+
+function UserProvider({ children }) {
+  const [user, setUser] = useState(null);
+
+  const value = useMemo(() => ({ user, setUser }), [user]);
+
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
+}
+```
