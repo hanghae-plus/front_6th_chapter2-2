@@ -1,26 +1,12 @@
-import { useState, useCallback, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { CartItem, Product } from "../../types";
+import { useLocalStorage } from "./useLocalStorage";
 
 export const useCart = () => {
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem("cart");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return [];
-      }
-    }
-    return [];
+  const [cart, setCart] = useLocalStorage<CartItem[]>({
+    key: "cart",
+    initialValue: [],
   });
-
-  useEffect(() => {
-    if (cart.length > 0) {
-      localStorage.setItem("cart", JSON.stringify(cart));
-    } else {
-      localStorage.removeItem("cart");
-    }
-  }, [cart]);
 
   const addToCart = useCallback(
     (product: Product) => {

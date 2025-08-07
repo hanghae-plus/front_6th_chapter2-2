@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Product } from "../../types";
 import { initialProducts } from "../data";
+import { useLocalStorage } from "./useLocalStorage";
 // TODO: 상품 관리 Hook
 // 힌트:
 // 1. 상품 목록 상태 관리 (localStorage 연동 고려) ㅇ
@@ -22,21 +23,10 @@ export interface ProductWithUI extends Product {
 }
 
 export function useProducts() {
-  const [products, setProducts] = useState<ProductWithUI[]>(() => {
-    const saved = localStorage.getItem("products");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialProducts;
-      }
-    }
-    return initialProducts;
+  const [products, setProducts] = useLocalStorage<ProductWithUI[]>({
+    key: "products",
+    initialValue: initialProducts,
   });
-
-  useEffect(() => {
-    localStorage.setItem("products", JSON.stringify(products));
-  }, [products]);
 
   const addProduct = (newProduct: Omit<ProductWithUI, "id">) => {
     const product: ProductWithUI = {
