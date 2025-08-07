@@ -23,8 +23,6 @@ import {
   addCoupon as _addCoupon,
   deleteCoupon as _deleteCoupon,
   generateOrderNumber,
-  validateCouponDiscountValue,
-  getCouponDisplayText,
   checkAndClearSelectedCoupon,
 } from "../basic/models/coupon";
 

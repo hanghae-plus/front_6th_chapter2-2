@@ -19,20 +19,6 @@ export const canApplyCoupon = (
 };
 
 /**
- * 쿠폰 할인 금액을 계산하는 함수
- */
-export const calculateCouponDiscount = (
-  coupon: Coupon,
-  amount: number
-): number => {
-  if (coupon.discountType === "amount") {
-    return Math.min(coupon.discountValue, amount);
-  } else {
-    return Math.round(amount * (coupon.discountValue / 100));
-  }
-};
-
-/**
  * 쿠폰 유효성을 검증하는 함수 (중복 코드 검증)
  */
 export const validateCoupon = (

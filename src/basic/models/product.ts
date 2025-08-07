@@ -1,4 +1,4 @@
-import { Product, CartItem } from "../../types";
+import { Product } from "../../types";
 
 export interface ProductWithUI extends Product {
   description?: string;
@@ -96,37 +96,4 @@ export const getMaxDiscountRate = (product: Product): number => {
     return 0;
   }
   return Math.max(...product.discounts.map((d) => d.rate));
-};
-
-/**
- * 상품이 품절인지 확인하는 함수
- */
-export const isProductSoldOut = (
-  product: Product,
-  cart: CartItem[]
-): boolean => {
-  const cartItem = cart.find((item) => item.product.id === product.id);
-  const remaining = product.stock - (cartItem?.quantity || 0);
-  return remaining <= 0;
-};
-
-/**
- * 상품의 재고 상태를 반환하는 함수
- */
-export const getStockStatus = (
-  product: Product,
-  cart: CartItem[]
-): {
-  remaining: number;
-  isLowStock: boolean;
-  isSoldOut: boolean;
-} => {
-  const cartItem = cart.find((item) => item.product.id === product.id);
-  const remaining = product.stock - (cartItem?.quantity || 0);
-
-  return {
-    remaining,
-    isLowStock: remaining <= 5 && remaining > 0,
-    isSoldOut: remaining <= 0,
-  };
 };

@@ -25,55 +25,6 @@ export const generateOrderNumber = (): string => {
 };
 
 /**
- * 쿠폰 할인값 유효성을 검증하는 함수
- */
-export const validateCouponDiscountValue = (
-  discountType: "amount" | "percentage",
-  discountValue: number
-): { isValid: boolean; reason?: string; correctedValue?: number } => {
-  if (discountType === "percentage") {
-    if (discountValue > 100) {
-      return {
-        isValid: false,
-        reason: "할인율은 100%를 초과할 수 없습니다",
-        correctedValue: 100,
-      };
-    } else if (discountValue < 0) {
-      return {
-        isValid: false,
-        correctedValue: 0,
-      };
-    }
-  } else {
-    if (discountValue > 100000) {
-      return {
-        isValid: false,
-        reason: "할인 금액은 100,000원을 초과할 수 없습니다",
-        correctedValue: 100000,
-      };
-    } else if (discountValue < 0) {
-      return {
-        isValid: false,
-        correctedValue: 0,
-      };
-    }
-  }
-
-  return { isValid: true };
-};
-
-/**
- * 쿠폰 표시 텍스트를 생성하는 함수
- */
-export const getCouponDisplayText = (coupon: Coupon): string => {
-  if (coupon.discountType === "amount") {
-    return `${coupon.discountValue.toLocaleString()}원 할인`;
-  } else {
-    return `${coupon.discountValue}% 할인`;
-  }
-};
-
-/**
  * 선택된 쿠폰이 삭제되었는지 확인하고 선택 해제하는 함수
  */
 export const checkAndClearSelectedCoupon = (
