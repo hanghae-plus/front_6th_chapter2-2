@@ -1,0 +1,153 @@
+// src/basic/components/CouponForm.tsx
+import React, { useState } from 'react';
+import { Coupon } from '../types';
+
+interface Props {
+  onAddCoupon: (coupon: Coupon) => void;
+  onCancel: () => void;
+}
+
+export const CouponForm = ({ onAddCoupon, onCancel }: Props) => {
+  const [couponForm, setCouponForm] = useState<Coupon>({
+    name: '',
+    code: '',
+    discountType: 'amount',
+    discountValue: 0,
+  });
+  const [couponError, setCouponError] = useState<string | null>(null);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setCouponForm(prev => ({
+      ...prev,
+      [name]: name === 'code' ? value.toUpperCase() : value,
+    }));
+  };
+
+  const handleCouponValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value, 10) || 0;
+    setCouponForm({ ...couponForm, discountValue: value });
+    if (couponForm.discountType === 'percentage' && value > 100) {
+      setCouponError('할인율은 100%를 초과할 수 없습니다');
+    } else {
+      setCouponError(null);
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (couponError) {
+      alert(couponError);
+      return;
+    }
+    onAddCoupon(couponForm);
+  };
+
+  return (
+    <div className='mt-6 p-4 bg-gray-50 rounded-lg'>
+      <form onSubmit={handleSubmit} className='space-y-4'>
+        <h3 className='text-md font-medium text-gray-900'>
+          새 쿠폰 생성
+        </h3>
+        <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4'>
+          <div>
+            <label
+              htmlFor='coupon-name'
+              className='block text-sm font-medium text-gray-700 mb-1'
+            >
+              쿠폰명
+            </label>
+            <input
+              id='coupon-name'
+              name='name'
+              type='text'
+              value={couponForm.name}
+              onChange={handleInputChange}
+              className='w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm'
+              placeholder='신규 가입 쿠폰'
+              required
+            />
+          </div>
+          <div>
+            <label
+              htmlFor='coupon-code'
+              className='block text-sm font-medium text-gray-700 mb-1'
+            >
+              쿠폰 코드
+            </label>
+            <input
+              id='coupon-code'
+              name='code'
+              type='text'
+              value={couponForm.code}
+              onChange={handleInputChange}
+              className='w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm font-mono'
+              placeholder='WELCOME2024'
+              required
+            />
+          </div>
+          <div>
+            <label
+              htmlFor='coupon-discount-type'
+              className='block text-sm font-medium text-gray-700 mb-1'
+            >
+              할인 타입
+            </label>
+            <select
+              id='coupon-discount-type'
+              name='discountType'
+              value={couponForm.discountType}
+              onChange={handleInputChange}
+              className='w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm'
+            >
+              <option value='amount'>정액 할인</option>
+              <option value='percentage'>정률 할인</option>
+            </select>
+          </div>
+          <div>
+            <label
+              htmlFor='coupon-discount-value'
+              className='block text-sm font-medium text-gray-700 mb-1'
+            >
+              {couponForm.discountType === 'amount'
+                ? '할인 금액'
+                : '할인율(%)'}
+            </label>
+            <input
+              id='coupon-discount-value'
+              type='number'
+              value={couponForm.discountValue}
+              onChange={handleCouponValueChange}
+              onBlur={handleCouponValueChange}
+              className='w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm'
+              placeholder={
+                couponForm.discountType === 'amount' ? '5000' : '10'
+              }
+              required
+            />
+            {couponError && (
+              <p className='text-red-500 text-xs mt-1'>
+                {couponError}
+              </p>
+            )}
+          </div>
+        </div>
+        <div className='flex justify-end gap-3'>
+          <button
+            type='button'
+            onClick={onCancel}
+            className='px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50'
+          >
+            취소
+          </button>
+          <button
+            type='submit'
+            className='px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700'
+          >
+            쿠폰 생성
+          </button>
+        </div>
+      </form>
+    </div>
+  )
+}
