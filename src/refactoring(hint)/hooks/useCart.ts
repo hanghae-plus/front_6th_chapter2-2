@@ -14,7 +14,7 @@
 // - cartModel.getRemainingStock
 //
 // 반환할 값:
-// - cart: 장바구니 아이템 배열
+// - shop: 장바구니 아이템 배열
 // - selectedCoupon: 선택된 쿠폰
 // - addToCart: 상품 추가 함수
 // - removeFromCart: 상품 제거 함수

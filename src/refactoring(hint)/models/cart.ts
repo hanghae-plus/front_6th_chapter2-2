@@ -4,11 +4,11 @@
 // 구현할 함수들:
 // 1. calculateItemTotal(item): 개별 아이템의 할인 적용 후 총액 계산
 // 2. getMaxApplicableDiscount(item): 적용 가능한 최대 할인율 계산
-// 3. calculateCartTotal(cart, coupon): 장바구니 총액 계산 (할인 전/후, 할인액)
-// 4. updateCartItemQuantity(cart, productId, quantity): 수량 변경
-// 5. addItemToCart(cart, product): 상품 추가
-// 6. removeItemFromCart(cart, productId): 상품 제거
-// 7. getRemainingStock(product, cart): 남은 재고 계산
+// 3. calculateCartTotal(shop, coupon): 장바구니 총액 계산 (할인 전/후, 할인액)
+// 4. updateCartItemQuantity(shop, productId, quantity): 수량 변경
+// 5. addItemToCart(shop, product): 상품 추가
+// 6. removeItemFromCart(shop, productId): 상품 제거
+// 7. getRemainingStock(product, shop): 남은 재고 계산
 //
 // 원칙:
 // - UI와 관련된 로직 없음

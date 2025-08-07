@@ -4,7 +4,7 @@
 // 2. 장바구니 관리
 // 3. 쿠폰 적용
 // 4. 주문 처리
-// 
+//
 // 필요한 hooks:
 // - useProducts: 상품 목록 관리
 // - useCart: 장바구니 상태 관리
@@ -13,7 +13,7 @@
 //
 // 하위 컴포넌트:
 // - SearchBar: 검색 입력
-// - ProductList: 상품 목록 표시
+// - ProductArea: 상품 목록 표시
 // - Cart: 장바구니 표시 및 결제
 
 export function CartPage() {
