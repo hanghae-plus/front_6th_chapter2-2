@@ -1,20 +1,21 @@
 import type { CartItem } from "../../domains/cart";
 import { BadgeContainer, CartIcon, SearchInput } from "../../shared";
+import { AdminToggleButton } from "./AdminToggleButton";
 
 type HeaderProps = {
-  isAdmin: boolean;
+  isAdminMode: boolean;
+  onToggleAdminMode: () => void;
+  cart: CartItem[];
   searchTerm: string;
   setSearchTerm: (term: string) => void;
-  setIsAdmin: (isAdmin: boolean) => void;
-  cart: CartItem[];
   totalItemCount: number;
 };
 
 export function Header({
+  isAdminMode,
+  onToggleAdminMode,
   cart,
-  isAdmin,
   searchTerm,
-  setIsAdmin,
   setSearchTerm,
   totalItemCount
 }: HeaderProps) {
@@ -25,7 +26,7 @@ export function Header({
           <div className="flex flex-1 items-center">
             <h1 className="text-xl font-semibold text-gray-800">SHOP</h1>
             {/* 검색창 - 안티패턴: 검색 로직이 컴포넌트에 직접 포함 */}
-            {!isAdmin && (
+            {!isAdminMode && (
               <div className="ml-8 flex max-w-md flex-1 gap-3">
                 <SearchInput
                   type="text"
@@ -38,16 +39,10 @@ export function Header({
               </div>
             )}
           </div>
+
           <nav className="flex items-center space-x-4">
-            <button
-              onClick={() => setIsAdmin(!isAdmin)}
-              className={`rounded px-3 py-1.5 text-sm transition-colors ${
-                isAdmin ? "bg-gray-800 text-white" : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              {isAdmin ? "쇼핑몰로 돌아가기" : "관리자 페이지로"}
-            </button>
-            {!isAdmin && (
+            <AdminToggleButton isAdmin={isAdminMode} onToggleAdminMode={onToggleAdminMode} />
+            {!isAdminMode && (
               <BadgeContainer label={String(totalItemCount)} visible={cart.length > 0}>
                 <CartIcon className="h-6 w-6 text-gray-700" />
               </BadgeContainer>

@@ -21,7 +21,8 @@ import {
   NotificationList,
   useDebounceState,
   useLocalStorageState,
-  useNotifications
+  useNotifications,
+  useToggle
 } from "../shared";
 import { Header } from "./components";
 import { AdminPage, CartPage } from "./pages";
@@ -49,8 +50,9 @@ export function App() {
 
   const { notifications, addNotification, removeNotification } = useNotifications();
 
+  const [isAdminMode, toggleAdminMode] = useToggle(false);
+
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [activeTab, setActiveTab] = useState<"products" | "coupons">("products");
   const [showProductForm, setShowProductForm] = useState(false);
@@ -74,9 +76,9 @@ export function App() {
 
   const formatPriceWithContext = useCallback(
     (price: number, productId?: string) => {
-      return formatPrice(price, productId, products, cart, isAdmin);
+      return formatPrice(price, productId, products, cart, isAdminMode);
     },
-    [products, cart, isAdmin]
+    [products, cart, isAdminMode]
   );
 
   const [totalItemCount, setTotalItemCount] = useState(0);
@@ -160,16 +162,16 @@ export function App() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header
+        isAdminMode={isAdminMode}
+        onToggleAdminMode={toggleAdminMode}
         cart={cart}
-        isAdmin={isAdmin}
         searchTerm={searchTerm}
-        setIsAdmin={setIsAdmin}
         setSearchTerm={setSearchTerm}
         totalItemCount={totalItemCount}
       />
 
       <main className="mx-auto max-w-7xl px-4 py-8">
-        {isAdmin ? (
+        {isAdminMode ? (
           <AdminPage
             activeTab={activeTab}
             addNotification={addNotification}
