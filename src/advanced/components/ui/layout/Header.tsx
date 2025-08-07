@@ -1,20 +1,13 @@
+import { useAtom } from 'jotai';
 import { CartIcon } from '../../icons/CartIcon';
+import { isAdminAtom, seacrhTermAtom, totalItemCountAtom } from '../../../store/atoms';
+import { useSearchTerm } from '../../../hooks/useSearchTerm';
 
-interface HeaderProps {
-  isAdmin: boolean;
-  setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>;
-  searchTerm: string;
-  handleSearchTerm: (value: string) => void;
-  cartTotalItem: number;
-}
+const Header = () => {
+  const [isAdmin, setIsAdmin] = useAtom(isAdminAtom);
+  const [totalItemCount] = useAtom(totalItemCountAtom);
+  const { searchTerm, handleSearchTerm } = useSearchTerm();
 
-const Header = ({
-  isAdmin,
-  setIsAdmin,
-  searchTerm,
-  handleSearchTerm,
-  cartTotalItem,
-}: HeaderProps) => {
   return (
     <>
       <header className='bg-white shadow-sm sticky top-0 z-40 border-b'>
@@ -47,9 +40,9 @@ const Header = ({
               {!isAdmin && (
                 <div className='relative'>
                   <CartIcon />
-                  {cartTotalItem > 0 && (
+                  {totalItemCount > 0 && (
                     <span className='absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center'>
-                      {cartTotalItem}
+                      {totalItemCount}
                     </span>
                   )}
                 </div>

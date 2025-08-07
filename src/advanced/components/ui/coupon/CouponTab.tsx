@@ -1,43 +1,32 @@
 import { useState, useCallback } from 'react';
+import { useAtom } from 'jotai';
 import { Coupon } from '../../../../types';
 import { MESSAGES } from '../../../constants/messages';
 import { PlusIcon } from '../../icons';
 import CouponCard from './CouponCard';
 import CouponForm from './CouponForm';
+import { useCoupons } from '../../../hooks/useCoupons';
+import { useNotification } from '../../../hooks/useNotification';
+import { selectedCouponAtom } from '../../../store/atoms';
 
-interface CouponTabProps {
-  // coupon
-  coupons: Coupon[];
-  addCoupon: (newCoupon: Coupon) => void;
-  deleteCoupon: (couponCode: string) => void;
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>;
-
-  // notification
-  addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
-}
-
-const CouponTab = ({
-  coupons,
-  addCoupon,
-  deleteCoupon,
-  selectedCoupon,
-  setSelectedCoupon,
-  addNotification,
-}: CouponTabProps) => {
+const CouponTab = () => {
   // 쿠폰 추가 (수정) 폼 표시
   const [showCouponForm, setShowCouponForm] = useState(false);
+
+  const { coupons, addCoupon, removeCoupon } = useCoupons();
+  const { addNotification } = useNotification();
+  const [selectedCoupon, setSelectedCoupon] = useAtom(selectedCouponAtom);
 
   // 쿠폰 삭제
   const deleteCouponItem = useCallback(
     (couponCode: string) => {
-      deleteCoupon(couponCode);
+      removeCoupon(couponCode);
       if (selectedCoupon?.code === couponCode) {
         setSelectedCoupon(null);
       }
       addNotification(MESSAGES.COUPON.DELETED, 'success');
     },
-    [selectedCoupon, addNotification],
+    [selectedCoupon, addNotification, removeCoupon, setSelectedCoupon],
   );
 
   return (

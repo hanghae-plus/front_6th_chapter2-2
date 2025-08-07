@@ -1,43 +1,20 @@
 import { useState } from 'react';
-import { Coupon, Product } from '../../types';
 import { TabLayout } from './ui/layout/TabLayout';
 import ProductTab from './ui/product/ProductTab';
 import CouponTab from './ui/coupon/CouponTab';
+import { useProducts } from '../hooks/useProducts';
+import { useCoupons } from '../hooks/useCoupons';
+import { useCart } from '../hooks/useCart';
+import { useNotification } from '../hooks/useNotification';
 
-interface AdminPageProps {
-  // products
-  products: Product[];
-  addProduct: (newProduct: Omit<Product, 'id'>) => void;
-  updateProduct: (productId: string, updates: Partial<Product>) => void;
-  deleteProduct: (productId: string) => void;
-  getRemainingStock: (product: Product) => number;
-
-  // coupons
-  coupons: Coupon[];
-  addCoupon: (newCoupon: Coupon) => void;
-  deleteCoupon: (couponCode: string) => void;
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>;
-
-  // notification
-  addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
-}
-
-const AdminPage = ({
-  products,
-  getRemainingStock,
-  coupons,
-  addNotification,
-  addProduct,
-  updateProduct,
-  deleteProduct,
-  addCoupon,
-  deleteCoupon,
-  selectedCoupon,
-  setSelectedCoupon,
-}: AdminPageProps) => {
+const AdminPage = () => {
   // 관리자 페이지 - 활성화된 탭 (상품/쿠폰 관리)
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
+
+  const { products, addProduct, updateProduct, deleteProduct } = useProducts();
+  const { coupons, addCoupon, removeCoupon } = useCoupons();
+  const { getRemainingStock } = useCart();
+  const { addNotification } = useNotification();
 
   const handleActiveTab = (value: 'products' | 'coupons') => {
     setActiveTab(value);
@@ -69,9 +46,7 @@ const AdminPage = ({
         <CouponTab
           coupons={coupons}
           addCoupon={addCoupon}
-          deleteCoupon={deleteCoupon}
-          selectedCoupon={selectedCoupon}
-          setSelectedCoupon={setSelectedCoupon}
+          deleteCoupon={removeCoupon}
           addNotification={addNotification}
         />
       )}

@@ -4,9 +4,10 @@ import { Coupon, Product } from '../../types';
 import { Products } from '../constants/products';
 import { cartModel } from '../models/cart';
 import { useProducts } from './useProducts';
+import { useNotification } from './useNotification';
 import { cartAtom, selectedCouponAtom } from '../store/atoms';
 
-export function useCart(addNotification: any) {
+export function useCart() {
   // 장바구니 상태 관리
   const [cart, setCart] = useAtom(cartAtom);
 
@@ -15,6 +16,9 @@ export function useCart(addNotification: any) {
 
   // 상품 목록 관리
   const { products } = useProducts();
+
+  // 알림 관리
+  const { addNotification } = useNotification();
 
   // 재고 확인
   const getRemainingStock = (product: Product): number => {

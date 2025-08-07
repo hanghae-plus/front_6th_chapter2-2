@@ -21,3 +21,9 @@ export const notificationAtom = atom<NotificationType[]>([]);
 
 // 검색어
 export const seacrhTermAtom = atom<string>('');
+
+// 관리자 모드 상태
+export const isAdminAtom = atom<boolean>(false);
+
+// 장바구니 총 아이템 수
+export const totalItemCountAtom = atom<number>(0);

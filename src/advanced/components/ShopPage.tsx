@@ -6,49 +6,29 @@ import ProductList from './ui/product/ProductList';
 import CartList from './ui/cart/CartList';
 import CouponSelector from './ui/coupon/CouponSelector';
 import OrderSummary from './ui/cart/OrderSummary';
+import { useProducts } from '../hooks/useProducts';
+import { useCart } from '../hooks/useCart';
+import { useCoupons } from '../hooks/useCoupons';
+import { useNotification } from '../hooks/useNotification';
+import { useSearchTerm } from '../hooks/useSearchTerm';
 
-interface CartPageProps {
-  // product
-  products: Product[];
-  getRemainingStock: (product: Product) => number;
-  updateQuantity: (productId: string, newQuantity: number) => void;
-  addToCart: (product: Product) => void;
-  removeFromCart: (productId: string) => void;
+const ShopPage = () => {
+  const { products } = useProducts();
+  const {
+    cart,
+    selectedCoupon,
+    setSelectedCoupon,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+    calculateCartTotal,
+    getRemainingStock,
+    clearCart,
+  } = useCart();
+  const { coupons } = useCoupons();
+  const { addNotification } = useNotification();
+  const { debouncedSearchTerm } = useSearchTerm();
 
-  // cart
-  cart: CartItem[];
-  cartTotalPrice: { totalBeforeDiscount: number; totalAfterDiscount: number };
-  calculateItemTotal: (item: CartItem) => number;
-  clearCart: () => void;
-
-  // coupons
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: (value: React.SetStateAction<Coupon | null>) => void;
-
-  // search
-  debouncedSearchTerm: string;
-
-  // notification
-  addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
-}
-
-const ShopPage = ({
-  products,
-  getRemainingStock,
-  updateQuantity,
-  addToCart,
-  removeFromCart,
-  cart,
-  cartTotalPrice,
-  calculateItemTotal,
-  clearCart,
-  coupons,
-  selectedCoupon,
-  setSelectedCoupon,
-  debouncedSearchTerm,
-  addNotification,
-}: CartPageProps) => {
   // 장바구니 담기 버튼 처리
   const addItemToCart = useCallback(
     (product: Product) => {
@@ -61,7 +41,7 @@ const ShopPage = ({
       addToCart(product);
       addNotification(MESSAGES.PRODUCT.ADDED_TO_CART, 'success');
     },
-    [cart, addNotification, getRemainingStock],
+    [addNotification, getRemainingStock, addToCart],
   );
 
   // 장바구니의 상품 수 업데이트 (-1, +1 처리)
@@ -83,19 +63,22 @@ const ShopPage = ({
 
       updateQuantity(productId, newQuantity);
     },
-    [products, addNotification, getRemainingStock],
+    [products, addNotification, updateQuantity],
   );
 
   // 장바구니에서 상품 제거
-  const removeItemFromCart = useCallback((productId: string) => {
-    removeFromCart(productId);
-  }, []);
+  const removeItemFromCart = useCallback(
+    (productId: string) => {
+      removeFromCart(productId);
+    },
+    [removeFromCart],
+  );
 
   // 쿠폰 적용 함수
   const applyCoupon = useCallback(
     (coupon: Coupon) => {
       // 할인 적용 전 총 가격
-      const currentTotal = cartTotalPrice.totalAfterDiscount;
+      const currentTotal = calculateCartTotal().totalAfterDiscount;
 
       // 총 가격 10000원 이하일 경우 처리
       if (currentTotal < ORDER.MIN_FOR_COUPON && coupon.discountType === 'percentage') {
@@ -107,7 +90,7 @@ const ShopPage = ({
       setSelectedCoupon(coupon);
       addNotification(MESSAGES.COUPON.APPLIED, 'success');
     },
-    [addNotification, cartTotalPrice],
+    [addNotification, calculateCartTotal, setSelectedCoupon],
   );
 
   // 주문 완료 처리 함수
@@ -116,7 +99,35 @@ const ShopPage = ({
     addNotification(MESSAGES.ORDER.COMPLETED(orderNumber), 'success');
     clearCart();
     setSelectedCoupon(null);
-  }, [addNotification]);
+  }, [addNotification, clearCart, setSelectedCoupon]);
+
+  // 아이템별 총액 계산
+  const calculateItemTotal = (item: CartItem): number => {
+    const { price } = item.product;
+    const { quantity } = item;
+    const discount = getMaxApplicableDiscount(item);
+
+    return Math.round(price * quantity * (1 - discount));
+  };
+
+  // 최대 할인율 계산
+  const getMaxApplicableDiscount = (item: CartItem): number => {
+    const { discounts } = item.product;
+    const { quantity } = item;
+
+    const baseDiscount = discounts.reduce((maxDiscount, discount) => {
+      return quantity >= discount.quantity && discount.rate > maxDiscount
+        ? discount.rate
+        : maxDiscount;
+    }, 0);
+
+    const hasBulkPurchase = cart.some((cartItem) => cartItem.quantity >= 10);
+    if (hasBulkPurchase) {
+      return Math.min(baseDiscount + 0.05, 0.5); // 대량 구매 시 추가 5% 할인
+    }
+
+    return baseDiscount;
+  };
 
   return (
     <div className='grid grid-cols-1 lg:grid-cols-4 gap-6'>
@@ -152,7 +163,7 @@ const ShopPage = ({
               />
 
               {/* 결제 정보 */}
-              <OrderSummary cartTotalPrice={cartTotalPrice} completeOrder={completeOrder} />
+              <OrderSummary cartTotalPrice={calculateCartTotal()} completeOrder={completeOrder} />
             </>
           )}
         </div>
