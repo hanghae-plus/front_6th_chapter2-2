@@ -1,9 +1,9 @@
 import { useAtom } from 'jotai';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { ProductForm as ProductFormType } from '../../../types';
 import { defaultProductForm } from '../../constants';
-import { addNotificationAtom } from '../../store/actions';
+import { addNotificationAtom, addProductAtom, updateProductAtom } from '../../store/actions';
 import { productsAtom } from '../../store/atoms';
 import { isValidPrice, isValidStock } from '../../utils/validators';
 import { CloseIcon } from '../icons';
@@ -12,25 +12,23 @@ import Input from '../ui/Input';
 
 interface ProductFormProps {
   editingProduct: string | null;
-  productForm: ProductFormType;
-  setProductForm: (form: ProductFormType) => void;
   showProductForm: boolean;
   setShowProductForm: (show: boolean) => void;
   setEditingProduct: (id: string | null) => void;
-  handleProductSubmit: (e: React.FormEvent) => void;
 }
 
 const ProductForm = ({
   editingProduct,
-  productForm,
-  setProductForm,
   showProductForm,
   setShowProductForm,
   setEditingProduct,
-  handleProductSubmit,
 }: ProductFormProps) => {
   const [products] = useAtom(productsAtom);
   const [, addNotification] = useAtom(addNotificationAtom);
+  const [, addProduct] = useAtom(addProductAtom);
+  const [, updateProduct] = useAtom(updateProductAtom);
+
+  const [productForm, setProductForm] = useState<ProductFormType>(defaultProductForm);
 
   // 편집 모드일 때 기존 상품 데이터 불러오기
   useEffect(() => {
@@ -48,7 +46,24 @@ const ProductForm = ({
     } else if (editingProduct === 'new') {
       setProductForm(defaultProductForm);
     }
-  }, [editingProduct, products, setProductForm]);
+  }, [editingProduct, products]);
+
+  const handleProductSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editingProduct && editingProduct !== 'new') {
+      updateProduct({
+        productId: editingProduct,
+        updates: productForm,
+      });
+      setEditingProduct(null);
+    } else {
+      addProduct({
+        newProduct: productForm,
+      });
+    }
+    setProductForm(defaultProductForm);
+    setShowProductForm(false);
+  };
 
   if (!showProductForm) return null;
 

@@ -2,9 +2,8 @@ import { useAtom } from 'jotai';
 import { useState } from 'react';
 
 import ProductForm from './ProductForm';
-import { ProductWithUI, ProductForm as ProductFormType } from '../../../types';
-import { defaultProductForm } from '../../constants';
-import { deleteProductAtom, addProductAtom, updateProductAtom } from '../../store/actions';
+import { ProductWithUI } from '../../../types';
+import { deleteProductAtom } from '../../store/actions';
 import { productsAtom, cartAtom } from '../../store/atoms';
 import { formatPrice } from '../../utils/formatters';
 import Badge from '../ui/Badge';
@@ -15,39 +14,12 @@ const ProductManagement = () => {
   const [products] = useAtom(productsAtom);
   const [cart] = useAtom(cartAtom);
   const [, deleteProduct] = useAtom(deleteProductAtom);
-  const [, addProduct] = useAtom(addProductAtom);
-  const [, updateProduct] = useAtom(updateProductAtom);
 
   const [showProductForm, setShowProductForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
-  const [productForm, setProductForm] = useState<ProductFormType>(defaultProductForm);
-
-  const handleProductSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editingProduct && editingProduct !== 'new') {
-      updateProduct({
-        productId: editingProduct,
-        updates: productForm,
-      });
-      setEditingProduct(null);
-    } else {
-      addProduct({
-        newProduct: productForm,
-      });
-    }
-    setProductForm(defaultProductForm);
-    setShowProductForm(false);
-  };
 
   const startEditProduct = (product: ProductWithUI) => {
     setEditingProduct(product.id);
-    setProductForm({
-      name: product.name,
-      description: product.description || '',
-      price: product.price,
-      stock: product.stock,
-      discounts: product.discounts,
-    });
     setShowProductForm(true);
   };
 
@@ -68,7 +40,6 @@ const ProductManagement = () => {
           <Button
             onClick={() => {
               setEditingProduct('new');
-              setProductForm(defaultProductForm);
               setShowProductForm(true);
             }}
             hasTextSm
@@ -149,12 +120,9 @@ const ProductManagement = () => {
       </div>
       <ProductForm
         editingProduct={editingProduct}
-        productForm={productForm}
-        setProductForm={setProductForm}
         showProductForm={showProductForm}
         setShowProductForm={setShowProductForm}
         setEditingProduct={setEditingProduct}
-        handleProductSubmit={handleProductSubmit}
       />
     </Card>
   );

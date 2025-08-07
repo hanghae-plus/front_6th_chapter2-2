@@ -1,10 +1,8 @@
 import { useAtom } from 'jotai';
 import { useState } from 'react';
 
-import { CouponForm as CouponFormType } from '../../../types';
-import { defaultCouponForm } from '../../constants';
 import { formatCouponDisplay } from '../../models/coupon';
-import { addCouponAtom, removeCouponAtom } from '../../store/actions';
+import { removeCouponAtom } from '../../store/actions';
 import { TrashIcon, PlusIcon } from '../icons';
 import CouponForm from './CouponForm';
 import { couponsAtom, selectedCouponAtom } from '../../store/atoms';
@@ -15,20 +13,9 @@ import Card from '../ui/Card';
 const CouponManagement = () => {
   const [coupons] = useAtom(couponsAtom);
   const [selectedCoupon, setSelectedCoupon] = useAtom(selectedCouponAtom);
-  const [, addCoupon] = useAtom(addCouponAtom);
   const [, removeCoupon] = useAtom(removeCouponAtom);
 
   const [showCouponForm, setShowCouponForm] = useState(false);
-  const [couponForm, setCouponForm] = useState<CouponFormType>(defaultCouponForm);
-
-  const handleCouponSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    addCoupon({
-      newCoupon: couponForm,
-    });
-    setCouponForm(defaultCouponForm);
-    setShowCouponForm(false);
-  };
 
   const handleRemoveCoupon = (couponCode: string) => {
     removeCoupon({
@@ -89,13 +76,7 @@ const CouponManagement = () => {
           </div>
         </div>
 
-        <CouponForm
-          couponForm={couponForm}
-          setCouponForm={setCouponForm}
-          showCouponForm={showCouponForm}
-          setShowCouponForm={setShowCouponForm}
-          handleCouponSubmit={handleCouponSubmit}
-        />
+        <CouponForm showCouponForm={showCouponForm} setShowCouponForm={setShowCouponForm} />
       </div>
     </Card>
   );

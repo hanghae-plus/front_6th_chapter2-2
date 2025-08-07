@@ -1,32 +1,44 @@
 import { useAtom } from 'jotai';
+import { useState, useEffect } from 'react';
 
 import { CouponForm as CouponFormType } from '../../../types';
+import { defaultCouponForm } from '../../constants';
 import {
   validateCouponDiscountValue,
   getCouponDiscountLabel,
   getCouponDiscountPlaceholder,
 } from '../../models/coupon';
-import { addNotificationAtom } from '../../store/actions';
+import { addNotificationAtom, addCouponAtom } from '../../store/actions';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 import Select from '../ui/Selector';
 
 interface CouponFormProps {
-  couponForm: CouponFormType;
-  setCouponForm: (form: CouponFormType) => void;
   showCouponForm: boolean;
   setShowCouponForm: (show: boolean) => void;
-  handleCouponSubmit: (e: React.FormEvent) => void;
 }
 
-const CouponForm = ({
-  couponForm,
-  setCouponForm,
-  showCouponForm,
-  setShowCouponForm,
-  handleCouponSubmit,
-}: CouponFormProps) => {
+const CouponForm = ({ showCouponForm, setShowCouponForm }: CouponFormProps) => {
   const [, addNotification] = useAtom(addNotificationAtom);
+  const [, addCoupon] = useAtom(addCouponAtom);
+
+  const [couponForm, setCouponForm] = useState<CouponFormType>(defaultCouponForm);
+
+  // showCouponForm이 true가 될 때 폼 초기화
+  useEffect(() => {
+    if (showCouponForm) {
+      setCouponForm(defaultCouponForm);
+    }
+  }, [showCouponForm]);
+
+  const handleCouponSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    addCoupon({
+      newCoupon: couponForm,
+    });
+    setCouponForm(defaultCouponForm);
+    setShowCouponForm(false);
+  };
 
   if (!showCouponForm) return null;
 
