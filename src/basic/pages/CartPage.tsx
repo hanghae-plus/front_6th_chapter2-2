@@ -14,7 +14,10 @@ import { NotificationVariant } from "../entities/notification/types";
 import { getProductStockStatus } from "../features/check-stock/libs";
 import { calculateStock } from "../entities/product/libs/stock";
 import { useGlobalNotification } from "../entities/notification/hooks/useGlobalNotification";
-import { useCoupon } from "../entities/coupon/hooks/useCoupon";
+import {
+  useCoupon,
+  CouponErrorReason,
+} from "../entities/coupon/hooks/useCoupon";
 
 interface CartPageProps {
   products: ProductWithUI[];
@@ -37,9 +40,14 @@ export function CartPage({
 }: CartPageProps) {
   const { addNotification } = useGlobalNotification();
   const { coupons, applyCoupon: applyCouponLogic } = useCoupon({
-    onSuccess: (message) =>
-      addNotification(message, NotificationVariant.SUCCESS),
-    onError: (message) => addNotification(message, NotificationVariant.ERROR),
+    onApplyCouponError: (_, reason) => {
+      if (reason === CouponErrorReason.INSUFFICIENT_AMOUNT) {
+        addNotification(
+          "percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.",
+          NotificationVariant.ERROR
+        );
+      }
+    },
   });
 
   const displayPrice = (product: Product) => {
@@ -197,9 +205,10 @@ export function CartPage({
 
       applyCouponLogic(coupon, currentTotal, (appliedCoupon) => {
         setSelectedCoupon(appliedCoupon);
+        addNotification("쿠폰이 적용되었습니다.", NotificationVariant.SUCCESS);
       });
     },
-    [applyCouponLogic, setSelectedCoupon]
+    [applyCouponLogic, setSelectedCoupon, addNotification]
   );
 
   const completeOrder = useCallback(() => {

@@ -1,41 +1,43 @@
 import { useCallback } from "react";
-import { Coupon } from "../../../../types";
+import { Coupon, DiscountType } from "../../../../types";
 import { useCouponStore } from "./useCouponStore";
+
+export enum CouponErrorReason {
+  DUPLICATE_CODE = "DUPLICATE_CODE",
+  INSUFFICIENT_AMOUNT = "INSUFFICIENT_AMOUNT",
+}
 
 interface UseCouponOptions {
   onAddCoupon?: (coupon: Coupon) => void;
   onDeleteCoupon?: (code: string) => void;
-  onSuccess?: (message: string) => void;
-  onError?: (message: string) => void;
+  onAddCouponError?: (coupon: Coupon, reason: CouponErrorReason) => void;
+  onApplyCouponError?: (coupon: Coupon, reason: CouponErrorReason) => void;
 }
 
 export function useCoupon(options: UseCouponOptions = {}) {
-  const { onAddCoupon, onDeleteCoupon, onSuccess, onError } = options;
+  const { onAddCoupon, onDeleteCoupon, onAddCouponError, onApplyCouponError } =
+    options;
   const couponStore = useCouponStore();
 
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {
       if (couponStore.isDuplicateCode(newCoupon.code)) {
-        onError?.("이미 존재하는 쿠폰 코드입니다.");
+        onAddCouponError?.(newCoupon, CouponErrorReason.DUPLICATE_CODE);
         return;
       }
 
       couponStore.addCoupon(newCoupon);
-      onSuccess?.("쿠폰이 추가되었습니다.");
-
       onAddCoupon?.(newCoupon);
     },
-    [couponStore, onSuccess, onError, onAddCoupon]
+    [couponStore, onAddCoupon, onAddCouponError]
   );
 
   const deleteCoupon = useCallback(
     (code: string) => {
       couponStore.deleteCoupon(code);
-      onSuccess?.("쿠폰이 삭제되었습니다.");
-
       onDeleteCoupon?.(code);
     },
-    [couponStore, onSuccess, onDeleteCoupon]
+    [couponStore, onDeleteCoupon]
   );
 
   const applyCoupon = useCallback(
@@ -44,15 +46,17 @@ export function useCoupon(options: UseCouponOptions = {}) {
       currentTotal: number,
       onApply: (coupon: Coupon) => void
     ) => {
-      if (currentTotal < 10000 && coupon.discountType === "percentage") {
-        onError?.("percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.");
+      if (
+        currentTotal < 10000 &&
+        coupon.discountType === DiscountType.PERCENTAGE
+      ) {
+        onApplyCouponError?.(coupon, CouponErrorReason.INSUFFICIENT_AMOUNT);
         return;
       }
 
       onApply(coupon);
-      onSuccess?.("쿠폰이 적용되었습니다.");
     },
-    [onSuccess, onError]
+    [onApplyCouponError]
   );
 
   return {

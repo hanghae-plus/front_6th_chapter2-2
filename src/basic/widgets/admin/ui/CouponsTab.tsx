@@ -2,7 +2,10 @@ import { useState } from "react";
 import PlusIcon from "../../../assets/icons/PlusIcon.svg?react";
 import { CouponCard } from "../../../entities/coupon/ui/CouponCard";
 import { AddCouponForm } from "../../../features/add-coupon/ui/AddCouponForm";
-import { useCoupon } from "../../../entities/coupon/hooks/useCoupon";
+import {
+  useCoupon,
+  CouponErrorReason,
+} from "../../../entities/coupon/hooks/useCoupon";
 import { useGlobalNotification } from "../../../entities/notification/hooks/useGlobalNotification";
 import { NotificationVariant } from "../../../entities/notification/types";
 
@@ -11,13 +14,21 @@ export function CouponsTab() {
   const { addNotification } = useGlobalNotification();
 
   const { coupons, addCoupon, deleteCoupon } = useCoupon({
-    onAddCoupon: () => setShowCouponForm(false),
-    onDeleteCoupon: () => {
-      // 필요시 추가 로직
+    onAddCoupon: () => {
+      setShowCouponForm(false);
+      addNotification("쿠폰이 추가되었습니다.", NotificationVariant.SUCCESS);
     },
-    onSuccess: (message) =>
-      addNotification(message, NotificationVariant.SUCCESS),
-    onError: (message) => addNotification(message, NotificationVariant.ERROR),
+    onDeleteCoupon: () => {
+      addNotification("쿠폰이 삭제되었습니다.", NotificationVariant.SUCCESS);
+    },
+    onAddCouponError: (_, reason) => {
+      if (reason === CouponErrorReason.DUPLICATE_CODE) {
+        addNotification(
+          "이미 존재하는 쿠폰 코드입니다.",
+          NotificationVariant.ERROR
+        );
+      }
+    },
   });
 
   return (
