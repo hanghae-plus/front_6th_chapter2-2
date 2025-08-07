@@ -1,0 +1,47 @@
+name: pnpm-deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      targetStage:
+        description: "배포 환경"
+        type: choice
+        default: main
+        required: true
+        options: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Setup node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.17.0"
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - uses: actions/cache@v4
+        id: cache
+        with:
+          path: |
+            node_modules
+            .pnpm-store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --prod
+
+      - name: Build
+        run: pnpm build
