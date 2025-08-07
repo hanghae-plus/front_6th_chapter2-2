@@ -1,16 +1,8 @@
-import { useState } from "react";
-
 import CouponAdmin from "@/basic/features/admin/components/CouponAdmin";
 import ProductAdmin from "@/basic/features/admin/components/ProductAdmin";
-import { useCart } from "@/basic/features/cart/hooks/useCart";
-import { useCoupon } from "@/basic/features/coupon/hooks/useCoupon";
 import { Coupon } from "@/basic/features/coupon/types/coupon.type";
-import { DiscountType } from "@/basic/features/discount/types/discount.type";
 import { AddNotification } from "@/basic/features/notification/types/notification";
 import Tabs from "@/basic/shared/components/ui/Tabs";
-import { DEFAULTS } from "@/basic/shared/constants/defaults";
-import { NOTIFICATION } from "@/basic/shared/constants/notification";
-import { VALIDATION } from "@/basic/shared/constants/validation";
 
 enum AdminTabsValue {
   PRODUCTS = "products",
