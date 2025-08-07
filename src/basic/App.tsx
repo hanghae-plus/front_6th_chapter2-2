@@ -1,15 +1,10 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 
 import { Coupon, ProductWithUI, Notification, ProductForm, CouponForm } from '../types';
-import {
-  CloseIcon,
-  CartIcon,
-  ImageIcon,
-  CartHeaderIcon,
-  EmptyCartIcon,
-  TrashIcon,
-  PlusIcon,
-} from './components/icons';
+import Header from './components/Header';
+import { CloseIcon, CartHeaderIcon, EmptyCartIcon, TrashIcon, PlusIcon } from './components/icons';
+import NotificationComponent from './components/Notification';
+import ProductCard from './components/ProductCard';
 import Badge from './components/ui/Badge';
 import Button from './components/ui/Button';
 import Card from './components/ui/Card';
@@ -27,14 +22,11 @@ import {
   getCouponDiscountPlaceholder,
 } from './models/coupon';
 import {
-  getMaxDiscountRate,
-  formatDiscountDescription,
   hasDiscount,
   calculateDiscountRate,
   hasTotalDiscount,
   calculateTotalDiscountAmount,
 } from './models/discount';
-import { isRecommended } from './models/product';
 import { formatPrice } from './utils/formatters';
 import { useDebounce } from './utils/hooks/useDebounce';
 import { isValidPrice, isValidStock } from './utils/validators';
@@ -180,75 +172,19 @@ const App = () => {
     <div className='min-h-screen bg-gray-50'>
       {/* ===== ENTITY COMPONENTS: 엔티티 컴포넌트들 ===== */}
       {/* TODO: src/basic/components/Notification.tsx로 분리 - 알림 시스템 */}
-      {notifications.length > 0 && (
-        <div className='fixed top-20 right-4 z-50 space-y-2 max-w-sm'>
-          {notifications.map((notif) => (
-            <div
-              key={notif.id}
-              className={`p-4 rounded-md shadow-md text-white flex justify-between items-center ${
-                notif.type === 'error'
-                  ? 'bg-red-600'
-                  : notif.type === 'warning'
-                  ? 'bg-yellow-600'
-                  : 'bg-green-600'
-              }`}
-            >
-              <span className='mr-2'>{notif.message}</span>
-              <Button
-                onClick={() => setNotifications((prev) => prev.filter((n) => n.id !== notif.id))}
-                className='text-white hover:text-gray-200'
-              >
-                <CloseIcon />
-              </Button>
-            </div>
-          ))}
-        </div>
-      )}
+      <NotificationComponent
+        notifications={notifications}
+        onRemoveNotification={(id) => setNotifications((prev) => prev.filter((n) => n.id !== id))}
+      />
       {/* TODO: src/basic/components/Header.tsx로 분리 - 헤더 (네비게이션, 검색) */}
-      <header className='bg-white shadow-sm sticky top-0 z-40 border-b'>
-        <div className='max-w-7xl mx-auto px-4'>
-          <div className='flex justify-between items-center h-16'>
-            <div className='flex items-center flex-1'>
-              <h1 className='text-xl font-semibold text-gray-800'>SHOP</h1>
-              {/* 검색창 - 안티패턴: 검색 로직이 컴포넌트에 직접 포함 */}
-              {!isAdmin && (
-                <div className='ml-8 flex-1 max-w-md'>
-                  <Input
-                    type='text'
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder='상품 검색...'
-                    className='px-4 py-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500'
-                  />
-                </div>
-              )}
-            </div>
-            <nav className='flex items-center space-x-4'>
-              <Button
-                onClick={() => setIsAdmin(!isAdmin)}
-                hasTransition
-                hasTextSm
-                hasRounded
-                className={`px-3 py-1.5 ${
-                  isAdmin ? 'bg-gray-800 text-white' : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                {isAdmin ? '쇼핑몰로 돌아가기' : '관리자 페이지로'}
-              </Button>
-              {!isAdmin && (
-                <div className='relative'>
-                  <CartIcon />
-                  {cart.length > 0 && (
-                    <span className='absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center'>
-                      {totalItemCount}
-                    </span>
-                  )}
-                </div>
-              )}
-            </nav>
-          </div>
-        </div>
-      </header>
+      <Header
+        isAdmin={isAdmin}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        setIsAdmin={setIsAdmin}
+        cart={cart}
+        totalItemCount={totalItemCount}
+      />
 
       <main className='max-w-7xl mx-auto px-4 py-8'>
         {isAdmin ? (
@@ -757,87 +693,14 @@ const App = () => {
 
                       return (
                         // TODO: src/basic/components/ProductCard.tsx로 분리 - 개별 상품 카드
-                        <Card
-                          key={product.id}
-                          padding='none'
-                          className='overflow-hidden hover:shadow-lg transition-shadow'
-                        >
-                          {/* 상품 이미지 영역 (placeholder) */}
-                          <div className='relative'>
-                            <div className='aspect-square bg-gray-100 flex items-center justify-center'>
-                              <ImageIcon />
-                            </div>
-                            {isRecommended(product) && (
-                              <Badge
-                                size='xs'
-                                rounded='sm'
-                                className='absolute top-2 right-2 bg-red-500 text-white px-2 py-1'
-                              >
-                                BEST
-                              </Badge>
-                            )}
-                            {product.discounts.length > 0 && (
-                              <Badge
-                                size='xs'
-                                rounded='sm'
-                                className='absolute top-2 left-2 bg-orange-500 text-white px-2 py-1'
-                              >
-                                {/* TODO: src/basic/models/discount.ts로 분리 - getMaxDiscountRate(discounts): number */}
-                                ~{getMaxDiscountRate(product.discounts)}%
-                              </Badge>
-                            )}
-                          </div>
-
-                          {/* 상품 정보 */}
-                          <div className='p-4'>
-                            <h3 className='font-medium text-gray-900 mb-1'>{product.name}</h3>
-                            {product.description && (
-                              <p className='text-sm text-gray-500 mb-2 line-clamp-2'>
-                                {product.description}
-                              </p>
-                            )}
-
-                            {/* 가격 정보 */}
-                            <div className='mb-3'>
-                              <p className='text-lg font-bold text-gray-900'>
-                                {formatPrice(product.price, product.id, isAdmin, products, cart)}
-                              </p>
-                              {product.discounts.length > 0 && (
-                                <p className='text-xs text-gray-500'>
-                                  {formatDiscountDescription(product.discounts)}
-                                </p>
-                              )}
-                            </div>
-
-                            {/* 재고 상태 */}
-                            <div className='mb-3'>
-                              {remainingStock <= 5 && remainingStock > 0 && (
-                                <p className='text-xs text-red-600 font-medium'>
-                                  품절임박! {remainingStock}개 남음
-                                </p>
-                              )}
-                              {remainingStock > 5 && (
-                                <p className='text-xs text-gray-500'>재고 {remainingStock}개</p>
-                              )}
-                            </div>
-
-                            {/* 장바구니 버튼 */}
-                            <Button
-                              onClick={() => handleAddToCart(product)}
-                              disabled={remainingStock <= 0}
-                              hasFontMedium
-                              hasTransition
-                              hasRounded
-                              className={`w-full py-2 px-4 rounded-md ${
-                                remainingStock <= 0
-                                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                  : 'bg-gray-900 text-white hover:bg-gray-800'
-                              }`}
-                            >
-                              {remainingStock <= 0 ? '품절' : '장바구니 담기'}
-                            </Button>
-                          </div>
-                        </Card>
+                        <ProductCard
+                          product={product}
+                          isAdmin={isAdmin}
+                          products={products}
+                          cart={cart}
+                          handleAddToCart={handleAddToCart}
+                          remainingStock={remainingStock}
+                        />
                       );
                     })}
                   </div>
