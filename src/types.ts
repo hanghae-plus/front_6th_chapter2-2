@@ -1,14 +1,13 @@
 export type CouponDiscountType = 'amount' | 'percentage';
 
 export interface Product {
-  filter: any;
   id: string;
   name: string;
   price: number;
   stock: number;
   discounts: Discount[];
-  isRecommended: boolean;
-  description: string;
+  description?: string;
+  isRecommended?: boolean;
 }
 
 export interface Discount {
