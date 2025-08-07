@@ -1,4 +1,5 @@
 import { IProductWithUI } from "../../type";
+import { MESSAGES } from "../../constants/messages";
 import { formatPrice } from "../../utils/formatters";
 import ProductItem from "./ProductItem";
 
@@ -31,7 +32,7 @@ const ProductList = ({
 
   // 가격 텍스트 처리
   const getPriceText = (item: IProductWithUI) => {
-    if (item && getRemainingStock(item) <= 0) return "SOLD OUT";
+    if (item && getRemainingStock(item) <= 0) return MESSAGES.PRODUCT.SOLD_OUT;
     return formatPrice(item.price, "krw");
   };
 

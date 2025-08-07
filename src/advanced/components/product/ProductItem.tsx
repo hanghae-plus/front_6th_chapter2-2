@@ -1,11 +1,11 @@
 import { IProductWithUI } from "../../type";
 import { formatPercentage, formatPrice } from "../../utils/formatters";
 import { STOCK } from "../../constants/business";
+import { MESSAGES } from "../../constants/messages";
 import { ImageIcon } from "../icon";
 import { useCart } from "../../hooks/useCart";
 import { useNotification } from "../../hooks/useNotification";
 import { useCallback } from "react";
-import { MESSAGES } from "../../constants/messages";
 
 interface ProductItemProps {
   product: IProductWithUI;
@@ -19,7 +19,7 @@ const ProductItem = ({ product }: ProductItemProps) => {
 
   // 가격 텍스트 처리
   const getPriceText = (item: IProductWithUI) => {
-    if (item && getRemainingStock(item) <= 0) return "SOLD OUT";
+    if (item && getRemainingStock(item) <= 0) return MESSAGES.PRODUCT.SOLD_OUT;
     return formatPrice(item.price, "krw");
   };
 

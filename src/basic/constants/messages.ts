@@ -15,6 +15,7 @@ export const MESSAGES = {
 
     OUT_OF_STOCK: "재고가 부족합니다!",
     MAX_STOCK: (maxStock: number) => `재고는 ${maxStock}개까지만 있습니다.`,
+    SOLD_OUT: "SOLD OUT",
     ADDED_TO_CART: "장바구니에 담았습니다",
   },
 
