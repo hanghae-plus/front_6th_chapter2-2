@@ -1,21 +1,17 @@
-import type { CartItem, Coupon } from '../../../../types';
+import {
+  useApplyCoupon,
+  useClearSelectedCoupon,
+  useCoupons,
+  useSelectedCoupon,
+} from '../../../hooks/useCoupons';
 import { formatNumberRate, formatNumberWon } from '../../../utils/formatters';
 
-interface Props {
-  cart: CartItem[];
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  applyCoupon: (params: { cart: CartItem[]; coupon: Coupon }) => void;
-  clearSelectedCoupon: () => void;
-}
+export function Coupons() {
+  const coupons = useCoupons();
+  const selectedCoupon = useSelectedCoupon();
+  const applyCoupon = useApplyCoupon();
+  const clearSelectedCoupon = useClearSelectedCoupon();
 
-export function Coupons({
-  cart,
-  coupons,
-  selectedCoupon,
-  applyCoupon,
-  clearSelectedCoupon,
-}: Props) {
   return (
     <section className="bg-white rounded-lg border border-gray-200 p-4">
       <div className="flex items-center justify-between mb-3">
@@ -31,7 +27,7 @@ export function Coupons({
           value={selectedCoupon?.code || ''}
           onChange={(e) => {
             const coupon = coupons.find((c) => c.code === e.target.value);
-            if (coupon) applyCoupon({ cart, coupon });
+            if (coupon) applyCoupon({ coupon });
             else clearSelectedCoupon();
           }}
         >

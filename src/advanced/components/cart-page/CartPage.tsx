@@ -1,30 +1,6 @@
-// TODO: 장바구니 페이지 컴포넌트
-// 힌트:
-// 1. 상품 목록 표시 (검색 기능 포함)
-// 2. 장바구니 관리
-// 3. 쿠폰 적용
-// 4. 주문 처리
-//
-// 필요한 hooks:
-// - useProducts: 상품 목록 관리
-// - useCart: 장바구니 상태 관리
-// - useCoupons: 쿠폰 목록 관리
-// - useDebounce: 검색어 디바운싱
-//
-// 하위 컴포넌트:
-// - SearchBar: 검색 입력
-// - ProductList: 상품 목록 표시
-// - Cart: 장바구니 표시 및 결제
-
 import { useCart } from '../../hooks/useCart';
-import {
-  useApplyCoupon,
-  useClearSelectedCoupon,
-  useCoupons,
-  useSelectedCoupon,
-} from '../../hooks/useCoupons';
-import { useCompleteOrder } from '../../hooks/useOrder';
 import { useProducts } from '../../hooks/useProducts';
+import { useDebouncedSearch } from '../../hooks/useSearch';
 import * as cartModel from '../../models/cart';
 import * as productModel from '../../models/product';
 import { CartItemInfo } from './cart/CartItem';
@@ -36,18 +12,10 @@ import { EmptyProducts } from './products/EmptyProducts';
 import { ProductCard } from './products/ProductCard';
 import { TotalCount } from './products/TotalCount';
 
-interface Props {
-  searchTerm: string;
-}
-
-export function CartPage({ searchTerm }: Props) {
+export function CartPage() {
   const cart = useCart();
-  const applyCoupon = useApplyCoupon();
-  const [selectedCoupon] = useSelectedCoupon();
-  const clearSelectedCoupon = useClearSelectedCoupon();
-  const coupons = useCoupons();
   const products = useProducts();
-  const { completeOrder } = useCompleteOrder();
+  const searchTerm = useDebouncedSearch();
   const filteredProducts = productModel.searchProducts({
     products,
     searchTerm,
@@ -90,7 +58,6 @@ export function CartPage({ searchTerm }: Props) {
                     item: cartItem,
                     cart,
                   });
-
                   const itemTotal = cartModel.calculateItemTotal({
                     item: cartItem,
                     cart,
@@ -100,7 +67,6 @@ export function CartPage({ searchTerm }: Props) {
                     <CartItemInfo
                       key={cartItem.product.id}
                       cartItem={cartItem}
-                      products={products}
                       discountRate={discountRate}
                       itemTotal={itemTotal}
                     />
@@ -110,19 +76,9 @@ export function CartPage({ searchTerm }: Props) {
             )}
           </section>
 
-          <Coupons
-            cart={cart}
-            coupons={coupons}
-            selectedCoupon={selectedCoupon}
-            applyCoupon={applyCoupon}
-            clearSelectedCoupon={clearSelectedCoupon}
-          />
+          <Coupons />
 
-          <OrderSummary
-            cart={cart}
-            selectedCoupon={selectedCoupon}
-            completeOrder={completeOrder}
-          />
+          <OrderSummary />
         </div>
       </div>
     </div>

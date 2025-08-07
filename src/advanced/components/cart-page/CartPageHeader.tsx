@@ -1,18 +1,12 @@
 import { useTotalItemCount } from '../../hooks/useCart';
+import { useGotoAdminPage } from '../../hooks/usePage';
+import { useSearch } from '../../hooks/useSearch';
 import { Header } from '../ui/Header';
 
-interface Props {
-  searchTerm: string;
-  setSearchTerm: (value: string) => void;
-  setIsAdmin: (value: boolean) => void;
-}
-
-export function CartPageHeader({
-  searchTerm,
-  setSearchTerm,
-  setIsAdmin,
-}: Props) {
+export function CartPageHeader() {
   const totalItemCount = useTotalItemCount();
+  const gotoAdminPage = useGotoAdminPage();
+  const { searchTerm, setSearchTerm } = useSearch();
 
   return (
     <Header
@@ -30,7 +24,7 @@ export function CartPageHeader({
       nav={
         <>
           <button
-            onClick={() => setIsAdmin(true)}
+            onClick={gotoAdminPage}
             className="px-3 py-1.5 text-sm rounded transition-colors text-gray-600 hover:text-gray-900"
           >
             관리자 페이지로

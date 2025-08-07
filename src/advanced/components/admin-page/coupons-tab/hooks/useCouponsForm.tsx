@@ -1,5 +1,5 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react';
-import type { Coupon } from '../../../../../types';
+import { useAddCoupon } from '../../../../hooks/useCoupons';
 import { useNotify } from '../../../../hooks/useNotification';
 
 export interface CouponForm {
@@ -9,12 +9,9 @@ export interface CouponForm {
   discountValue: number;
 }
 
-interface UseCouponsFormParams {
-  addCoupon: (params: { newCoupon: Coupon }) => void;
-}
-
-export function useCouponsForm({ addCoupon }: UseCouponsFormParams) {
+export function useCouponsForm() {
   const notify = useNotify();
+  const addCoupon = useAddCoupon();
   const defaultValue: CouponForm = {
     name: '',
     code: '',

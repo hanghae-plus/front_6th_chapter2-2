@@ -1,15 +1,15 @@
-import type { CartItem, Coupon } from '../../../../types';
+import { useCart } from '../../../hooks/useCart';
+import { useSelectedCoupon } from '../../../hooks/useCoupons';
+import { useCompleteOrder } from '../../../hooks/useOrder';
 import * as cartModel from '../../../models/cart';
 import * as couponModel from '../../../models/coupon';
 import { formatNumberWon } from '../../../utils/formatters';
 
-interface Props {
-  cart: CartItem[];
-  selectedCoupon: Coupon | null;
-  completeOrder: () => void;
-}
+export function OrderSummary() {
+  const cart = useCart();
+  const selectedCoupon = useSelectedCoupon();
+  const { completeOrder } = useCompleteOrder();
 
-export function OrderSummary({ cart, selectedCoupon, completeOrder }: Props) {
   const totals = cartModel.calculateCartTotal({
     cart,
     applyCoupon: couponModel.getCouponApplier({ coupon: selectedCoupon }),

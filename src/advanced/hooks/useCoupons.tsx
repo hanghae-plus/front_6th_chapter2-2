@@ -1,4 +1,4 @@
-import { useAtom, useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import type { Coupon } from '../../types';
 import {
   addCouponAtom,
@@ -62,7 +62,7 @@ export function useApplyCoupon() {
 }
 
 export function useSelectedCoupon() {
-  return useAtom(selectedCouponAtom);
+  return useAtomValue(selectedCouponAtom);
 }
 
 export function useClearSelectedCoupon() {

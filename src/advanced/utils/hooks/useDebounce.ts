@@ -6,25 +6,26 @@
 //
 // 사용 예시: 검색어 입력 디바운싱
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 interface UseDebounceParams<T> {
   delay: number;
   value: T;
+  setValue: (value: T) => void;
 }
 
-export function useDebounce<T>({ delay, value }: UseDebounceParams<T>): T {
-  const [debouncedValue, setDebouncedValue] = useState(value);
-
+export function useSetDebounce<T>({
+  delay,
+  value,
+  setValue,
+}: UseDebounceParams<T>) {
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebouncedValue(value);
+      setValue(value);
     }, delay);
 
     return () => {
       clearTimeout(timer);
     };
-  }, [value, delay]);
-
-  return debouncedValue;
+  }, [value, delay, setValue]);
 }

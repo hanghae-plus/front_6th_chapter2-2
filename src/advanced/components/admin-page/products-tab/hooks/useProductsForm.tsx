@@ -1,6 +1,7 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react';
 import type { ProductWithUI } from '../../../../../types';
 import { useNotify } from '../../../../hooks/useNotification';
+import { useAddProduct, useUpdateProduct } from '../../../../hooks/useProducts';
 
 export interface ProductForm {
   name: string;
@@ -10,19 +11,10 @@ export interface ProductForm {
   discounts: { quantity: number; rate: number }[];
 }
 
-interface UseProductsFormParams {
-  updateProduct: (params: {
-    productId: string;
-    updates: Partial<ProductForm>;
-  }) => void;
-  addProduct: (params: { newProduct: Omit<ProductForm, 'id'> }) => void;
-}
-
-export function useProductsForm({
-  addProduct,
-  updateProduct,
-}: UseProductsFormParams) {
+export function useProductsForm() {
   const notify = useNotify();
+  const addProduct = useAddProduct();
+  const updateProduct = useUpdateProduct();
   const defaultValue: ProductForm = {
     name: '',
     price: 0,

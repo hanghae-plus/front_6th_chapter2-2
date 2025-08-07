@@ -1,20 +1,16 @@
-import type { CartItem, Product } from '../../../../types';
+import type { CartItem } from '../../../../types';
 import { useRemoveFromCart, useUpdateQuantity } from '../../../hooks/useCart';
+import { useProducts } from '../../../hooks/useProducts';
 import { formatNumberRate, formatNumberWon } from '../../../utils/formatters';
 
 interface Props {
-  products: Product[];
   discountRate: number;
   itemTotal: number;
   cartItem: CartItem;
 }
 
-export function CartItemInfo({
-  products,
-  discountRate,
-  itemTotal,
-  cartItem,
-}: Props) {
+export function CartItemInfo({ discountRate, itemTotal, cartItem }: Props) {
+  const products = useProducts();
   const removeFromCart = useRemoveFromCart();
   const updateQuantity = useUpdateQuantity();
   const { product, quantity } = cartItem;

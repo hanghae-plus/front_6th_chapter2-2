@@ -1,26 +1,10 @@
-import type { ProductWithUI } from '../../../../types';
 import { TabTitle } from '../ui/TabTitle';
 import { useProductsForm } from './hooks/useProductsForm';
 import { ProductsForm } from './ProductsForm';
 import { ProductsTable } from './ProductsTable';
 import { Button } from './ui/Button';
 
-interface Props {
-  products: ProductWithUI[];
-  addProduct: (params: { newProduct: Omit<ProductWithUI, 'id'> }) => void;
-  deleteProduct: (params: { productId: string }) => void;
-  updateProduct: (params: {
-    productId: string;
-    updates: Partial<ProductWithUI>;
-  }) => void;
-}
-
-export function ProductsTab({
-  products,
-  addProduct,
-  deleteProduct,
-  updateProduct,
-}: Props) {
+export function ProductsTab() {
   const {
     showProductForm,
     editingProduct,
@@ -41,7 +25,7 @@ export function ProductsTab({
     handleAddDiscount,
     getDisplayValue,
     getDiscountRateDisplay,
-  } = useProductsForm({ addProduct, updateProduct });
+  } = useProductsForm();
 
   return (
     <section className="bg-white rounded-lg border border-gray-200">
@@ -53,11 +37,7 @@ export function ProductsTab({
         </div>
       </div>
 
-      <ProductsTable
-        products={products}
-        startEditProduct={editProductForm}
-        deleteProduct={deleteProduct}
-      />
+      <ProductsTable startEditProduct={editProductForm} />
 
       {showProductForm && (
         <ProductsForm
