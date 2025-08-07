@@ -3,6 +3,7 @@ import { Coupon } from "../types";
 import ShopPage from "./____pages/shop/ShopPage";
 import AdminPage from "./____pages/admin/AdminPage";
 import NotificationProvider from "./___features/notification/NotificationProvider";
+import { AdminContext } from "./____pages/admin-context";
 
 const App = () => {
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
@@ -10,19 +11,19 @@ const App = () => {
 
   return (
     <NotificationProvider>
-      {isAdmin ? (
-        <AdminPage
-          setIsAdmin={setIsAdmin}
-          selectedCoupon={selectedCoupon}
-          setSelectedCoupon={setSelectedCoupon}
-        />
-      ) : (
-        <ShopPage
-          selectedCoupon={selectedCoupon}
-          setSelectedCoupon={setSelectedCoupon}
-          setIsAdmin={setIsAdmin}
-        />
-      )}
+      <AdminContext value={{ isAdmin, setIsAdmin }}>
+        {isAdmin ? (
+          <AdminPage
+            selectedCoupon={selectedCoupon}
+            setSelectedCoupon={setSelectedCoupon}
+          />
+        ) : (
+          <ShopPage
+            selectedCoupon={selectedCoupon}
+            setSelectedCoupon={setSelectedCoupon}
+          />
+        )}
+      </AdminContext>
     </NotificationProvider>
   );
 };

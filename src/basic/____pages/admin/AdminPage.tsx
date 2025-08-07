@@ -1,23 +1,20 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, use } from "react";
 import { Coupon } from "../../../types";
 import { useCoupons } from "../../___features/coupon/use-coupons";
 import ProductsContent from "./ProductsContent";
 import CouponsContent from "./CouponsContent";
 import { useTab } from "../../_shared/utility-hooks/use-tab";
 import { cn } from "../../_shared/tw-utility/cn";
+import { AdminContext } from "../admin-context";
 
 interface AdminPageProps {
-  setIsAdmin: Dispatch<SetStateAction<boolean>>;
   selectedCoupon: Coupon | null;
   setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
 }
 
-function AdminPage({
-  setIsAdmin,
-  selectedCoupon,
-  setSelectedCoupon,
-}: AdminPageProps) {
+function AdminPage({ selectedCoupon, setSelectedCoupon }: AdminPageProps) {
   const { addCoupon, removeCoupon, coupons } = useCoupons();
+  const { setIsAdmin } = use(AdminContext);
 
   const adminTabs = useTab({
     tabs: [
