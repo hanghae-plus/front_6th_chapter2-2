@@ -40,6 +40,7 @@ export function ProductList({
 
             return (
               <Product
+                key={product.id}
                 product={product}
                 cart={cart}
                 addToCart={addToCart}

@@ -15,6 +15,7 @@ export function AdminTab({
       <nav className="-mb-px flex space-x-8">
         {tabs.map((tab) => (
           <button
+            key={tab.value}
             onClick={() => setActiveTab(tab.value)}
             className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
               activeTab === tab.value
