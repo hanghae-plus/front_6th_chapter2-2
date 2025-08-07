@@ -1,20 +1,152 @@
 import { ProductWithUI } from "../types";
 import CloseIcon from "../../../assets/icons/CloseIcon.svg?react";
 import { NotificationVariant } from "../../notification/types";
+import { useGlobalNotification } from "../../notification/hooks/useGlobalNotification";
+import { useCallback } from "react";
 
 interface ProductFormFieldsProps {
   product: Partial<ProductWithUI>;
   onChange: (field: keyof ProductWithUI, value: any) => void;
   errors?: Record<string, string>;
-  addNotification: (message: string, variant?: NotificationVariant) => void;
 }
 
 export function ProductFormFields({
   product,
   onChange,
   errors = {},
-  addNotification,
 }: ProductFormFieldsProps) {
+  const { addNotification } = useGlobalNotification();
+
+  // 기본 입력 핸들러들
+  const handleNameChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onChange("name", e.target.value);
+    },
+    [onChange]
+  );
+
+  const handleDescriptionChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onChange("description", e.target.value);
+    },
+    [onChange]
+  );
+
+  // 가격 관련 핸들러들
+  const handlePriceChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      if (value === "" || /^\d+$/.test(value)) {
+        onChange("price", value === "" ? 0 : parseInt(value));
+      }
+    },
+    [onChange]
+  );
+
+  const handlePriceBlur = useCallback(
+    (e: React.FocusEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      if (value === "") {
+        onChange("price", 0);
+      } else if (parseInt(value) < 0) {
+        addNotification("가격은 0보다 커야 합니다", NotificationVariant.ERROR);
+        onChange("price", 0);
+      }
+    },
+    [onChange, addNotification]
+  );
+
+  // 재고 관련 핸들러들
+  const handleStockChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      if (value === "" || /^\d+$/.test(value)) {
+        onChange("stock", value === "" ? 0 : parseInt(value));
+      }
+    },
+    [onChange]
+  );
+
+  const handleStockBlur = useCallback(
+    (e: React.FocusEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      if (value === "") {
+        onChange("stock", 0);
+      } else if (parseInt(value) < 0) {
+        addNotification("재고는 0보다 커야 합니다", NotificationVariant.ERROR);
+        onChange("stock", 0);
+      } else if (parseInt(value) > 9999) {
+        addNotification(
+          "재고는 9999개를 초과할 수 없습니다",
+          NotificationVariant.ERROR
+        );
+        onChange("stock", 9999);
+      }
+    },
+    [onChange, addNotification]
+  );
+
+  // 할인 관련 핸들러들
+  const handleDiscountQuantityChange = useCallback(
+    (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+      const newDiscounts = [...(product.discounts || [])];
+      newDiscounts[index].quantity = parseInt(e.target.value) || 0;
+      onChange("discounts", newDiscounts);
+    },
+    [product.discounts, onChange]
+  );
+
+  const handleDiscountRateChange = useCallback(
+    (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+      const newDiscounts = [...(product.discounts || [])];
+      newDiscounts[index].rate = (parseInt(e.target.value) || 0) / 100;
+      onChange("discounts", newDiscounts);
+    },
+    [product.discounts, onChange]
+  );
+
+  const handleDiscountRateBlur = useCallback(
+    (index: number, e: React.FocusEvent<HTMLInputElement>) => {
+      const value = parseInt(e.target.value) || 0;
+      const newDiscounts = [...(product.discounts || [])];
+
+      if (value > 100) {
+        addNotification(
+          "할인율은 100%를 초과할 수 없습니다",
+          NotificationVariant.ERROR
+        );
+        newDiscounts[index].rate = 1.0; // 100%
+        onChange("discounts", newDiscounts);
+      } else if (value < 0) {
+        addNotification(
+          "할인율은 0% 미만일 수 없습니다",
+          NotificationVariant.ERROR
+        );
+        newDiscounts[index].rate = 0.0; // 0%
+        onChange("discounts", newDiscounts);
+      }
+    },
+    [product.discounts, onChange, addNotification]
+  );
+
+  const handleRemoveDiscount = useCallback(
+    (index: number) => {
+      const newDiscounts = (product.discounts || []).filter(
+        (_, i) => i !== index
+      );
+      onChange("discounts", newDiscounts);
+    },
+    [product.discounts, onChange]
+  );
+
+  const handleAddDiscount = useCallback(() => {
+    const newDiscounts = [
+      ...(product.discounts || []),
+      { quantity: 10, rate: 0.1 },
+    ];
+    onChange("discounts", newDiscounts);
+  }, [product.discounts, onChange]);
+
   return (
     <>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -25,7 +157,7 @@ export function ProductFormFields({
           <input
             type="text"
             value={product.name || ""}
-            onChange={(e) => onChange("name", e.target.value)}
+            onChange={handleNameChange}
             className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
             required
           />
@@ -40,7 +172,7 @@ export function ProductFormFields({
           <input
             type="text"
             value={product.description || ""}
-            onChange={(e) => onChange("description", e.target.value)}
+            onChange={handleDescriptionChange}
             className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
           />
           {errors.description && (
@@ -54,24 +186,8 @@ export function ProductFormFields({
           <input
             type="text"
             value={product.price === 0 ? "" : product.price || ""}
-            onChange={(e) => {
-              const value = e.target.value;
-              if (value === "" || /^\d+$/.test(value)) {
-                onChange("price", value === "" ? 0 : parseInt(value));
-              }
-            }}
-            onBlur={(e) => {
-              const value = e.target.value;
-              if (value === "") {
-                onChange("price", 0);
-              } else if (parseInt(value) < 0) {
-                addNotification(
-                  "가격은 0보다 커야 합니다",
-                  NotificationVariant.ERROR
-                );
-                onChange("price", 0);
-              }
-            }}
+            onChange={handlePriceChange}
+            onBlur={handlePriceBlur}
             className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
             placeholder="숫자만 입력"
             required
@@ -87,30 +203,8 @@ export function ProductFormFields({
           <input
             type="text"
             value={product.stock === 0 ? "" : product.stock || ""}
-            onChange={(e) => {
-              const value = e.target.value;
-              if (value === "" || /^\d+$/.test(value)) {
-                onChange("stock", value === "" ? 0 : parseInt(value));
-              }
-            }}
-            onBlur={(e) => {
-              const value = e.target.value;
-              if (value === "") {
-                onChange("stock", 0);
-              } else if (parseInt(value) < 0) {
-                addNotification(
-                  "재고는 0보다 커야 합니다",
-                  NotificationVariant.ERROR
-                );
-                onChange("stock", 0);
-              } else if (parseInt(value) > 9999) {
-                addNotification(
-                  "재고는 9999개를 초과할 수 없습니다",
-                  NotificationVariant.ERROR
-                );
-                onChange("stock", 9999);
-              }
-            }}
+            onChange={handleStockChange}
+            onBlur={handleStockBlur}
             className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
             placeholder="숫자만 입력"
             required
@@ -133,11 +227,7 @@ export function ProductFormFields({
               <input
                 type="number"
                 value={discount.quantity}
-                onChange={(e) => {
-                  const newDiscounts = [...(product.discounts || [])];
-                  newDiscounts[index].quantity = parseInt(e.target.value) || 0;
-                  onChange("discounts", newDiscounts);
-                }}
+                onChange={(e) => handleDiscountQuantityChange(index, e)}
                 className="w-20 px-2 py-1 border rounded"
                 min="1"
                 placeholder="수량"
@@ -146,12 +236,8 @@ export function ProductFormFields({
               <input
                 type="number"
                 value={discount.rate * 100}
-                onChange={(e) => {
-                  const newDiscounts = [...(product.discounts || [])];
-                  newDiscounts[index].rate =
-                    (parseInt(e.target.value) || 0) / 100;
-                  onChange("discounts", newDiscounts);
-                }}
+                onChange={(e) => handleDiscountRateChange(index, e)}
+                onBlur={(e) => handleDiscountRateBlur(index, e)}
                 className="w-16 px-2 py-1 border rounded"
                 min="0"
                 max="100"
@@ -160,12 +246,7 @@ export function ProductFormFields({
               <span className="text-sm">% 할인</span>
               <button
                 type="button"
-                onClick={() => {
-                  const newDiscounts = (product.discounts || []).filter(
-                    (_, i) => i !== index
-                  );
-                  onChange("discounts", newDiscounts);
-                }}
+                onClick={() => handleRemoveDiscount(index)}
                 className="text-red-600 hover:text-red-800"
               >
                 <CloseIcon className="w-4 h-4" />
@@ -174,13 +255,7 @@ export function ProductFormFields({
           ))}
           <button
             type="button"
-            onClick={() => {
-              const newDiscounts = [
-                ...(product.discounts || []),
-                { quantity: 10, rate: 0.1 },
-              ];
-              onChange("discounts", newDiscounts);
-            }}
+            onClick={handleAddDiscount}
             className="text-sm text-indigo-600 hover:text-indigo-800"
           >
             + 할인 추가
