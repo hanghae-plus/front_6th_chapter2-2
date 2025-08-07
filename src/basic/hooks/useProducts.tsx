@@ -14,23 +14,18 @@
 // - removeProductDiscount: 할인 규칙 삭제
 
 import { useCallback, type Dispatch, type SetStateAction } from 'react';
-import type { CartItem, Product, ProductWithUI } from '../../types';
+import type { Notify, Product, ProductWithUI } from '../../types';
 import { initialProducts } from '../constants';
 import * as productModel from '../models/product';
 import { useLocalStorage } from '../utils/hooks/useLocalStorage';
 
 interface UseProductsParams {
-  addNotification: (params: {
-    message: string;
-    type: 'error' | 'success';
-  }) => void;
+  notify: Notify;
 }
 
 interface UseProductsReturn {
   products: ProductWithUI[];
   setProducts: Dispatch<SetStateAction<Product[]>>;
-  getRemainingStock: (params: { cart: CartItem[]; product: Product }) => number;
-  isSoldOut: (params: { cart: CartItem[]; product: Product }) => boolean;
   addProduct: (params: { newProduct: Omit<ProductWithUI, 'id'> }) => void;
   updateProduct: (params: {
     productId: string;
@@ -39,9 +34,7 @@ interface UseProductsReturn {
   deleteProduct: (params: { productId: string }) => void;
 }
 
-export function useProducts({
-  addNotification,
-}: UseProductsParams): UseProductsReturn {
+export function useProducts({ notify }: UseProductsParams): UseProductsReturn {
   const [products, setProducts] = useLocalStorage({
     key: 'products',
     initialValue: initialProducts,
@@ -51,14 +44,6 @@ export function useProducts({
     products,
     setProducts,
 
-    getRemainingStock: useCallback((params) => {
-      return productModel.getRemainingStock(params);
-    }, []),
-
-    isSoldOut: useCallback((params) => {
-      return productModel.getRemainingStock(params) <= 0;
-    }, []),
-
     addProduct: useCallback(
       (params) => {
         setProducts((prevProducts) => {
@@ -67,7 +52,7 @@ export function useProducts({
             newProduct: params.newProduct,
             products: prevProducts,
             onSuccess: () => {
-              addNotification({
+              notify({
                 message: '상품이 추가되었습니다.',
                 type: 'success',
               });
@@ -75,7 +60,7 @@ export function useProducts({
           });
         });
       },
-      [setProducts, addNotification]
+      [setProducts, notify]
     ),
 
     updateProduct: useCallback(
@@ -86,7 +71,7 @@ export function useProducts({
             updates,
             products: prevProducts,
             onSuccess: () => {
-              addNotification({
+              notify({
                 message: '상품이 수정되었습니다.',
                 type: 'success',
               });
@@ -94,7 +79,7 @@ export function useProducts({
           });
         });
       },
-      [setProducts, addNotification]
+      [setProducts, notify]
     ),
 
     deleteProduct: useCallback(
@@ -104,7 +89,7 @@ export function useProducts({
             productId,
             products: prevProducts,
             onSuccess: () => {
-              addNotification({
+              notify({
                 message: '상품이 삭제되었습니다.',
                 type: 'success',
               });
@@ -112,7 +97,7 @@ export function useProducts({
           });
         });
       },
-      [setProducts, addNotification]
+      [setProducts, notify]
     ),
   };
 }

@@ -1,91 +1,51 @@
-import { useState, type FormEvent } from 'react';
-import type { CartItem, ProductWithUI } from '../../../../types';
+import type { CartItem, Notify, ProductWithUI } from '../../../../types';
 import { TabTitle } from '../ui/TabTitle';
-import { ProductsForm, type ProductForm } from './ProductsForm';
+import { useProductsForm } from './hooks/useProductsForm';
+import { ProductsForm } from './ProductsForm';
 import { ProductsTable } from './ProductsTable';
 import { Button } from './ui/Button';
 
 interface Props {
   products: ProductWithUI[];
   cart: CartItem[];
-  isSoldOut: (params: { cart: CartItem[]; product: ProductWithUI }) => boolean;
   addProduct: (params: { newProduct: Omit<ProductWithUI, 'id'> }) => void;
   deleteProduct: (params: { productId: string }) => void;
   updateProduct: (params: {
     productId: string;
     updates: Partial<ProductWithUI>;
   }) => void;
-  addNotification: (params: {
-    message: string;
-    type?: 'error' | 'success' | 'warning';
-  }) => void;
+  notify: Notify;
 }
 
 export function ProductsTab({
   products,
   cart,
-  isSoldOut,
   addProduct,
   deleteProduct,
   updateProduct,
-  addNotification,
+  notify,
 }: Props) {
-  const [showProductForm, setShowProductForm] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<string | null>(null);
-  const [productForm, setProductForm] = useState<ProductForm>({
-    name: '',
-    price: 0,
-    stock: 0,
-    description: '',
-    discounts: [],
-  });
-
-  const startEditProduct = ({ product }: { product: ProductWithUI }) => {
-    const {
-      id,
-      name,
-      price,
-      stock,
-      description = '',
-      discounts = [],
-    } = product;
-    setEditingProduct(id);
-    setProductForm({
-      name,
-      price,
-      stock,
-      description,
-      discounts,
-    });
-    setShowProductForm(true);
-  };
-
-  const handleProductSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    if (editingProduct && editingProduct !== 'new') {
-      updateProduct({
-        productId: editingProduct,
-        updates: productForm,
-      });
-      setEditingProduct(null);
-    } else {
-      addProduct({
-        newProduct: {
-          ...productForm,
-          discounts: productForm.discounts,
-        },
-      });
-    }
-    setProductForm({
-      name: '',
-      price: 0,
-      stock: 0,
-      description: '',
-      discounts: [],
-    });
-    setEditingProduct(null);
-    setShowProductForm(false);
-  };
+  const {
+    showProductForm,
+    editingProduct,
+    productForm,
+    closeProductForm,
+    openProductForm,
+    editProductForm,
+    handleSubmitProductForm,
+    handleNameChange,
+    handleDescriptionChange,
+    handlePriceChange,
+    handlePriceBlur,
+    handleStockChange,
+    handleStockBlur,
+    handleDiscountQuantityChange,
+    handleDiscountRateChange,
+    handleRemoveDiscount,
+    handleAddDiscount,
+    getDisplayValue,
+    getDiscountRateDisplay,
+  } = useProductsForm({ addProduct, updateProduct, notify });
 
   return (
     <section className="bg-white rounded-lg border border-gray-200">
@@ -93,50 +53,35 @@ export function ProductsTab({
         <div className="flex justify-between items-center">
           <TabTitle>상품 목록</TabTitle>
 
-          <Button
-            onClick={() => {
-              setEditingProduct('new');
-              setProductForm({
-                name: '',
-                price: 0,
-                stock: 0,
-                description: '',
-                discounts: [],
-              });
-              setShowProductForm(true);
-            }}
-          >
-            새 상품 추가
-          </Button>
+          <Button onClick={openProductForm}>새 상품 추가</Button>
         </div>
       </div>
 
       <ProductsTable
         products={products}
         cart={cart}
-        isSoldOut={isSoldOut}
-        startEditProduct={startEditProduct}
+        startEditProduct={editProductForm}
         deleteProduct={deleteProduct}
       />
 
       {showProductForm && (
         <ProductsForm
-          onSubmit={handleProductSubmit}
+          onSubmit={handleSubmitProductForm}
           editingProduct={editingProduct}
           productForm={productForm}
-          setProductForm={setProductForm}
-          addNotification={addNotification}
-          clearProductsForm={() => {
-            setEditingProduct(null);
-            setProductForm({
-              name: '',
-              price: 0,
-              stock: 0,
-              description: '',
-              discounts: [],
-            });
-            setShowProductForm(false);
-          }}
+          onClickCancel={closeProductForm}
+          handleNameChange={handleNameChange}
+          handleDescriptionChange={handleDescriptionChange}
+          handlePriceChange={handlePriceChange}
+          handlePriceBlur={handlePriceBlur}
+          handleStockChange={handleStockChange}
+          handleStockBlur={handleStockBlur}
+          handleDiscountQuantityChange={handleDiscountQuantityChange}
+          handleDiscountRateChange={handleDiscountRateChange}
+          handleRemoveDiscount={handleRemoveDiscount}
+          handleAddDiscount={handleAddDiscount}
+          getDisplayValue={getDisplayValue}
+          getDiscountRateDisplay={getDiscountRateDisplay}
         />
       )}
     </section>

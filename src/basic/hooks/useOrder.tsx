@@ -1,26 +1,26 @@
 import { useCallback } from 'react';
-import type { AddNotificationParams } from './useNotification';
+import type { Notify } from '../../types';
 
 interface UseOrderParams {
-  addNotification: (params: AddNotificationParams) => void;
+  notify: Notify;
   clearCart: () => void;
   clearSelectedCoupon: () => void;
 }
 
 export function useOrder({
-  addNotification,
+  notify,
   clearCart,
   clearSelectedCoupon,
 }: UseOrderParams) {
   return {
     completeOrder: useCallback(() => {
       const orderNumber = `ORD-${Date.now()}`;
-      addNotification({
+      notify({
         message: `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
         type: 'success',
       });
       clearCart();
       clearSelectedCoupon();
-    }, [addNotification, clearCart, clearSelectedCoupon]),
+    }, [notify, clearCart, clearSelectedCoupon]),
   };
 }

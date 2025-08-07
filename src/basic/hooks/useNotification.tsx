@@ -1,13 +1,10 @@
 import { useCallback, useState } from 'react';
-import type { Notification } from '../../types';
+import type { Notification, Notify } from '../../types';
 import * as notificationModel from '../models/notification';
 
 interface UseNotificationReturn {
   notifications: Notification[];
-  addNotification: (params: {
-    message: string;
-    type?: 'error' | 'success' | 'warning';
-  }) => void;
+  notify: Notify;
   removeNotification: (params: { id: string }) => void;
 }
 
@@ -17,7 +14,7 @@ export function useNotification(): UseNotificationReturn {
   return {
     notifications,
 
-    addNotification: useCallback(({ message, type = 'success' }) => {
+    notify: useCallback(({ message, type = 'success' }) => {
       setNotifications((prevNotifications) => {
         const TOAST_DURATION = 3_000;
         const id = Date.now().toString();

@@ -25,19 +25,13 @@
 // - clearCart: 장바구니 비우기 함수
 
 import { useCallback, useEffect } from 'react';
-import type { CartItem, Coupon, Product } from '../../types';
+import type { CartItem, Notify, Product } from '../../types';
 import * as cartModel from '../models/cart';
+import * as productModel from '../models/product';
 import { useLocalStorage } from '../utils/hooks/useLocalStorage';
 
 interface UseCartParams {
-  addNotification: (params: {
-    message: string;
-    type?: 'error' | 'success' | 'warning';
-  }) => void;
-  isSoldOut: (params: { cart: CartItem[]; product: Product }) => boolean;
-  getCouponApplier: (params: {
-    coupon: Coupon | null;
-  }) => (params: { price: number }) => number;
+  notify: Notify;
 }
 
 interface UseCartReturn {
@@ -51,18 +45,9 @@ interface UseCartReturn {
     products: Product[];
   }) => void;
   clearCart: () => void;
-  calculateCartTotal: (params: { coupon: Coupon | null }) => {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
-  };
-  calculateItemTotal: (params: { item: CartItem }) => number;
 }
 
-export function useCart({
-  addNotification,
-  isSoldOut,
-  getCouponApplier,
-}: UseCartParams): UseCartReturn {
+export function useCart({ notify }: UseCartParams): UseCartReturn {
   const LOCAL_STORAGE_KEY = 'cart';
   const [cart, setCart] = useLocalStorage<CartItem[]>({
     key: LOCAL_STORAGE_KEY,
@@ -86,13 +71,16 @@ export function useCart({
             cart: prevCart,
             product,
             checkSoldOut: () => {
-              return isSoldOut({ cart: prevCart, product });
+              return productModel.isSoldOut({
+                getRemainingStock: () =>
+                  productModel.getRemainingStock({ cart: prevCart, product }),
+              });
             },
             onFailure: ({ message }) => {
-              addNotification({ message, type: 'error' });
+              notify({ message, type: 'error' });
             },
             onSuccess: () => {
-              addNotification({
+              notify({
                 message: '장바구니에 담았습니다',
                 type: 'success',
               });
@@ -100,7 +88,7 @@ export function useCart({
           });
         });
       },
-      [setCart, addNotification, isSoldOut]
+      [setCart, notify]
     ),
 
     removeFromCart: useCallback(
@@ -124,34 +112,16 @@ export function useCart({
             productId,
             products,
             onFailure: ({ message }) => {
-              addNotification({ message, type: 'error' });
+              notify({ message, type: 'error' });
             },
-            onSuccess: () => {},
           });
         });
       },
-      [setCart, addNotification]
+      [setCart, notify]
     ),
 
     clearCart: useCallback(() => {
       setCart([]);
     }, [setCart]),
-
-    calculateCartTotal: useCallback(
-      ({ coupon }) => {
-        return cartModel.calculateCartTotal({
-          cart,
-          applyCoupon: getCouponApplier({ coupon }),
-        });
-      },
-      [cart, getCouponApplier]
-    ),
-
-    calculateItemTotal: useCallback(
-      ({ item }) => {
-        return cartModel.calculateItemTotal({ item, cart });
-      },
-      [cart]
-    ),
   };
 }

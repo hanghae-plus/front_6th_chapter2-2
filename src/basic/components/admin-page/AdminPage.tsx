@@ -16,7 +16,7 @@
 // - CouponList: 쿠폰 목록 표시
 
 import { useState, type ReactNode } from 'react';
-import type { CartItem, Coupon, ProductWithUI } from '../../../types';
+import type { CartItem, Coupon, Notify, ProductWithUI } from '../../../types';
 import { AdminTabs, type AdminTab } from './AdminTabs';
 import { CouponsTab } from './coupons-tab/CouponsTab';
 import { ProductsTab } from './products-tab/ProductsTab';
@@ -27,7 +27,6 @@ interface Props {
   cart: CartItem[];
 
   products: ProductWithUI[];
-  isSoldOut: (params: { cart: CartItem[]; product: ProductWithUI }) => boolean;
   addProduct: (params: { newProduct: Omit<ProductWithUI, 'id'> }) => void;
   deleteProduct: (params: { productId: string }) => void;
   updateProduct: (params: {
@@ -39,17 +38,13 @@ interface Props {
   addCoupon: (params: { newCoupon: Coupon }) => void;
   deleteCoupon: (params: { couponCode: string }) => void;
 
-  addNotification: (params: {
-    message: string;
-    type?: 'error' | 'success' | 'warning';
-  }) => void;
+  notify: Notify;
 }
 
 export function AdminPage({
   cart,
 
   products,
-  isSoldOut,
   addProduct,
   deleteProduct,
   updateProduct,
@@ -58,7 +53,7 @@ export function AdminPage({
   addCoupon,
   deleteCoupon,
 
-  addNotification,
+  notify,
 }: Props) {
   const [activeTab, setActiveTab] = useState<AdminTab>('products');
 
@@ -68,18 +63,17 @@ export function AdminPage({
         coupons={coupons}
         addCoupon={addCoupon}
         deleteCoupon={deleteCoupon}
-        addNotification={addNotification}
+        notify={notify}
       />
     ),
     products: (
       <ProductsTab
         cart={cart}
         products={products}
-        isSoldOut={isSoldOut}
         addProduct={addProduct}
         deleteProduct={deleteProduct}
         updateProduct={updateProduct}
-        addNotification={addNotification}
+        notify={notify}
       />
     ),
   };

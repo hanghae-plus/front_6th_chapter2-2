@@ -1,11 +1,11 @@
 import type { CartItem, ProductWithUI } from '../../../../types';
+import * as productModel from '../../../models/product';
 import { formatNumberWon } from '../../../utils/formatters';
 import { Table } from '../../ui/Table';
 
 interface Props {
   products: ProductWithUI[];
   cart: CartItem[];
-  isSoldOut: (params: { cart: CartItem[]; product: ProductWithUI }) => boolean;
   startEditProduct: (params: { product: ProductWithUI }) => void;
   deleteProduct: (params: { productId: string }) => void;
 }
@@ -13,7 +13,6 @@ interface Props {
 export function ProductsTable({
   products,
   cart,
-  isSoldOut,
   startEditProduct,
   deleteProduct,
 }: Props) {
@@ -31,10 +30,11 @@ export function ProductsTable({
         가격: {
           className: 'px-6 py-4 whitespace-nowrap text-sm text-gray-500',
           children: (product) => {
-            const { price } = product;
-            return isSoldOut({ cart, product })
-              ? 'SOLD OUT'
-              : formatNumberWon({ price });
+            return productModel.formatPrice({
+              cart,
+              product,
+              formatter: formatNumberWon,
+            });
           },
         },
         재고: {

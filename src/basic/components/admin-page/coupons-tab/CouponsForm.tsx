@@ -1,4 +1,4 @@
-import type { Dispatch, FormEvent, SetStateAction } from 'react';
+import type { FormEvent } from 'react';
 import { InputWithLabel } from '../ui/InputWithLabel';
 import { FormTitle } from './ui/FormTitle';
 import { SelectWithLabel } from './ui/SelectWithLabel';
@@ -12,21 +12,31 @@ export interface CouponForm {
 
 interface Props {
   couponForm: CouponForm;
-  setCouponForm: Dispatch<SetStateAction<CouponForm>>;
   onSubmit: (e: FormEvent) => void;
-  addNotification: (params: {
-    message: string;
-    type?: 'error' | 'success' | 'warning';
-  }) => void;
-  setShowCouponForm: Dispatch<SetStateAction<boolean>>;
+  onClickCancel: () => void;
+  // 훅에서 제공하는 핸들러들
+  handleNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleCodeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleDiscountTypeChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  handleDiscountValueChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleDiscountValueBlur: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  getDisplayValue: (value: number) => string;
+  getDiscountLabel: (discountType: 'amount' | 'percentage') => string;
+  getDiscountPlaceholder: (discountType: 'amount' | 'percentage') => string;
 }
 
 export function CouponsForm({
   couponForm,
-  setCouponForm,
   onSubmit,
-  addNotification,
-  setShowCouponForm,
+  onClickCancel,
+  handleNameChange,
+  handleCodeChange,
+  handleDiscountTypeChange,
+  handleDiscountValueChange,
+  handleDiscountValueBlur,
+  getDisplayValue,
+  getDiscountLabel,
+  getDiscountPlaceholder,
 }: Props) {
   const { name, code, discountType, discountValue } = couponForm;
 
@@ -39,24 +49,14 @@ export function CouponsForm({
           <InputWithLabel
             label="쿠폰명"
             value={name}
-            onChange={(e) =>
-              setCouponForm({
-                ...couponForm,
-                name: e.target.value,
-              })
-            }
+            onChange={handleNameChange}
             placeholder="신규 가입 쿠폰"
           />
 
           <InputWithLabel
             label="쿠폰 코드"
             value={code}
-            onChange={(e) =>
-              setCouponForm({
-                ...couponForm,
-                code: e.target.value.toUpperCase(),
-              })
-            }
+            onChange={handleCodeChange}
             placeholder="WELCOME2024"
             required
           />
@@ -68,70 +68,22 @@ export function CouponsForm({
               { label: '정률 할인', value: 'percentage' },
             ]}
             value={discountType}
-            onChange={(e) =>
-              setCouponForm({
-                ...couponForm,
-                discountType: e.target.value as 'amount' | 'percentage',
-              })
-            }
+            onChange={handleDiscountTypeChange}
           />
 
           <InputWithLabel
-            label={discountType === 'amount' ? '할인 금액' : '할인율(%)'}
-            value={discountValue === 0 ? '' : discountValue}
-            onChange={(e) => {
-              const value = e.target.value;
-              if (value === '' || /^\d+$/.test(value)) {
-                setCouponForm({
-                  ...couponForm,
-                  discountValue: value === '' ? 0 : parseInt(value),
-                });
-              }
-            }}
-            onBlur={(e) => {
-              const value = parseInt(e.target.value) || 0;
-              if (discountType === 'percentage') {
-                if (value > 100) {
-                  addNotification({
-                    message: '할인율은 100%를 초과할 수 없습니다',
-                    type: 'error',
-                  });
-                  setCouponForm({
-                    ...couponForm,
-                    discountValue: 100,
-                  });
-                } else if (value < 0) {
-                  setCouponForm({
-                    ...couponForm,
-                    discountValue: 0,
-                  });
-                }
-              } else {
-                if (value > 100000) {
-                  addNotification({
-                    message: '할인 금액은 100,000원을 초과할 수 없습니다',
-                    type: 'error',
-                  });
-                  setCouponForm({
-                    ...couponForm,
-                    discountValue: 100000,
-                  });
-                } else if (value < 0) {
-                  setCouponForm({
-                    ...couponForm,
-                    discountValue: 0,
-                  });
-                }
-              }
-            }}
-            placeholder={discountType === 'amount' ? '5000' : '10'}
+            label={getDiscountLabel(discountType)}
+            value={getDisplayValue(discountValue)}
+            onChange={handleDiscountValueChange}
+            onBlur={handleDiscountValueBlur}
+            placeholder={getDiscountPlaceholder(discountType)}
             required
           />
         </div>
         <div className="flex justify-end gap-3">
           <button
             type="button"
-            onClick={() => setShowCouponForm(false)}
+            onClick={onClickCancel}
             className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
             취소

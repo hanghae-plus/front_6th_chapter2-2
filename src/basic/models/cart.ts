@@ -18,6 +18,7 @@
 // TODO: 구현
 
 import type { CartItem, Product } from '../../types';
+import { numberFormat } from '../utils/formatters';
 import { applyDiscount } from './discount';
 
 interface GetMaxApplicableDiscountParams {
@@ -203,8 +204,8 @@ interface UpdateCartQuantityParams {
   products: Product[];
   productId: string;
   newQuantity: number;
-  onFailure: (params: { message: string }) => void;
-  onSuccess: () => void;
+  onFailure?: (params: { message: string }) => void;
+  onSuccess?: () => void;
 }
 
 export function updateCartQuantity({
@@ -212,8 +213,8 @@ export function updateCartQuantity({
   products,
   productId,
   newQuantity,
-  onFailure,
-  onSuccess,
+  onFailure = () => {},
+  onSuccess = () => {},
 }: UpdateCartQuantityParams) {
   if (newQuantity <= 0) {
     onSuccess();
@@ -276,4 +277,30 @@ interface CalculateTotalItemCount {
 // 장바구니 총 개수 계산
 export function calculateTotalItemCount({ cart }: CalculateTotalItemCount) {
   return cart.reduce((sum, item) => sum + item.quantity, 0);
+}
+
+interface CalculateItemDiscountRateParams {
+  item: CartItem;
+  cart: CartItem[];
+}
+
+// 장바구니 개별 항목 적용된 할인율
+export function calculateItemDiscountRate({
+  item,
+  cart,
+}: CalculateItemDiscountRateParams) {
+  const itemTotal = calculateItemTotal({
+    item,
+    cart,
+  });
+  const originalPrice = item.product.price * item.quantity;
+  const hasDiscount = itemTotal < originalPrice;
+  const discountRate = hasDiscount ? 1 - itemTotal / originalPrice : 0;
+
+  return +numberFormat({
+    number: discountRate,
+    options: {
+      maximumFractionDigits: 2,
+    },
+  });
 }

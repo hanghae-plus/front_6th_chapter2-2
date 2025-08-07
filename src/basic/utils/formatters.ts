@@ -8,24 +8,31 @@
 
 export function numberFormat({
   options,
-  price,
+  number,
 }: {
-  price: number;
+  number: number;
   options: Intl.NumberFormatOptions;
 }) {
-  return Intl.NumberFormat('ko-KR', options).format(price);
+  return Intl.NumberFormat('ko-KR', options).format(number);
 }
 
-export function formatPriceKRW({ price }: { price: number }) {
+export function formatNumberKRW({ number }: { number: number }) {
   return numberFormat({
     options: { style: 'currency', currency: 'KRW' },
-    price,
+    number,
   });
 }
 
-export function formatNumberWon({ price }: { price: number }) {
+export function formatNumberWon({ number }: { number: number }) {
   return `${numberFormat({
     options: { style: 'decimal' },
-    price,
+    number,
   })}원`;
+}
+
+export function formatNumberRate({ number }: { number: number }) {
+  return numberFormat({
+    options: { style: 'percent' },
+    number,
+  });
 }

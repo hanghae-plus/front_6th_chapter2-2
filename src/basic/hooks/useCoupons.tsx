@@ -9,20 +9,14 @@
 // - removeCoupon: 쿠폰 삭제
 
 import { useCallback, useState } from 'react';
-import type { Coupon } from '../../types';
+import type { CartItem, Coupon, Notify } from '../../types';
 import { initialCoupons } from '../constants';
+import * as cartModel from '../models/cart';
 import * as couponModel from '../models/coupon';
 import { useLocalStorage } from '../utils/hooks/useLocalStorage';
 
 interface UseCouponsParams {
-  addNotification: (params: {
-    message: string;
-    type: 'error' | 'success';
-  }) => void;
-  calculateCartTotal: ({ coupon }: { coupon: Coupon }) => {
-    totalAfterDiscount: number;
-    totalBeforeDiscount: number;
-  };
+  notify: Notify;
 }
 
 interface UseCouponsReturn {
@@ -30,14 +24,11 @@ interface UseCouponsReturn {
   selectedCoupon: Coupon | null;
   addCoupon: (params: { newCoupon: Coupon }) => void;
   deleteCoupon: (params: { couponCode: string }) => void;
-  applyCoupon: (params: { coupon: Coupon }) => void;
+  applyCoupon: (params: { cart: CartItem[]; coupon: Coupon }) => void;
   clearSelectedCoupon: () => void;
 }
 
-export function useCoupons({
-  addNotification,
-  calculateCartTotal,
-}: UseCouponsParams): UseCouponsReturn {
+export function useCoupons({ notify }: UseCouponsParams): UseCouponsReturn {
   const [coupons, setCoupons] = useLocalStorage({
     key: 'coupons',
     initialValue: initialCoupons,
@@ -55,10 +46,10 @@ export function useCoupons({
             newCoupon,
             coupons: prevCoupons,
             onFailure: ({ message }) => {
-              addNotification({ message, type: 'error' });
+              notify({ message, type: 'error' });
             },
             onSuccess: () => {
-              addNotification({
+              notify({
                 message: '쿠폰이 추가되었습니다.',
                 type: 'success',
               });
@@ -66,7 +57,7 @@ export function useCoupons({
           });
         });
       },
-      [setCoupons, addNotification]
+      [setCoupons, notify]
     ),
 
     deleteCoupon: useCallback(
@@ -76,7 +67,7 @@ export function useCoupons({
             coupons: prevCoupons,
             couponCode,
             onSuccess: () => {
-              addNotification({
+              notify({
                 message: '쿠폰이 삭제되었습니다.',
                 type: 'success',
               });
@@ -84,26 +75,27 @@ export function useCoupons({
           });
         });
       },
-      [setCoupons, addNotification]
+      [setCoupons, notify]
     ),
 
     applyCoupon: useCallback(
-      ({ coupon }) => {
+      ({ cart, coupon }) => {
         setSelectedCoupon((prevCoupon) => {
-          const { totalAfterDiscount } = calculateCartTotal({
-            coupon,
+          const { totalAfterDiscount } = cartModel.calculateCartTotal({
+            cart,
+            applyCoupon: couponModel.getCouponApplier({ coupon }),
           });
           return couponModel.applyCoupon({
             coupon,
             prevCoupon,
             cartTotal: totalAfterDiscount,
             onFailure: ({ message }) => {
-              addNotification({ message, type: 'error' });
+              notify({ message, type: 'error' });
             },
           });
         });
       },
-      [calculateCartTotal, addNotification]
+      [notify]
     ),
 
     clearSelectedCoupon: useCallback(() => {

@@ -1,47 +1,38 @@
-import { useState, type FormEvent } from 'react';
-import type { Coupon } from '../../../../types';
+import type { Coupon, Notify } from '../../../../types';
 import { TabTitle } from '../ui/TabTitle';
 import { CouponCard } from './CouponCard';
-import { CouponsForm, type CouponForm } from './CouponsForm';
+import { CouponsForm } from './CouponsForm';
+import { useCouponsForm } from './hooks/useCouponsForm';
 import { ShowCouponFormCard } from './ShowCouponFormCard';
 
 interface Props {
   coupons: Coupon[];
   addCoupon: (params: { newCoupon: Coupon }) => void;
   deleteCoupon: (params: { couponCode: string }) => void;
-  addNotification: (params: {
-    message: string;
-    type?: 'error' | 'success' | 'warning';
-  }) => void;
+  notify: Notify;
 }
 
 export function CouponsTab({
   coupons,
   addCoupon,
   deleteCoupon,
-  addNotification,
+  notify,
 }: Props) {
-  const [showCouponForm, setShowCouponForm] = useState(false);
-  const [couponForm, setCouponForm] = useState<CouponForm>({
-    name: '',
-    code: '',
-    discountType: 'amount',
-    discountValue: 0,
-  });
-
-  const handleCouponSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    addCoupon({
-      newCoupon: couponForm,
-    });
-    setCouponForm({
-      name: '',
-      code: '',
-      discountType: 'amount',
-      discountValue: 0,
-    });
-    setShowCouponForm(false);
-  };
+  const {
+    showCouponForm,
+    couponForm,
+    handleSubmitCouponForm,
+    closeCouponForm,
+    openCouponForm,
+    handleNameChange,
+    handleCodeChange,
+    handleDiscountTypeChange,
+    handleDiscountValueChange,
+    handleDiscountValueBlur,
+    getDisplayValue,
+    getDiscountLabel,
+    getDiscountPlaceholder,
+  } = useCouponsForm({ addCoupon, notify });
 
   return (
     <section className="bg-white rounded-lg border border-gray-200">
@@ -59,18 +50,22 @@ export function CouponsTab({
             />
           ))}
 
-          <ShowCouponFormCard
-            onClick={() => setShowCouponForm(!showCouponForm)}
-          />
+          <ShowCouponFormCard onClick={openCouponForm} />
         </div>
 
         {showCouponForm && (
           <CouponsForm
             couponForm={couponForm}
-            setCouponForm={setCouponForm}
-            onSubmit={handleCouponSubmit}
-            addNotification={addNotification}
-            setShowCouponForm={setShowCouponForm}
+            onSubmit={handleSubmitCouponForm}
+            onClickCancel={closeCouponForm}
+            handleNameChange={handleNameChange}
+            handleCodeChange={handleCodeChange}
+            handleDiscountTypeChange={handleDiscountTypeChange}
+            handleDiscountValueChange={handleDiscountValueChange}
+            handleDiscountValueBlur={handleDiscountValueBlur}
+            getDisplayValue={getDisplayValue}
+            getDiscountLabel={getDiscountLabel}
+            getDiscountPlaceholder={getDiscountPlaceholder}
           />
         )}
       </div>

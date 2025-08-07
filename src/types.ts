@@ -33,3 +33,8 @@ export interface Notification {
   message: string;
   type: 'error' | 'success' | 'warning';
 }
+
+export type Notify = (params: {
+  message: string;
+  type: 'error' | 'success' | 'warning';
+}) => void;
