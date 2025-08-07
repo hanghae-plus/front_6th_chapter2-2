@@ -71,17 +71,9 @@ interface Notification {
 
 const App = () => {
 
-  const [products, setProducts] = useState<ProductWithUI[]>(() => {
-    const saved = localStorage.getItem('products');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialProducts;
-      }
-    }
-    return initialProducts;
-  });
+  const { products, addProduct: addProductHook, updateProduct: updateProductHook, deleteProduct: deleteProductHook } = useProducts();
+
+
 
   const [cart, setCart] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem('cart');
@@ -95,17 +87,9 @@ const App = () => {
     return [];
   });
 
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem('coupons');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialCoupons;
-      }
-    }
-    return initialCoupons;
-  });
+  const { coupons, addCoupon: addCouponHook, deleteCoupon: deleteCouponHook } = useCoupons();
+
+
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -179,13 +163,9 @@ const App = () => {
     setTotalItemCount(count);
   }, [cart]);
 
-  useEffect(() => {
-    localStorage.setItem('products', JSON.stringify(products));
-  }, [products]);
 
-  useEffect(() => {
-    localStorage.setItem('coupons', JSON.stringify(coupons));
-  }, [coupons]);
+
+
 
   useEffect(() => {
     if (cart.length > 0) {
@@ -276,47 +256,44 @@ const App = () => {
   }, [addNotification]);
 
   const addProduct = useCallback((newProduct: Omit<ProductWithUI, 'id'>) => {
-    const product: ProductWithUI = {
-      ...newProduct,
-      id: `p${Date.now()}`
-    };
-    setProducts(prev => [...prev, product]);
-    addNotification('상품이 추가되었습니다.', 'success');
-  }, [addNotification]);
+    const res = addProductHook(newProduct);
+    if (res.success) {
+      addNotification('상품이 추가되었습니다.', 'success');
+    } else {
+      addNotification(res.message ?? '상품 추가 실패', 'error');
+    }
+  }, [addProductHook, addNotification]);
 
   const updateProduct = useCallback((productId: string, updates: Partial<ProductWithUI>) => {
-    setProducts(prev =>
-      prev.map(product =>
-        product.id === productId
-          ? { ...product, ...updates }
-          : product
-      )
-    );
-    addNotification('상품이 수정되었습니다.', 'success');
-  }, [addNotification]);
+    const res = updateProductHook(productId, updates);
+    if (res.success) {
+      addNotification('상품이 수정되었습니다.', 'success');
+    } else {
+      addNotification(res.message ?? '상품 수정 실패', 'error');
+    }
+  }, [updateProductHook, addNotification]);
 
   const deleteProduct = useCallback((productId: string) => {
-    setProducts(prev => prev.filter(p => p.id !== productId));
+    deleteProductHook(productId);
     addNotification('상품이 삭제되었습니다.', 'success');
-  }, [addNotification]);
+  }, [deleteProductHook, addNotification]);
 
   const addCoupon = useCallback((newCoupon: Coupon) => {
-    const existingCoupon = coupons.find(c => c.code === newCoupon.code);
-    if (existingCoupon) {
-      addNotification('이미 존재하는 쿠폰 코드입니다.', 'error');
-      return;
+    const res = addCouponHook(newCoupon);
+    if (res.success) {
+      addNotification('쿠폰이 추가되었습니다.', 'success');
+    } else {
+      addNotification(res.message ?? '쿠폰 생성 실패', 'error');
     }
-    setCoupons(prev => [...prev, newCoupon]);
-    addNotification('쿠폰이 추가되었습니다.', 'success');
-  }, [coupons, addNotification]);
+  }, [addCouponHook, addNotification]);
 
   const deleteCoupon = useCallback((couponCode: string) => {
-    setCoupons(prev => prev.filter(c => c.code !== couponCode));
+    deleteCouponHook(couponCode);
     if (selectedCoupon?.code === couponCode) {
       setSelectedCoupon(null);
     }
     addNotification('쿠폰이 삭제되었습니다.', 'success');
-  }, [selectedCoupon, addNotification]);
+  }, [deleteCouponHook, selectedCoupon, addNotification]);
 
   const handleProductSubmit = (e: React.FormEvent) => {
     e.preventDefault();
