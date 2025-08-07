@@ -28,9 +28,11 @@ export const VALIDATION_LIMITS = {
 export const ADMIN_TABS = {
   PRODUCTS: "products" as const,
   COUPONS: "coupons" as const,
+  INVENTORY: "inventory" as const,
 } as const;
 
 export const ADMIN_TAB_LABELS = {
   [ADMIN_TABS.PRODUCTS]: "상품 관리",
   [ADMIN_TABS.COUPONS]: "쿠폰 관리",
+  [ADMIN_TABS.INVENTORY]: "재고 관리",
 } as const;
