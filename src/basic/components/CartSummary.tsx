@@ -1,5 +1,4 @@
 import React from 'react';
-import { Coupon } from '../../types';
 
 interface CartSummaryProps {
   totals: {

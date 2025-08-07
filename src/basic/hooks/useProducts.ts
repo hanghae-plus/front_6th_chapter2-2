@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useAtom } from 'jotai';
 import { productsAtom } from '../atoms';
-import { ProductWithUI, initialProducts } from '../constants/initialData';
+import { ProductWithUI } from '../constants/initialData';
 
 interface UseProductsOptions {
   storageKey?: string;
@@ -22,7 +22,6 @@ export const useProducts = (
   options?: UseProductsOptions
 ): UseProductsReturn => {
   const storageKey = options?.storageKey ?? 'products';
-  const defaultProducts = options?.defaultProducts ?? initialProducts;
 
   const [products, setProducts] = useAtom(productsAtom);
 
@@ -67,20 +66,6 @@ export const useProducts = (
     },
     [products]
   );
-
-  /* ----------------------------- storage sync ----------------------------- */
-  const onStorage = useCallback(
-    (e: StorageEvent) => {
-      if (e.key === storageKey && e.newValue) {
-        try {
-          const next = JSON.parse(e.newValue) as ProductWithUI[];
-          setProducts(next);
-        } catch {/* ignore */}
-      }
-    },
-    [storageKey]
-  );
-
 
   return {
     products,

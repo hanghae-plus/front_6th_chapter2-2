@@ -113,21 +113,6 @@ export const useCart = (options?: UseCartOptions): UseCartReturn => {
     [cart]
   );
 
-  const onStorage = useCallback(
-    (e: StorageEvent) => {
-      if (e.key === storageKey && e.newValue) {
-        try {
-          const value = JSON.parse(e.newValue) as CartItem[];
-          setCart(value);
-        } catch {
-          /* ignore */
-        }
-      }
-    },
-    [storageKey]
-  );
-
-
   return {
     cart,
     addToCart,

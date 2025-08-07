@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import { Coupon } from '../../types';
-import { initialCoupons } from '../constants/initialData';
 import { couponsAtom } from '../atoms';
 import { useAtom } from 'jotai';
 
@@ -19,7 +18,6 @@ export const useCoupons = (
   options?: UseCouponsOptions
 ): UseCouponsReturn => {
   const storageKey = options?.storageKey ?? 'coupons';
-  const defaultCoupons = options?.defaultCoupons ?? initialCoupons;
 
   const [coupons, setCoupons] = useAtom(couponsAtom);
 
@@ -45,19 +43,6 @@ export const useCoupons = (
       persist(next);
     },
     [coupons]
-  );
-
-  /* ----------------------------- storage sync ----------------------------- */
-  const onStorage = useCallback(
-    (e: StorageEvent) => {
-      if (e.key === storageKey && e.newValue) {
-        try {
-          const next = JSON.parse(e.newValue) as Coupon[];
-          setCoupons(next);
-        } catch {/* ignore */}
-      }
-    },
-    [storageKey]
   );
 
   return {
