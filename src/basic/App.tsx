@@ -75,17 +75,7 @@ const App = () => {
 
 
 
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem('cart');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return [];
-      }
-    }
-    return [];
-  });
+  const { cart, addToCart: addToCartHook, removeFromCart: removeFromCartHook, updateQuantity: updateQuantityHook, calculateTotal, clearCart, getRemainingStock } = useCart();
 
   const { coupons, addCoupon: addCouponHook, deleteCoupon: deleteCouponHook } = useCoupons();
 
@@ -139,12 +129,7 @@ const App = () => {
 
 
 
-  const getRemainingStock = (product: Product): number => {
-    const cartItem = cart.find(item => item.product.id === product.id);
-    const remaining = product.stock - (cartItem?.quantity || 0);
-    
-    return remaining;
-  };
+
 
   const addNotification = useCallback((message: string, type: 'error' | 'success' | 'warning' = 'success') => {
     const id = Date.now().toString();
@@ -167,77 +152,32 @@ const App = () => {
 
 
 
-  useEffect(() => {
-    if (cart.length > 0) {
-      localStorage.setItem('cart', JSON.stringify(cart));
-    } else {
-      localStorage.removeItem('cart');
-    }
-  }, [cart]);
+
 
 
 
   const addToCart = useCallback((product: ProductWithUI) => {
-    const remainingStock = getRemainingStock(product);
-    if (remainingStock <= 0) {
-      addNotification('재고가 부족합니다!', 'error');
-      return;
+    const res = addToCartHook(product);
+    if (res.success) {
+      addNotification('장바구니에 담았습니다', 'success');
+    } else {
+      addNotification(res.message ?? '재고가 부족합니다!', 'error');
     }
-
-    setCart(prevCart => {
-      const existingItem = prevCart.find(item => item.product.id === product.id);
-      
-      if (existingItem) {
-        const newQuantity = existingItem.quantity + 1;
-        
-        if (newQuantity > product.stock) {
-          addNotification(`재고는 ${product.stock}개까지만 있습니다.`, 'error');
-          return prevCart;
-        }
-
-        return prevCart.map(item =>
-          item.product.id === product.id
-            ? { ...item, quantity: newQuantity }
-            : item
-        );
-      }
-      
-      return [...prevCart, { product, quantity: 1 }];
-    });
-    
-    addNotification('장바구니에 담았습니다', 'success');
-  }, [cart, addNotification, getRemainingStock]);
+  }, [addToCartHook, addNotification]);
 
   const removeFromCart = useCallback((productId: string) => {
-    setCart(prevCart => prevCart.filter(item => item.product.id !== productId));
-  }, []);
+    removeFromCartHook(productId);
+  }, [removeFromCartHook]);
 
   const updateQuantity = useCallback((productId: string, newQuantity: number) => {
-    if (newQuantity <= 0) {
-      removeFromCart(productId);
-      return;
+    const res = updateQuantityHook(productId, newQuantity);
+    if (!res.success) {
+      addNotification(res.message ?? '수량 변경 실패', 'error');
     }
-
-    const product = products.find(p => p.id === productId);
-    if (!product) return;
-
-    const maxStock = product.stock;
-    if (newQuantity > maxStock) {
-      addNotification(`재고는 ${maxStock}개까지만 있습니다.`, 'error');
-      return;
-    }
-
-    setCart(prevCart =>
-      prevCart.map(item =>
-        item.product.id === productId
-          ? { ...item, quantity: newQuantity }
-          : item
-      )
-    );
-  }, [products, removeFromCart, addNotification, getRemainingStock]);
+  }, [updateQuantityHook, addNotification]);
 
   const applyCoupon = useCallback((coupon: Coupon) => {
-    const currentTotal = calculateCartTotal(cart).totalAfterDiscount;
+    const currentTotal = calculateTotal().totalAfterDiscount;
     
     if (currentTotal < 10000 && coupon.discountType === 'percentage') {
       addNotification('percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.', 'error');
@@ -335,7 +275,7 @@ const App = () => {
     setShowProductForm(true);
   };
 
-  const totals = calculateCartTotal(cart, selectedCoupon);
+  const totals = calculateTotal(selectedCoupon);
 
   const filteredProducts = debouncedSearchTerm
     ? products.filter(product => 
