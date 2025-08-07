@@ -1,19 +1,19 @@
-import { ProductIcon } from '../icons/ProductIcon.tsx';
+import { ProductIcon } from '../icons';
 import Button from '../ui/Button.tsx';
-import { useProducts } from '../../hooks/useProducts.ts';
 import { formatters, getRemainingStock } from '../../utils/formatters.ts';
-import { CartItem, Product } from '../../models/entities';
+import { CartItem, Product, ProductWithUI } from '../../models/entities';
 
 const ProductList = ({
   debouncedSearchTerm,
   cart,
   addToCart,
+  products,
 }: {
+  products: ProductWithUI[];
   cart: CartItem[];
   addToCart: (product: Product) => void;
   debouncedSearchTerm: string;
 }) => {
-  const { products } = useProducts();
   const filteredProducts = debouncedSearchTerm
     ? products.filter(
         product =>

@@ -1,9 +1,15 @@
 import ProductList from '../product/ProductList.tsx';
 import CartList from '../cart/CartList.tsx';
-import { CartItem, Coupon, Product } from '../../models/entities';
+import {
+  CartItem,
+  Coupon,
+  Product,
+  ProductWithUI,
+} from '../../models/entities';
 
 interface CartViewProps {
   cart: CartItem[];
+  products: ProductWithUI[];
   coupons: Coupon[];
   addNotification: (
     message: string,
@@ -30,6 +36,7 @@ const CartView = ({
   onApplyCoupon,
   onResetCart,
   coupons,
+  products,
   onResetCoupon,
 }: CartViewProps) => {
   return (
@@ -37,6 +44,7 @@ const CartView = ({
       <div className="lg:col-span-3">
         {/* 상품 목록 */}
         <ProductList
+          products={products}
           debouncedSearchTerm={debouncedSearchTerm}
           cart={cart}
           addToCart={addToCart}

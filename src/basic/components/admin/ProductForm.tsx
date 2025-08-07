@@ -1,4 +1,3 @@
-import React, { ChangeEvent, FormEvent } from 'react';
 import Form from '../ui/Form.tsx';
 import FormField from '../ui/FormField.tsx';
 import Input from '../ui/Input.tsx';
@@ -6,30 +5,31 @@ import Button from '../ui/Button.tsx';
 import { CloseIcon } from '../icons';
 import { ProductWithUI } from '../../models/entities';
 import { FormType } from './ProductTab.tsx';
+import {
+  BlurHandler,
+  FormSubmitHandler,
+  InputChangeHandler,
+} from '../../models/common';
+import { NotificationHandler } from '../../models/components/toast.types.ts';
 
 interface FormProps {
   updateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
   productForm: FormType;
   addProduct: (newProduct: Omit<ProductWithUI, 'id'>) => void;
-  addNotification: (
-    message: string,
-    type?: 'error' | 'success' | 'warning'
-  ) => void;
+  addNotification: NotificationHandler;
   onComplete: () => void;
   editingProduct: string | null;
   handler: {
-    handleFieldChange: (e: ChangeEvent<HTMLInputElement>) => void;
-    handleNumberField: (e: ChangeEvent<HTMLInputElement>) => void;
-    handleNumberFieldBlur: (
-      fieldName: string
-    ) => (e: React.ChangeEvent<HTMLInputElement>) => void;
+    handleFieldChange: InputChangeHandler;
+    handleNumberField: InputChangeHandler;
+    handleNumberFieldBlur: (fieldName: string) => BlurHandler;
     handleDiscountAdd: () => void;
     handleDiscountUpdate: (
       index: number,
       field: 'quantity' | 'rate'
-    ) => (e: React.ChangeEvent<HTMLInputElement>) => void;
+    ) => InputChangeHandler;
     handleDiscountRemove: (index: number) => () => void;
-    handleProductSubmit: (e: FormEvent) => void;
+    handleProductSubmit: FormSubmitHandler;
     handleAddDiscount: () => void;
   };
 }
@@ -45,9 +45,6 @@ const ProductForm = ({
         onSubmit={handler.handleProductSubmit}
         title={editingProduct === 'new' ? '새 상품 추가' : '상품 수정'}
       >
-        <h3 className="text-lg font-medium text-gray-900">
-          {editingProduct === 'new' ? '새 상품 추가' : '상품 수정'}
-        </h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField title={'상품명'}>
             <Input

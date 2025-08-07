@@ -3,17 +3,13 @@ import { ProductWithUI, Coupon, CartItem } from '../../models/entities';
 import Button from '../ui/Button.tsx';
 import ProductTab from '../admin/ProductTab.tsx';
 import CouponTab from '../admin/CouponTab.tsx';
+import { NotificationHandler } from '../../models/components/toast.types.ts';
 
 interface AdminViewProps {
-  // 공통 상태 (App.tsx에서 전달)
   products: ProductWithUI[];
   coupons: Coupon[];
   cart: CartItem[];
-  // 공통 함수들
-  addNotification: (
-    message: string,
-    type?: 'error' | 'success' | 'warning'
-  ) => void;
+  addNotification: NotificationHandler;
   updateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
   deleteProduct: (productId: string) => void;
   addProduct: (newProduct: Omit<ProductWithUI, 'id'>) => void;

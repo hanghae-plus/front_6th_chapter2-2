@@ -5,14 +5,12 @@ import { CartItem, ProductWithUI } from '../../models/entities';
 import ProductForm from './ProductForm.tsx';
 import ProductTable from './ProductTable.tsx';
 import { useProductForm } from '../../hooks/useProductForm.ts';
+import { NotificationHandler } from '../../models/components/toast.types.ts';
 
 interface ProductTabProps {
   cart: CartItem[];
   addProduct: (newProduct: Omit<ProductWithUI, 'id'>) => void;
-  addNotification: (
-    message: string,
-    type?: 'error' | 'success' | 'warning'
-  ) => void;
+  addNotification: NotificationHandler;
   products: ProductWithUI[];
   updateProduct: (productId: string, updates: Partial<ProductWithUI>) => void;
   deleteProduct: (productId: string) => void;

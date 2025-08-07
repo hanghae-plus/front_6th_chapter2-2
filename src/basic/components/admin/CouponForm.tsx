@@ -1,16 +1,20 @@
-import React from 'react';
 import Form from '../ui/Form.tsx';
 import Select from '../ui/Select.tsx';
 import Input from '../ui/Input.tsx';
 import Button from '../ui/Button.tsx';
 import { Coupon } from '../../models/entities';
+import {
+  FormSubmitHandler,
+  InputChangeHandler,
+  SelectChangeHandler,
+} from '../../models/common';
 
 interface CouponFormProps {
   handler: {
-    handleBlur: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    handleFieldChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    handleCouponSubmit: (e: React.FormEvent) => void;
-    handleDiscountTypeChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+    handleBlur: InputChangeHandler;
+    handleFieldChange: InputChangeHandler;
+    handleCouponSubmit: FormSubmitHandler;
+    handleDiscountTypeChange: SelectChangeHandler;
   };
   state: {
     couponForm: Coupon;

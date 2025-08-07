@@ -1,3 +1,5 @@
+import { BlurHandler } from '../../models/common';
+
 interface InputProps {
   type?: 'text' | 'number' | 'email' | 'password';
   value: string | number;
@@ -8,7 +10,7 @@ interface InputProps {
   variant?: 'default' | 'search';
   name: string;
   // 추가 props
-  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onBlur?: BlurHandler;
   required?: boolean;
   min?: string | number;
   max?: string | number;
