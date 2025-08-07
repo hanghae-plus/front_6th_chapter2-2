@@ -4,7 +4,6 @@ import { CouponSelector } from '../../../components/ui/CouponSelector';
 import { PaymentSummary } from '../../../components/ui/PaymentSummary';
 import { ProductList } from '../../../components/ui/ProductList';
 import type { ProductWithUI } from '../../../constants';
-import type { NotificationVariant } from '../../../entities/notification';
 import { useCartService } from '../../../hooks/useCartService';
 import { useDebouncedSearch } from '../../../hooks/useDebouncedSearch';
 import { calculateCartTotal } from '../../../models/cart';
@@ -20,8 +19,6 @@ interface CartPageProps {
   selectedCoupon: Coupon | null;
   onResetSelectedCoupon: () => void;
   onApplyCoupon: (cart: CartItem[], coupon: Coupon) => void;
-
-  onAddNotification: (message: string, type: NotificationVariant) => void;
 }
 
 export function CartPage({
@@ -33,12 +30,9 @@ export function CartPage({
   selectedCoupon,
   onResetSelectedCoupon,
   onApplyCoupon,
-
-  onAddNotification,
 }: CartPageProps) {
   const { cart, handleAddToCart, updateQuantity, removeFromCart, completeOrder } = useCartService({
     products,
-    onAddNotification,
     onResetSelectedCoupon,
   });
   const { searchTerm, debouncedSearchTerm, handleChangeSearchTerm } = useDebouncedSearch();

@@ -5,7 +5,6 @@ import { CouponTab } from '../../../components/ui/CouponTab';
 import { ProductTab } from '../../../components/ui/ProductTab';
 import { TabNavigation } from '../../../components/ui/TabNavigation';
 import type { ProductWithUI } from '../../../constants';
-import type { NotificationVariant } from '../../../entities/notification';
 import { AdminHeader } from '../../../widgets/admin-header';
 
 interface AdminPageProps {
@@ -19,8 +18,6 @@ interface AdminPageProps {
   coupons: Coupon[];
   onAddCoupon: (newCoupon: Coupon) => void;
   onDeleteCoupon: (couponCode: string) => void;
-
-  onAddNotification: (message: string, type: NotificationVariant) => void;
 }
 
 export function AdminPage({
@@ -34,8 +31,6 @@ export function AdminPage({
   coupons,
   onAddCoupon,
   onDeleteCoupon,
-
-  onAddNotification,
 }: AdminPageProps) {
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
 
@@ -63,7 +58,6 @@ export function AdminPage({
                   onAddProduct={onAddProduct}
                   onUpdateProduct={onUpdateProduct}
                   onDeleteProduct={onDeleteProduct}
-                  onAddNotification={onAddNotification}
                 />
               );
             }
@@ -73,7 +67,6 @@ export function AdminPage({
                 coupons={coupons}
                 onAddCoupon={onAddCoupon}
                 onDeleteCoupon={onDeleteCoupon}
-                onAddNotification={onAddNotification}
               />
             );
           })()}

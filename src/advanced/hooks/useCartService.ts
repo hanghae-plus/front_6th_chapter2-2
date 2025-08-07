@@ -1,28 +1,25 @@
+import { useSetAtom } from 'jotai';
 import { useCallback } from 'react';
 
 import { useCartStore } from './useCartStore';
 import type { ProductWithUI } from '../constants';
-import type { NotificationVariant } from '../entities/notification';
+import { addNotificationAtom } from '../entities/notification';
 import { getRemainingStock } from '../models/product';
 
 interface UseCartServiceProps {
   products: ProductWithUI[];
-  onAddNotification: (message: string, type: NotificationVariant) => void;
   onResetSelectedCoupon: () => void;
 }
 
-export function useCartService({
-  products,
-  onAddNotification,
-  onResetSelectedCoupon,
-}: UseCartServiceProps) {
+export function useCartService({ products, onResetSelectedCoupon }: UseCartServiceProps) {
   const { cart, addToCart, updateToCart, removeFromCart, resetCart } = useCartStore();
+  const addNotification = useSetAtom(addNotificationAtom);
 
   const handleAddToCart = useCallback(
     (product: ProductWithUI) => {
       const remainingStock = getRemainingStock(product, cart);
       if (remainingStock <= 0) {
-        onAddNotification('재고가 부족합니다!', 'error');
+        addNotification('재고가 부족합니다!', 'error');
         return;
       }
 
@@ -32,7 +29,7 @@ export function useCartService({
         const newQuantity = existingItem.quantity + 1;
 
         if (newQuantity > product.stock) {
-          onAddNotification(`재고는 ${product.stock}개까지만 있습니다.`, 'error');
+          addNotification(`재고는 ${product.stock}개까지만 있습니다.`, 'error');
           return;
         }
 
@@ -41,9 +38,9 @@ export function useCartService({
       }
 
       addToCart(product);
-      onAddNotification('장바구니에 담았습니다', 'success');
+      addNotification('장바구니에 담았습니다', 'success');
     },
-    [cart, onAddNotification, addToCart, updateToCart]
+    [cart, addNotification, addToCart, updateToCart]
   );
 
   const updateQuantity = useCallback(
@@ -58,21 +55,21 @@ export function useCartService({
 
       const maxStock = product.stock;
       if (newQuantity > maxStock) {
-        onAddNotification(`재고는 ${maxStock}개까지만 있습니다.`, 'error');
+        addNotification(`재고는 ${maxStock}개까지만 있습니다.`, 'error');
         return;
       }
 
       updateToCart(product, newQuantity);
     },
-    [products, removeFromCart, onAddNotification, updateToCart]
+    [products, removeFromCart, addNotification, updateToCart]
   );
 
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
-    onAddNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
+    addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
     resetCart();
     onResetSelectedCoupon();
-  }, [onAddNotification, resetCart, onResetSelectedCoupon]);
+  }, [addNotification, resetCart, onResetSelectedCoupon]);
 
   return {
     cart,

@@ -1,7 +1,6 @@
 import { ProductAccordion } from './ProductAccordion';
 import { ProductForm } from './ProductForm';
 import type { ProductWithUI } from '../../constants';
-import type { NotificationVariant } from '../../entities/notification';
 import { useProductForm } from '../../hooks/useProductForm';
 
 interface ProductTabProps {
@@ -9,7 +8,6 @@ interface ProductTabProps {
   onAddProduct: (product: Omit<ProductWithUI, 'id'>) => void;
   onUpdateProduct: (productId: string, product: Omit<ProductWithUI, 'id'>) => void;
   onDeleteProduct: (productId: string) => void;
-  onAddNotification: (message: string, type: NotificationVariant) => void;
 }
 
 export function ProductTab({
@@ -17,7 +15,6 @@ export function ProductTab({
   onAddProduct,
   onUpdateProduct,
   onDeleteProduct,
-  onAddNotification,
 }: ProductTabProps) {
   const {
     showProductForm,
@@ -56,7 +53,6 @@ export function ProductTab({
         updateForm={updateProductFormData}
         onSubmit={handleProductSubmit}
         onCancel={handleCancelProductForm}
-        onAddNotification={onAddNotification}
       />
     </section>
   );

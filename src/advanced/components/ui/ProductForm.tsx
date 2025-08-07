@@ -1,5 +1,7 @@
+import { useSetAtom } from 'jotai';
+
 import type { ProductWithUI } from '../../constants';
-import type { NotificationVariant } from '../../entities/notification';
+import { addNotificationAtom } from '../../entities/notification';
 import { Icon } from '../../shared/icon';
 import {
   convertPercentageToRate,
@@ -18,7 +20,6 @@ interface ProductFormProps {
   editingProduct: string | null;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
-  onAddNotification: (message: string, type: Exclude<NotificationVariant, 'warning'>) => void;
 }
 
 export function ProductForm({
@@ -28,8 +29,9 @@ export function ProductForm({
   editingProduct,
   onSubmit,
   onCancel,
-  onAddNotification,
 }: ProductFormProps) {
+  const addNotification = useSetAtom(addNotificationAtom);
+
   if (!isOpen) return null;
 
   const isNewProduct = editingProduct === 'new';
@@ -76,7 +78,7 @@ export function ProductForm({
                 if (isEmptyValue(value)) {
                   updateForm({ price: 0 });
                 } else if (!isValidPrice(parseInt(value))) {
-                  onAddNotification('가격은 0보다 커야 합니다', 'error');
+                  addNotification('가격은 0보다 커야 합니다', 'error');
                   updateForm({ price: 0 });
                 }
               }}
@@ -101,10 +103,10 @@ export function ProductForm({
                 if (isEmptyValue(value)) {
                   updateForm({ stock: 0 });
                 } else if (!isValidMinimumStock(parseInt(value))) {
-                  onAddNotification('재고는 0보다 커야 합니다', 'error');
+                  addNotification('재고는 0보다 커야 합니다', 'error');
                   updateForm({ stock: 0 });
                 } else if (!isValidMaximumStock(parseInt(value))) {
-                  onAddNotification('재고는 9999개를 초과할 수 없습니다', 'error');
+                  addNotification('재고는 9999개를 초과할 수 없습니다', 'error');
                   updateForm({ stock: 9999 });
                 }
               }}

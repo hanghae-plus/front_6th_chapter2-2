@@ -1,17 +1,13 @@
 import { useState } from 'react';
 
-import { NotificationList, useNotificationStore } from '../entities/notification';
+import { NotificationList } from '../entities/notification';
 import { useCouponService } from '../hooks/useCouponService';
 import { useProductService } from '../hooks/useProductService';
 import { AdminPage } from '../pages/admin';
 import { CartPage } from '../pages/cart';
 
 export const App = () => {
-  const { notifications, addNotification, removeNotification } = useNotificationStore();
-
-  const { products, onAddProduct, onUpdateProduct, onDeleteProduct } = useProductService({
-    onAddNotification: addNotification,
-  });
+  const { products, onAddProduct, onUpdateProduct, onDeleteProduct } = useProductService();
   const {
     coupons,
     selectedCoupon,
@@ -19,15 +15,13 @@ export const App = () => {
     onAddCoupon,
     onDeleteCoupon,
     onApplyCoupon,
-  } = useCouponService({
-    onAddNotification: addNotification,
-  });
+  } = useCouponService();
 
   const [isAdmin, setIsAdmin] = useState(false);
 
   return (
     <div className='min-h-screen bg-gray-50'>
-      <NotificationList notifications={notifications} onRemoveNotification={removeNotification} />
+      <NotificationList />
 
       {isAdmin ? (
         <AdminPage
@@ -41,8 +35,6 @@ export const App = () => {
           coupons={coupons}
           onAddCoupon={onAddCoupon}
           onDeleteCoupon={onDeleteCoupon}
-          // notifications
-          onAddNotification={addNotification}
         />
       ) : (
         <CartPage
@@ -54,8 +46,6 @@ export const App = () => {
           selectedCoupon={selectedCoupon}
           onResetSelectedCoupon={onResetSelectedCoupon}
           onApplyCoupon={onApplyCoupon}
-          // notifications
-          onAddNotification={addNotification}
         />
       )}
     </div>

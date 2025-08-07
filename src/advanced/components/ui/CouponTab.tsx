@@ -2,22 +2,15 @@ import { CouponAddButton } from './CouponAddButton';
 import { CouponForm } from './CouponForm';
 import { CouponList } from './CouponList';
 import type { Coupon } from '../../../types';
-import type { NotificationVariant } from '../../entities/notification';
 import { useCouponForm } from '../../hooks/useCouponForm';
 
 interface CouponTabProps {
   coupons: Coupon[];
   onAddCoupon: (coupon: Coupon) => void;
   onDeleteCoupon: (couponCode: string) => void;
-  onAddNotification: (message: string, type: NotificationVariant) => void;
 }
 
-export function CouponTab({
-  coupons,
-  onAddCoupon,
-  onDeleteCoupon,
-  onAddNotification,
-}: CouponTabProps) {
+export function CouponTab({ coupons, onAddCoupon, onDeleteCoupon }: CouponTabProps) {
   const {
     showCouponForm,
     couponFormData,
@@ -25,10 +18,7 @@ export function CouponTab({
     handleCouponSubmit,
     handleShowCouponForm,
     handleHideCouponForm,
-  } = useCouponForm({
-    onAddCoupon,
-    onAddNotification,
-  });
+  } = useCouponForm({ onAddCoupon });
 
   return (
     <section className='bg-white rounded-lg border border-gray-200'>
@@ -48,7 +38,6 @@ export function CouponTab({
           updateForm={updateCouponFormData}
           onSubmit={handleCouponSubmit}
           onCancel={handleHideCouponForm}
-          onAddNotification={onAddNotification}
         />
       </div>
     </section>

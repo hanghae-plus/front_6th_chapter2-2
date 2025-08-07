@@ -1,5 +1,7 @@
+import { useSetAtom } from 'jotai';
+
 import type { Coupon } from '../../../types';
-import type { NotificationVariant } from '../../entities/notification';
+import { addNotificationAtom } from '../../entities/notification';
 import { isEmptyValue, isNumber } from '../../shared/lib';
 
 interface CouponFormProps {
@@ -8,17 +10,11 @@ interface CouponFormProps {
   updateForm: (updates: Partial<Coupon>) => void;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
-  onAddNotification: (message: string, type: Exclude<NotificationVariant, 'warning'>) => void;
 }
 
-export function CouponForm({
-  isOpen,
-  form,
-  updateForm,
-  onSubmit,
-  onCancel,
-  onAddNotification,
-}: CouponFormProps) {
+export function CouponForm({ isOpen, form, updateForm, onSubmit, onCancel }: CouponFormProps) {
+  const addNotification = useSetAtom(addNotificationAtom);
+
   if (!isOpen) return null;
 
   return (
@@ -78,14 +74,14 @@ export function CouponForm({
                 const value = parseInt(e.target.value) || 0;
                 if (form.discountType === 'percentage') {
                   if (value > 100) {
-                    onAddNotification('할인율은 100%를 초과할 수 없습니다', 'error');
+                    addNotification('할인율은 100%를 초과할 수 없습니다', 'error');
                     updateForm({ discountValue: 100 });
                   } else if (value < 0) {
                     updateForm({ discountValue: 0 });
                   }
                 } else {
                   if (value > 100000) {
-                    onAddNotification('할인 금액은 100,000원을 초과할 수 없습니다', 'error');
+                    addNotification('할인 금액은 100,000원을 초과할 수 없습니다', 'error');
                     updateForm({ discountValue: 100000 });
                   } else if (value < 0) {
                     updateForm({ discountValue: 0 });
