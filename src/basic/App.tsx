@@ -8,9 +8,9 @@ import { useProducts } from './hooks/useProducts';
 import { useNotification } from './hooks/useNotification';
 import { useProductSearch } from './hooks/useProductSearch';
 import { formatKoreanPrice, formatPercentage } from './shared/utils';
+import { validator } from './shared/utils/validators';
 import { SEARCH_DELAY } from './shared/constants/toast';
 import { STOCK } from './constants/product';
-import { DISCOUNT } from './constants/discount';
 import { MESSAGES } from './constants/message';
 
 const App = () => {
@@ -488,18 +488,23 @@ const App = () => {
                             value={productForm.price === 0 ? '' : productForm.price}
                             onChange={(e) => {
                               const value = e.target.value;
-                              if (value === '' || /^\d+$/.test(value)) {
-                                setProductForm({ ...productForm, price: value === '' ? 0 : parseInt(value) });
+                              const numericString = validator.validateNumericString(value);
+                              if (numericString !== null) {
+                                setProductForm({
+                                  ...productForm,
+                                  price: numericString === '' ? 0 : parseInt(numericString),
+                                });
                               }
                             }}
                             onBlur={(e) => {
                               const value = e.target.value;
-                              if (value === '') {
-                                setProductForm({ ...productForm, price: 0 });
-                              } else if (parseInt(value) < 0) {
-                                addNotification('가격은 0보다 커야 합니다', 'error');
-                                setProductForm({ ...productForm, price: 0 });
+                              const price = value === '' ? 0 : parseInt(value);
+                              const validation = validator.isValidPrice(price);
+
+                              if (!validation.isValid) {
+                                addNotification(validation.message, 'error');
                               }
+                              setProductForm({ ...productForm, price: validation.correctedValue });
                             }}
                             className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
                             placeholder="숫자만 입력"
@@ -513,21 +518,23 @@ const App = () => {
                             value={productForm.stock === 0 ? '' : productForm.stock}
                             onChange={(e) => {
                               const value = e.target.value;
-                              if (value === '' || /^\d+$/.test(value)) {
-                                setProductForm({ ...productForm, stock: value === '' ? 0 : parseInt(value) });
+                              const numericString = validator.validateNumericString(value);
+                              if (numericString !== null) {
+                                setProductForm({
+                                  ...productForm,
+                                  stock: numericString === '' ? 0 : parseInt(numericString),
+                                });
                               }
                             }}
                             onBlur={(e) => {
                               const value = e.target.value;
-                              if (value === '') {
-                                setProductForm({ ...productForm, stock: 0 });
-                              } else if (parseInt(value) < 0) {
-                                addNotification(MESSAGES.STOCK.MIN, 'error');
-                                setProductForm({ ...productForm, stock: 0 });
-                              } else if (parseInt(value) > STOCK.MAX_QUANTITY) {
-                                addNotification(MESSAGES.STOCK.MAX, 'error');
-                                setProductForm({ ...productForm, stock: STOCK.MAX_QUANTITY });
+                              const stock = value === '' ? 0 : parseInt(value);
+                              const validation = validator.isValidStock(stock);
+
+                              if (!validation.isValid) {
+                                addNotification(validation.message, 'error');
                               }
+                              setProductForm({ ...productForm, stock: validation.correctedValue });
                             }}
                             className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
                             placeholder="숫자만 입력"
@@ -730,27 +737,25 @@ const App = () => {
                               value={couponForm.discountValue === 0 ? '' : couponForm.discountValue}
                               onChange={(e) => {
                                 const value = e.target.value;
-                                if (value === '' || /^\d+$/.test(value)) {
-                                  setCouponForm({ ...couponForm, discountValue: value === '' ? 0 : parseInt(value) });
+                                const numericString = validator.validateNumericString(value);
+                                if (numericString !== null) {
+                                  setCouponForm({
+                                    ...couponForm,
+                                    discountValue: numericString === '' ? 0 : parseInt(numericString),
+                                  });
                                 }
                               }}
                               onBlur={(e) => {
                                 const value = parseInt(e.target.value) || 0;
-                                if (couponForm.discountType === 'percentage') {
-                                  if (value > DISCOUNT.MAX_PERCENTAGE) {
-                                    addNotification(MESSAGES.DISCOUNT_PERCENTAGE.MAX, 'error');
-                                    setCouponForm({ ...couponForm, discountValue: DISCOUNT.MAX_PERCENTAGE });
-                                  } else if (value < 0) {
-                                    setCouponForm({ ...couponForm, discountValue: 0 });
-                                  }
-                                } else {
-                                  if (value > DISCOUNT.MAX_COUPON_AMOUNT) {
-                                    addNotification(MESSAGES.DISCOUNT_AMOUNT.MAX, 'error');
-                                    setCouponForm({ ...couponForm, discountValue: DISCOUNT.MAX_COUPON_AMOUNT });
-                                  } else if (value < 0) {
-                                    setCouponForm({ ...couponForm, discountValue: 0 });
-                                  }
+                                const validation =
+                                  couponForm.discountType === 'percentage'
+                                    ? validator.isValidDiscountPercentage(value)
+                                    : validator.isValidDiscountAmount(value);
+
+                                if (!validation.isValid) {
+                                  addNotification(validation.message, 'error');
                                 }
+                                setCouponForm({ ...couponForm, discountValue: validation.correctedValue });
                               }}
                               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
                               placeholder={couponForm.discountType === 'amount' ? '5000' : '10'}
