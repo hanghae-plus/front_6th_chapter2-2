@@ -33,11 +33,7 @@ const App = () => {
     selectedCoupon,
     totalItemCount,
   } = useCart();
-  const { coupons, addCoupon, deleteCoupon } = useCoupon(
-    selectedCoupon,
-    applyCoupon,
-    addNotification,
-  );
+  const { coupons, addCoupon, deleteCoupon } = useCoupon();
   const {
     couponForm,
     showCouponForm,

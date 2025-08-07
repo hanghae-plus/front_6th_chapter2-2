@@ -7,54 +7,33 @@
 // - coupons: 쿠폰 배열
 // - addCoupon: 새 쿠폰 추가
 // - removeCoupon: 쿠폰 삭제
-import { useState, useEffect, useCallback } from 'react';
+import { useAtom, useSetAtom } from 'jotai';
+import { useCallback } from 'react';
 
-import { initialCoupons } from '../constants';
+import { couponsAtom, addCouponAtom, deleteCouponAtom } from '../atoms/couponAtoms';
 import { Coupon } from '../types';
 
-const useCoupon = (
-  selectedCoupon: Coupon | null,
-  applyCoupon: (coupon: Coupon | null) => void,
-  addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void,
-) => {
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem('coupons');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialCoupons;
-      }
-    }
-    return initialCoupons;
-  });
+const useCoupon = () => {
+  // atoms 구독
+  const [coupons] = useAtom(couponsAtom);
 
-  useEffect(() => {
-    localStorage.setItem('coupons', JSON.stringify(coupons));
-  }, [coupons]);
+  // action atoms
+  const addCouponAction = useSetAtom(addCouponAtom);
+  const deleteCouponAction = useSetAtom(deleteCouponAtom);
 
+  // wrapper 함수들
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {
-      const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
-      if (existingCoupon) {
-        addNotification('이미 존재하는 쿠폰 코드입니다.', 'error');
-        return;
-      }
-      setCoupons((prev) => [...prev, newCoupon]);
-      addNotification('쿠폰이 추가되었습니다.', 'success');
+      addCouponAction(newCoupon);
     },
-    [coupons, addNotification],
+    [addCouponAction],
   );
 
   const deleteCoupon = useCallback(
     (couponCode: string) => {
-      setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
-      if (selectedCoupon?.code === couponCode) {
-        applyCoupon(null);
-      }
-      addNotification('쿠폰이 삭제되었습니다.', 'success');
+      deleteCouponAction(couponCode);
     },
-    [selectedCoupon, applyCoupon, addNotification],
+    [deleteCouponAction],
   );
 
   return { coupons, addCoupon, deleteCoupon };
