@@ -1,6 +1,6 @@
 import type { CartItem } from '../../../types';
 import { calculateItemTotal } from '../../models/cart';
-import { Icon } from '../icons';
+import { Icon } from '../../shared/icon';
 
 interface CartItemListProps {
   cart: CartItem[];

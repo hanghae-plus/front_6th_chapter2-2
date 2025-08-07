@@ -1,4 +1,4 @@
-import { Icon } from '../icons';
+import { Icon } from '../../shared/icon';
 
 interface CouponAddButtonProps {
   onAddNew: () => void;

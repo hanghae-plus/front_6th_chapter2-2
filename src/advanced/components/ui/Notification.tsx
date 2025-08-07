@@ -1,7 +1,7 @@
 import { HTMLAttributes, useEffect } from 'react';
 
 import type { Notification as NotificationType, NotificationVariant } from '../../constants';
-import { Icon } from '../icons';
+import { Icon } from '../../shared/icon';
 
 interface NotificationProps {
   notification: NotificationType;

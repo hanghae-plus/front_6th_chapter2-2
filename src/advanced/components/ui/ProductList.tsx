@@ -1,8 +1,8 @@
 import type { CartItem } from '../../../types';
 import type { ProductWithUI } from '../../constants';
 import { filterProducts, getRemainingStock } from '../../models/product';
+import { Icon } from '../../shared/icon';
 import { convertRateToPercentage, formatKRWPrice } from '../../shared/lib';
-import { Icon } from '../icons';
 
 interface ProductListProps {
   products: ProductWithUI[];

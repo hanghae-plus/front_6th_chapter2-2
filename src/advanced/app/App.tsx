@@ -1,13 +1,13 @@
 import { useState } from 'react';
 
-import { AdminPage } from './components/AdminPage';
-import { CartPage } from './components/CartPage';
-import { Notifications } from './components/ui/Notifications';
-import { useCouponService } from './hooks/useCouponService';
-import { useNotificationStore } from './hooks/useNotificationStore';
-import { useProductService } from './hooks/useProductService';
+import { AdminPage } from '../components/AdminPage';
+import { CartPage } from '../components/CartPage';
+import { Notifications } from '../components/ui/Notifications';
+import { useCouponService } from '../hooks/useCouponService';
+import { useNotificationStore } from '../hooks/useNotificationStore';
+import { useProductService } from '../hooks/useProductService';
 
-const App = () => {
+export const App = () => {
   const { notifications, addNotification, removeNotification } = useNotificationStore();
 
   const { products, onAddProduct, onUpdateProduct, onDeleteProduct } = useProductService({
@@ -62,5 +62,3 @@ const App = () => {
     </div>
   );
 };
-
-export default App;

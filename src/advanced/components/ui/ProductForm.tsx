@@ -1,4 +1,5 @@
 import type { NotificationVariant, ProductWithUI } from '../../constants';
+import { Icon } from '../../shared/icon';
 import {
   convertPercentageToRate,
   convertRateToPercentage,
@@ -8,7 +9,6 @@ import {
   isValidMinimumStock,
   isValidPrice,
 } from '../../shared/lib';
-import { Icon } from '../icons';
 
 interface ProductFormProps {
   isOpen: boolean;

@@ -7,3 +7,5 @@ export const iconNames = {
   cartBagRegular: 'cartBagRegular-icon',
   cartBagThin: 'cartBagThin-icon',
 } as const;
+
+export type IconName = keyof typeof iconNames;

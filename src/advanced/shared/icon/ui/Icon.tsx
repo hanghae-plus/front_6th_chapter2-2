@@ -1,9 +1,9 @@
 import { type HTMLAttributes } from 'react';
 
-import { iconNames } from './iconNames';
+import type { IconName } from '../consts/iconNames';
 
 interface IconProps extends HTMLAttributes<SVGElement> {
-  name: keyof typeof iconNames;
+  name: IconName;
   width?: number;
   height?: number;
 }

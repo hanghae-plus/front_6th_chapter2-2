@@ -1,6 +1,5 @@
 import type { CartItem, Coupon } from '../../types';
 import type { NotificationVariant, ProductWithUI } from '../constants';
-import { Icon } from './icons';
 import { calculateCartTotal } from '../models/cart';
 import { CartHeader } from './ui/CartHeader';
 import { CartItemList } from './ui/CartItemList';
@@ -9,6 +8,7 @@ import { PaymentSummary } from './ui/PaymentSummary';
 import { ProductList } from './ui/ProductList';
 import { useCartService } from '../hooks/useCartService';
 import { useDebouncedSearch } from '../hooks/useDebouncedSearch';
+import { Icon } from '../shared/icon';
 
 interface CartPageProps {
   onChangeAdminPage: () => void;

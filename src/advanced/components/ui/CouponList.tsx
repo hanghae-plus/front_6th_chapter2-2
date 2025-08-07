@@ -1,5 +1,5 @@
 import type { Coupon } from '../../../types';
-import { Icon } from '../icons';
+import { Icon } from '../../shared/icon';
 
 interface CouponListProps {
   coupons: Coupon[];

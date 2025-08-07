@@ -1,6 +1,6 @@
 import { createPortal } from 'react-dom';
 
-import { iconNames } from './iconNames';
+import { iconNames } from '../../shared/icon';
 
 const svgMap = (
   <svg xmlns='http://www.w3.org/2000/svg'>
