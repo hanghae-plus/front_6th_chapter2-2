@@ -1,3 +1,5 @@
+export type CouponDiscountType = 'amount' | 'percentage';
+
 export interface Product {
   filter: any;
   id: string;
@@ -22,7 +24,7 @@ export interface CartItem {
 export interface Coupon {
   name: string;
   code: string;
-  discountType: 'amount' | 'percentage';
+  discountType: CouponDiscountType;
   discountValue: number;
 }
 export interface NotificationType {
@@ -40,4 +42,10 @@ export interface ProductFormType {
     quantity: number;
     rate: number;
   }>;
+}
+export interface CouponFormType {
+  name: string;
+  code: string;
+  discountType: CouponDiscountType;
+  discountValue: number;
 }
