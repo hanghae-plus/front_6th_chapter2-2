@@ -1,6 +1,6 @@
 import { ProductTableRow } from "./ProductTableRow";
 import type { Product, CartItem } from "../../../types";
-import { getRemainingStock } from "../../utils/formatters";
+import { getRemainingStock } from "../../models/cart";
 
 interface ProductTableProps {
   products: Product[];

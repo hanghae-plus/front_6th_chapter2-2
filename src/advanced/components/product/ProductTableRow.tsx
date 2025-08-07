@@ -1,6 +1,6 @@
 import { Button } from "../ui/button/Button";
 import { Product } from "../../../types";
-import { formatPriceWithRemainingStock } from "../../utils/formatters";
+import { formatPriceWithStock } from "../../utils/formatters";
 
 interface ProductTableRowProps {
   product: Product;
@@ -20,7 +20,7 @@ export const ProductTableRow = ({ product, remainingStock, onEdit, onDelete }: P
     <tr className="hover:bg-gray-50">
       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{product.name}</td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-        {formatPriceWithRemainingStock(product.price, remainingStock, true)}
+        {formatPriceWithStock(product.price, remainingStock, true)}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
         <span

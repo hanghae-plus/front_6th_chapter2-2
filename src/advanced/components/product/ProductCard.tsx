@@ -1,5 +1,6 @@
 import { Product } from "../../../types";
 import { formatPrice } from "../../utils/formatters";
+import { Button } from "../ui/button/Button";
 
 interface ProductCardProps {
   product: Product;
@@ -97,7 +98,7 @@ const ProductStock = ({ remainingStock }: { remainingStock: number }) => (
   </div>
 );
 
-// 상품 액션 버튼
+// 상품 액션 버튼 - UI 컴포넌트 사용
 const ProductAction = ({
   product,
   remainingStock,
@@ -106,14 +107,18 @@ const ProductAction = ({
   product: Product;
   remainingStock: number;
   addToCart: (product: Product) => void;
-}) => (
-  <button
-    onClick={() => addToCart(product)}
-    disabled={remainingStock <= 0}
-    className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
-      remainingStock <= 0 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-gray-900 text-white hover:bg-gray-800"
-    }`}
-  >
-    {remainingStock <= 0 ? "품절" : "장바구니 담기"}
-  </button>
-);
+}) => {
+  const isOutOfStock = remainingStock <= 0;
+
+  return (
+    <Button
+      variant={isOutOfStock ? "ghost" : "primary"}
+      size="md"
+      className="w-full"
+      disabled={isOutOfStock}
+      onClick={() => addToCart(product)}
+    >
+      {isOutOfStock ? "품절" : "장바구니 담기"}
+    </Button>
+  );
+};

@@ -4,13 +4,16 @@ import { useAutoCallback } from "../utils/hooks/useAutoCallbak";
 import { withTryNotifySuccess } from "../utils/withNotify";
 import { productsAtom, addProductAtom, updateProductAtom, deleteProductAtom } from "../stores/productStore";
 
+// 라이브러리 훅을 래핑하는 엔티티 Hook
 export const useProducts = (addNotification?: (message: string, type?: "error" | "success" | "warning") => void) => {
+  // Jotai 라이브러리 훅들을 래핑
   const [products] = useAtom(productsAtom);
 
   const addProductSet = useSetAtom(addProductAtom);
   const updateProductSet = useSetAtom(updateProductAtom);
   const deleteProductSet = useSetAtom(deleteProductAtom);
 
+  // 엔티티 특화 로직으로 래핑
   const addProduct = (newProduct: Omit<Product, "id">) => {
     addProductSet(newProduct);
   };
@@ -23,6 +26,7 @@ export const useProducts = (addNotification?: (message: string, type?: "error" |
     deleteProductSet(productId);
   };
 
+  // 엔티티 특화 에러 처리와 알림 로직
   const handleAddProduct = useAutoCallback(
     withTryNotifySuccess(addProduct, "상품이 추가되었습니다.", addNotification ?? (() => {}))
   );

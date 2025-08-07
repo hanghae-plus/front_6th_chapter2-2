@@ -1,6 +1,5 @@
 import { CartContainer } from "../../../components/cart/CartContainer";
 import { ProductList } from "../../../components/product/ProductList";
-import { getRemainingStock } from "../../../utils/formatters";
 import { useAtomValue, useSetAtom } from "jotai";
 import {
   cartAtom,
@@ -13,6 +12,7 @@ import { couponsAtom, selectedCouponAtom, applyCouponAtom, setSelectedCouponAtom
 import { productsAtom } from "../../../stores/productStore";
 import { addNotificationAtom } from "../../../stores/notificationStore";
 import { searchProducts } from "../../../models/product";
+import { getRemainingStock } from "../../../models/cart";
 import { useMemo } from "react";
 import { withTryNotifySuccess } from "../../../utils/withNotify";
 import type { Product, Coupon } from "../../../../types";
