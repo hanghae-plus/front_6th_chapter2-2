@@ -12,11 +12,10 @@ import ProductList from './components/ui/product/ProductList';
 
 import { CloseIcon, PlusIcon, ShoppingBagIcon, LargeShoppingBagIcon } from './components/icons';
 import { TabLayout } from './components/ui/layout/TabLayout';
-import ProductTable from './components/ui/product/ProductTable';
-import ProductForm from './components/ui/product/ProductForm';
 import CouponGrid from './components/ui/coupon/CouponCard';
 import CouponForm from './components/ui/coupon/CouponForm';
 import CouponSelector from './components/ui/coupon/CouponSelector';
+import ProductTab from './components/ui/product/ProductTab';
 
 const App = () => {
   const { notifications, addNotification, setNotifications } = useNotification();
@@ -138,50 +137,14 @@ const App = () => {
             </div>
 
             {activeTab === 'products' ? (
-              <section className='bg-white rounded-lg border border-gray-200'>
-                <div className='p-6 border-b border-gray-200'>
-                  <div className='flex justify-between items-center'>
-                    <h2 className='text-lg font-semibold'>상품 목록</h2>
-                    <button
-                      onClick={() => {
-                        setEditingProduct('new');
-                        setProductForm({
-                          name: '',
-                          price: 0,
-                          stock: 0,
-                          description: '',
-                          discounts: [],
-                        });
-                        setShowProductForm(true);
-                      }}
-                      className='px-4 py-2 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800'
-                    >
-                      새 상품 추가
-                    </button>
-                  </div>
-                </div>
-
-                <div className='overflow-x-auto'>
-                  <ProductTable
-                    products={products as Product[]}
-                    getRemainingStock={getRemainingStock}
-                    startEditProduct={startEditProduct}
-                    deleteProductItem={deleteProduct}
-                  />
-                </div>
-                {showProductForm && (
-                  <ProductForm
-                    setShowProductForm={setShowProductForm}
-                    addProduct={addProduct}
-                    updateProduct={updateProduct}
-                    editingProduct={editingProduct}
-                    setEditingProduct={setEditingProduct}
-                    productForm={productForm}
-                    setProductForm={setProductForm}
-                    addNotification={addNotification}
-                  />
-                )}
-              </section>
+              <ProductTab
+                products={products as Product[]}
+                addProduct={addProduct}
+                updateProduct={updateProduct}
+                deleteProduct={deleteProduct}
+                getRemainingStock={getRemainingStock}
+                addNotification={addNotification}
+              />
             ) : (
               <section className='bg-white rounded-lg border border-gray-200'>
                 <div className='p-6 border-b border-gray-200'>
