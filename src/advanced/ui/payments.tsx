@@ -1,12 +1,15 @@
-interface PaymentsProps {
-  totals: {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
-  };
-  completeOrder: () => void;
-}
+import { useMemo } from 'react';
+import { useCart, useCoupons } from '../contexts';
+import { CartModel } from '../models';
 
-export function Payments({ totals, completeOrder }: PaymentsProps) {
+export function Payments() {
+  const { cart, completeOrder } = useCart();
+  const { selectedCoupon } = useCoupons();
+
+  const totals = useMemo(() => {
+    const cartModel = new CartModel(cart);
+    return cartModel.calculateTotal(selectedCoupon || undefined);
+  }, [cart, selectedCoupon]);
   return (
     <section className='bg-white rounded-lg border border-gray-200 p-4'>
       <h3 className='text-lg font-semibold mb-4'>결제 정보</h3>

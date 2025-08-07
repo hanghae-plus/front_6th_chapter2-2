@@ -1,13 +1,7 @@
-import { Coupon } from '@/types';
+import { useCoupons } from '../contexts';
 
-interface CouponsProps {
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  applyCoupon: (coupon: Coupon) => void;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
-}
-
-export function Coupons({ coupons, selectedCoupon, applyCoupon, setSelectedCoupon }: CouponsProps) {
+export function Coupons() {
+  const { coupons, selectedCoupon, applyCoupon, setSelectedCoupon } = useCoupons();
   return (
     <section className='bg-white rounded-lg border border-gray-200 p-4'>
       <div className='flex items-center justify-between mb-3'>

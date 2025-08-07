@@ -1,5 +1,5 @@
-export { NotificationProvider, useNotifications } from './NotificationContext';
-export { ProductProvider, useProducts } from './ProductContext';
-export { CouponProvider, useCoupons } from './CouponContext';
-export { CartProvider, useCart } from './CartContext';
+export { useNotifications } from './NotificationContext';
+export { useProducts } from './ProductContext';
+export { useCoupons } from './CouponContext';
+export { useCart } from './CartContext';
 export { AppProvider } from './AppProvider';

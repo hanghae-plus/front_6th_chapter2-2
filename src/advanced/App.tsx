@@ -1,25 +1,17 @@
 import { useState, useMemo } from 'react';
 import { Header, NotificationItem } from './ui';
-import { CartModel, ProductModel } from './models';
-import { useDebounceValue, useTotalItemCount } from './hooks';
+import { ProductModel } from './models';
+import { useDebounceValue } from './hooks';
 import { AdminDashboard, UserDashboard } from './pages';
-import { useNotifications, useProducts, useCoupons, useCart, AppProvider } from './contexts';
+import { useNotifications, useProducts, AppProvider } from './contexts';
 
 function AppContent() {
   const [isAdmin, setIsAdmin] = useState(false);
   const { notifications, removeNotification } = useNotifications();
   const { products } = useProducts();
-  const { selectedCoupon } = useCoupons();
-  const { cart } = useCart();
-  const totalItemCount = useTotalItemCount(cart);
   const [searchTerm, setSearchTerm] = useState('');
 
   const debouncedSearchTerm = useDebounceValue(searchTerm, 500);
-
-  const totals = useMemo(() => {
-    const cartModel = new CartModel(cart);
-    return cartModel.calculateTotal(selectedCoupon || undefined);
-  }, [cart, selectedCoupon]);
 
   const filteredProducts = useMemo(() => {
     const productModel = new ProductModel(products);
@@ -28,7 +20,6 @@ function AppContent() {
 
   return (
     <div className='min-h-screen bg-gray-50'>
-      {/* Notification */}
       {notifications.length > 0 && (
         <div className='fixed top-20 right-4 z-50 space-y-2 max-w-sm'>
           {notifications.map((notif) => (
@@ -45,8 +36,6 @@ function AppContent() {
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
         setIsAdmin={setIsAdmin}
-        cart={cart}
-        totalItemCount={totalItemCount}
       />
       <main className='max-w-7xl mx-auto px-4 py-8'>
         {isAdmin ? (
@@ -56,7 +45,6 @@ function AppContent() {
             filteredProducts={filteredProducts}
             debouncedSearchTerm={debouncedSearchTerm}
             isAdmin={isAdmin}
-            totals={totals}
           />
         )}
       </main>

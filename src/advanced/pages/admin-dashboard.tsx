@@ -18,7 +18,7 @@ export function AdminDashboard({ isAdmin }: AdminDashboardProps) {
     deleteProduct,
     handleProductSubmit,
   } = useProducts();
-  
+
   const {
     coupons,
     couponForm,
@@ -28,7 +28,7 @@ export function AdminDashboard({ isAdmin }: AdminDashboardProps) {
     deleteCoupon,
     handleCouponSubmit,
   } = useCoupons();
-  
+
   const { addNotification } = useNotifications();
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
   const [editingProduct, setEditingProduct] = useState<string | null>(null);

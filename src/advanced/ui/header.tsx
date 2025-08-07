@@ -1,14 +1,13 @@
-import { CartItem } from '@/types';
 import { CartIcon } from './icons';
 import { SearchInput } from './search-input';
+import { useCart } from '../contexts';
+import { useTotalItemCount } from '../hooks';
 
 interface HeaderProps {
   isAdmin: boolean;
   searchTerm: string;
   setSearchTerm: (term: string) => void;
   setIsAdmin: (isAdmin: boolean) => void;
-  cart: CartItem[];
-  totalItemCount: number;
 }
 
 export function Header({
@@ -16,9 +15,9 @@ export function Header({
   searchTerm,
   setSearchTerm,
   setIsAdmin,
-  cart,
-  totalItemCount,
 }: HeaderProps) {
+  const { cart } = useCart();
+  const totalItemCount = useTotalItemCount(cart);
   return (
     <header className='bg-white shadow-sm sticky top-0 z-40 border-b'>
       <div className='max-w-7xl mx-auto px-4'>

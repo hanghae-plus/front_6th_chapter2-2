@@ -1,14 +1,9 @@
-import { CartItem } from '../../types';
 import { CloseIcon, EmptyBagIcon, ShoppingBagIcon } from './icons';
 import { CartModel } from '../models/cart';
+import { useCart } from '../contexts';
 
-interface CartProps {
-  cart: CartItem[];
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
-}
-
-export function Cart({ cart, removeFromCart, updateQuantity }: CartProps) {
+export function Cart() {
+  const { cart, removeFromCart, updateQuantity } = useCart();
   const cartModel = new CartModel(cart);
 
   return (
