@@ -17,7 +17,12 @@ import {
   type ProductWithUI,
   useProductActions
 } from "../domains/product";
-import { NotificationList, useLocalStorageState, useNotifications } from "../shared";
+import {
+  NotificationList,
+  useDebounceValue,
+  useLocalStorageState,
+  useNotifications
+} from "../shared";
 import { Header } from "./components";
 import { AdminPage, CartPage } from "./pages";
 
@@ -43,7 +48,8 @@ export function App() {
   const [activeTab, setActiveTab] = useState<"products" | "coupons">("products");
   const [showProductForm, setShowProductForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+
+  const debouncedSearchTerm = useDebounceValue({ delay: 500, value: searchTerm });
 
   // Admin
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
@@ -115,13 +121,6 @@ export function App() {
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);
     setTotalItemCount(count);
   }, [cart]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
 
   const handleProductSubmitWrapper = (e: FormEvent) => {
     e.preventDefault();
