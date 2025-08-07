@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
-import type { Coupon as CouponType, CouponFormData as CouponFormDataType } from '../../../types';
-import { DEFAULT_COUPON_FORM } from '../../constants/couponForm';
+import type { Coupon as CouponType, CouponFormData as CouponFormDataType } from '../../types';
+import { DEFAULT_COUPON_FORM } from '../constants/couponForm';
 import {
   normalizeCode,
   updateFormDiscountType,
@@ -8,7 +8,7 @@ import {
   validateDiscountValue as validateDiscountValuePure,
   formToCoupon,
   resetCouponForm,
-} from '../../models/couponForm';
+} from '../models/couponForm';
 
 /**
  * 쿠폰 폼 데이터 atom

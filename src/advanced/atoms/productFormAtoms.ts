@@ -1,7 +1,7 @@
 import { atom } from 'jotai';
-import type { ProductFormData as ProductFormDataType } from '../../../types';
-import type { ProductWithUI } from '../types';
-import { DEFAULT_PRODUCT_FORM } from '../../constants/productForm';
+import type { ProductFormData as ProductFormDataType } from '../../types';
+import type { ProductWithUI } from '../shared/types';
+import { DEFAULT_PRODUCT_FORM } from '../constants/productForm';
 import {
   parseNumericValue,
   validatePrice,
@@ -12,7 +12,7 @@ import {
   formToProduct,
   productToForm,
   resetProductForm,
-} from '../../models/productForm';
+} from '../models/productForm';
 
 /**
  * 상품 폼 데이터 atom

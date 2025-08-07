@@ -2,7 +2,7 @@ import React from 'react';
 import { useAtom } from 'jotai';
 import type { ToastItemProps, ToastContainerProps } from './type';
 import { getToastBackgroundClass, getToastPositionClass } from './model';
-import { notificationsAtom, removeNotificationAtom } from '../../../shared/atoms/notificationAtoms';
+import { notificationsAtom, removeNotificationAtom } from '../../../atoms/notificationAtoms';
 import { CloseIcon } from '../../icons';
 
 /**

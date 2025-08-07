@@ -8,8 +8,8 @@ import CouponList from '../components/admin/CouponList';
 import ProductForm from '../components/admin/ProductForm';
 import { ProductList } from '../components/admin/ProductList';
 import { useNotificationActions } from '../shared/hooks';
-import { showProductFormAtom, startEditProductAtom, startAddProductAtom } from '../shared/atoms/productFormAtoms';
-import { showCouponFormAtom, toggleCouponFormAtom } from '../shared/atoms/couponFormAtoms';
+import { showProductFormAtom, startEditProductAtom, startAddProductAtom } from '../atoms/productFormAtoms';
+import { showCouponFormAtom, toggleCouponFormAtom } from '../atoms/couponFormAtoms';
 
 interface AdminPageProps {
   products: ProductWithUI[];

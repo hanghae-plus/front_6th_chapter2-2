@@ -11,7 +11,7 @@ import {
   validateCouponDiscountValueAtom,
   submitCouponFormAtom,
   resetCouponFormAtom,
-} from '../../shared/atoms/couponFormAtoms';
+} from '../../atoms/couponFormAtoms';
 
 interface CouponFormProps {
   onSubmit: (coupon: CouponType) => void;

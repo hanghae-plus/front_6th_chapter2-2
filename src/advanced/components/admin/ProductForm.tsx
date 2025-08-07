@@ -16,7 +16,7 @@ import {
   updateDiscountQuantityAtom,
   updateDiscountRateAtom,
   resetProductFormAtom,
-} from '../../shared/atoms/productFormAtoms';
+} from '../../atoms/productFormAtoms';
 import type { ProductWithUI } from '../../shared/types';
 import { formToProduct } from '../../models/productForm';
 

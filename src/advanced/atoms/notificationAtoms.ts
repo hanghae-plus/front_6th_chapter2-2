@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
-import type { Notification } from '../types';
-import { NOTIFICATION_DURATION } from '../constants/toast';
+import type { Notification } from '../shared/types';
+import { NOTIFICATION_DURATION } from '../shared/constants/toast';
 
 /**
  * 알림 목록을 관리하는 atom
