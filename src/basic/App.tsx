@@ -1,16 +1,13 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Coupon } from '../types';
-import { initialCoupons } from './shared/constants';
 import { ProductWithUI } from './shared/types';
-import { useLocalStorage } from './shared/hooks';
 import { useCart } from './hooks/useCart';
+import { useCoupons } from './hooks/useCoupons';
 import * as cartModel from './models/cart';
 import { useProducts } from './hooks/useProducts';
 import { useNotification } from './hooks/useNotification';
 
 const App = () => {
-  const [coupons, setCoupons] = useLocalStorage('coupons', initialCoupons);
-
   const {
     cart,
     selectedCoupon,
@@ -30,6 +27,8 @@ const App = () => {
     updateProduct: updateProductHook,
     deleteProduct: deleteProductHook,
   } = useProducts();
+
+  const { coupons, addCoupon: addCouponHook, deleteCoupon: deleteCouponHook } = useCoupons();
 
   const { notifications, addNotification, removeNotification } = useNotification();
 
@@ -203,12 +202,7 @@ const App = () => {
    */
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {
-      const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
-      if (existingCoupon) {
-        addNotification('이미 존재하는 쿠폰 코드입니다.', 'error');
-        return;
-      }
-      setCoupons((prev) => [...prev, newCoupon]);
+      addCouponHook(newCoupon);
       addNotification('쿠폰이 추가되었습니다.', 'success');
     },
     [coupons, addNotification],
@@ -220,13 +214,13 @@ const App = () => {
    */
   const deleteCoupon = useCallback(
     (couponCode: string) => {
-      setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
+      deleteCouponHook(couponCode);
       if (selectedCoupon?.code === couponCode) {
         setSelectedCoupon(null);
       }
       addNotification('쿠폰이 삭제되었습니다.', 'success');
     },
-    [setCoupons, selectedCoupon, setSelectedCoupon, addNotification],
+    [deleteCouponHook, selectedCoupon, setSelectedCoupon, addNotification],
   );
 
   /**
