@@ -2,6 +2,8 @@ import { useState, useCallback } from "react";
 import { Coupon } from "../../types";
 import { useLocalStorage } from "./useLocalStorage";
 import { DuplicateCouponCodeError, CouponUsageConditionError } from "../errors/Coupon.error";
+import { useAutoCallback } from "../utils/hooks/useAutoCallbak";
+import { withTryNotifySuccess } from "../utils/withNotify";
 
 const initialCoupons: Coupon[] = [
   {
@@ -30,9 +32,8 @@ export const useCoupons = (addNotification?: (message: string, type?: "error" | 
         throw new DuplicateCouponCodeError(newCoupon.code);
       }
       setCoupons((prev) => [...prev, newCoupon]);
-      addNotification?.("쿠폰이 추가되었습니다.", "success");
     },
-    [coupons, addNotification]
+    [coupons]
   );
 
   const deleteCoupon = useCallback(
@@ -41,25 +42,33 @@ export const useCoupons = (addNotification?: (message: string, type?: "error" | 
       if (selectedCoupon?.code === couponCode) {
         setSelectedCoupon(null);
       }
-      addNotification?.("쿠폰이 삭제되었습니다.", "success");
     },
-    [selectedCoupon, addNotification]
+    [selectedCoupon]
   );
 
   const applyCoupon = useCallback((coupon: Coupon, currentTotal: number) => {
     if (currentTotal < 10000 && coupon.discountType === "percentage") {
       throw new CouponUsageConditionError(coupon.discountType, 10000);
     }
-    addNotification?.("쿠폰이 적용되었습니다.", "success");
     setSelectedCoupon(coupon);
   }, []);
+
+  const handleAddCoupon = useAutoCallback(
+    withTryNotifySuccess(addCoupon, "쿠폰이 추가되었습니다.", addNotification ?? (() => {}))
+  );
+  const handleDeleteCoupon = useAutoCallback(
+    withTryNotifySuccess(deleteCoupon, "쿠폰이 삭제되었습니다.", addNotification ?? (() => {}))
+  );
+  const handleApplyCoupon = useAutoCallback(
+    withTryNotifySuccess(applyCoupon, "쿠폰이 적용되었습니다.", addNotification ?? (() => {}))
+  );
 
   return {
     coupons,
     selectedCoupon,
-    addCoupon,
-    deleteCoupon,
-    applyCoupon,
+    addCoupon: handleAddCoupon,
+    deleteCoupon: handleDeleteCoupon,
+    applyCoupon: handleApplyCoupon,
     setSelectedCoupon,
   };
 };

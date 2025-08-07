@@ -48,16 +48,6 @@ const App = () => {
   // 쿠폰 적용된 총합 계산
   const getFinalTotal = useAutoCallback(() => calculateFinalTotal(cartTotals, selectedCoupon));
 
-  // 장바구니에 상품 추가
-  const handleAddToCart = useAutoCallback(withTryNotifySuccess(addToCart, "장바구니에 담았습니다", addNotification));
-
-  // 수량 업데이트
-  const handleUpdateQuantity = useAutoCallback(
-    withTryNotifyError((productId: string, newQuantity: number) => {
-      updateQuantity(productId, newQuantity, products);
-    }, addNotification)
-  );
-
   const completeOrder = useAutoCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
     addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, "success");
@@ -105,11 +95,11 @@ const App = () => {
             searchInfo={searchInfo}
             calculateItemTotal={calculateItemTotal}
             onRemoveFromCart={removeFromCart}
-            onUpdateQuantity={handleUpdateQuantity}
+            onUpdateQuantity={(productId, quantity) => updateQuantity(productId, quantity, products)}
             onApplyCoupon={(coupon) => applyCoupon(coupon, totals.totalAfterDiscount)}
             onRemoveCoupon={() => setSelectedCoupon(null)}
             onCompleteOrder={completeOrder}
-            onAddToCart={handleAddToCart}
+            onAddToCart={addToCart}
           />
         )}
       </main>

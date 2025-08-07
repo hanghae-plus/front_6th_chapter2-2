@@ -4,6 +4,8 @@ import { useLocalStorage } from "./useLocalStorage";
 import { InsufficientStockError, StockExceededError } from "../errors/Cart.error";
 import { ProductNotFoundError } from "../errors/Product.error";
 import { calculateTotalItemCount } from "../utils/calculations";
+import { withTryNotifySuccess } from "../utils/withNotify";
+import { useAutoCallback } from "../utils/hooks/useAutoCallbak";
 
 const initCart = () => {
   const saved = localStorage.getItem("cart");
@@ -54,14 +56,12 @@ export const useCart = (addNotification?: (message: string, type?: "error" | "su
 
         return [...prevCart, { product, quantity: 1 }];
       });
-      addNotification?.("장바구니에 담았습니다.", "success");
     },
     [getRemainingStock]
   );
 
   const removeFromCart = useCallback((productId: string) => {
     setCart((prevCart) => prevCart.filter((item) => item.product.id !== productId));
-    addNotification?.("장바구니에서 제거되었습니다.", "success");
   }, []);
 
   const updateQuantity = useCallback(
@@ -84,22 +84,35 @@ export const useCart = (addNotification?: (message: string, type?: "error" | "su
       setCart((prevCart) =>
         prevCart.map((item) => (item.product.id === productId ? { ...item, quantity: newQuantity } : item))
       );
-      addNotification?.("수량이 업데이트되었습니다.", "success");
     },
-    [removeFromCart, addNotification]
+    [removeFromCart]
   );
 
   const clearCart = useCallback(() => {
     setCart([]);
   }, []);
 
+  const handleAddToCart = useAutoCallback(
+    withTryNotifySuccess(addToCart, "장바구니에 담았습니다.", addNotification ?? (() => {}))
+  );
+
+  const handleRemoveFromCart = useAutoCallback(
+    withTryNotifySuccess(removeFromCart, "장바구니에서 제거되었습니다.", addNotification ?? (() => {}))
+  );
+  const handleUpdateQuantity = useAutoCallback(
+    withTryNotifySuccess(updateQuantity, "수량이 업데이트되었습니다.", addNotification ?? (() => {}))
+  );
+  const handleClearCart = useAutoCallback(
+    withTryNotifySuccess(clearCart, "장바구니가 비워졌습니다.", addNotification ?? (() => {}))
+  );
+
   return {
     cart,
     totalItemCount,
     getRemainingStock,
-    addToCart,
-    removeFromCart,
-    updateQuantity,
-    clearCart,
+    addToCart: handleAddToCart,
+    removeFromCart: handleRemoveFromCart,
+    updateQuantity: handleUpdateQuantity,
+    clearCart: handleClearCart,
   };
 };

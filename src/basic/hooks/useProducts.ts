@@ -4,6 +4,8 @@ import { useLocalStorage } from "./useLocalStorage";
 import { createStore } from "../utils/createStore";
 import { Product } from "../../types";
 import { ProductNotFoundError, DuplicateProductNameError, ProductValidationError } from "../errors/Product.error";
+import { useAutoCallback } from "../utils/hooks/useAutoCallbak";
+import { withTryNotifySuccess } from "../utils/withNotify";
 
 // 초기 데이터
 const initialProducts: Product[] = [
@@ -73,9 +75,8 @@ export const useProducts = (addNotification?: (message: string, type?: "error" |
         id: generateUniqueId(),
       };
       setProducts((prev) => [...prev, product]);
-      addNotification?.("상품이 추가되었습니다.", "success");
     },
-    [products, addNotification]
+    [products]
   );
 
   // 상품 수정
@@ -105,9 +106,8 @@ export const useProducts = (addNotification?: (message: string, type?: "error" |
       }
 
       setProducts((prev) => prev.map((product) => (product.id === productId ? { ...product, ...updates } : product)));
-      addNotification?.("상품이 수정되었습니다.", "success");
     },
-    [products, addNotification]
+    [products]
   );
 
   // 상품 삭제
@@ -120,15 +120,24 @@ export const useProducts = (addNotification?: (message: string, type?: "error" |
       }
 
       setProducts((prev) => prev.filter((p) => p.id !== productId));
-      addNotification?.("상품이 삭제되었습니다.", "success");
     },
-    [products, addNotification]
+    [products]
+  );
+
+  const handleAddProduct = useAutoCallback(
+    withTryNotifySuccess(addProduct, "상품이 추가되었습니다.", addNotification ?? (() => {}))
+  );
+  const handleUpdateProduct = useAutoCallback(
+    withTryNotifySuccess(updateProduct, "상품이 수정되었습니다.", addNotification ?? (() => {}))
+  );
+  const handleDeleteProduct = useAutoCallback(
+    withTryNotifySuccess(deleteProduct, "상품이 삭제되었습니다.", addNotification ?? (() => {}))
   );
 
   return {
     products,
-    addProduct,
-    updateProduct,
-    deleteProduct,
+    addProduct: handleAddProduct,
+    updateProduct: handleUpdateProduct,
+    deleteProduct: handleDeleteProduct,
   };
 };
