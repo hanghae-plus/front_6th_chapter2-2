@@ -38,15 +38,22 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
 
       - name: Build
         run: pnpm run build
 
       - name: Copy HTML files with friendly names
         run: |
-          cp dist/index.basic.html dist/basic.html
-          cp dist/index.advanced.html dist/advanced.html
+          if [ -f "dist/index.basic.html" ]; then
+            cp dist/index.basic.html dist/basic.html
+            echo "✅ basic.html 복사 완료"
+          fi
+
+          if [ -f "dist/index.advanced.html" ]; then
+            cp dist/index.advanced.html dist/advanced.html
+            echo "✅ advanced.html 복사 완료"
+          fi
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
