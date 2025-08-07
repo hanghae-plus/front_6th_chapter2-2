@@ -16,10 +16,10 @@ const App = () => {
     <>
       {notifications.length > 0 && (
         <div className="fixed top-20 right-4 z-50 space-y-2 max-w-sm">
-          {notifications.map((notif) => (
+          {notifications.map((notification) => (
             <NotificationItem
-              key={notif.id}
-              notification={notif}
+              key={notification.id}
+              notification={notification}
               removeNotification={removeNotification}
             />
           ))}

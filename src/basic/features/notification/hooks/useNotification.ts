@@ -1,12 +1,12 @@
 import { useCallback, useState } from "react";
 
-import { NOTIFICATION } from "@basic/shared/constants/notification";
-
 import {
   AddNotification,
+  Notification,
+  NotificationType,
   RemoveNotification,
 } from "@/basic/features/notification/types/notification";
-import { Notification, NotificationType } from "@/types";
+import { NOTIFICATION } from "@/basic/shared/constants/notification";
 
 export function useNotification(): {
   notifications: Notification[];

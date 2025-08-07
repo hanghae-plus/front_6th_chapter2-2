@@ -99,20 +99,17 @@ export function useLocalStorage<T>(
     return () => window.removeEventListener("storage", handleStorageChange);
   }, [key]);
 
-  const setValue = useCallback(
-    (value: T | ((prev: T) => T)) => {
-      setStoredValue((prev) => {
-        const valueToStore =
-          typeof value === "function" ? (value as (prev: T) => T)(prev) : value;
+  const setValue = (value: T | ((prev: T) => T)) => {
+    setStoredValue((prev) => {
+      const valueToStore =
+        typeof value === "function" ? (value as (prev: T) => T)(prev) : value;
 
-        setLocalStorageItem(key, valueToStore);
-        notifyStorageChange(key, valueToStore);
+      setLocalStorageItem(key, valueToStore);
+      notifyStorageChange(key, valueToStore);
 
-        return valueToStore;
-      });
-    },
-    [key]
-  );
+      return valueToStore;
+    });
+  };
 
   return [storedValue, setValue];
 }

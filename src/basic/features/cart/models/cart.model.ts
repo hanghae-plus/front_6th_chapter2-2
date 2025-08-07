@@ -3,7 +3,10 @@ import { couponModel } from "@/basic/features/coupon/models/coupon.model";
 import { Coupon } from "@/basic/features/coupon/types/coupon.type";
 import { discountModel } from "@/basic/features/discount/models/discount.model";
 import { Product } from "@/basic/features/product/types/product";
-import { calculateDiscountedPrice } from "@/basic/shared/utils/calculation.util";
+import {
+  calculateDiscountedPrice,
+  roundAmount,
+} from "@/basic/shared/utils/calculation.util";
 
 const calculateItemTotal = (item: CartItem, cart: CartItem[]): number => {
   const maxDiscountRate = discountModel.getMaxApplicableDiscountRate(
@@ -36,8 +39,8 @@ const calculateCartTotal = (
     : totalAfterItemDiscounts;
 
   return {
-    totalBeforeDiscount: Math.round(totalBeforeDiscount),
-    totalAfterDiscount: Math.round(totalAfterCouponDiscount),
+    totalBeforeDiscount: roundAmount(totalBeforeDiscount),
+    totalAfterDiscount: roundAmount(totalAfterCouponDiscount),
   };
 };
 
