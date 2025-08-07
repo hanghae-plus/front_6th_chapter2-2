@@ -1,5 +1,5 @@
 import type { CartItem } from "../../domains/cart";
-import { CartIcon, SearchInput } from "../../shared";
+import { BadgeContainer, CartIcon, SearchInput } from "../../shared";
 
 type HeaderProps = {
   isAdmin: boolean;
@@ -48,14 +48,9 @@ export function Header({
               {isAdmin ? "쇼핑몰로 돌아가기" : "관리자 페이지로"}
             </button>
             {!isAdmin && (
-              <div className="relative">
+              <BadgeContainer label={String(totalItemCount)} visible={cart.length > 0}>
                 <CartIcon className="h-6 w-6 text-gray-700" />
-                {cart.length > 0 && (
-                  <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
-                    {totalItemCount}
-                  </span>
-                )}
-              </div>
+              </BadgeContainer>
             )}
           </nav>
         </div>
