@@ -1,5 +1,5 @@
-import { INotification } from "../type";
-import { CloseIcon } from "./icon";
+import { INotification } from "../../type";
+import { CloseIcon } from "../icon";
 
 interface NotificationItemProps {
   notification: INotification;

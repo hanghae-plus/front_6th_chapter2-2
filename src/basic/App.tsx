@@ -5,7 +5,7 @@ import { useCart } from "./hooks/useCart";
 import { useSearchTerm } from "./hooks/useSearchTerm";
 import { useNotification } from "./hooks/useNotification";
 import Header from "./components/Header";
-import NotificationItem from "./components/NotificationItem";
+import NotificationList from "./components/notification/NotificationList";
 import AdminPage from "./pages/AdminPage";
 import CartPage from "./pages/CartPage";
 
@@ -32,29 +32,21 @@ const App = () => {
   } = useCart();
 
   // 검색 처리
-  const {searchTerm, debouncedSearchTerm, handleSearchTerm} = useSearchTerm();
+  const { searchTerm, debouncedSearchTerm, handleSearchTerm } = useSearchTerm();
   // 알림 처리
-  const {notifications, addNotification, removeNotification} = useNotification();
+  const { notifications, addNotification, removeNotification } =
+    useNotification();
 
   // 페이지 처리
   const [isAdmin, setIsAdmin] = useState(false);
 
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* 알림 표시 컨테이너 */}
-      {notifications.length > 0 && (
-        <div className="fixed top-20 right-4 z-50 space-y-2 max-w-sm">
-          {notifications.map((notif) => (
-            // 토스트 모달 컴포넌트
-            <NotificationItem
-              key={notif.id}
-              notification={notif}
-              removeNotification={removeNotification}
-            />
-          ))}
-        </div>
-      )}
+      <NotificationList
+        notifications={notifications}
+        removeNotification={removeNotification}
+      />
 
       {/* 헤더 */}
       <Header

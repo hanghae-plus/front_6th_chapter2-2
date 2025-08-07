@@ -1,10 +1,10 @@
 import { useState, useCallback } from "react";
 import { IProductForm, IProductWithUI } from "../../type";
 import { MESSAGES } from "../../constants/messages";
+import { useProducts } from "../../hooks/useProducts";
+import { useNotification } from "../../hooks/useNotification";
 import ProductForm from "./ProductForm";
 import ProductTable from "./ProductTable";
-import { useNotification } from "../../hooks/useNotification";
-import { useProducts } from "../../hooks/useProducts";
 
 const ProductTab = () => {
   const { products, deleteProduct } = useProducts();
