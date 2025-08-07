@@ -4,14 +4,12 @@ import { AdminPageHeader } from './components/admin-page/AdminPageHeader';
 import { CartPage } from './components/cart-page/CartPage';
 import { CartPageHeader } from './components/cart-page/CartPageHeader';
 import { Notifications } from './components/Notifications';
-import { useCoupons } from './hooks/useCoupons';
 import { useOrder } from './hooks/useOrder';
 import { useProducts } from './hooks/useProducts';
 import { useDebounce } from './utils/hooks/useDebounce';
 
 const App = () => {
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
-  const { coupons } = useCoupons();
   const { completeOrder } = useOrder();
 
   const [isAdmin, setIsAdmin] = useState(false);
@@ -39,13 +37,11 @@ const App = () => {
             addProduct={addProduct}
             deleteProduct={deleteProduct}
             updateProduct={updateProduct}
-            coupons={coupons}
           />
         ) : (
           <CartPage
             searchTerm={debouncedSearchTerm}
             products={products}
-            coupons={coupons}
             completeOrder={completeOrder}
           />
         )}

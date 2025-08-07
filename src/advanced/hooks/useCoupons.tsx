@@ -22,23 +22,14 @@ import { initialCoupons } from '../constants';
 import { useAtomWithLocalStorage } from '../utils/hooks/useLocalStorage';
 import { useNotify } from './useNotification';
 
-interface UseCouponsReturn {
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  clearSelectedCoupon: () => void;
-}
-
-export function useCoupons(): UseCouponsReturn {
-  const notify = useNotify();
-  const [coupons, setCoupons] = useAtomWithLocalStorage({
+export function useCoupons(): Coupon[] {
+  const [coupons] = useAtomWithLocalStorage({
     key: 'coupons',
     initialValue: initialCoupons,
     atom: couponsAtom,
   });
 
-  return {
-    coupons,
-  };
+  return coupons;
 }
 
 export function useAddCoupon() {

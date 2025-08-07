@@ -16,11 +16,12 @@
 // - ProductList: 상품 목록 표시
 // - Cart: 장바구니 표시 및 결제
 
-import type { Coupon, ProductWithUI } from '../../../types';
+import type { ProductWithUI } from '../../../types';
 import { useCart } from '../../hooks/useCart';
 import {
   useApplyCoupon,
   useClearSelectedCoupon,
+  useCoupons,
   useSelectedCoupon,
 } from '../../hooks/useCoupons';
 import * as cartModel from '../../models/cart';
@@ -37,20 +38,15 @@ import { TotalCount } from './products/TotalCount';
 interface Props {
   searchTerm: string;
   products: ProductWithUI[];
-  coupons: Coupon[];
   completeOrder: () => void;
 }
 
-export function CartPage({
-  searchTerm,
-  products,
-  coupons,
-  completeOrder,
-}: Props) {
+export function CartPage({ searchTerm, products, completeOrder }: Props) {
   const cart = useCart();
   const applyCoupon = useApplyCoupon();
   const [selectedCoupon] = useSelectedCoupon();
   const clearSelectedCoupon = useClearSelectedCoupon();
+  const coupons = useCoupons();
   const filteredProducts = productModel.searchProducts({
     products,
     searchTerm,
