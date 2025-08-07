@@ -1,0 +1,57 @@
+import { useCart } from "@/basic/features/cart/hooks/useCart";
+import { useCoupon } from "@/basic/features/coupon/hooks/useCoupon";
+import { Coupon } from "@/basic/features/coupon/types/coupon.type";
+
+interface CouponDetailProps {
+  selectedCoupon: Coupon | null;
+  setSelectedCoupon: (coupon: Coupon | null) => void;
+}
+
+export default function CouponDetail({
+  selectedCoupon,
+  setSelectedCoupon,
+}: CouponDetailProps) {
+  const { applyCoupon, resetCoupon } = useCart({
+    selectedCoupon,
+    setSelectedCoupon,
+  });
+  const { coupons } = useCoupon({
+    resetCoupon,
+    selectedCoupon,
+  });
+
+  return (
+    <section className="bg-white rounded-lg border border-gray-200 p-4">
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-sm font-semibold text-gray-700">쿠폰 할인</h3>
+        <button className="text-xs text-blue-600 hover:underline">
+          쿠폰 등록
+        </button>
+      </div>
+      {coupons.length > 0 && (
+        <select
+          className="w-full text-sm border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
+          value={selectedCoupon?.code || ""}
+          onChange={(e) => {
+            const coupon = coupons.find(
+              (c: Coupon) => c.code === e.target.value
+            );
+            if (coupon) applyCoupon(coupon);
+            else resetCoupon();
+          }}
+        >
+          <option value="">쿠폰 선택</option>
+          {coupons.map((coupon: Coupon) => (
+            <option key={coupon.code} value={coupon.code}>
+              {coupon.name} (
+              {coupon.discountType === "amount"
+                ? `${coupon.discountValue.toLocaleString()}원`
+                : `${coupon.discountValue}%`}
+              )
+            </option>
+          ))}
+        </select>
+      )}
+    </section>
+  );
+}
