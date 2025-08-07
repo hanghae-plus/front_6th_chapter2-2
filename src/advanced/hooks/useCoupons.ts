@@ -10,20 +10,15 @@
 
 import { useCallback } from "react";
 import { Coupon } from "../../types";
-import { initialCoupons } from "../constants";
 import { addCoupon, deleteCoupon } from "../models/coupon";
-import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 import { useNotification } from "../utils/hooks/useNotification";
 import { useAtom } from "jotai";
-import { selectedCouponAtom } from "../atoms";
+import { couponsAtom, selectedCouponAtom } from "../atoms";
 
 export function useCoupons() {
   const { addNotification } = useNotification();
   const [selectedCoupon, setSelectedCoupon] = useAtom(selectedCouponAtom);
-  const [coupons, setCoupons] = useLocalStorage<Coupon[]>(
-    "coupons",
-    initialCoupons
-  );
+  const [coupons, setCoupons] = useAtom(couponsAtom);
 
   const applyAddCoupon = useCallback(
     (newCoupon: Coupon) => {

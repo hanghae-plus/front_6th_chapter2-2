@@ -30,30 +30,14 @@ import { useNotification } from "../utils/hooks/useNotification";
 // - ProductList: 상품 목록 표시
 // - Cart: 장바구니 표시 및 결제
 
-interface CartPageProps {
-  debouncedSearchTerm: string;
-}
-
-export function CartPage({ debouncedSearchTerm }: CartPageProps) {
+export function CartPage() {
   const [selectedCoupon, setSelectedCoupon] = useAtom(selectedCouponAtom);
-  const [totalItemCount, setTotalItemCount] = useAtom(totalItemCountAtom);
+
   const { addNotification } = useNotification();
   const { products } = useProducts();
 
-  const {
-    cart,
-    addToCart,
-    removeFromCart,
-    updateQuantity,
-    applyCoupon,
-    calculateCartTotal,
-    clearCart,
-  } = useCart({
-    products,
-    selectedCoupon,
-    setSelectedCoupon,
-    setTotalItemCount,
-  });
+  const { cart, addToCart, applyCoupon, calculateCartTotal, clearCart } =
+    useCart();
 
   const { coupons } = useCoupons();
 
@@ -67,53 +51,21 @@ export function CartPage({ debouncedSearchTerm }: CartPageProps) {
     setSelectedCoupon(null);
   }, [addNotification]);
 
-  const discount = getMaxApplicableDiscount({
-    discounts: cart.flatMap((item) => item.product.discounts),
-    quantity: cart.reduce((acc, item) => acc + item.quantity, 0),
-    hasBulkPurchase: hasBulkPurchase(cart),
-  });
-
   const totals = calculateCartTotal({
     cart,
     selectedCoupon,
   });
 
-  const filteredProducts = debouncedSearchTerm
-    ? products.filter(
-        (product) =>
-          product.name
-            .toLowerCase()
-            .includes(debouncedSearchTerm.toLowerCase()) ||
-          (product.description &&
-            product.description
-              .toLowerCase()
-              .includes(debouncedSearchTerm.toLowerCase()))
-      )
-    : products;
-
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
       <div className="lg:col-span-3">
         {/* 상품 목록 */}
-        <ProductList
-          products={products}
-          filteredProducts={filteredProducts}
-          debouncedSearchTerm={debouncedSearchTerm}
-          cart={cart}
-          addToCart={addToCart}
-        />
+        <ProductList products={products} cart={cart} addToCart={addToCart} />
       </div>
 
       <div className="lg:col-span-1">
         <div className="sticky top-24 space-y-4">
-          <Cart
-            cart={cart}
-            discount={discount}
-            removeFromCart={removeFromCart}
-            updateQuantity={updateQuantity}
-            products={products}
-          />
-
+          <Cart />
           {cart.length > 0 && (
             <>
               <CouponInfo

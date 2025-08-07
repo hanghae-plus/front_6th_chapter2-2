@@ -12,6 +12,13 @@ import {
 } from "../models/cart";
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 import { useNotification } from "../utils/hooks/useNotification";
+import { useAtom } from "jotai";
+import {
+  cartAtom,
+  productsAtom,
+  selectedCouponAtom,
+  totalItemCountAtom,
+} from "../atoms";
 
 // TODO: 장바구니 관리 Hook
 // 힌트:
@@ -39,18 +46,11 @@ import { useNotification } from "../utils/hooks/useNotification";
 // - getRemainingStock: 재고 확인 함수
 // - clearCart: 장바구니 비우기 함수
 
-export function useCart({
-  products,
-  selectedCoupon,
-  setSelectedCoupon,
-  setTotalItemCount,
-}: {
-  products: ProductWithUI[];
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
-  setTotalItemCount: Dispatch<SetStateAction<number>>;
-}) {
-  const [cart, setCart] = useLocalStorage<CartItem[]>("cart", []);
+export function useCart() {
+  const [products] = useAtom(productsAtom);
+  const [cart, setCart] = useAtom(cartAtom);
+  const [selectedCoupon, setSelectedCoupon] = useAtom(selectedCouponAtom);
+  const [totalItemCount, setTotalItemCount] = useAtom(totalItemCountAtom);
   const { addNotification } = useNotification();
 
   useEffect(() => {

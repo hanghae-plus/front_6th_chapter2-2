@@ -5,17 +5,16 @@ import { formatPrice } from "../../../utils/formatters";
 import { Product } from "./Product";
 import { ProductListSummary } from "../ProductListSummary";
 import { Search } from "../Search";
+import { useDebounce } from "../../../utils/hooks/useDebounce";
+import { searchTermAtom } from "../../../atoms";
+import { useAtom } from "jotai";
 
 export function ProductList({
   products,
-  filteredProducts,
-  debouncedSearchTerm,
   cart,
   addToCart,
 }: {
   products: ProductWithUI[];
-  filteredProducts: ProductWithUI[];
-  debouncedSearchTerm: string;
   cart: CartItem[];
   addToCart: ({
     product,
@@ -25,6 +24,21 @@ export function ProductList({
     cart: CartItem[];
   }) => void;
 }) {
+  const [searchTerm, setSearchTerm] = useAtom(searchTermAtom);
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const filteredProducts = debouncedSearchTerm
+    ? products.filter(
+        (product) =>
+          product.name
+            .toLowerCase()
+            .includes(debouncedSearchTerm.toLowerCase()) ||
+          (product.description &&
+            product.description
+              .toLowerCase()
+              .includes(debouncedSearchTerm.toLowerCase()))
+      )
+    : products;
+
   return (
     <section>
       <ProductListSummary products={products} />

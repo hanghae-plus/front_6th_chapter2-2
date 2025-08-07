@@ -3,9 +3,8 @@ import { AdminPage } from "./components/AdminPage";
 import { CartPage } from "./components/CartPage";
 import { UIToast } from "./components/ui/UIToast";
 import { Layout } from "./components/layout/Layout";
-import { useDebounce } from "./utils/hooks/useDebounce";
 import { useAtom } from "jotai";
-import { searchTermAtom, isAdminAtom } from "./atoms";
+import { isAdminAtom } from "./atoms";
 
 export interface ProductWithUI extends Product {
   description?: string;
@@ -20,20 +19,12 @@ export interface Notification {
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useAtom(isAdminAtom);
-  const [searchTerm, setSearchTerm] = useAtom(searchTermAtom);
-  const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   return (
     <Layout>
       <UIToast />
       <Layout.Header />
-      <Layout.Main>
-        {isAdmin ? (
-          <AdminPage />
-        ) : (
-          <CartPage debouncedSearchTerm={debouncedSearchTerm} />
-        )}
-      </Layout.Main>
+      <Layout.Main>{isAdmin ? <AdminPage /> : <CartPage />}</Layout.Main>
     </Layout>
   );
 };

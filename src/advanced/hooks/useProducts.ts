@@ -14,17 +14,14 @@
 // - removeProductDiscount: 할인 규칙 삭제
 import { useCallback } from "react";
 import { ProductWithUI } from "../App";
-import { initialProducts } from "../constants";
 import { addProduct, deleteProduct, updateProduct } from "../models/product";
-import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 import { useNotification } from "../utils/hooks/useNotification";
+import { useAtom } from "jotai";
+import { productsAtom } from "../atoms";
 
 export function useProducts() {
   const { addNotification } = useNotification();
-  const [products, setProducts] = useLocalStorage<ProductWithUI[]>(
-    "products",
-    initialProducts
-  );
+  const [products, setProducts] = useAtom(productsAtom);
 
   const applyAddProduct = useCallback(
     (newProduct: Omit<ProductWithUI, "id">) => {

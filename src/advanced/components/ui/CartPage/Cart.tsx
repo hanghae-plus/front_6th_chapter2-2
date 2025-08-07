@@ -1,39 +1,24 @@
-import { CartItem as CartItemType } from "../../../../types";
 import { ShoppingBagIcon } from "../../icons";
 import { CartIsEmpty } from "./CartIsEmpty";
 import { CartItem } from "./CartItem";
-import { ProductWithUI } from "../../../App";
-import { calculateItemTotal } from "../../../models/cart";
+import {
+  calculateItemTotal,
+  getMaxApplicableDiscount,
+  hasBulkPurchase,
+} from "../../../models/cart";
+import { useCart } from "../../../hooks/useCart";
+import { useProducts } from "../../../hooks/useProducts";
 
-export function Cart({
-  cart,
-  discount,
-  removeFromCart,
-  updateQuantity,
-  products,
-}: {
-  cart: CartItemType[];
-  discount: number;
-  removeFromCart: ({
-    productId,
-    cart,
-  }: {
-    productId: string;
-    cart: CartItemType[];
-  }) => void;
-  updateQuantity: ({
-    productId,
-    newQuantity,
-    cart,
-    products,
-  }: {
-    productId: string;
-    newQuantity: number;
-    cart: CartItemType[];
-    products: ProductWithUI[];
-  }) => void;
-  products: ProductWithUI[];
-}) {
+export function Cart() {
+  const { products } = useProducts();
+  const { cart, removeFromCart, updateQuantity } = useCart();
+
+  const discount = getMaxApplicableDiscount({
+    discounts: cart.flatMap((item) => item.product.discounts),
+    quantity: cart.reduce((acc, item) => acc + item.quantity, 0),
+    hasBulkPurchase: hasBulkPurchase(cart),
+  });
+
   return (
     <section className="bg-white rounded-lg border border-gray-200 p-4">
       <h2 className="text-lg font-semibold mb-4 flex items-center">

@@ -1,7 +1,8 @@
 import { atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { initialCoupons, initialProducts } from "./constants";
-import { Coupon } from "../types";
+import { CartItem, Coupon } from "../types";
+import { ProductWithUI } from "./App";
 
 export interface Notification {
   id: string;
@@ -15,6 +16,9 @@ export const notificationsAtom = atom<Notification[]>([]);
 export const searchTermAtom = atom("");
 export const totalItemCountAtom = atom(0);
 
-export const couponsAtom = atomWithStorage("coupons", initialCoupons);
-export const productsAtom = atomWithStorage("products", initialProducts);
-export const cartAtom = atomWithStorage("cart", []);
+export const couponsAtom = atomWithStorage<Coupon[]>("coupons", initialCoupons);
+export const productsAtom = atomWithStorage<ProductWithUI[]>(
+  "products",
+  initialProducts
+);
+export const cartAtom = atomWithStorage<CartItem[]>("cart", []);
