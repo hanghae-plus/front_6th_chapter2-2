@@ -1,6 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
 import { CartItem, Product } from '../types';
-import { Products } from './constants/products';
 import { useNotification } from './hooks/useNotification';
 import { useProducts } from './hooks/useProducts';
 import { useCoupons } from './hooks/useCoupons';
@@ -10,12 +9,13 @@ import Header from './components/ui/layout/Header';
 import Notification from './components/ui/notification/Notification';
 import ProductList from './components/ui/product/ProductList';
 
-import { CloseIcon, PlusIcon, ShoppingBagIcon, LargeShoppingBagIcon } from './components/icons';
+import { PlusIcon } from './components/icons';
 import { TabLayout } from './components/ui/layout/TabLayout';
 import CouponGrid from './components/ui/coupon/CouponCard';
 import CouponForm from './components/ui/coupon/CouponForm';
 import CouponSelector from './components/ui/coupon/CouponSelector';
 import ProductTab from './components/ui/product/ProductTab';
+import CartList from './components/ui/cart/CartList';
 
 const App = () => {
   const { notifications, addNotification, setNotifications } = useNotification();
@@ -38,24 +38,6 @@ const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
-  const [showProductForm, setShowProductForm] = useState(false);
-
-  // Admin
-  const [editingProduct, setEditingProduct] = useState<string | null>(null);
-  const [productForm, setProductForm] = useState({
-    name: '',
-    price: 0,
-    stock: 0,
-    description: '',
-    discounts: [] as Array<{ quantity: number; rate: number }>,
-  });
-
-  const [couponForm, setCouponForm] = useState({
-    name: '',
-    code: '',
-    discountType: 'amount' as 'amount' | 'percentage',
-    discountValue: 0,
-  });
 
   const getMaxApplicableDiscount = (item: CartItem): number => {
     const { discounts } = item.product;
@@ -95,18 +77,6 @@ const App = () => {
     addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
     clearCart();
   }, [addNotification]);
-
-  const startEditProduct = (product: (typeof Products)[number]) => {
-    setEditingProduct(product.id);
-    setProductForm({
-      name: product.name,
-      price: product.price,
-      stock: product.stock,
-      description: product.description || '',
-      discounts: product.discounts || [],
-    });
-    setShowProductForm(true);
-  };
 
   const handleActiveTab = (value: 'products' | 'coupons') => {
     setActiveTab(value);
@@ -193,74 +163,12 @@ const App = () => {
 
             <div className='lg:col-span-1'>
               <div className='sticky top-24 space-y-4'>
-                <section className='bg-white rounded-lg border border-gray-200 p-4'>
-                  <h2 className='text-lg font-semibold mb-4 flex items-center'>
-                    <ShoppingBagIcon />
-                    장바구니
-                  </h2>
-                  {cart.length === 0 ? (
-                    <div className='text-center py-8'>
-                      <LargeShoppingBagIcon />
-                      <p className='text-gray-500 text-sm'>장바구니가 비어있습니다</p>
-                    </div>
-                  ) : (
-                    <div className='space-y-3'>
-                      {cart.map((item) => {
-                        const itemTotal = calculateItemTotal(item);
-                        const originalPrice = item.product.price * item.quantity;
-                        const hasDiscount = itemTotal < originalPrice;
-                        const discountRate = hasDiscount
-                          ? Math.round((1 - itemTotal / originalPrice) * 100)
-                          : 0;
-
-                        return (
-                          <div key={item.product.id} className='border-b pb-3 last:border-b-0'>
-                            <div className='flex justify-between items-start mb-2'>
-                              <h4 className='text-sm font-medium text-gray-900 flex-1'>
-                                {item.product.name}
-                              </h4>
-                              <button
-                                onClick={() => removeFromCart(item.product.id)}
-                                className='text-gray-400 hover:text-red-500 ml-2'
-                              >
-                                <CloseIcon />
-                              </button>
-                            </div>
-                            <div className='flex items-center justify-between'>
-                              <div className='flex items-center'>
-                                <button
-                                  onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
-                                  className='w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100'
-                                >
-                                  <span className='text-xs'>−</span>
-                                </button>
-                                <span className='mx-3 text-sm font-medium w-8 text-center'>
-                                  {item.quantity}
-                                </span>
-                                <button
-                                  onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                                  className='w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100'
-                                >
-                                  <span className='text-xs'>+</span>
-                                </button>
-                              </div>
-                              <div className='text-right'>
-                                {hasDiscount && (
-                                  <span className='text-xs text-red-500 font-medium block'>
-                                    -{discountRate}%
-                                  </span>
-                                )}
-                                <p className='text-sm font-medium text-gray-900'>
-                                  {Math.round(itemTotal).toLocaleString()}원
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </section>
+                <CartList
+                  cart={cart}
+                  calculateItemTotal={calculateItemTotal}
+                  removeItemFromCart={removeFromCart}
+                  updateItemQuantity={updateQuantity}
+                />
 
                 {cart.length > 0 && (
                   <>
