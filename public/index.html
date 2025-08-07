@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hanghae Shopping Cart</title>
+    <!-- Note: Tailwind CDN is for development only. For production, use PostCSS or Tailwind CLI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: [
+                '-apple-system',
+                'BlinkMacSystemFont',
+                'Helvetica Neue',
+                'Arial',
+                'sans-serif',
+              ],
+            },
+            letterSpacing: {
+              'extra-wide': '0.3em',
+              'super-wide': '0.25em',
+            },
+            fontSize: { '2xs': '0.625rem' },
+            maxHeight: { 800: '800px' },
+            backgroundImage: { 'gradient-black': 'linear-gradient(135deg, #000 0%, #333 100%)' },
+          },
+        },
+      };
+    </script>
+    <script
+      type="module"
+      crossorigin
+      src="/front_6th_chapter2-1/assets/advanced-D4woG9ou.js"
+    ></script>
+  </head>
+  <body class="bg-gray-50 text-black antialiased overflow-hidden h-screen text-sm">
+    <div id="app" class="max-w-screen-xl h-screen max-h-800 mx-auto p-8 flex flex-col">
+      <!-- Content will be dynamically generated here -->
+    </div>
+  </body>
+</html>
