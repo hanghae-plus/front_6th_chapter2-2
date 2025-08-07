@@ -1,8 +1,9 @@
-// Hooks
-export * from "./hooks";
+export * from "./types/tabs";
 
-// Libs
+export * from "./hooks";
+export * from "./hooks/useTabs";
+
 export * from "./libs";
 
-// UI
 export * from "./ui";
+export * from "./ui/Tabs";
