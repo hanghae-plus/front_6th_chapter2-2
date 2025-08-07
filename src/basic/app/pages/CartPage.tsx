@@ -1,5 +1,5 @@
 import type { CartItem, Coupon, Product } from "../../../types";
-import { CloseIcon, ImagePlaceholderIcon, ShoppingBagIcon } from "../../shared";
+import { Button, CloseIcon, ImagePlaceholderIcon, ShoppingBagIcon } from "../../shared";
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -122,17 +122,14 @@ export function CartPage({
                       </div>
 
                       {/* 장바구니 버튼 */}
-                      <button
+                      <Button
                         onClick={() => addToCart(product)}
                         disabled={remainingStock <= 0}
-                        className={`w-full rounded-md px-4 py-2 font-medium transition-colors ${
-                          remainingStock <= 0
-                            ? "cursor-not-allowed bg-gray-100 text-gray-400"
-                            : "bg-gray-900 text-white hover:bg-gray-800"
-                        }`}
+                        color={remainingStock <= 0 ? "secondary" : "dark"}
+                        className="w-full"
                       >
                         {remainingStock <= 0 ? "품절" : "장바구니 담기"}
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 );
@@ -270,12 +267,9 @@ export function CartPage({
                   </div>
                 </div>
 
-                <button
-                  onClick={completeOrder}
-                  className="mt-4 w-full rounded-md bg-yellow-400 py-3 font-medium text-gray-900 transition-colors hover:bg-yellow-500"
-                >
+                <Button onClick={completeOrder} size="lg" color="yellow" className="mt-4 w-full">
                   {totals.totalAfterDiscount.toLocaleString()}원 결제하기
-                </button>
+                </Button>
 
                 <div className="mt-3 text-center text-xs text-gray-500">
                   <p>* 실제 결제는 이루어지지 않습니다</p>

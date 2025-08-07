@@ -1,4 +1,5 @@
 import type { Notification } from "../../types";
+import { Button } from "./Button";
 
 interface NotificationListProps {
   notifications: Notification[];
@@ -24,7 +25,12 @@ export function NotificationList({ notifications, onRemove }: NotificationListPr
           }`}
         >
           <span className="mr-2">{notif.message}</span>
-          <button onClick={() => onRemove(notif.id)} className="text-white hover:text-gray-200">
+          <Button
+            onClick={() => onRemove(notif.id)}
+            color="secondary"
+            size="sm"
+            className="bg-transparent p-1 text-white hover:bg-white/10 hover:text-gray-200"
+          >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
@@ -33,7 +39,7 @@ export function NotificationList({ notifications, onRemove }: NotificationListPr
                 d="M6 18L18 6M6 6l12 12"
               />
             </svg>
-          </button>
+          </Button>
         </div>
       ))}
     </div>
