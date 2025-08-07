@@ -16,7 +16,6 @@
 // - CouponList: 쿠폰 목록 표시
 
 import { useState, type ReactNode } from 'react';
-import type { ProductWithUI } from '../../../types';
 import {
   useAddCoupon,
   useCoupons,
@@ -25,6 +24,7 @@ import {
 import {
   useAddProduct,
   useDeleteProduct,
+  useProducts,
   useUpdateProduct,
 } from '../../hooks/useProducts';
 import { AdminTabs, type AdminTab } from './AdminTabs';
@@ -33,11 +33,9 @@ import { ProductsTab } from './products-tab/ProductsTab';
 import { PageInfo } from './ui/PageInfo';
 import { PageTitle } from './ui/PageTItle';
 
-interface Props {
-  products: ProductWithUI[];
-}
+interface Props {}
 
-export function AdminPage({ products }: Props) {
+export function AdminPage({}: Props) {
   const [activeTab, setActiveTab] = useState<AdminTab>('products');
   const addCoupon = useAddCoupon();
   const deleteCoupon = useDeleteCoupon();
@@ -45,6 +43,7 @@ export function AdminPage({ products }: Props) {
   const addProduct = useAddProduct();
   const updateProduct = useUpdateProduct();
   const deleteProduct = useDeleteProduct();
+  const products = useProducts();
 
   const tabContent: Record<AdminTab, ReactNode> = {
     coupons: (

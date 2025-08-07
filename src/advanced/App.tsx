@@ -5,11 +5,9 @@ import { CartPage } from './components/cart-page/CartPage';
 import { CartPageHeader } from './components/cart-page/CartPageHeader';
 import { Notifications } from './components/Notifications';
 import { useOrder } from './hooks/useOrder';
-import { useProducts } from './hooks/useProducts';
 import { useDebounce } from './utils/hooks/useDebounce';
 
 const App = () => {
-  const { products } = useProducts();
   const { completeOrder } = useOrder();
 
   const [isAdmin, setIsAdmin] = useState(false);
@@ -32,11 +30,10 @@ const App = () => {
 
       <main className="max-w-7xl mx-auto px-4 py-8">
         {isAdmin ? (
-          <AdminPage products={products} />
+          <AdminPage />
         ) : (
           <CartPage
             searchTerm={debouncedSearchTerm}
-            products={products}
             completeOrder={completeOrder}
           />
         )}

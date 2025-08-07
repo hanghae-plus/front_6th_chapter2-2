@@ -1,6 +1,5 @@
 import { useSetAtom } from 'jotai';
-import { type Dispatch, type SetStateAction } from 'react';
-import type { Product, ProductWithUI } from '../../types';
+import type { ProductWithUI } from '../../types';
 import {
   addProductAtom,
   deleteProductAtom,
@@ -11,23 +10,14 @@ import { initialProducts } from '../constants';
 import { useAtomWithLocalStorage } from '../utils/hooks/useLocalStorage';
 import { useNotify } from './useNotification';
 
-interface UseProductsReturn {
-  products: ProductWithUI[];
-  setProducts: Dispatch<SetStateAction<Product[]>>;
-}
-
-export function useProducts(): UseProductsReturn {
-  const notify = useNotify();
-  const [products, setProducts] = useAtomWithLocalStorage({
+export function useProducts(): ProductWithUI[] {
+  const [products] = useAtomWithLocalStorage({
     key: 'products',
     initialValue: initialProducts,
     atom: productsAtom,
   });
 
-  return {
-    products,
-    setProducts,
-  };
+  return products;
 }
 
 export function useAddProduct() {
