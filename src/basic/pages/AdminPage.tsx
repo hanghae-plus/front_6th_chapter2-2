@@ -1,6 +1,5 @@
 import AdminTabs from "@/basic/features/admin/components/AdminTabs";
 import { Coupon } from "@/basic/features/coupon/types/coupon.type";
-import { AddNotification } from "@/basic/features/notification/types/notification";
 import Header from "@/basic/shared/components/layout/Header";
 import MainLayout from "@/basic/shared/components/layout/MainLayout";
 import PageLayout from "@/basic/shared/components/layout/PageLayout";
@@ -9,14 +8,12 @@ interface AdminPageProps {
   setIsAdmin: (isAdmin: boolean) => void;
   selectedCoupon: Coupon | null;
   setSelectedCoupon: (coupon: Coupon | null) => void;
-  addNotification: AddNotification;
 }
 
 export default function AdminPage({
   setIsAdmin,
   selectedCoupon,
   setSelectedCoupon,
-  addNotification,
 }: AdminPageProps) {
   return (
     <PageLayout>
@@ -34,7 +31,6 @@ export default function AdminPage({
           </div>
 
           <AdminTabs
-            addNotification={addNotification}
             selectedCoupon={selectedCoupon}
             setSelectedCoupon={setSelectedCoupon}
           />

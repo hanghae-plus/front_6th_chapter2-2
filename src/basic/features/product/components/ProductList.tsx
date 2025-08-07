@@ -1,5 +1,4 @@
 import { Coupon } from "@/basic/features/coupon/types/coupon.type";
-import { AddNotification } from "@/basic/features/notification/types/notification";
 import ProductCard from "@/basic/features/product/components/ProductCard";
 import { useProducts } from "@/basic/features/product/hooks/useProducts";
 import { productModel } from "@/basic/features/product/models/product.model";
@@ -7,20 +6,16 @@ import { ProductWithUI } from "@/basic/features/product/types/product";
 
 interface ProductListProps {
   searchTerm: string;
-  addNotification: AddNotification;
   selectedCoupon: Coupon | null;
   setSelectedCoupon: (coupon: Coupon | null) => void;
 }
 
 export default function ProductList({
   searchTerm,
-  addNotification,
   selectedCoupon,
   setSelectedCoupon,
 }: ProductListProps) {
-  const { products } = useProducts({
-    addNotification,
-  });
+  const { products } = useProducts();
 
   const filteredProducts = productModel.searchProducts(products, searchTerm);
 
@@ -46,7 +41,6 @@ export default function ProductList({
             <ProductCard
               key={product.id}
               product={product}
-              addNotification={addNotification}
               selectedCoupon={selectedCoupon}
               setSelectedCoupon={setSelectedCoupon}
             />

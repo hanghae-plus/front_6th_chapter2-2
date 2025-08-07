@@ -1,15 +1,13 @@
-import { AddNotification } from "@/basic/features/notification/types/notification";
+import { throwNotificationError } from "@/basic/features/notification/utils/notificationError.util";
 import { useProducts } from "@/basic/features/product/hooks/useProducts";
 import Icon from "@/basic/shared/components/icons/Icon";
 import NumberInput from "@/basic/shared/components/ui/NumberInput";
 import TextInput from "@/basic/shared/components/ui/TextInput";
 import { DEFAULTS } from "@/basic/shared/constants/defaults";
-import { NOTIFICATION } from "@/basic/shared/constants/notification";
 import { VALIDATION } from "@/basic/shared/constants/validation";
 import { regexUtils } from "@/basic/shared/utils/regex.util";
 
 interface ProductFormProps {
-  addNotification: AddNotification;
   editingProduct: string | null;
   productForm: typeof DEFAULTS.PRODUCT_FORM;
   setEditingProduct: (productId: string | null) => void;
@@ -18,28 +16,29 @@ interface ProductFormProps {
 }
 
 export default function ProductForm({
-  addNotification,
   editingProduct,
   productForm,
   setEditingProduct,
   setProductForm,
   setShowProductForm,
 }: ProductFormProps) {
-  const { addProduct, updateProduct } = useProducts({
-    addNotification,
-  });
+  const { addProduct, updateProduct } = useProducts();
 
   const handleProductSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     if (editingProduct && editingProduct !== "new") {
       updateProduct(editingProduct, productForm);
       setEditingProduct(null);
+
+      throwNotificationError.success("상품이 수정되었습니다.");
     } else {
       addProduct({
         ...productForm,
         discounts: productForm.discounts,
       });
     }
+
     setProductForm(DEFAULTS.PRODUCT_FORM);
     setEditingProduct(null);
     setShowProductForm(false);
@@ -75,14 +74,14 @@ export default function ProductForm({
         price: VALIDATION.PRODUCT_LIMITS.MIN_PRICE,
       });
     } else if (parseInt(value) < VALIDATION.PRODUCT_LIMITS.MIN_PRICE) {
-      addNotification(
-        `가격은 ${VALIDATION.PRODUCT_LIMITS.MIN_PRICE}보다 커야 합니다`,
-        NOTIFICATION.TYPES.ERROR
-      );
       setProductForm({
         ...productForm,
         price: VALIDATION.PRODUCT_LIMITS.MIN_PRICE,
       });
+
+      throwNotificationError.error(
+        `가격은 ${VALIDATION.PRODUCT_LIMITS.MIN_PRICE}보다 커야 합니다`
+      );
     }
   };
 
@@ -107,23 +106,23 @@ export default function ProductForm({
         stock: VALIDATION.PRODUCT_LIMITS.MIN_STOCK,
       });
     } else if (parseInt(value) < VALIDATION.PRODUCT_LIMITS.MIN_STOCK) {
-      addNotification(
-        `재고는 ${VALIDATION.PRODUCT_LIMITS.MIN_STOCK}보다 커야 합니다`,
-        NOTIFICATION.TYPES.ERROR
-      );
       setProductForm({
         ...productForm,
         stock: VALIDATION.PRODUCT_LIMITS.MIN_STOCK,
       });
-    } else if (parseInt(value) > VALIDATION.PRODUCT_LIMITS.MAX_STOCK) {
-      addNotification(
-        `재고는 ${VALIDATION.PRODUCT_LIMITS.MAX_STOCK}개를 초과할 수 없습니다`,
-        NOTIFICATION.TYPES.ERROR
+
+      throwNotificationError.error(
+        `재고는 ${VALIDATION.PRODUCT_LIMITS.MIN_STOCK}보다 커야 합니다`
       );
+    } else if (parseInt(value) > VALIDATION.PRODUCT_LIMITS.MAX_STOCK) {
       setProductForm({
         ...productForm,
         stock: VALIDATION.PRODUCT_LIMITS.MAX_STOCK,
       });
+
+      throwNotificationError.error(
+        `재고는 ${VALIDATION.PRODUCT_LIMITS.MAX_STOCK}개를 초과할 수 없습니다`
+      );
     }
   };
 
@@ -200,7 +199,6 @@ export default function ProductForm({
             label="설명"
             value={productForm.description}
             onChange={handleChangeProductDescription}
-            required
           />
 
           <TextInput

@@ -1,7 +1,6 @@
 import CouponAdmin from "@/basic/features/admin/components/CouponAdmin";
 import ProductAdmin from "@/basic/features/admin/components/ProductAdmin";
 import { Coupon } from "@/basic/features/coupon/types/coupon.type";
-import { AddNotification } from "@/basic/features/notification/types/notification";
 import Tabs from "@/basic/shared/components/ui/Tabs";
 
 enum AdminTabsValue {
@@ -10,13 +9,11 @@ enum AdminTabsValue {
 }
 
 interface AdminTabsProps {
-  addNotification: AddNotification;
   selectedCoupon: Coupon | null;
   setSelectedCoupon: (coupon: Coupon | null) => void;
 }
 
 export default function AdminTabs({
-  addNotification,
   selectedCoupon,
   setSelectedCoupon,
 }: AdminTabsProps) {
@@ -29,7 +26,6 @@ export default function AdminTabs({
 
       <Tabs.Content value={AdminTabsValue.PRODUCTS}>
         <ProductAdmin
-          addNotification={addNotification}
           selectedCoupon={selectedCoupon}
           setSelectedCoupon={setSelectedCoupon}
         />
@@ -37,7 +33,6 @@ export default function AdminTabs({
 
       <Tabs.Content value={AdminTabsValue.COUPONS}>
         <CouponAdmin
-          addNotification={addNotification}
           selectedCoupon={selectedCoupon}
           setSelectedCoupon={setSelectedCoupon}
         />

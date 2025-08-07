@@ -5,19 +5,16 @@ import { useState } from "react";
 import AdminSection from "@/basic/features/admin/components/AdminSection";
 import ProductListRow from "@/basic/features/admin/components/ProductAdmin/ProductListRow";
 import { Coupon } from "@/basic/features/coupon/types/coupon.type";
-import { AddNotification } from "@/basic/features/notification/types/notification";
 import { useProducts } from "@/basic/features/product/hooks/useProducts";
 import { ProductWithUI } from "@/basic/features/product/types/product";
 import { DEFAULTS } from "@/basic/shared/constants/defaults";
 
 interface ProductAdminProps {
-  addNotification: AddNotification;
   selectedCoupon: Coupon | null;
   setSelectedCoupon: (coupon: Coupon | null) => void;
 }
 
 export default function ProductAdmin({
-  addNotification,
   selectedCoupon,
   setSelectedCoupon,
 }: ProductAdminProps) {
@@ -25,9 +22,7 @@ export default function ProductAdmin({
   const [productForm, setProductForm] = useState(DEFAULTS.PRODUCT_FORM);
   const [showProductForm, setShowProductForm] = useState(false);
 
-  const { products } = useProducts({
-    addNotification,
-  });
+  const { products } = useProducts();
 
   const handleClickAddProduct = () => {
     setEditingProduct("new");
@@ -75,7 +70,6 @@ export default function ProductAdmin({
               <ProductListRow
                 key={product.id}
                 product={product}
-                addNotification={addNotification}
                 selectedCoupon={selectedCoupon}
                 setSelectedCoupon={setSelectedCoupon}
                 setEditingProduct={setEditingProduct}
@@ -88,7 +82,6 @@ export default function ProductAdmin({
 
         {showProductForm && (
           <ProductForm
-            addNotification={addNotification}
             editingProduct={editingProduct}
             productForm={productForm}
             setEditingProduct={setEditingProduct}

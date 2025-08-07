@@ -1,6 +1,6 @@
 import { useCart } from "@/basic/features/cart/hooks/useCart";
 import { Coupon } from "@/basic/features/coupon/types/coupon.type";
-import { AddNotification } from "@/basic/features/notification/types/notification";
+import { throwNotificationError } from "@/basic/features/notification/utils/notificationError.util";
 import { useProducts } from "@/basic/features/product/hooks/useProducts";
 import { productModel } from "@/basic/features/product/models/product.model";
 import { ProductWithUI } from "@/basic/features/product/types/product";
@@ -8,7 +8,6 @@ import { DEFAULTS } from "@/basic/shared/constants/defaults";
 
 interface ProductListRowProps {
   product: ProductWithUI;
-  addNotification: AddNotification;
   selectedCoupon: Coupon | null;
   setSelectedCoupon: (coupon: Coupon | null) => void;
   setEditingProduct: (productId: string | null) => void;
@@ -18,18 +17,14 @@ interface ProductListRowProps {
 
 export default function ProductListRow({
   product,
-  addNotification,
   selectedCoupon,
   setSelectedCoupon,
   setEditingProduct,
   setProductForm,
   setShowProductForm,
 }: ProductListRowProps) {
-  const { products, deleteProduct } = useProducts({
-    addNotification,
-  });
+  const { products, deleteProduct } = useProducts();
   const { cart } = useCart({
-    addNotification,
     selectedCoupon,
     setSelectedCoupon,
   });
@@ -49,8 +44,10 @@ export default function ProductListRow({
   const handleClickEditProduct = (product: ProductWithUI) =>
     startEditProduct(product);
 
-  const handleClickDeleteProduct = (productId: string) =>
+  const handleClickDeleteProduct = (productId: string) => {
     deleteProduct(productId);
+    throwNotificationError.success("상품이 삭제되었습니다.");
+  };
 
   const { id, name, price, stock, description } = product;
 

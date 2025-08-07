@@ -1,22 +1,18 @@
 import CartItem from "@/basic/features/cart/components/CartItem";
 import { useCart } from "@/basic/features/cart/hooks/useCart";
 import { Coupon } from "@/basic/features/coupon/types/coupon.type";
-import { AddNotification } from "@/basic/features/notification/types/notification";
 import Icon from "@/basic/shared/components/icons/Icon";
 
 interface CartDetailProps {
-  addNotification: AddNotification;
   selectedCoupon: Coupon | null;
   setSelectedCoupon: (coupon: Coupon | null) => void;
 }
 
 export default function CartDetail({
-  addNotification,
   selectedCoupon,
   setSelectedCoupon,
 }: CartDetailProps) {
   const { cart } = useCart({
-    addNotification,
     selectedCoupon,
     setSelectedCoupon,
   });
@@ -42,7 +38,6 @@ export default function CartDetail({
             <CartItem
               key={item.product.id}
               item={item}
-              addNotification={addNotification}
               selectedCoupon={selectedCoupon}
               setSelectedCoupon={setSelectedCoupon}
             />

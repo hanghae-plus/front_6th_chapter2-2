@@ -25,9 +25,7 @@ export default function ProductCard({
   selectedCoupon,
   setSelectedCoupon,
 }: ProductCardProps) {
-  const { products } = useProducts({
-    addNotification,
-  });
+  const { products } = useProducts();
   const { cart, addToCart } = useCart({
     addNotification,
     selectedCoupon,

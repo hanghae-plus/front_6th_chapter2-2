@@ -9,6 +9,4 @@ export interface Notification {
 export type NotificationType =
   (typeof NOTIFICATION.TYPES)[keyof typeof NOTIFICATION.TYPES];
 
-export type AddNotification = (message: string, type: NotificationType) => void;
-
 export type RemoveNotification = (id: string) => void;

@@ -2,21 +2,15 @@ import { useCallback } from "react";
 
 import { couponData } from "@/basic/features/coupon/data/coupon.data";
 import { Coupon } from "@/basic/features/coupon/types/coupon.type";
-import { AddNotification } from "@/basic/features/notification/types/notification";
-import { NOTIFICATION } from "@/basic/shared/constants/notification";
+import { throwNotificationError } from "@/basic/features/notification/utils/notificationError.util";
 import { useLocalStorage } from "@/basic/shared/hooks/useLocalStorage";
 
 interface Props {
-  addNotification: AddNotification;
   resetCoupon: () => void;
   selectedCoupon: Coupon | null;
 }
 
-export function useCoupon({
-  addNotification,
-  resetCoupon,
-  selectedCoupon,
-}: Props) {
+export function useCoupon({ resetCoupon, selectedCoupon }: Props) {
   const [coupons, setCoupons] = useLocalStorage<Coupon[]>(
     "coupons",
     couponData.initialCoupons
@@ -26,27 +20,29 @@ export function useCoupon({
     (newCoupon: Coupon) => {
       const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
       if (existingCoupon) {
-        addNotification(
-          "이미 존재하는 쿠폰 코드입니다.",
-          NOTIFICATION.TYPES.ERROR
-        );
+        throwNotificationError.error("이미 존재하는 쿠폰 코드입니다.");
+
         return;
       }
+
       setCoupons((prev) => [...prev, newCoupon]);
-      addNotification("쿠폰이 추가되었습니다.", NOTIFICATION.TYPES.SUCCESS);
+
+      throwNotificationError.success("쿠폰이 추가되었습니다.");
     },
-    [coupons, addNotification]
+    [coupons]
   );
 
   const deleteCoupon = useCallback(
     (couponCode: string) => {
       setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
+
       if (selectedCoupon?.code === couponCode) {
         resetCoupon();
       }
-      addNotification("쿠폰이 삭제되었습니다.", NOTIFICATION.TYPES.SUCCESS);
+
+      throwNotificationError.success("쿠폰이 삭제되었습니다.");
     },
-    [selectedCoupon, addNotification]
+    [selectedCoupon]
   );
 
   return { coupons, addCoupon, deleteCoupon };

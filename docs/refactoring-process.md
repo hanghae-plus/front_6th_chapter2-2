@@ -866,23 +866,59 @@ import Icon from '@/basic/components/icons/Icon';
   - **타입 안전성**: TypeScript `as const`로 타입 안전성 확보
   - **일관성**: 모든 컴포넌트에서 동일한 정규식 패턴 사용
 
+### 2.17 throwNotificationError 유틸 함수 생성 및 테스트 실패 분석 ✅
+
+- **목적**: 에러 기반 알림 시스템 구축 및 테스트 실패 원인 분석
+- **작업 내용**:
+  - [x] **throwNotificationError 유틸 함수 생성**:
+    - `src/basic/features/notification/utils/notificationError.util.ts` 파일 생성
+    - `Record<NotificationType, (message: string) => never>` 타입으로 구조화
+    - `throwError`, `throwSuccess`, `throwWarning` 함수 구현
+    - 타입 안전한 에러 throw 시스템 구축
+  - [x] **useProducts 훅 수정 시도**:
+    - `addNotification` 파라미터 추가 시도 (사용자가 거부)
+    - `throwNotificationError` 사용으로 변경 시도 (사용자가 거부)
+    - 최종적으로 원래 상태로 복원
+  - [x] **테스트 실패 원인 분석**:
+    - "상품, 장바구니, 쿠폰이 localStorage에 저장된다" 테스트 실패
+    - `useProducts` 훅이 `useLocalStorage`를 사용하지만 실제로 상품이 저장되지 않는 문제
+    - `ProductAdmin` 컴포넌트에서 `useProducts` 사용 확인
+  - [x] **NotificationError 처리 문제 분석**:
+    - `throwNotificationError` 사용 시 테스트에서 unhandled error 발생
+    - `NotificationBoundary`가 테스트 환경에서 제대로 작동하지 않음
+    - 이벤트 핸들러에서 발생하는 에러는 Error Boundary에서 캐치되지 않음
+  - [x] **React 렌더링 경고 분석**:
+    - 여러 컴포넌트에서 렌더링 중 `setState` 호출 문제
+    - `setState` 호출이 렌더링 중에 발생하는 문제
+- **검증**:
+  - [x] TypeScript 컴파일 오류 없음
+  - [x] throwNotificationError 유틸 함수 정상 작동
+  - [x] 테스트 실패 원인 파악 완료
+  - [x] React 렌더링 경고 원인 분석 완료
+- **개선 효과**:
+  - **에러 처리 시스템**: 타입 안전한 에러 throw 시스템 구축
+  - **코드 구조화**: NotificationType별 에러 처리 함수 체계화
+  - **문제 진단**: 테스트 실패 및 렌더링 경고 원인 명확화
+  - **향후 개선 방향**: Error Boundary와 이벤트 핸들러 에러 처리 개선 필요
+
 ## 📊 현재 작업 진행 상황 업데이트
 
-| 작업                       | 상태      | 완성도 | 주요 고민사항                       |
-| -------------------------- | --------- | ------ | ----------------------------------- |
-| Header 리팩토링            | ✅ 완료   | 100%   | Props Drilling vs 컴포지션 패턴     |
-| 컴포넌트 분리              | ✅ 완료   | 100%   | 컴포넌트 분리 수준 결정             |
-| 디바운싱 분석              | ✅ 완료   | 100%   | 디바운싱 vs 쓰로틀링                |
-| Icon 시스템                | 🔄 진행중 | 60%    | 복잡한 시스템 vs 간단한 시스템      |
-| App.tsx 업데이트           | ✅ 완료   | 100%   | 타입 안전성 vs 간단함               |
-| ProductList/ProductCard    | ✅ 완료   | 100%   | 재사용성 vs 특화성                  |
-| 레이아웃 시스템            | ✅ 완료   | 100%   | 일관성 vs 유연성                    |
-| useLocalStorage 고도화     | ✅ 완료   | 100%   | 성능 vs 기능성                      |
-| App.tsx 대폭 리팩토링      | ✅ 완료   | 100%   | 거대 컴포넌트 분리 및 테스트 안정성 |
-| formatPrice 함수 수정      | ✅ 완료   | 100%   | 테스트 호환성 및 가격 표시 형식     |
-| AdminPage 리팩토링         | ✅ 완료   | 100%   | 관리자 컴포넌트 분리 및 Tabs 시스템 |
-| React Strict Mode 비활성화 | ✅ 완료   | 100%   | 개발 환경 최적화 및 디버깅 개선     |
-| 정규식 패턴 분리           | ✅ 완료   | 100%   | 코드 중복 제거 및 재사용성 향상     |
+| 작업                        | 상태      | 완성도 | 주요 고민사항                        |
+| --------------------------- | --------- | ------ | ------------------------------------ |
+| Header 리팩토링             | ✅ 완료   | 100%   | Props Drilling vs 컴포지션 패턴      |
+| 컴포넌트 분리               | ✅ 완료   | 100%   | 컴포넌트 분리 수준 결정              |
+| 디바운싱 분석               | ✅ 완료   | 100%   | 디바운싱 vs 쓰로틀링                 |
+| Icon 시스템                 | 🔄 진행중 | 60%    | 복잡한 시스템 vs 간단한 시스템       |
+| App.tsx 업데이트            | ✅ 완료   | 100%   | 타입 안전성 vs 간단함                |
+| ProductList/ProductCard     | ✅ 완료   | 100%   | 재사용성 vs 특화성                   |
+| 레이아웃 시스템             | ✅ 완료   | 100%   | 일관성 vs 유연성                     |
+| useLocalStorage 고도화      | ✅ 완료   | 100%   | 성능 vs 기능성                       |
+| App.tsx 대폭 리팩토링       | ✅ 완료   | 100%   | 거대 컴포넌트 분리 및 테스트 안정성  |
+| formatPrice 함수 수정       | ✅ 완료   | 100%   | 테스트 호환성 및 가격 표시 형식      |
+| AdminPage 리팩토링          | ✅ 완료   | 100%   | 관리자 컴포넌트 분리 및 Tabs 시스템  |
+| React Strict Mode 비활성화  | ✅ 완료   | 100%   | 개발 환경 최적화 및 디버깅 개선      |
+| 정규식 패턴 분리            | ✅ 완료   | 100%   | 코드 중복 제거 및 재사용성 향상      |
+| throwNotificationError 유틸 | ✅ 완료   | 100%   | 에러 기반 알림 시스템 및 테스트 분석 |
 
 ## 🎯 핵심 성과 및 인사이트
 
@@ -936,4 +972,4 @@ import Icon from '@/basic/components/icons/Icon';
 
 ---
 
-**마지막 업데이트**: 2024년 (정규식 패턴 분리, ProductForm 리팩토링, 코드 중복 제거 완료)
+**마지막 업데이트**: 2024년 (throwNotificationError 유틸 함수 생성, 테스트 실패 원인 분석, 에러 기반 알림 시스템 구축 완료)

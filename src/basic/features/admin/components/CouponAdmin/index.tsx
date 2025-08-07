@@ -1,3 +1,5 @@
+import { throwNotificationError } from "../../../notification/utils/notificationError.util";
+
 import { useState } from "react";
 
 import AdminSection from "@/basic/features/admin/components/AdminSection";
@@ -5,33 +7,28 @@ import { useCart } from "@/basic/features/cart/hooks/useCart";
 import { useCoupon } from "@/basic/features/coupon/hooks/useCoupon";
 import { Coupon } from "@/basic/features/coupon/types/coupon.type";
 import { DiscountType } from "@/basic/features/discount/types/discount.type";
-import { AddNotification } from "@/basic/features/notification/types/notification";
 import Icon from "@/basic/shared/components/icons/Icon";
 import { DEFAULTS } from "@/basic/shared/constants/defaults";
-import { NOTIFICATION } from "@/basic/shared/constants/notification";
 import { VALIDATION } from "@/basic/shared/constants/validation";
+import { formatPrice } from "@/basic/shared/utils";
 import { regexUtils } from "@/basic/shared/utils/regex.util";
 
 interface CouponAdminProps {
-  addNotification: AddNotification;
   selectedCoupon: Coupon | null;
   setSelectedCoupon: (coupon: Coupon | null) => void;
 }
 
 export default function CouponAdmin({
-  addNotification,
   selectedCoupon,
   setSelectedCoupon,
 }: CouponAdminProps) {
   const [couponForm, setCouponForm] = useState(DEFAULTS.COUPON_FORM);
   const [showCouponForm, setShowCouponForm] = useState(false);
   const { resetCoupon } = useCart({
-    addNotification,
     selectedCoupon,
     setSelectedCoupon,
   });
   const { coupons, addCoupon, deleteCoupon } = useCoupon({
-    addNotification,
     resetCoupon,
     selectedCoupon,
   });
@@ -68,7 +65,7 @@ export default function CouponAdmin({
                     <div className="mt-2">
                       <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white text-indigo-700">
                         {coupon.discountType === "amount"
-                          ? `${coupon.discountValue.toLocaleString()}원 할인`
+                          ? `${formatPrice.unit(coupon.discountValue)} 할인`
                           : `${coupon.discountValue}% 할인`}
                       </span>
                     </div>
@@ -187,16 +184,16 @@ export default function CouponAdmin({
                             value >
                             VALIDATION.COUPON_LIMITS.MAX_DISCOUNT_PERCENTAGE
                           ) {
-                            addNotification(
-                              `할인율은 ${VALIDATION.COUPON_LIMITS.MAX_DISCOUNT_PERCENTAGE}%를 초과할 수 없습니다`,
-                              NOTIFICATION.TYPES.ERROR
-                            );
                             setCouponForm({
                               ...couponForm,
                               discountValue:
                                 VALIDATION.COUPON_LIMITS
                                   .MAX_DISCOUNT_PERCENTAGE,
                             });
+
+                            throwNotificationError.error(
+                              `할인율은 ${VALIDATION.COUPON_LIMITS.MAX_DISCOUNT_PERCENTAGE}%를 초과할 수 없습니다`
+                            );
                           } else if (
                             value < VALIDATION.COUPON_LIMITS.MIN_DISCOUNT_VALUE
                           ) {
@@ -210,15 +207,15 @@ export default function CouponAdmin({
                           if (
                             value > VALIDATION.COUPON_LIMITS.MAX_DISCOUNT_AMOUNT
                           ) {
-                            addNotification(
-                              `할인 금액은 ${VALIDATION.COUPON_LIMITS.MAX_DISCOUNT_AMOUNT.toLocaleString()}원을 초과할 수 없습니다`,
-                              NOTIFICATION.TYPES.ERROR
-                            );
                             setCouponForm({
                               ...couponForm,
                               discountValue:
                                 VALIDATION.COUPON_LIMITS.MAX_DISCOUNT_AMOUNT,
                             });
+
+                            throwNotificationError.error(
+                              `할인율은 ${VALIDATION.COUPON_LIMITS.MAX_DISCOUNT_PERCENTAGE}%를 초과할 수 없습니다`
+                            );
                           } else if (
                             value < VALIDATION.COUPON_LIMITS.MIN_DISCOUNT_VALUE
                           ) {

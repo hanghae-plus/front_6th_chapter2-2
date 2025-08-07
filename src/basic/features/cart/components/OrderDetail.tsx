@@ -3,35 +3,32 @@ import { useCallback } from "react";
 import { useCart } from "@/basic/features/cart/hooks/useCart";
 import { cartModel } from "@/basic/features/cart/models/cart.model";
 import { Coupon } from "@/basic/features/coupon/types/coupon.type";
-import { AddNotification } from "@/basic/features/notification/types/notification";
-import { NOTIFICATION } from "@/basic/shared/constants/notification";
+import { throwNotificationError } from "@/basic/features/notification/utils/notificationError.util";
 
 interface OrderDetailProps {
-  addNotification: AddNotification;
   selectedCoupon: Coupon | null;
   setSelectedCoupon: (coupon: Coupon | null) => void;
 }
 
 export default function OrderDetail({
-  addNotification,
   selectedCoupon,
   setSelectedCoupon,
 }: OrderDetailProps) {
   const { clearCart, resetCoupon, cart } = useCart({
-    addNotification,
     selectedCoupon,
     setSelectedCoupon,
   });
 
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
-    addNotification(
-      `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
-      NOTIFICATION.TYPES.SUCCESS
-    );
+
     clearCart();
     resetCoupon();
-  }, [addNotification, clearCart, resetCoupon]);
+
+    throwNotificationError.success(
+      `주문이 완료되었습니다. 주문번호: ${orderNumber}`
+    );
+  }, [clearCart, resetCoupon]);
 
   const totals = cartModel.calculateCartTotal(cart, selectedCoupon);
 
