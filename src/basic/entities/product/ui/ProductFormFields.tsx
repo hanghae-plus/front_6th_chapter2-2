@@ -17,7 +17,6 @@ export function ProductFormFields({
 }: ProductFormFieldsProps) {
   const { addNotification } = useGlobalNotification();
 
-  // 기본 입력 핸들러들
   const handleNameChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       onChange("name", e.target.value);
@@ -32,7 +31,6 @@ export function ProductFormFields({
     [onChange]
   );
 
-  // 가격 관련 핸들러들
   const handlePriceChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
@@ -56,7 +54,6 @@ export function ProductFormFields({
     [onChange, addNotification]
   );
 
-  // 재고 관련 핸들러들
   const handleStockChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
@@ -86,7 +83,6 @@ export function ProductFormFields({
     [onChange, addNotification]
   );
 
-  // 할인 관련 핸들러들
   const handleDiscountQuantityChange = useCallback(
     (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
       const newDiscounts = [...(product.discounts || [])];
@@ -115,14 +111,14 @@ export function ProductFormFields({
           "할인율은 100%를 초과할 수 없습니다",
           NotificationVariant.ERROR
         );
-        newDiscounts[index].rate = 1.0; // 100%
+        newDiscounts[index].rate = 1.0;
         onChange("discounts", newDiscounts);
       } else if (value < 0) {
         addNotification(
           "할인율은 0% 미만일 수 없습니다",
           NotificationVariant.ERROR
         );
-        newDiscounts[index].rate = 0.0; // 0%
+        newDiscounts[index].rate = 0.0;
         onChange("discounts", newDiscounts);
       }
     },

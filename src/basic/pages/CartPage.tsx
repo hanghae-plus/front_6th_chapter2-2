@@ -68,7 +68,7 @@ export function CartPage({
 
     const hasBulkPurchase = cart.some((cartItem) => cartItem.quantity >= 10);
     if (hasBulkPurchase) {
-      return Math.min(baseDiscount + 0.05, 0.5); // 대량 구매 시 추가 5% 할인
+      return Math.min(baseDiscount + 0.05, 0.5);
     }
 
     return baseDiscount;

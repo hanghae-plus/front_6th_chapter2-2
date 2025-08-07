@@ -9,7 +9,6 @@ import {
 export function useNotificationStore() {
   const [notifications, setNotifications] = useState<NotificationType[]>([]);
 
-  // 컴포넌트가 마운트될 때 구독자 등록
   useEffect(() => {
     const unsubscribe = subscribeToNotifications(setNotifications);
     return unsubscribe;

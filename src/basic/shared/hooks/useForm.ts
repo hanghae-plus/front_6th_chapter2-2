@@ -22,7 +22,6 @@ export function useForm<T extends Record<string, any>>({
   const handleFieldChange = (field: keyof T, value: any) => {
     setValues((prev) => ({ ...prev, [field]: value }));
 
-    // 해당 필드의 에러 클리어
     if (errors[field as string]) {
       setErrors((prev) => {
         const newErrors = { ...prev };

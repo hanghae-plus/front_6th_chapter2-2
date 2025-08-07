@@ -1,6 +1,5 @@
 import { Coupon, DiscountType } from "../../../../types";
 
-// 에러 메시지 상수
 const ERROR_MESSAGES = {
   COUPON_NAME_REQUIRED: "쿠폰명을 입력해주세요.",
   COUPON_CODE_REQUIRED: "쿠폰 코드를 입력해주세요.",
