@@ -12,13 +12,19 @@ import { CartItem, Coupon, DiscountType, ProductWithUI } from "@/types";
 interface Props {
   addNotification: AddNotification;
   products: ProductWithUI[];
+  selectedCoupon: Coupon | null;
+  setSelectedCoupon: (coupon: Coupon | null) => void;
 }
 
-export function useCart({ addNotification, products }: Props) {
+export function useCart({
+  addNotification,
+  products,
+  selectedCoupon,
+  setSelectedCoupon,
+}: Props) {
   const [cart, setCart] = useLocalStorage<CartItem[]>("cart", []);
 
   const [totalItemCount, setTotalItemCount] = useState<number>(DEFAULTS.TOTAL);
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
   const addToCart = useCallback(
     (product: ProductWithUI) => {
@@ -125,6 +131,10 @@ export function useCart({ addNotification, products }: Props) {
     setSelectedCoupon(null);
   }, []);
 
+  const clearCart = useCallback(() => {
+    setCart([]);
+  }, []);
+
   useEffect(() => {
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);
     setTotalItemCount(count);
@@ -139,6 +149,6 @@ export function useCart({ addNotification, products }: Props) {
     updateQuantity,
     applyCoupon,
     resetCoupon,
-    selectedCoupon,
+    clearCart,
   };
 }

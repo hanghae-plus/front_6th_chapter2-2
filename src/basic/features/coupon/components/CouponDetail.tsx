@@ -1,4 +1,35 @@
-export default function CouponDetail() {
+import { useCart } from "@/basic/features/cart/hooks/useCart";
+import { useCoupon } from "@/basic/features/coupon/hooks/useCoupon";
+import { Coupon } from "@/basic/features/coupon/types/coupon.type";
+import { AddNotification } from "@/basic/features/notification/types/notification";
+import { useProducts } from "@/basic/features/product/hooks/useProducts";
+
+interface CouponDetailProps {
+  addNotification: AddNotification;
+  selectedCoupon: Coupon | null;
+  setSelectedCoupon: (coupon: Coupon | null) => void;
+}
+
+export default function CouponDetail({
+  addNotification,
+  selectedCoupon,
+  setSelectedCoupon,
+}: CouponDetailProps) {
+  const { products } = useProducts({
+    addNotification,
+  });
+  const { applyCoupon, resetCoupon } = useCart({
+    addNotification,
+    products,
+    selectedCoupon,
+    setSelectedCoupon,
+  });
+  const { coupons } = useCoupon({
+    addNotification,
+    resetCoupon,
+    selectedCoupon,
+  });
+
   return (
     <section className="bg-white rounded-lg border border-gray-200 p-4">
       <div className="flex items-center justify-between mb-3">

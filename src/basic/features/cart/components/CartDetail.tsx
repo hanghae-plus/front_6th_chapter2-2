@@ -1,9 +1,14 @@
-import { useProducts } from "../../product/hooks/useProducts";
-
 import { useCart } from "@/basic/features/cart/hooks/useCart";
 import { cartModel } from "@/basic/features/cart/models/cart.model";
+import { AddNotification } from "@/basic/features/notification/types/notification";
+import { useProducts } from "@/basic/features/product/hooks/useProducts";
+import Icon from "@/basic/shared/components/icons/Icon";
 
-export default function CartDetail() {
+interface CartDetailProps {
+  addNotification: AddNotification;
+}
+
+export default function CartDetail({ addNotification }: CartDetailProps) {
   const { products } = useProducts({
     addNotification,
   });
@@ -12,39 +17,27 @@ export default function CartDetail() {
     products,
   });
 
+  const handleClickDecrease = (productId: string, newQuantity: number) => {
+    updateQuantity(productId, newQuantity);
+  };
+
+  const handleClickIncrease = (productId: string, newQuantity: number) => {
+    updateQuantity(productId, newQuantity);
+  };
+
+  const isEmptyCart = cart.length === 0;
+
   return (
     <section className="bg-white rounded-lg border border-gray-200 p-4">
-      <h2 className="text-lg font-semibold mb-4 flex items-center">
-        <svg
-          className="w-5 h-5 mr-2"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-          />
-        </svg>
+      <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+        <Icon type="shop" size={5} color="text-gray-900" />
         장바구니
       </h2>
-      {cart.length === 0 ? (
-        <div className="text-center py-8">
-          <svg
-            className="w-16 h-16 text-gray-300 mx-auto mb-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1}
-              d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-            />
-          </svg>
+
+      {isEmptyCart ? (
+        <div className="flex flex-col items-center justify-center py-8 gap-4">
+          <Icon type="shopThin" size={16} color="text-gray-300" />
+
           <p className="text-gray-500 text-sm">장바구니가 비어있습니다</p>
         </div>
       ) : (
@@ -89,7 +82,7 @@ export default function CartDetail() {
                   <div className="flex items-center">
                     <button
                       onClick={() =>
-                        updateQuantity(item.product.id, item.quantity - 1)
+                        handleClickDecrease(item.product.id, item.quantity - 1)
                       }
                       className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                     >
@@ -100,7 +93,7 @@ export default function CartDetail() {
                     </span>
                     <button
                       onClick={() =>
-                        updateQuantity(item.product.id, item.quantity + 1)
+                        handleClickIncrease(item.product.id, item.quantity + 1)
                       }
                       className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                     >
