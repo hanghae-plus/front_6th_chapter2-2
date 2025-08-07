@@ -4,7 +4,7 @@ import { Coupon } from '../../../types.ts';
 type CouponTabProps = {
   coupons: Array<Coupon>;
   deleteCoupon: (couponCode: string) => void;
-  setShowCouponForm: React.Dispatch<boolean>;
+  setShowCouponForm: React.Dispatch<React.SetStateAction<boolean>>;
   showCouponForm: boolean;
   handleCouponSubmit: (e: React.FormEvent) => void;
   couponForm: Coupon;

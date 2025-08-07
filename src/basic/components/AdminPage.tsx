@@ -21,7 +21,7 @@ import { ProductsTab } from './admin/ProductsTab.tsx';
 import { CouponTab } from './admin/CouponTab.tsx';
 
 type AdminPageProps = {
-  activeTab: string;
+  activeTab: 'products' | 'coupons';
   setActiveTab: React.Dispatch<React.SetStateAction<'products' | 'coupons'>>;
   setEditingProduct: React.Dispatch<React.SetStateAction<string | null>>;
   setProductForm: React.Dispatch<React.SetStateAction<ProductForm>>;
@@ -35,7 +35,7 @@ type AdminPageProps = {
   showCouponForm: boolean;
   couponForm: Coupon;
   deleteCoupon: (couponCode: string) => void;
-  setShowCouponForm: React.Dispatch<boolean>;
+  setShowCouponForm: React.Dispatch<React.SetStateAction<boolean>>;
   handleCouponSubmit: (e: React.FormEvent) => void;
   setCouponForm: React.Dispatch<React.SetStateAction<Coupon>>;
   addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;

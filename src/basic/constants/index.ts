@@ -23,9 +23,7 @@ export const initialProducts: ProductWithUI[] = [
     name: '상품2',
     price: 20000,
     stock: 20,
-    discounts: [
-      { quantity: 10, rate: 0.15 }
-    ],
+    discounts: [{ quantity: 10, rate: 0.15 }],
     description: '다양한 기능을 갖춘 실용적인 상품입니다.',
     isRecommended: true,
   },
@@ -36,10 +34,10 @@ export const initialProducts: ProductWithUI[] = [
     stock: 20,
     discounts: [
       { quantity: 10, rate: 0.2 },
-      { quantity: 30, rate: 0.25 }
+      { quantity: 30, rate: 0.25 },
     ],
     description: '대용량과 고성능을 자랑하는 상품입니다.',
-  }
+  },
 ];
 
 export const initialCoupons: Coupon[] = [
@@ -54,6 +52,6 @@ export const initialCoupons: Coupon[] = [
     code: 'PERCENT10',
     discountType: 'percentage',
     discountValue: 10,
-  }
+  },
 ];
 
