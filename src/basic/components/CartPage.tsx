@@ -58,7 +58,6 @@ export function CartPage({
     updateQuantity,
     applyCoupon,
     calculateCartTotal,
-    getRemainingStock,
     clearCart,
   } = useCart({
     products,
