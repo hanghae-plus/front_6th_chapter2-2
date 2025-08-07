@@ -1,5 +1,5 @@
 import type { CartItem } from "../../domains/cart";
-import { CartIcon } from "../../shared";
+import { CartIcon, SearchInput } from "../../shared";
 
 type HeaderProps = {
   isAdmin: boolean;
@@ -26,13 +26,14 @@ export function Header({
             <h1 className="text-xl font-semibold text-gray-800">SHOP</h1>
             {/* 검색창 - 안티패턴: 검색 로직이 컴포넌트에 직접 포함 */}
             {!isAdmin && (
-              <div className="ml-8 max-w-md flex-1">
-                <input
+              <div className="ml-8 flex max-w-md flex-1 gap-3">
+                <SearchInput
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="상품 검색..."
-                  className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
+                  color="blue"
+                  size="lg"
                 />
               </div>
             )}

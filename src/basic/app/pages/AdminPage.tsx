@@ -1,7 +1,7 @@
 import { FormEvent } from "react";
 
 import type { Coupon, Product } from "../../../types";
-import { CloseIcon, PlusIcon, TrashIcon } from "../../shared";
+import { CloseIcon, PlusIcon, SearchInput, TrashIcon } from "../../shared";
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -198,30 +198,30 @@ export function AdminPage({
                 </h3>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-gray-700">상품명</label>
-                    <input
+                    <SearchInput
                       type="text"
+                      label="상품명"
                       value={productForm.name}
                       onChange={(e) => setProductForm({ ...productForm, name: e.target.value })}
-                      className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                      className="shadow-sm"
                       required
                     />
                   </div>
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-gray-700">설명</label>
-                    <input
+                    <SearchInput
                       type="text"
+                      label="설명"
                       value={productForm.description}
                       onChange={(e) =>
                         setProductForm({ ...productForm, description: e.target.value })
                       }
-                      className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                      className="shadow-sm"
                     />
                   </div>
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-gray-700">가격</label>
-                    <input
+                    <SearchInput
                       type="text"
+                      label="가격"
                       value={productForm.price === 0 ? "" : productForm.price}
                       onChange={(e) => {
                         const value = e.target.value;
@@ -241,15 +241,15 @@ export function AdminPage({
                           setProductForm({ ...productForm, price: 0 });
                         }
                       }}
-                      className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                      className="shadow-sm"
                       placeholder="숫자만 입력"
                       required
                     />
                   </div>
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-gray-700">재고</label>
-                    <input
+                    <SearchInput
                       type="text"
+                      label="재고"
                       value={productForm.stock === 0 ? "" : productForm.stock}
                       onChange={(e) => {
                         const value = e.target.value;
@@ -272,7 +272,7 @@ export function AdminPage({
                           setProductForm({ ...productForm, stock: 9999 });
                         }
                       }}
-                      className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                      className="shadow-sm"
                       placeholder="숫자만 입력"
                       required
                     />
@@ -419,27 +419,25 @@ export function AdminPage({
                   <h3 className="text-md font-medium text-gray-900">새 쿠폰 생성</h3>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <div>
-                      <label className="mb-1 block text-sm font-medium text-gray-700">쿠폰명</label>
-                      <input
+                      <SearchInput
                         type="text"
+                        label="쿠폰명"
                         value={couponForm.name}
                         onChange={(e) => setCouponForm({ ...couponForm, name: e.target.value })}
-                        className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        className="text-sm shadow-sm"
                         placeholder="신규 가입 쿠폰"
                         required
                       />
                     </div>
                     <div>
-                      <label className="mb-1 block text-sm font-medium text-gray-700">
-                        쿠폰 코드
-                      </label>
-                      <input
+                      <SearchInput
                         type="text"
+                        label="쿠폰 코드"
                         value={couponForm.code}
                         onChange={(e) =>
                           setCouponForm({ ...couponForm, code: e.target.value.toUpperCase() })
                         }
-                        className="w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        className="font-mono text-sm shadow-sm"
                         placeholder="WELCOME2024"
                         required
                       />
@@ -466,8 +464,9 @@ export function AdminPage({
                       <label className="mb-1 block text-sm font-medium text-gray-700">
                         {couponForm.discountType === "amount" ? "할인 금액" : "할인율(%)"}
                       </label>
-                      <input
+                      <SearchInput
                         type="text"
+                        label={couponForm.discountType === "amount" ? "할인 금액" : "할인율(%)"}
                         value={couponForm.discountValue === 0 ? "" : couponForm.discountValue}
                         onChange={(e) => {
                           const value = e.target.value;
@@ -499,7 +498,7 @@ export function AdminPage({
                             }
                           }
                         }}
-                        className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        className="text-sm shadow-sm"
                         placeholder={couponForm.discountType === "amount" ? "5000" : "10"}
                         required
                       />
