@@ -12,7 +12,7 @@ import { useDebounce } from './utils/hooks/useDebounce';
 
 const App = () => {
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
-  const { cart, totalItemCount } = useCart();
+  const { cart } = useCart();
   const {
     coupons,
     selectedCoupon,
@@ -40,7 +40,6 @@ const App = () => {
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
           setIsAdmin={setIsAdmin}
-          totalItemCount={totalItemCount}
         />
       )}
 

@@ -1,18 +1,19 @@
+import { useTotalItemCount } from '../../hooks/useCart';
 import { Header } from '../ui/Header';
 
 interface Props {
   searchTerm: string;
   setSearchTerm: (value: string) => void;
   setIsAdmin: (value: boolean) => void;
-  totalItemCount: number;
 }
 
 export function CartPageHeader({
   searchTerm,
   setSearchTerm,
   setIsAdmin,
-  totalItemCount,
 }: Props) {
+  const totalItemCount = useTotalItemCount();
+
   return (
     <Header
       main={

@@ -79,3 +79,8 @@ export const updateQuantityAtom = atom(
 export const clearCartAtom = atom(null, (get, set) => {
   set(cartAtom, []);
 });
+
+export const totalItemCountAtom = atom((get) => {
+  const cart = get(cartAtom);
+  return cartModel.calculateTotalItemCount({ cart });
+});
