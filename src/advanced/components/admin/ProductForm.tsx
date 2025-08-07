@@ -1,45 +1,67 @@
-import type { ProductFormData as ProductFormDataType } from '../../../types';
+import React from 'react';
+import { useAtom } from 'jotai';
 import { useNotificationActions } from '../../shared/hooks';
 import { CloseIcon } from '../icons';
+import {
+  productFormAtom,
+  editingProductAtom,
+  updateProductNameAtom,
+  updateProductDescriptionAtom,
+  updateProductPriceAtom,
+  updateProductStockAtom,
+  validatePriceAtom,
+  validateStockAtom,
+  addDiscountPolicyAtom,
+  removeDiscountPolicyAtom,
+  updateDiscountQuantityAtom,
+  updateDiscountRateAtom,
+  resetProductFormAtom,
+} from '../../shared/atoms/productFormAtoms';
+import type { ProductWithUI } from '../../shared/types';
+import { formToProduct } from '../../models/productForm';
 
 interface ProductFormProps {
-  editingProduct: string | null;
-  productForm: ProductFormDataType;
-  updateProductName: (name: string) => void;
-  updateDescription: (description: string) => void;
-  updatePrice: (price: string) => void;
-  updateStock: (stock: string) => void;
-  validatePriceValue: (price: string, callback: (message: string) => void) => void;
-  validateStockValue: (stock: string, callback: (message: string) => void) => void;
-  addDiscountPolicy: () => void;
-  removeDiscountPolicy: (index: number) => void;
-  updateDiscountQuantity: (index: number, quantity: number) => void;
-  updateDiscountRate: (index: number, rate: number) => void;
-  handleCancelProductForm: () => void;
-  handleProductSubmit: (e: React.FormEvent) => void;
+  onSubmit: (product: Omit<ProductWithUI, 'id'>, productId?: string) => void;
 }
 
-export function ProductForm({
-  editingProduct,
-  productForm,
-  updateProductName,
-  updateDescription,
-  updatePrice,
-  updateStock,
-  validatePriceValue,
-  validateStockValue,
-  addDiscountPolicy,
-  removeDiscountPolicy,
-  updateDiscountQuantity,
-  updateDiscountRate,
-  handleCancelProductForm,
-  handleProductSubmit,
-}: ProductFormProps) {
+export function ProductForm({ onSubmit }: ProductFormProps) {
   const { addNotification } = useNotificationActions();
+
+  // Atoms에서 상태와 액션들 가져오기
+  const [productForm] = useAtom(productFormAtom);
+  const [editingProduct] = useAtom(editingProductAtom);
+  const [, updateProductName] = useAtom(updateProductNameAtom);
+  const [, updateDescription] = useAtom(updateProductDescriptionAtom);
+  const [, updatePrice] = useAtom(updateProductPriceAtom);
+  const [, updateStock] = useAtom(updateProductStockAtom);
+  const [, validatePriceValue] = useAtom(validatePriceAtom);
+  const [, validateStockValue] = useAtom(validateStockAtom);
+  const [, addDiscountPolicy] = useAtom(addDiscountPolicyAtom);
+  const [, removeDiscountPolicy] = useAtom(removeDiscountPolicyAtom);
+  const [, updateDiscountQuantity] = useAtom(updateDiscountQuantityAtom);
+  const [, updateDiscountRate] = useAtom(updateDiscountRateAtom);
+  const [, resetForm] = useAtom(resetProductFormAtom);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const productData = formToProduct(productForm);
+
+    if (editingProduct && editingProduct !== 'new') {
+      onSubmit(productData, editingProduct);
+    } else {
+      onSubmit(productData);
+    }
+
+    resetForm();
+  };
+
+  const handleCancel = () => {
+    resetForm();
+  };
 
   return (
     <div className="p-6 border-t border-gray-200 bg-gray-50">
-      <form onSubmit={handleProductSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <h3 className="text-lg font-medium text-gray-900">{editingProduct === 'new' ? '새 상품 추가' : '상품 수정'}</h3>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -68,7 +90,7 @@ export function ProductForm({
 
           {/* 가격 입력 */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">가격</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">가격 (원)</label>
             <input
               type="text"
               value={productForm.price === 0 ? '' : productForm.price}
@@ -143,7 +165,7 @@ export function ProductForm({
         <div className="flex justify-end gap-3">
           <button
             type="button"
-            onClick={handleCancelProductForm}
+            onClick={handleCancel}
             className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
             취소

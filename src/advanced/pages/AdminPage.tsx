@@ -1,14 +1,15 @@
 import { useState, useCallback } from 'react';
+import { useAtom } from 'jotai';
 import type { Coupon as CouponType } from '../../types';
 import type { ProductWithUI } from '../shared/types';
 import { MESSAGES } from '../constants/message';
 import { useCouponForm } from '../hooks/useCouponForm';
 import { CouponForm } from '../components/admin/CouponForm';
 import CouponList from '../components/admin/CouponList';
-import { useProductForm } from '../hooks/useProductForm';
 import ProductForm from '../components/admin/ProductForm';
 import { ProductList } from '../components/admin/ProductList';
 import { useNotificationActions } from '../shared/hooks';
+import { showProductFormAtom, startEditProductAtom, startAddProductAtom } from '../shared/atoms/productFormAtoms';
 
 interface AdminPageProps {
   products: ProductWithUI[];
@@ -35,6 +36,12 @@ export function AdminPage({
 }: AdminPageProps) {
   const { addNotification } = useNotificationActions();
 
+  // ProductForm 관련 atoms
+  const [showProductForm] = useAtom(showProductFormAtom);
+  const [, startEditProduct] = useAtom(startEditProductAtom);
+  const [, startAddProduct] = useAtom(startAddProductAtom);
+
+  // CouponForm 관련 기존 로직 유지
   const {
     couponForm,
     updateName: updateCouponName,
@@ -45,31 +52,10 @@ export function AdminPage({
     submitForm: submitCouponForm,
   } = useCouponForm();
 
-  const {
-    productForm,
-    editingProduct,
-    updateName: updateProductName,
-    updateDescription,
-    updatePrice,
-    updateStock,
-    validatePriceValue,
-    validateStockValue,
-    addDiscountPolicy,
-    removeDiscountPolicy,
-    updateDiscountQuantity,
-    updateDiscountRate,
-    startEditProduct: startEditProductHook,
-    startAddProduct,
-    submitForm: submitProductForm,
-    resetForm: resetProductForm,
-  } = useProductForm();
-
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
-  const [showProductForm, setShowProductForm] = useState(false);
 
   const toggleCouponForm = () => setShowCouponForm((prev) => !prev);
-  const toggleProductForm = () => setShowProductForm((prev) => !prev);
 
   const addProduct = useCallback(
     (newProduct: Omit<ProductWithUI, 'id'>) => {
@@ -114,22 +100,16 @@ export function AdminPage({
     [deleteCouponHook, selectedCoupon, selectCoupon, addNotification],
   );
 
-  // 상품 폼 제출 핸들러 - Hook의 submitForm 사용
+  // 상품 폼 제출 핸들러 - 대폭 단순화!
   const handleProductSubmit = useCallback(
-    (e: React.FormEvent) => {
-      submitProductForm(
-        e,
-        (productData, productId) => {
-          if (productId) {
-            updateProduct(productId, productData);
-          } else {
-            addProduct(productData);
-          }
-        },
-        () => setShowProductForm(false),
-      );
+    (productData: Omit<ProductWithUI, 'id'>, productId?: string) => {
+      if (productId) {
+        updateProduct(productId, productData);
+      } else {
+        addProduct(productData);
+      }
     },
-    [submitProductForm, addProduct, updateProduct],
+    [addProduct, updateProduct],
   );
 
   // 쿠폰 폼 제출 핸들러
@@ -140,33 +120,13 @@ export function AdminPage({
     [submitCouponForm, addCoupon],
   );
 
-  // 상품 편집 시작 핸들러
-  const handleStartEditProduct = useCallback(
-    (product: ProductWithUI) => {
-      startEditProductHook(product);
-      setShowProductForm(true);
-    },
-    [startEditProductHook],
-  );
-
-  // 새 상품 추가 시작 핸들러
-  const handleStartAddProduct = useCallback(() => {
-    startAddProduct();
-    setShowProductForm(true);
-  }, [startAddProduct]);
-
-  // 상품 폼 취소 핸들러
-  const handleCancelProductForm = useCallback(() => {
-    resetProductForm();
-    setShowProductForm(false);
-  }, [resetProductForm]);
-
   return (
     <div className="max-w-6xl mx-auto">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">관리자 대시보드</h1>
         <p className="text-gray-600 mt-1">상품과 쿠폰을 관리할 수 있습니다</p>
       </div>
+
       <div className="border-b border-gray-200 mb-6">
         <nav className="-mb-px flex space-x-8">
           <button
@@ -198,7 +158,7 @@ export function AdminPage({
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold">상품 목록</h2>
               <button
-                onClick={handleStartAddProduct}
+                onClick={startAddProduct}
                 className="px-4 py-2 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800"
               >
                 새 상품 추가
@@ -209,28 +169,11 @@ export function AdminPage({
           <ProductList
             products={products}
             activeTab={activeTab}
-            handleStartEditProduct={handleStartEditProduct}
+            handleStartEditProduct={startEditProduct}
             deleteProduct={deleteProduct}
           />
 
-          {showProductForm && (
-            <ProductForm
-              editingProduct={editingProduct}
-              productForm={productForm}
-              updateProductName={updateProductName}
-              updateDescription={updateDescription}
-              updatePrice={updatePrice}
-              updateStock={updateStock}
-              validatePriceValue={validatePriceValue}
-              validateStockValue={validateStockValue}
-              addDiscountPolicy={addDiscountPolicy}
-              removeDiscountPolicy={removeDiscountPolicy}
-              updateDiscountQuantity={updateDiscountQuantity}
-              updateDiscountRate={updateDiscountRate}
-              handleCancelProductForm={handleCancelProductForm}
-              handleProductSubmit={handleProductSubmit}
-            />
-          )}
+          {showProductForm && <ProductForm onSubmit={handleProductSubmit} />}
         </section>
       ) : (
         <section className="bg-white rounded-lg border border-gray-200">
