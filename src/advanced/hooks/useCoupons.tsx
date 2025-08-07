@@ -8,9 +8,10 @@
 // - addCoupon: 새 쿠폰 추가
 // - removeCoupon: 쿠폰 삭제
 
-import { useCallback, useState } from 'react';
+import { useAtom } from 'jotai';
+import { useCallback } from 'react';
 import type { CartItem, Coupon } from '../../types';
-import { couponsAtom } from '../atoms/coupon';
+import { couponsAtom, selectedCouponAtom } from '../atoms/coupon';
 import { initialCoupons } from '../constants';
 import * as cartModel from '../models/cart';
 import * as couponModel from '../models/coupon';
@@ -33,7 +34,7 @@ export function useCoupons(): UseCouponsReturn {
     initialValue: initialCoupons,
     atom: couponsAtom,
   });
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+  const [selectedCoupon, setSelectedCoupon] = useAtom(selectedCouponAtom);
 
   return {
     coupons,
