@@ -7,7 +7,7 @@ import {
   formatPrice,
 } from "../shared/libs/price";
 
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { CartItem } from "../entities/cart/ui/CartItem";
 import CartBagIcon from "../assets/icons/CartBagIcon.svg?react";
 import { NotificationVariant } from "../entities/notification/types";
@@ -25,8 +25,6 @@ interface CartPageProps {
   searchValue: string;
   cart: CartItemType[];
   setCart: (cart: CartItemType[]) => void;
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
 }
 
 export function CartPage({
@@ -35,9 +33,8 @@ export function CartPage({
   searchValue,
   cart,
   setCart,
-  selectedCoupon,
-  setSelectedCoupon,
 }: CartPageProps) {
+  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const { addNotification } = useGlobalNotification();
   const { coupons, applyCoupon: applyCouponLogic } = useCoupon({
     onApplyCouponError: (_, reason) => {

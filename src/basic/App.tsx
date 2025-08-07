@@ -1,4 +1,3 @@
-import { Coupon } from "../types";
 import Header from "./app/components/Header";
 
 import { useState } from "react";
@@ -17,7 +16,6 @@ const App = () => {
   const { filteredProducts, searchValue, searchTerm, onSearchChange } =
     useProductSearch(products);
 
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const { notifications, removeNotification } = useNotification();
 
@@ -44,8 +42,6 @@ const App = () => {
             searchValue={searchTerm}
             cart={cart}
             setCart={setCart}
-            selectedCoupon={selectedCoupon}
-            setSelectedCoupon={setSelectedCoupon}
           />
         )}
       </main>
