@@ -1,29 +1,40 @@
-import { Coupon } from '../../../types.ts';
-import { useCart } from '../../hooks/useCart.ts';
+import { CartItem, Coupon } from '../../../types.ts';
 import { ProductWithUI } from '../../constants';
+import React from 'react';
 
 type CartProps = {
+  // CartProps
+  cart: CartItem[];
   coupons: Coupon[];
+  selectedCoupon: Coupon | null;
+  applyCoupon: (coupon: Coupon) => void;
+  removeItemFromCart: (productId: string) => void;
+  updateCartItemQuantity: (productId: string, newQuantity: number) => void;
+  setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>;
+  calculateItemTotal: (item: CartItem) => number;
   totals: {
     totalBeforeDiscount: number;
     totalAfterDiscount: number;
   };
   completeOrder: () => void;
+  //searchBar
+  debouncedSearchTerm: string;
   products: ProductWithUI[];
   addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
 };
 
-export const Cart = ({ coupons, totals, completeOrder, addNotification, products }: CartProps) => {
-  const {
-    cart,
-    selectedCoupon,
-    setSelectedCoupon,
-    removeItemFromCart,
-    updateCartItemQuantity,
-    calculateItemTotal,
-    applyCoupon,
-  } = useCart(products, addNotification);
-
+export const Cart = ({
+  cart,
+  coupons,
+  selectedCoupon,
+  applyCoupon,
+  removeItemFromCart,
+  updateCartItemQuantity,
+  setSelectedCoupon,
+  calculateItemTotal,
+  totals,
+  completeOrder,
+}: CartProps) => {
   return (
     <div className="lg:col-span-1">
       <div className="sticky top-24 space-y-4">

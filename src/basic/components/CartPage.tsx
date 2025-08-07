@@ -20,6 +20,8 @@ import { Cart } from './cart/Cart.tsx';
 import { ProductList } from './cart/ProductList.tsx';
 import { CartItem, Coupon } from '../../types.ts';
 import { ProductWithUI } from '../constants';
+import React from 'react';
+import { getRemainingStock } from '../models/cart.ts';
 
 type CartPageProps = {
   // ProductListPros
@@ -28,6 +30,13 @@ type CartPageProps = {
   // CartProps
   cart: CartItem[];
   coupons: Coupon[];
+  selectedCoupon: Coupon | null;
+  applyCoupon: (coupon: Coupon) => void;
+  addItemToCart: (product: ProductWithUI) => void;
+  removeItemFromCart: (productId: string) => void;
+  updateCartItemQuantity: (productId: string, newQuantity: number) => void;
+  setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>;
+  calculateItemTotal: (item: CartItem) => number;
   totals: {
     totalBeforeDiscount: number;
     totalAfterDiscount: number;
@@ -43,6 +52,13 @@ export function CartPage({
   filteredProducts,
   formatPrice,
   cart,
+  selectedCoupon,
+  setSelectedCoupon,
+  applyCoupon,
+  addItemToCart,
+  removeItemFromCart,
+  updateCartItemQuantity,
+  calculateItemTotal,
   coupons,
   totals,
   completeOrder,
@@ -70,16 +86,26 @@ export function CartPage({
                 filteredProducts={filteredProducts}
                 formatPrice={formatPrice}
                 addNotification={addNotification}
+                addItemToCart={addItemToCart}
+                getRemainingStock={getRemainingStock}
               />
             )}
           </section>
         </div>
         <Cart
+          cart={cart}
           coupons={coupons}
-          products={products}
+          selectedCoupon={selectedCoupon}
+          applyCoupon={applyCoupon}
+          removeItemFromCart={removeItemFromCart}
+          updateCartItemQuantity={updateCartItemQuantity}
+          setSelectedCoupon={setSelectedCoupon}
+          calculateItemTotal={calculateItemTotal}
           totals={totals}
           completeOrder={completeOrder}
           addNotification={addNotification}
+          debouncedSearchTerm={debouncedSearchTerm}
+          products={products}
         />
       </div>
     </>

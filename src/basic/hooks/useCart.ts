@@ -57,12 +57,12 @@ export function useCart(
 
   const addItemToCart = useCallback(
     (product: Product) => {
-      const remainingStock = cartModel.getRemainingStock(product, cart);
-      if (remainingStock <= 0) {
-        addNotification('재고가 부족합니다!', 'error');
-        return;
-      }
       setCart((prevCart) => {
+        const remainingStock = cartModel.getRemainingStock(product, prevCart);
+        if (remainingStock <= 0) {
+          addNotification('재고가 부족합니다!', 'error');
+          return prevCart;
+        }
         const existingItem = prevCart.find((item) => item.product.id === product.id);
 
         if (existingItem) {
@@ -73,12 +73,11 @@ export function useCart(
           }
           return cartModel.updateCartItemQuantity(prevCart, product.id, newQuantity);
         }
+        addNotification('장바구니에 담았습니다', 'success');
         return cartModel.addItemToCart(product, prevCart);
       });
-
-      addNotification('장바구니에 담았습니다', 'success');
     },
-    [cart, addNotification]
+    [addNotification]
   );
 
   const removeItemFromCart = useCallback((productId: string) => {
@@ -142,6 +141,7 @@ export function useCart(
   );
   return {
     cart,
+    setCart,
     selectedCoupon,
     setSelectedCoupon,
     addItemToCart,

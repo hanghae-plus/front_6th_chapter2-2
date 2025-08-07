@@ -1,18 +1,22 @@
 import { ProductWithUI } from '../../constants';
-import { CartItem } from '../../../types.ts';
-import { getRemainingStock } from '../../models/cart.ts';
-import { useCart } from '../../hooks/useCart.ts';
+import { CartItem, Product } from '../../../types.ts';
 
 type ProductListProps = {
   filteredProducts: ProductWithUI[];
   formatPrice: (price: number, productId?: string) => string;
   cart: CartItem[];
   addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
+  addItemToCart: (product: ProductWithUI) => void;
+  getRemainingStock: (product: Product, cart: CartItem[]) => number;
 };
 
-export const ProductList = ({ filteredProducts, formatPrice, cart, addNotification }: ProductListProps) => {
-  // 임시 적용
-  const { addItemToCart } = useCart(filteredProducts, addNotification)
+export const ProductList = ({
+  filteredProducts,
+  formatPrice,
+  cart,
+  addItemToCart,
+  getRemainingStock,
+}: ProductListProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {filteredProducts.map((product) => {

@@ -1,11 +1,12 @@
 import { useState, useCallback, useEffect } from 'react';
-import { CartItem, Coupon, Product, Notification } from '../types';
+import { Coupon, Notification } from '../types';
 import { initialProducts, initialCoupons, ProductWithUI } from './constants';
 import { Header } from './components/ui/Header.tsx';
 import { Notifications } from './components/ui/Notifications.tsx';
 import { AdminPage } from './components/AdminPage.tsx';
 import { CartPage } from './components/CartPage.tsx';
 import { calculateCartTotal } from './models/cart.ts';
+import { useCart } from './hooks/useCart.ts';
 
 const App = () => {
   const [products, setProducts] = useState<ProductWithUI[]>(() => {
@@ -20,18 +21,6 @@ const App = () => {
     return initialProducts;
   });
 
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem('cart');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return [];
-      }
-    }
-    return [];
-  });
-
   const [coupons, setCoupons] = useState<Coupon[]>(() => {
     const saved = localStorage.getItem('coupons');
     if (saved) {
@@ -44,7 +33,6 @@ const App = () => {
     return initialCoupons;
   });
 
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showCouponForm, setShowCouponForm] = useState(false);
@@ -85,13 +73,6 @@ const App = () => {
     return `₩${price.toLocaleString()}`;
   };
 
-  const getRemainingStock = (product: Product): number => {
-    const cartItem = cart.find((item) => item.product.id === product.id);
-    const remaining = product.stock - (cartItem?.quantity || 0);
-
-    return remaining;
-  };
-
   const addNotification = useCallback((message: string, type: 'error' | 'success' | 'warning' = 'success') => {
     const id = Date.now().toString();
     setNotifications((prev) => [...prev, { id, message, type }]);
@@ -100,6 +81,18 @@ const App = () => {
       setNotifications((prev) => prev.filter((n) => n.id !== id));
     }, 3000);
   }, []);
+
+  const {
+    cart,
+    selectedCoupon,
+    setSelectedCoupon,
+    addItemToCart,
+    removeItemFromCart,
+    updateCartItemQuantity,
+    calculateItemTotal,
+    applyCoupon,
+    getRemainingStock,
+  } = useCart(products, addNotification);
 
   const [totalItemCount, setTotalItemCount] = useState(0);
 
@@ -126,7 +119,7 @@ const App = () => {
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
     addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
-    setCart([]);
+    //setCart([]);
     setSelectedCoupon(null);
   }, [addNotification]);
 
@@ -232,6 +225,8 @@ const App = () => {
       )
     : products;
 
+
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Notifications notifications={notifications} setNotifications={setNotifications} />
@@ -273,6 +268,13 @@ const App = () => {
           <CartPage
             cart={cart}
             products={products}
+            selectedCoupon={selectedCoupon}
+            setSelectedCoupon={setSelectedCoupon}
+            addItemToCart={addItemToCart}
+            removeItemFromCart={removeItemFromCart}
+            updateCartItemQuantity={updateCartItemQuantity}
+            calculateItemTotal={calculateItemTotal}
+            applyCoupon={applyCoupon}
             filteredProducts={filteredProducts}
             formatPrice={formatPrice}
             coupons={coupons}
