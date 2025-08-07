@@ -9,6 +9,7 @@ import {
   calculateCartTotal,
   calculateItemTotal,
 } from "../basic/models/cart";
+import { canApplyCoupon, validateCoupon } from "../basic/models/discount";
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -187,18 +188,16 @@ const App = () => {
         selectedCoupon
       ).totalAfterDiscount;
 
-      if (currentTotal < 10000 && coupon.discountType === "percentage") {
-        addNotification(
-          "percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.",
-          "error"
-        );
+      const validation = canApplyCoupon(coupon, currentTotal);
+      if (!validation.canApply) {
+        addNotification(validation.reason!, "error");
         return;
       }
 
       setSelectedCoupon(coupon);
       addNotification("쿠폰이 적용되었습니다.", "success");
     },
-    [addNotification, calculateCartTotal]
+    [addNotification, cart, selectedCoupon]
   );
 
   const completeOrder = useCallback(() => {
@@ -245,9 +244,9 @@ const App = () => {
 
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {
-      const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
-      if (existingCoupon) {
-        addNotification("이미 존재하는 쿠폰 코드입니다.", "error");
+      const validation = validateCoupon(newCoupon, coupons);
+      if (!validation.isValid) {
+        addNotification(validation.reason!, "error");
         return;
       }
       setCoupons((prev) => [...prev, newCoupon]);

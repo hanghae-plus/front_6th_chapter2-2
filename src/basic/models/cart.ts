@@ -1,4 +1,5 @@
 import { Product, CartItem, Coupon } from "../../types";
+import { applyCouponToAmount } from "./discount";
 
 type AddToCartResult =
   | { success: true; cart: CartItem[] }
@@ -130,18 +131,8 @@ export const calculateCartTotal = (cart: CartItem[], coupon: Coupon | null) => {
     totalAfterDiscount += calculateItemTotal(item);
   });
 
-  if (coupon) {
-    if (coupon.discountType === "amount") {
-      totalAfterDiscount = Math.max(
-        0,
-        totalAfterDiscount - coupon.discountValue
-      );
-    } else {
-      totalAfterDiscount = Math.round(
-        totalAfterDiscount * (1 - coupon.discountValue / 100)
-      );
-    }
-  }
+  // 쿠폰 할인 적용
+  totalAfterDiscount = applyCouponToAmount(totalAfterDiscount, coupon);
 
   return {
     totalBeforeDiscount: Math.round(totalBeforeDiscount),
