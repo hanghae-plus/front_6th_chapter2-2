@@ -17,6 +17,7 @@
 // - Cart: 장바구니 표시 및 결제
 
 import type { CartItem, Coupon, ProductWithUI } from '../../../types';
+import { useCart } from '../../hooks/useCart';
 import * as cartModel from '../../models/cart';
 import * as productModel from '../../models/product';
 import { CartItemInfo } from './cart/CartItem';
@@ -31,7 +32,6 @@ import { TotalCount } from './products/TotalCount';
 interface Props {
   searchTerm: string;
   products: ProductWithUI[];
-  cart: CartItem[];
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
   applyCoupon: (params: { cart: CartItem[]; coupon: Coupon }) => void;
@@ -42,13 +42,13 @@ interface Props {
 export function CartPage({
   searchTerm,
   products,
-  cart,
   coupons,
   selectedCoupon,
   applyCoupon,
   clearSelectedCoupon,
   completeOrder,
 }: Props) {
+  const cart = useCart();
   const filteredProducts = productModel.searchProducts({
     products,
     searchTerm,
@@ -65,9 +65,7 @@ export function CartPage({
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredProducts.map((product) => {
-                return (
-                  <ProductCard key={product.id} cart={cart} product={product} />
-                );
+                return <ProductCard key={product.id} product={product} />;
               })}
             </div>
           )}

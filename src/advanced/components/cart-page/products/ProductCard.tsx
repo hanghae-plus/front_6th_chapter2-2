@@ -1,15 +1,15 @@
-import type { CartItem, ProductWithUI } from '../../../../types';
-import { useAddToCart } from '../../../hooks/useCart';
+import type { ProductWithUI } from '../../../../types';
+import { useAddToCart, useCart } from '../../../hooks/useCart';
 import * as discountModel from '../../../models/discount';
 import * as productModel from '../../../models/product';
 import { formatNumberKRW, formatNumberRate } from '../../../utils/formatters';
 
 interface Props {
-  cart: CartItem[];
   product: ProductWithUI;
 }
 
-export function ProductCard({ cart, product }: Props) {
+export function ProductCard({ product }: Props) {
+  const cart = useCart();
   const addToCart = useAddToCart();
   const { name, description, discounts, isRecommended } = product;
   const maxDiscountRate = discountModel.getMaxDiscountRate({ discounts });

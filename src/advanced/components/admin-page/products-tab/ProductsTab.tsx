@@ -1,4 +1,4 @@
-import type { CartItem, ProductWithUI } from '../../../../types';
+import type { ProductWithUI } from '../../../../types';
 import { TabTitle } from '../ui/TabTitle';
 import { useProductsForm } from './hooks/useProductsForm';
 import { ProductsForm } from './ProductsForm';
@@ -7,7 +7,6 @@ import { Button } from './ui/Button';
 
 interface Props {
   products: ProductWithUI[];
-  cart: CartItem[];
   addProduct: (params: { newProduct: Omit<ProductWithUI, 'id'> }) => void;
   deleteProduct: (params: { productId: string }) => void;
   updateProduct: (params: {
@@ -18,7 +17,6 @@ interface Props {
 
 export function ProductsTab({
   products,
-  cart,
   addProduct,
   deleteProduct,
   updateProduct,
@@ -57,7 +55,6 @@ export function ProductsTab({
 
       <ProductsTable
         products={products}
-        cart={cart}
         startEditProduct={editProductForm}
         deleteProduct={deleteProduct}
       />

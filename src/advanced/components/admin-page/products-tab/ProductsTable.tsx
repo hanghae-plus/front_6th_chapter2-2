@@ -1,21 +1,22 @@
-import type { CartItem, ProductWithUI } from '../../../../types';
+import type { ProductWithUI } from '../../../../types';
+import { useCart } from '../../../hooks/useCart';
 import * as productModel from '../../../models/product';
 import { formatNumberWon } from '../../../utils/formatters';
 import { Table } from '../../ui/Table';
 
 interface Props {
   products: ProductWithUI[];
-  cart: CartItem[];
   startEditProduct: (params: { product: ProductWithUI }) => void;
   deleteProduct: (params: { productId: string }) => void;
 }
 
 export function ProductsTable({
   products,
-  cart,
   startEditProduct,
   deleteProduct,
 }: Props) {
+  const cart = useCart();
+
   return (
     <Table
       datas={products}

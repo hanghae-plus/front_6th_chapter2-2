@@ -4,7 +4,6 @@ import { AdminPageHeader } from './components/admin-page/AdminPageHeader';
 import { CartPage } from './components/cart-page/CartPage';
 import { CartPageHeader } from './components/cart-page/CartPageHeader';
 import { Notifications } from './components/Notifications';
-import { useCart } from './hooks/useCart';
 import { useCoupons } from './hooks/useCoupons';
 import { useOrder } from './hooks/useOrder';
 import { useProducts } from './hooks/useProducts';
@@ -12,7 +11,6 @@ import { useDebounce } from './utils/hooks/useDebounce';
 
 const App = () => {
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
-  const cart = useCart();
   const {
     coupons,
     selectedCoupon,
@@ -46,7 +44,6 @@ const App = () => {
       <main className="max-w-7xl mx-auto px-4 py-8">
         {isAdmin ? (
           <AdminPage
-            cart={cart}
             products={products}
             addProduct={addProduct}
             deleteProduct={deleteProduct}
@@ -59,7 +56,6 @@ const App = () => {
           <CartPage
             searchTerm={debouncedSearchTerm}
             products={products}
-            cart={cart}
             coupons={coupons}
             selectedCoupon={selectedCoupon}
             applyCoupon={applyCoupon}
