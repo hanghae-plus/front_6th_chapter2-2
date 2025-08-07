@@ -1,18 +1,23 @@
+import { useAtom } from 'jotai';
 import { hasTotalDiscount, calculateTotalDiscountAmount } from '../../models/discount';
 import Button from '../ui/Button';
 import Card from '../ui/Card';
+import { cartTotalAtom } from '../../store/atoms';
+import { completeOrderAtom } from '../../store/actions';
 
 interface CartTotal {
   totalBeforeDiscount: number;
   totalAfterDiscount: number;
 }
 
-interface PaymentSummaryProps {
-  totals: CartTotal;
-  handleCompleteOrder: () => void;
-}
+const PaymentSummary = () => {
+  const [totals] = useAtom(cartTotalAtom);
+  const [, completeOrder] = useAtom(completeOrderAtom);
 
-const PaymentSummary = ({ totals, handleCompleteOrder }: PaymentSummaryProps) => {
+  const handleCompleteOrder = () => {
+    completeOrder();
+  };
+
   return (
     <Card
       padding='sm'

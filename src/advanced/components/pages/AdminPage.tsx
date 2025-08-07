@@ -1,59 +1,10 @@
 import { useState } from 'react';
 
-import {
-  ProductWithUI,
-  CartItem,
-  Coupon,
-  ProductForm as ProductFormType,
-  CouponForm as CouponFormType,
-} from '../../../types';
 import AdminTabs from '../admin/AdminTabs';
 import CouponManagement from '../admin/CouponManagement';
 import ProductManagement from '../admin/ProductManagement';
 
-interface AdminPageProps {
-  products: ProductWithUI[];
-  cart: CartItem[];
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
-  addProduct: (
-    product: ProductFormType,
-    onNotification?: (message: string, type?: 'success' | 'error' | 'warning') => void
-  ) => void;
-  updateProduct: (
-    id: string,
-    product: ProductFormType,
-    onNotification?: (message: string, type?: 'success' | 'error' | 'warning') => void
-  ) => void;
-  deleteProduct: (
-    id: string,
-    onNotification?: (message: string, type?: 'success' | 'error' | 'warning') => void
-  ) => void;
-  addCoupon: (
-    coupon: CouponFormType,
-    onNotification?: (message: string, type?: 'success' | 'error' | 'warning') => void
-  ) => void;
-  removeCoupon: (
-    code: string,
-    onNotification?: (message: string, type?: 'success' | 'error' | 'warning') => void
-  ) => void;
-  addNotification: (message: string, type?: 'success' | 'error' | 'warning') => void;
-}
-
-const AdminPage = ({
-  products,
-  cart,
-  coupons,
-  selectedCoupon,
-  setSelectedCoupon,
-  addProduct,
-  updateProduct,
-  deleteProduct,
-  addCoupon,
-  removeCoupon,
-  addNotification,
-}: AdminPageProps) => {
+const AdminPage = () => {
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
 
   return (
@@ -64,25 +15,7 @@ const AdminPage = ({
       </div>
       <AdminTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
-      {activeTab === 'products' ? (
-        <ProductManagement
-          products={products}
-          cart={cart}
-          addProduct={addProduct}
-          updateProduct={updateProduct}
-          deleteProduct={deleteProduct}
-          addNotification={addNotification}
-        />
-      ) : (
-        <CouponManagement
-          coupons={coupons}
-          selectedCoupon={selectedCoupon}
-          setSelectedCoupon={setSelectedCoupon}
-          addCoupon={addCoupon}
-          removeCoupon={removeCoupon}
-          addNotification={addNotification}
-        />
-      )}
+      {activeTab === 'products' ? <ProductManagement /> : <CouponManagement />}
     </div>
   );
 };

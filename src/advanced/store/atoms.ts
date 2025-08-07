@@ -12,7 +12,11 @@ export const cartAtom = atomWithStorage<CartItem[]>('cart', []);
 
 // 일반 메모리 Atom들 (기존 useState 대체)
 export const notificationsAtom = atomWithStorage<Notification[]>('notifications', []);
-export const isAdminAtom = atomWithStorage<boolean>('isAdmin', false);
+export const isAdminAtom = atomWithStorage<boolean>('isAdmin', false, {
+  getItem: () => false, // 새로고침 시 항상 false 반환
+  setItem: () => {}, // localStorage에 저장하지 않음
+  removeItem: () => {}, // localStorage에서 제거하지 않음
+});
 export const selectedCouponAtom = atom<Coupon | null>(null);
 export const searchTermAtom = atomWithStorage<string>('searchTerm', '');
 

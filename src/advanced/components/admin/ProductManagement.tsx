@@ -1,40 +1,23 @@
 import { useState } from 'react';
+import { useAtom } from 'jotai';
 
 import ProductForm from './ProductForm';
-import { ProductWithUI, ProductForm as ProductFormType, CartItem } from '../../../types';
+import { ProductWithUI, ProductForm as ProductFormType } from '../../../types';
 import { defaultProductForm } from '../../constants';
 import { formatPrice } from '../../utils/formatters';
 import Badge from '../ui/Badge';
 import Button from '../ui/Button';
 import Card from '../ui/Card';
+import { productsAtom, cartAtom } from '../../store/atoms';
+import { addProductAtom, updateProductAtom, deleteProductAtom } from '../../store/actions';
 
-interface ProductManagementProps {
-  products: ProductWithUI[];
-  cart: CartItem[];
-  addProduct: (
-    product: ProductFormType,
-    onNotification?: (message: string, type?: 'success' | 'error' | 'warning') => void
-  ) => void;
-  updateProduct: (
-    id: string,
-    product: ProductFormType,
-    onNotification?: (message: string, type?: 'success' | 'error' | 'warning') => void
-  ) => void;
-  deleteProduct: (
-    id: string,
-    onNotification?: (message: string, type?: 'success' | 'error' | 'warning') => void
-  ) => void;
-  addNotification: (message: string, type?: 'success' | 'error' | 'warning') => void;
-}
+const ProductManagement = () => {
+  const [products] = useAtom(productsAtom);
+  const [cart] = useAtom(cartAtom);
+  const [, addProduct] = useAtom(addProductAtom);
+  const [, updateProduct] = useAtom(updateProductAtom);
+  const [, deleteProduct] = useAtom(deleteProductAtom);
 
-const ProductManagement = ({
-  products,
-  cart,
-  addProduct,
-  updateProduct,
-  deleteProduct,
-  addNotification,
-}: ProductManagementProps) => {
   const [showProductForm, setShowProductForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [productForm, setProductForm] = useState<ProductFormType>(defaultProductForm);
@@ -42,10 +25,21 @@ const ProductManagement = ({
   const handleProductSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (editingProduct && editingProduct !== 'new') {
-      updateProduct(editingProduct, productForm, addNotification);
+      updateProduct({
+        productId: editingProduct,
+        updates: productForm,
+        onNotification: () => {
+          // 알림은 이미 updateProductAtom 내부에서 처리됨
+        },
+      });
       setEditingProduct(null);
     } else {
-      addProduct(productForm, addNotification);
+      addProduct({
+        newProduct: productForm,
+        onNotification: () => {
+          // 알림은 이미 addProductAtom 내부에서 처리됨
+        },
+      });
     }
     setProductForm(defaultProductForm);
     setShowProductForm(false);
@@ -61,6 +55,15 @@ const ProductManagement = ({
       discounts: product.discounts,
     });
     setShowProductForm(true);
+  };
+
+  const handleDeleteProduct = (productId: string) => {
+    deleteProduct({
+      productId,
+      onNotification: () => {
+        // 알림은 이미 deleteProductAtom 내부에서 처리됨
+      },
+    });
   };
 
   return (
@@ -142,7 +145,7 @@ const ProductManagement = ({
                     수정
                   </Button>
                   <Button
-                    onClick={() => deleteProduct(product.id, addNotification)}
+                    onClick={() => handleDeleteProduct(product.id)}
                     className='text-red-600 hover:text-red-900'
                   >
                     삭제
@@ -161,7 +164,6 @@ const ProductManagement = ({
         setShowProductForm={setShowProductForm}
         setEditingProduct={setEditingProduct}
         handleProductSubmit={handleProductSubmit}
-        addNotification={addNotification}
       />
     </Card>
   );

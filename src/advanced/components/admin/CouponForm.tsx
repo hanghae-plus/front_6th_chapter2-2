@@ -1,3 +1,4 @@
+import { useAtom } from 'jotai';
 import { CouponForm as CouponFormType } from '../../../types';
 import {
   validateCouponDiscountValue,
@@ -7,6 +8,7 @@ import {
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 import Select from '../ui/Selector';
+import { addNotificationAtom } from '../../store/actions';
 
 interface CouponFormProps {
   couponForm: CouponFormType;
@@ -14,7 +16,6 @@ interface CouponFormProps {
   showCouponForm: boolean;
   setShowCouponForm: (show: boolean) => void;
   handleCouponSubmit: (e: React.FormEvent) => void;
-  addNotification: (message: string, type?: 'success' | 'error' | 'warning') => void;
 }
 
 const CouponForm = ({
@@ -23,8 +24,9 @@ const CouponForm = ({
   showCouponForm,
   setShowCouponForm,
   handleCouponSubmit,
-  addNotification,
 }: CouponFormProps) => {
+  const [, addNotification] = useAtom(addNotificationAtom);
+
   if (!showCouponForm) return null;
 
   return (
@@ -91,7 +93,7 @@ const CouponForm = ({
 
                 if (!validation.isValid) {
                   if (validation.errorMessage) {
-                    addNotification(validation.errorMessage, 'error');
+                    addNotification({ message: validation.errorMessage, type: 'error' });
                   }
                   setCouponForm({
                     ...couponForm,

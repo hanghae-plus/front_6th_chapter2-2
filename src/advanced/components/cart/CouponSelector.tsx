@@ -1,21 +1,25 @@
+import { useAtom } from 'jotai';
 import { Coupon } from '../../../types';
 import Button from '../ui/Button';
 import Card from '../ui/Card';
 import Select from '../ui/Selector';
+import { couponsAtom, selectedCouponAtom } from '../../store/atoms';
+import { applyCouponAtom } from '../../store/actions';
 
-interface CouponSelectorProps {
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
-  handleApplyCoupon: (coupon: Coupon) => void;
-}
+const CouponSelector = () => {
+  const [coupons] = useAtom(couponsAtom);
+  const [selectedCoupon, setSelectedCoupon] = useAtom(selectedCouponAtom);
+  const [, applyCoupon] = useAtom(applyCouponAtom);
 
-const CouponSelector = ({
-  coupons,
-  selectedCoupon,
-  setSelectedCoupon,
-  handleApplyCoupon,
-}: CouponSelectorProps) => {
+  const handleApplyCoupon = (coupon: Coupon) => {
+    applyCoupon({
+      coupon,
+      onNotification: () => {
+        // 알림은 이미 applyCouponAtom 내부에서 처리됨
+      },
+    });
+  };
+
   return (
     <Card
       padding='sm'

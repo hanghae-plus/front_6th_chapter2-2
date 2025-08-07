@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useAtom } from 'jotai';
 
 import { Coupon, CouponForm as CouponFormType } from '../../../types';
 import { defaultCouponForm } from '../../constants';
@@ -8,38 +9,40 @@ import CouponForm from './CouponForm';
 import Badge from '../ui/Badge';
 import Button from '../ui/Button';
 import Card from '../ui/Card';
+import { couponsAtom, selectedCouponAtom } from '../../store/atoms';
+import { addCouponAtom, removeCouponAtom } from '../../store/actions';
 
-interface CouponManagementProps {
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
-  addCoupon: (
-    coupon: CouponFormType,
-    onNotification?: (message: string, type?: 'success' | 'error' | 'warning') => void
-  ) => void;
-  removeCoupon: (
-    code: string,
-    onNotification?: (message: string, type?: 'success' | 'error' | 'warning') => void
-  ) => void;
-  addNotification: (message: string, type?: 'success' | 'error' | 'warning') => void;
-}
+const CouponManagement = () => {
+  const [coupons] = useAtom(couponsAtom);
+  const [selectedCoupon, setSelectedCoupon] = useAtom(selectedCouponAtom);
+  const [, addCoupon] = useAtom(addCouponAtom);
+  const [, removeCoupon] = useAtom(removeCouponAtom);
 
-const CouponManagement = ({
-  coupons,
-  selectedCoupon,
-  setSelectedCoupon,
-  addCoupon,
-  removeCoupon,
-  addNotification,
-}: CouponManagementProps) => {
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [couponForm, setCouponForm] = useState<CouponFormType>(defaultCouponForm);
 
   const handleCouponSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    addCoupon(couponForm, addNotification);
+    addCoupon({
+      newCoupon: couponForm,
+      onNotification: () => {
+        // 알림은 이미 addCouponAtom 내부에서 처리됨
+      },
+    });
     setCouponForm(defaultCouponForm);
     setShowCouponForm(false);
+  };
+
+  const handleRemoveCoupon = (couponCode: string) => {
+    removeCoupon({
+      couponCode,
+      onNotification: () => {
+        // 알림은 이미 removeCouponAtom 내부에서 처리됨
+      },
+    });
+    if (selectedCoupon?.code === couponCode) {
+      setSelectedCoupon(null);
+    }
   };
 
   return (
@@ -71,12 +74,7 @@ const CouponManagement = ({
                   </div>
                 </div>
                 <Button
-                  onClick={() => {
-                    removeCoupon(coupon.code, addNotification);
-                    if (selectedCoupon?.code === coupon.code) {
-                      setSelectedCoupon(null);
-                    }
-                  }}
+                  onClick={() => handleRemoveCoupon(coupon.code)}
                   hasTransition
                   className='text-gray-400 hover:text-red-600'
                 >
@@ -103,7 +101,6 @@ const CouponManagement = ({
           showCouponForm={showCouponForm}
           setShowCouponForm={setShowCouponForm}
           handleCouponSubmit={handleCouponSubmit}
-          addNotification={addNotification}
         />
       </div>
     </Card>

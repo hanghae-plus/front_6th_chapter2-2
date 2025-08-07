@@ -3,11 +3,15 @@ import { CartItem } from '../../../types';
 import { CartIcon } from '../icons';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
-import { searchTermAtom, isAdminAtom, cartAtom, totalItemCountAtom } from '../../store/atoms';
+import { searchTermAtom, cartAtom, totalItemCountAtom } from '../../store/atoms';
 
-const Header = () => {
+interface HeaderProps {
+  isAdmin: boolean;
+  setIsAdmin: (isAdmin: boolean) => void;
+}
+
+const Header = ({ isAdmin, setIsAdmin }: HeaderProps) => {
   const [searchTerm, setSearchTerm] = useAtom(searchTermAtom);
-  const [isAdmin, setIsAdmin] = useAtom(isAdminAtom);
   const [cart] = useAtom(cartAtom);
   const [totalItemCount] = useAtom(totalItemCountAtom);
 
