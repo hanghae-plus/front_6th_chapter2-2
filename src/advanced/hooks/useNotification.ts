@@ -15,8 +15,8 @@ export const useNotification = () => {
 
   const addNotification = useCallback(
     (message: string, type: "error" | "success" | "warning" = "success") => {
-      const id = `notification_${generateId()}`;
-      setNotifications((prev) => [...prev, { id, message, type }]);
+      const id = generateId();
+      setNotifications((prev) => [...prev, { id: `notification_${id}`, message, type }]);
 
       setTimeout(() => {
         setNotifications((prev) => prev.filter((n) => n.id !== id));
