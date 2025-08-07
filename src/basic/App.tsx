@@ -19,6 +19,14 @@ import {
   getMaxDiscountRate,
   ProductWithUI,
 } from "../basic/models/product";
+import {
+  addCoupon as _addCoupon,
+  deleteCoupon as _deleteCoupon,
+  generateOrderNumber,
+  validateCouponDiscountValue,
+  getCouponDisplayText,
+  checkAndClearSelectedCoupon,
+} from "../basic/models/coupon";
 
 interface Notification {
   id: string;
@@ -202,7 +210,7 @@ const App = () => {
   );
 
   const completeOrder = useCallback(() => {
-    const orderNumber = `ORD-${Date.now()}`;
+    const orderNumber = generateOrderNumber();
     addNotification(
       `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
       "success"
@@ -242,7 +250,7 @@ const App = () => {
         addNotification(validation.reason!, "error");
         return;
       }
-      setCoupons((prev) => [...prev, newCoupon]);
+      setCoupons((prev) => _addCoupon(prev, newCoupon));
       addNotification("쿠폰이 추가되었습니다.", "success");
     },
     [coupons, addNotification]
@@ -250,13 +258,13 @@ const App = () => {
 
   const deleteCoupon = useCallback(
     (couponCode: string) => {
-      setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
-      if (selectedCoupon?.code === couponCode) {
-        setSelectedCoupon(null);
-      }
+      setCoupons((prev) => _deleteCoupon(prev, couponCode));
+      setSelectedCoupon((prev) =>
+        checkAndClearSelectedCoupon(prev, couponCode)
+      );
       addNotification("쿠폰이 삭제되었습니다.", "success");
     },
-    [selectedCoupon, addNotification]
+    [addNotification]
   );
 
   const handleProductSubmit = (e: React.FormEvent) => {
