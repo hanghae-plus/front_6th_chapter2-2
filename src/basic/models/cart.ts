@@ -1,6 +1,7 @@
 import { CartItem, Coupon, Product, Discount } from '../../types';
 import { ProductWithUI } from '../shared/types';
 import { DISCOUNT } from '../constants/discount';
+import { MESSAGES } from '../constants/message';
 
 /**
  * 수량 기반 할인 계산
@@ -189,7 +190,7 @@ export const processQuantityUpdate = (
   availableStock: number,
 ): QuantityUpdateResult => {
   if (!Number.isInteger(newQuantity) || newQuantity < 0) {
-    return { success: false, error: '수량은 0 이상의 정수여야 합니다.', errorType: 'INVALID_QUANTITY' };
+    return { success: false, error: MESSAGES.PRODUCT.INVALID_QUANTITY, errorType: 'INVALID_QUANTITY' };
   }
 
   if (newQuantity === 0) {
@@ -197,7 +198,7 @@ export const processQuantityUpdate = (
   }
 
   if (newQuantity > availableStock) {
-    return { success: false, error: `재고는 ${availableStock}개까지만 있습니다.`, errorType: 'INSUFFICIENT_STOCK' };
+    return { success: false, error: MESSAGES.PRODUCT.MAX_STOCK(availableStock), errorType: 'INSUFFICIENT_STOCK' };
   }
 
   return { success: true, updatedCart: updateCartItemQuantity(cart, productId, newQuantity) };

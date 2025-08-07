@@ -17,6 +17,7 @@ export const MESSAGES = {
     MAX_STOCK: (maxStock: number) => `재고는 ${maxStock}개까지만 있습니다.`,
     ADDED_TO_CART: '장바구니에 담았습니다',
     LOW_STOCK: (remainingStock: number) => `품절임박! ${remainingStock}개 남음`,
+    INVALID_QUANTITY: '수량은 0 이상의 정수여야 합니다.',
   },
 
   ORDER: {
