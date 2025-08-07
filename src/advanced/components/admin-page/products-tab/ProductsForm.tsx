@@ -1,5 +1,6 @@
 import type { FormEvent } from 'react';
 import { Fragment } from 'react/jsx-runtime';
+import { CloseIcon } from '../../icons';
 import { Label } from '../ui/Label';
 import { FormTitle } from './ui/FormTitle';
 import { InputWithLabel } from './ui/InputWithLabel';
@@ -24,16 +25,20 @@ interface Props {
   handlePriceBlur: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleStockChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleStockBlur: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleDiscountQuantityChange: (
-    index: number
-  ) => (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleDiscountRateChange: (
-    index: number
-  ) => (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleRemoveDiscount: (index: number) => () => void;
+  handleDiscountQuantityChange: ({
+    index,
+  }: {
+    index: number;
+  }) => (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleDiscountRateChange: ({
+    index,
+  }: {
+    index: number;
+  }) => (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleRemoveDiscount: ({ index }: { index: number }) => () => void;
   handleAddDiscount: () => void;
-  getDisplayValue: (value: number) => string;
-  getDiscountRateDisplay: (rate: number) => number;
+  getDisplayValue: ({ value }: { value: number }) => string;
+  getDiscountRateDisplay: ({ rate }: { rate: number }) => number;
 }
 
 export function ProductsForm({
@@ -142,20 +147,7 @@ export function ProductsForm({
                   onClick={handleRemoveDiscount({ index })}
                   className="text-red-600 hover:text-red-800"
                 >
-                  {/* icon */}
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
+                  <CloseIcon />
                 </button>
               </div>
             ))}

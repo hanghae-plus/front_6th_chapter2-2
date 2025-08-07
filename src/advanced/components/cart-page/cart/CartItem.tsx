@@ -2,6 +2,7 @@ import type { CartItem } from '../../../../types';
 import { useRemoveFromCart, useUpdateQuantity } from '../../../hooks/useCart';
 import { useProducts } from '../../../hooks/useProducts';
 import { formatNumberRate, formatNumberWon } from '../../../utils/formatters';
+import { CloseIcon } from '../../icons';
 
 interface Props {
   discountRate: number;
@@ -25,19 +26,7 @@ export function CartItemInfo({ discountRate, itemTotal, cartItem }: Props) {
           onClick={() => removeFromCart({ productId: product.id })}
           className="text-gray-400 hover:text-red-500 ml-2"
         >
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          <CloseIcon />
         </button>
       </div>
       <div className="flex items-center justify-between">

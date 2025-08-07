@@ -20,9 +20,17 @@ interface Props {
   handleDiscountTypeChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   handleDiscountValueChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleDiscountValueBlur: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  getDisplayValue: (value: number) => string;
-  getDiscountLabel: (discountType: 'amount' | 'percentage') => string;
-  getDiscountPlaceholder: (discountType: 'amount' | 'percentage') => string;
+  getDisplayValue: ({ value }: { value: number }) => string;
+  getDiscountLabel: ({
+    discountType,
+  }: {
+    discountType: 'amount' | 'percentage';
+  }) => string;
+  getDiscountPlaceholder: ({
+    discountType,
+  }: {
+    discountType: 'amount' | 'percentage';
+  }) => string;
 }
 
 export function CouponsForm({
