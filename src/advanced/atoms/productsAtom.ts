@@ -4,7 +4,15 @@ import { initialProducts } from '../data/mockProducts';
 
 export const productsAtom = atomWithStorage<ProductWithUI[]>('products', initialProducts, {
   getItem: (key: string, initialValue: ProductWithUI[]) => {
-    return initialProducts;
+    const saved = localStorage.getItem(key);
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return initialValue;
+      }
+    }
+    return initialValue;
   },
   setItem: (key: string, value: ProductWithUI[]) => {
     try {
