@@ -16,6 +16,14 @@ export const CouponForm = ({ onAddCoupon, onCancel }: Props) => {
   });
   const [couponError, setCouponError] = useState<string | null>(null);
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setCouponForm(prev => ({
+      ...prev,
+      [name]: name === 'code' ? value.toUpperCase() : value,
+    }));
+  };
+
   const handleCouponValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10) || 0;
     setCouponForm({ ...couponForm, discountValue: value });
@@ -51,11 +59,10 @@ export const CouponForm = ({ onAddCoupon, onCancel }: Props) => {
             </label>
             <input
               id='coupon-name'
+              name='name'
               type='text'
               value={couponForm.name}
-              onChange={e =>
-                setCouponForm({ ...couponForm, name: e.target.value })
-              }
+              onChange={handleInputChange}
               className='w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm'
               placeholder='신규 가입 쿠폰'
               required
@@ -70,14 +77,10 @@ export const CouponForm = ({ onAddCoupon, onCancel }: Props) => {
             </label>
             <input
               id='coupon-code'
+              name='code'
               type='text'
               value={couponForm.code}
-              onChange={e =>
-                setCouponForm({
-                  ...couponForm,
-                  code: e.target.value.toUpperCase(),
-                })
-              }
+              onChange={handleInputChange}
               className='w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm font-mono'
               placeholder='WELCOME2024'
               required
@@ -92,15 +95,9 @@ export const CouponForm = ({ onAddCoupon, onCancel }: Props) => {
             </label>
             <select
               id='coupon-discount-type'
+              name='discountType'
               value={couponForm.discountType}
-              onChange={e =>
-                setCouponForm({
-                  ...couponForm,
-                  discountType: e.target.value as
-                    | 'amount'
-                    | 'percentage',
-                })
-              }
+              onChange={handleInputChange}
               className='w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm'
             >
               <option value='amount'>정액 할인</option>

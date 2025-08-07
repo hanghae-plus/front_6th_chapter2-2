@@ -23,6 +23,11 @@ export const ProductForm = ({ editingProduct, onAddProduct, onUpdateProduct, onC
     }
   }, [editingProduct]);
 
+  const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setProductForm(prev => ({ ...prev, [name]: value }));
+  };
+
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     const numericValue = validateNumberInput(value);
@@ -66,11 +71,10 @@ export const ProductForm = ({ editingProduct, onAddProduct, onUpdateProduct, onC
             </label>
             <input
               id='product-name'
+              name='name'
               type='text'
               value={productForm.name}
-              onChange={e =>
-                setProductForm({ ...productForm, name: e.target.value })
-              }
+              onChange={handleTextChange}
               className='w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border'
               required
             />
@@ -84,14 +88,10 @@ export const ProductForm = ({ editingProduct, onAddProduct, onUpdateProduct, onC
             </label>
             <input
               id='product-description'
+              name='description'
               type='text'
               value={productForm.description}
-              onChange={e =>
-                setProductForm({
-                  ...productForm,
-                  description: e.target.value,
-                })
-              }
+              onChange={handleTextChange}
               className='w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border'
             />
           </div>

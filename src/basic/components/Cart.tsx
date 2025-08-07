@@ -20,6 +20,12 @@ export const Cart = ({ onCheckout }: Props) => {
   } = useCart();
   const { coupons } = useCoupons();
 
+  const handleCouponChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedCode = e.target.value;
+    const coupon = coupons.find(c => c.code === selectedCode) || null;
+    applyCoupon(coupon);
+  };
+
   const handleCheckout = () => {
     onCheckout();
     clearCart();
@@ -65,10 +71,7 @@ export const Cart = ({ onCheckout }: Props) => {
               <select
                 className="w-full text-sm border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
                 value={selectedCoupon?.code || ''}
-                onChange={(e) => {
-                  const coupon = coupons.find(c => c.code === e.target.value);
-                  applyCoupon(coupon || null);
-                }}
+                onChange={handleCouponChange}
                 role="combobox"
               >
                 <option value="">쿠폰 선택</option>
