@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Product } from "../../../types";
 import { useNotification } from "../../___features/notification/use-notification";
+import ProductTable from "./ProductTable";
+import ProductForm from "./ProductForm";
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -28,6 +30,8 @@ function ProductsContent({
   updateProduct,
   deleteProduct,
 }: Props) {
+  const { addNotification } = useNotification();
+
   const [showProductForm, setShowProductForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [productForm, setProductForm] = useState<ProductForm>({
@@ -38,11 +42,23 @@ function ProductsContent({
     discounts: [],
   });
 
-  const { addNotification } = useNotification();
+  const updateProductForm = (formValue: Partial<ProductForm>) => {
+    setProductForm((prev) => ({ ...prev, ...formValue }));
+  };
+
+  const resetProductForm = () => {
+    setProductForm({
+      name: "",
+      price: 0,
+      stock: 0,
+      description: "",
+      discounts: [],
+    });
+  };
 
   const startEditProduct = (product: ProductWithUI) => {
     setEditingProduct(product.id);
-    setProductForm({
+    updateProductForm({
       name: product.name,
       price: product.price,
       stock: product.stock,
@@ -60,13 +76,7 @@ function ProductsContent({
     } else {
       addProduct(productForm);
     }
-    setProductForm({
-      name: "",
-      price: 0,
-      stock: 0,
-      description: "",
-      discounts: [],
-    });
+    resetProductForm();
     setEditingProduct(null);
     setShowProductForm(false);
   };
@@ -79,13 +89,7 @@ function ProductsContent({
           <button
             onClick={() => {
               setEditingProduct("new");
-              setProductForm({
-                name: "",
-                price: 0,
-                stock: 0,
-                description: "",
-                discounts: [],
-              });
+              resetProductForm();
               setShowProductForm(true);
             }}
             className="px-4 py-2 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800"
@@ -96,69 +100,11 @@ function ProductsContent({
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                상품명
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                가격
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                재고
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                설명
-              </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                작업
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {products.map((product) => (
-              <tr key={product.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {product.name}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {product.price.toLocaleString()}원
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <span
-                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      product.stock > 10
-                        ? "bg-green-100 text-green-800"
-                        : product.stock > 0
-                        ? "bg-yellow-100 text-yellow-800"
-                        : "bg-red-100 text-red-800"
-                    }`}
-                  >
-                    {product.stock}개
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
-                  {product.description || "-"}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button
-                    onClick={() => startEditProduct(product)}
-                    className="text-indigo-600 hover:text-indigo-900 mr-3"
-                  >
-                    수정
-                  </button>
-                  <button
-                    onClick={() => deleteProduct(product.id)}
-                    className="text-red-600 hover:text-red-900"
-                  >
-                    삭제
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <ProductTable
+          products={products}
+          onEditProduct={startEditProduct}
+          onDeleteProduct={deleteProduct}
+        />
       </div>
       {showProductForm && (
         <div className="p-6 border-t border-gray-200 bg-gray-50">
@@ -175,8 +121,7 @@ function ProductsContent({
                   type="text"
                   value={productForm.name}
                   onChange={(e) =>
-                    setProductForm({
-                      ...productForm,
+                    updateProductForm({
                       name: e.target.value,
                     })
                   }
@@ -192,8 +137,7 @@ function ProductsContent({
                   type="text"
                   value={productForm.description}
                   onChange={(e) =>
-                    setProductForm({
-                      ...productForm,
+                    updateProductForm({
                       description: e.target.value,
                     })
                   }
@@ -210,8 +154,7 @@ function ProductsContent({
                   onChange={(e) => {
                     const value = e.target.value;
                     if (value === "" || /^\d+$/.test(value)) {
-                      setProductForm({
-                        ...productForm,
+                      updateProductForm({
                         price: value === "" ? 0 : parseInt(value),
                       });
                     }
@@ -219,13 +162,13 @@ function ProductsContent({
                   onBlur={(e) => {
                     const value = e.target.value;
                     if (value === "") {
-                      setProductForm({ ...productForm, price: 0 });
+                      updateProductForm({ price: 0 });
                     } else if (parseInt(value) < 0) {
                       addNotification({
                         text: "가격은 0보다 커야 합니다",
                         type: "error",
                       });
-                      setProductForm({ ...productForm, price: 0 });
+                      updateProductForm({ price: 0 });
                     }
                   }}
                   className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
@@ -243,8 +186,7 @@ function ProductsContent({
                   onChange={(e) => {
                     const value = e.target.value;
                     if (value === "" || /^\d+$/.test(value)) {
-                      setProductForm({
-                        ...productForm,
+                      updateProductForm({
                         stock: value === "" ? 0 : parseInt(value),
                       });
                     }
@@ -252,19 +194,19 @@ function ProductsContent({
                   onBlur={(e) => {
                     const value = e.target.value;
                     if (value === "") {
-                      setProductForm({ ...productForm, stock: 0 });
+                      updateProductForm({ stock: 0 });
                     } else if (parseInt(value) < 0) {
                       addNotification({
                         text: "재고는 0보다 커야 합니다",
                         type: "error",
                       });
-                      setProductForm({ ...productForm, stock: 0 });
+                      updateProductForm({ stock: 0 });
                     } else if (parseInt(value) > 9999) {
                       addNotification({
                         text: "재고는 9999개를 초과할 수 없습니다",
                         type: "error",
                       });
-                      setProductForm({ ...productForm, stock: 9999 });
+                      updateProductForm({ stock: 9999 });
                     }
                   }}
                   className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
@@ -290,8 +232,7 @@ function ProductsContent({
                         const newDiscounts = [...productForm.discounts];
                         newDiscounts[index].quantity =
                           parseInt(e.target.value) || 0;
-                        setProductForm({
-                          ...productForm,
+                        updateProductForm({
                           discounts: newDiscounts,
                         });
                       }}
@@ -307,8 +248,7 @@ function ProductsContent({
                         const newDiscounts = [...productForm.discounts];
                         newDiscounts[index].rate =
                           (parseInt(e.target.value) || 0) / 100;
-                        setProductForm({
-                          ...productForm,
+                        updateProductForm({
                           discounts: newDiscounts,
                         });
                       }}
@@ -324,8 +264,7 @@ function ProductsContent({
                         const newDiscounts = productForm.discounts.filter(
                           (_, i) => i !== index
                         );
-                        setProductForm({
-                          ...productForm,
+                        updateProductForm({
                           discounts: newDiscounts,
                         });
                       }}
@@ -350,8 +289,7 @@ function ProductsContent({
                 <button
                   type="button"
                   onClick={() => {
-                    setProductForm({
-                      ...productForm,
+                    updateProductForm({
                       discounts: [
                         ...productForm.discounts,
                         { quantity: 10, rate: 0.1 },
@@ -370,13 +308,7 @@ function ProductsContent({
                 type="button"
                 onClick={() => {
                   setEditingProduct(null);
-                  setProductForm({
-                    name: "",
-                    price: 0,
-                    stock: 0,
-                    description: "",
-                    discounts: [],
-                  });
+                  resetProductForm();
                   setShowProductForm(false);
                 }}
                 className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
