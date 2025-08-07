@@ -1,6 +1,7 @@
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { totalItemCountAtom } from "../../../stores/cartStore";
 import { cartAtom } from "../../../stores/cartStore";
+import { isAdminAtom, toggleAdminAtom } from "../../../stores/notificationStore";
 
 // Admin 헤더용 인터페이스
 interface AdminHeaderProps {
@@ -89,18 +90,23 @@ export const ShopHeader = ({ searchTerm, onSearchChange, onToggleAdmin }: ShopHe
   );
 };
 
-// 기존 Header 컴포넌트 (하위 호환성을 위해 유지)
+// 새로운 Header 컴포넌트 (isAdmin atom 직접 사용)
 interface HeaderProps {
-  isAdmin: boolean;
   searchTerm: string;
   onSearchChange: (value: string) => void;
-  onToggleAdmin: () => void;
 }
 
-export const Header = ({ isAdmin, searchTerm, onSearchChange, onToggleAdmin }: HeaderProps) => {
+export const Header = ({ searchTerm, onSearchChange }: HeaderProps) => {
+  const isAdmin = useAtomValue(isAdminAtom);
+  const toggleAdminSet = useSetAtom(toggleAdminAtom);
+
+  const handleToggleAdmin = () => {
+    toggleAdminSet();
+  };
+
   if (isAdmin) {
-    return <AdminHeader onToggleAdmin={onToggleAdmin} />;
+    return <AdminHeader onToggleAdmin={handleToggleAdmin} />;
   }
 
-  return <ShopHeader searchTerm={searchTerm} onSearchChange={onSearchChange} onToggleAdmin={onToggleAdmin} />;
+  return <ShopHeader searchTerm={searchTerm} onSearchChange={onSearchChange} onToggleAdmin={handleToggleAdmin} />;
 };

@@ -1,10 +1,6 @@
 // hooks
-import { useState } from "react";
 import { Provider } from "jotai";
-import { useProducts } from "./hooks/useProducts";
-import { useCart } from "./hooks/useCart";
-import { useCoupons } from "./hooks/useCoupons";
-import { useNotification } from "./hooks/useNotification";
+import { useAtomValue } from "jotai";
 
 // utils
 import { useProductSearch } from "./utils/hooks/useSearch";
@@ -17,55 +13,23 @@ import { Notification } from "./components/ui/notification/Notification";
 import AdminPage from "./pages/Admin/AdminPage";
 import ShopPage from "./pages/Main/ShopPage/ShopPage";
 
-// type
-
-const AppContent = () => {
-  // 커스텀 훅 사용
-  const { notifications, addNotification, removeNotification } = useNotification();
-
-  const { addProduct, updateProduct, deleteProduct } = useProducts(addNotification);
-  const { addCoupon, deleteCoupon } = useCoupons(addNotification);
-
-  const { searchTerm, setSearchTerm } = useProductSearch();
-
-  // 로컬 UI 상태
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <Notification notifications={notifications} onRemove={removeNotification} />
-
-      <Header
-        isAdmin={isAdmin}
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        onToggleAdmin={() => setIsAdmin(!isAdmin)}
-      />
-
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        {isAdmin ? (
-          <AdminPage
-            // 상품 관련 props
-            onDeleteProduct={deleteProduct}
-            onAddProduct={addProduct}
-            onUpdateProduct={updateProduct}
-            addNotification={addNotification}
-            // 쿠폰 관련 props
-            onDeleteCoupon={deleteCoupon}
-            onAddCoupon={addCoupon}
-          />
-        ) : (
-          <ShopPage searchTerm={searchTerm} />
-        )}
-      </main>
-    </div>
-  );
-};
+// stores
+import { isAdminAtom } from "./stores/notificationStore";
 
 const App = () => {
+  const { searchTerm, setSearchTerm } = useProductSearch();
+  const isAdmin = useAtomValue(isAdminAtom);
+
   return (
     <Provider>
-      <AppContent />
+      <div className="min-h-screen bg-gray-50">
+        <Notification />
+        <Header searchTerm={searchTerm} onSearchChange={setSearchTerm} />
+
+        <main className="max-w-7xl mx-auto px-4 py-8">
+          {isAdmin ? <AdminPage /> : <ShopPage searchTerm={searchTerm} />}
+        </main>
+      </div>
     </Provider>
   );
 };

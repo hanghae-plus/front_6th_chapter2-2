@@ -1,15 +1,10 @@
-interface NotificationItem {
-  id: string;
-  message: string;
-  type: "error" | "success" | "warning";
-}
+import { useAtomValue, useSetAtom } from "jotai";
+import { notificationsAtom, removeNotificationAtom } from "../../../stores/notificationStore";
 
-interface NotificationProps {
-  notifications: NotificationItem[];
-  onRemove: (id: string) => void;
-}
+export const Notification = () => {
+  const notifications = useAtomValue(notificationsAtom);
+  const removeNotificationSet = useSetAtom(removeNotificationAtom);
 
-export const Notification = ({ notifications, onRemove }: NotificationProps) => {
   if (notifications.length === 0) return null;
 
   return (
@@ -22,7 +17,7 @@ export const Notification = ({ notifications, onRemove }: NotificationProps) => 
           }`}
         >
           <span className="mr-2">{notif.message}</span>
-          <button onClick={() => onRemove(notif.id)} className="text-white hover:text-gray-200">
+          <button onClick={() => removeNotificationSet(notif.id)} className="text-white hover:text-gray-200">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>

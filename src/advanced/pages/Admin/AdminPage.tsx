@@ -6,44 +6,33 @@ import { Tabs } from "../../components/ui/tabs";
 // hooks
 import { useProductForm } from "../../hooks/useProductForm";
 import { useCouponForm } from "../../hooks/useCouponForm";
-import { useAtomValue } from "jotai";
-import { productsAtom } from "../../stores/productStore";
+import { useAtomValue, useSetAtom } from "jotai";
+import { productsAtom, addProductAtom, updateProductAtom, deleteProductAtom } from "../../stores/productStore";
 import { cartAtom } from "../../stores/cartStore";
-import { couponsAtom } from "../../stores/couponStore";
+import { couponsAtom, addCouponAtom, deleteCouponAtom } from "../../stores/couponStore";
+import { addNotificationAtom } from "../../stores/notificationStore";
+
+// utils
+import { withTryNotifySuccess } from "../../utils/withNotify";
 
 // types
-import type { Coupon, NotificationType } from "../../types/admin";
-
+import type { Coupon } from "../../types/admin";
 import { ADMIN_TABS } from "../../constants/admin";
 import { Product } from "../../../types";
 
-interface AdminPageProps {
-  // 상품 관련
-  onDeleteProduct: (productId: string) => void;
-  onAddProduct: (product: Omit<Product, "id">) => void;
-  onUpdateProduct: (productId: string, updates: Partial<Product>) => void;
-  addNotification: (message: string, type: NotificationType) => void;
-
-  // 쿠폰 관련
-  onDeleteCoupon: (couponCode: string) => void;
-  onAddCoupon: (coupon: Coupon) => void;
-}
-
-export default function AdminPage({
-  // 상품 관련 props
-  onDeleteProduct,
-  onAddProduct,
-  onUpdateProduct,
-  addNotification,
-
-  // 쿠폰 관련 props
-  onDeleteCoupon,
-  onAddCoupon,
-}: AdminPageProps) {
+export default function AdminPage() {
   // Jotai atom에서 직접 값 가져오기
   const products = useAtomValue(productsAtom);
   const cart = useAtomValue(cartAtom);
   const coupons = useAtomValue(couponsAtom);
+
+  // Jotai setter 함수들
+  const addProductSet = useSetAtom(addProductAtom);
+  const updateProductSet = useSetAtom(updateProductAtom);
+  const deleteProductSet = useSetAtom(deleteProductAtom);
+  const addCouponSet = useSetAtom(addCouponAtom);
+  const deleteCouponSet = useSetAtom(deleteCouponAtom);
+  const addNotificationSet = useSetAtom(addNotificationAtom);
 
   const {
     editingProduct,
@@ -59,14 +48,45 @@ export default function AdminPage({
   // Coupon Form 훅 사용
   const { couponForm, showCouponForm, updateField, showForm, hideForm, handleCouponSubmit } = useCouponForm();
 
+  // 이벤트 핸들러들 (withTryNotifySuccess 적용)
+  const handleDeleteProduct = withTryNotifySuccess(
+    (productId: string) => deleteProductSet(productId),
+    "상품이 삭제되었습니다.",
+    (message, type) => addNotificationSet({ message, type })
+  );
+
+  const handleAddProduct = withTryNotifySuccess(
+    (product: Omit<Product, "id">) => addProductSet(product),
+    "상품이 추가되었습니다.",
+    (message, type) => addNotificationSet({ message, type })
+  );
+
+  const handleUpdateProduct = withTryNotifySuccess(
+    (productId: string, updates: Partial<Product>) => updateProductSet({ productId, updates }),
+    "상품이 수정되었습니다.",
+    (message, type) => addNotificationSet({ message, type })
+  );
+
+  const handleDeleteCoupon = withTryNotifySuccess(
+    (couponCode: string) => deleteCouponSet(couponCode),
+    "쿠폰이 삭제되었습니다.",
+    (message, type) => addNotificationSet({ message, type })
+  );
+
+  const handleAddCoupon = withTryNotifySuccess(
+    (coupon: Coupon) => addCouponSet(coupon),
+    "쿠폰이 추가되었습니다.",
+    (message, type) => addNotificationSet({ message, type })
+  );
+
   // Product Form 제출 처리
   const handleProductFormSubmit = (e: React.FormEvent) => {
-    handleProductSubmit(e, onAddProduct, onUpdateProduct);
+    handleProductSubmit(e, handleAddProduct, handleUpdateProduct);
   };
 
   // Coupon Form 제출 처리
   const handleCouponFormSubmit = (e: React.FormEvent) => {
-    handleCouponSubmit(e, onAddCoupon);
+    handleCouponSubmit(e, handleAddCoupon);
   };
 
   return (
@@ -88,7 +108,7 @@ export default function AdminPage({
               products={products}
               cart={cart}
               onEditProduct={startEditProduct}
-              onDeleteProduct={onDeleteProduct}
+              onDeleteProduct={handleDeleteProduct}
               onAddProduct={startAddProduct}
               showProductForm={showProductForm}
               productForm={productForm}
@@ -96,21 +116,21 @@ export default function AdminPage({
               editingProduct={editingProduct}
               onProductSubmit={handleProductFormSubmit}
               onCancelProductForm={cancelProductForm}
-              addNotification={addNotification}
+              addNotification={(message, type) => addNotificationSet({ message, type })}
             />
           </Tabs.Panel>
 
           <Tabs.Panel value={ADMIN_TABS.COUPONS}>
             <CouponManagement
               coupons={coupons}
-              onDeleteCoupon={onDeleteCoupon}
+              onDeleteCoupon={handleDeleteCoupon}
               showCouponForm={showCouponForm}
               showForm={showForm}
               hideForm={hideForm}
               couponForm={couponForm}
               updateField={updateField}
               onCouponSubmit={handleCouponFormSubmit}
-              addNotification={addNotification}
+              addNotification={(message, type) => addNotificationSet({ message, type })}
             />
           </Tabs.Panel>
         </Tabs.Content>
