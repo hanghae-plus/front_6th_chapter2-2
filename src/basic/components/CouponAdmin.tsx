@@ -1,14 +1,15 @@
 // src/basic/components/CouponAdmin.tsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { TrashIcon } from './icons/TrashIcon';
 import { CouponForm } from './CouponForm';
 import { useCoupons } from '../hooks/useCoupons';
+import { Coupon } from '../types';
 
 export const CouponAdmin = () => {
   const { coupons, addCoupon, removeCoupon } = useCoupons();
   const [showCouponForm, setShowCouponForm] = useState(false);
 
-  const handleAddCoupon = (coupon) => {
+  const handleAddCoupon = (coupon: Coupon) => {
     addCoupon(coupon);
     setShowCouponForm(false);
   }

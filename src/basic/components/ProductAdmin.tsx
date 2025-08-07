@@ -1,5 +1,5 @@
 // src/basic/components/ProductAdmin.tsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Product } from '../types';
 import { formatCurrency } from '../utils/formatters';
 import { ProductForm } from './ProductForm';

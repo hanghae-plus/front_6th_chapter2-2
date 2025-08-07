@@ -1,5 +1,5 @@
 // src/basic/components/Admin.tsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ProductAdmin } from './ProductAdmin';
 import { CouponAdmin } from './CouponAdmin';
 
