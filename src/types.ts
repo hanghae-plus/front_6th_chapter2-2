@@ -47,3 +47,17 @@ export interface Coupon {
   discountType: 'amount' | 'percentage';
   discountValue: number;
 }
+
+/**
+ * @interface CouponFormData
+ * @property {string} name - 쿠폰 이름
+ * @property {string} code - 쿠폰 코드
+ * @property {'amount' | 'percentage'} discountType - 할인 타입
+ * @property {number} discountValue - 할인 값
+ */
+export interface CouponFormData {
+  name: string;
+  code: string;
+  discountType: 'amount' | 'percentage';
+  discountValue: number;
+}
