@@ -1,6 +1,7 @@
 import { initialProducts, ProductWithUI } from '@/basic/constants/mocks';
 import { useLocalStorage } from '@/basic/hooks';
 import { useCallback, useState } from 'react';
+import { INITIAL_PRODUCT_FORM, EDITING_STATES } from '@/basic/constants/forms';
 
 interface UseProductsProps {
   addNotification: (message: string, type: 'error' | 'success' | 'warning') => void;
@@ -10,13 +11,7 @@ export function useProducts({ addNotification }: UseProductsProps) {
   const [products, setProducts] = useLocalStorage<ProductWithUI[]>('products', initialProducts);
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [showProductForm, setShowProductForm] = useState(false);
-  const [productForm, setProductForm] = useState({
-    name: '',
-    price: 0,
-    stock: 0,
-    description: '',
-    discounts: [] as Array<{ quantity: number; rate: number }>,
-  });
+  const [productForm, setProductForm] = useState(INITIAL_PRODUCT_FORM);
 
   const addProduct = useCallback(
     (newProduct: Omit<ProductWithUI, 'id'>) => {
@@ -48,11 +43,39 @@ export function useProducts({ addNotification }: UseProductsProps) {
     [addNotification, setProducts]
   );
 
+  const startEditProduct = useCallback((product: ProductWithUI) => {
+    setEditingProduct(product.id);
+    setProductForm({
+      name: product.name,
+      price: product.price,
+      stock: product.stock,
+      description: product.description || '',
+      discounts: product.discounts || [],
+    });
+    setShowProductForm(true);
+  }, []);
+
+  const handleProductSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+
+      if (editingProduct && editingProduct !== EDITING_STATES.NEW) {
+        updateProduct(editingProduct, productForm);
+        setEditingProduct(null);
+      } else {
+        addProduct(productForm);
+      }
+
+      setProductForm(INITIAL_PRODUCT_FORM);
+      setEditingProduct(null);
+      setShowProductForm(false);
+    },
+    [editingProduct, productForm, updateProduct, addProduct]
+  );
+
   return {
     products,
     setProducts,
-    editingProduct,
-    setEditingProduct,
     showProductForm,
     setShowProductForm,
     productForm,
@@ -60,5 +83,8 @@ export function useProducts({ addNotification }: UseProductsProps) {
     addProduct,
     updateProduct,
     deleteProduct,
+
+    startEditProduct,
+    handleProductSubmit,
   };
 }

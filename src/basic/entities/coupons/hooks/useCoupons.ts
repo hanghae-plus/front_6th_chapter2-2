@@ -3,6 +3,7 @@ import { useLocalStorage } from '@/basic/hooks';
 import { Coupon } from '@/types';
 import { useCallback, useState } from 'react';
 import { validateCouponCode } from '@/basic/utils';
+import { INITIAL_COUPON_FORM } from '@/basic/constants/forms';
 
 interface UseCouponsProps {
   addNotification: (message: string, type: 'error' | 'success' | 'warning') => void;
@@ -12,12 +13,7 @@ export function useCoupons({ addNotification }: UseCouponsProps) {
   const [coupons, setCoupons] = useLocalStorage<Coupon[]>('coupons', initialCoupons);
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [showCouponForm, setShowCouponForm] = useState(false);
-  const [couponForm, setCouponForm] = useState({
-    name: '',
-    code: '',
-    discountType: 'amount' as 'amount' | 'percentage',
-    discountValue: 0,
-  });
+  const [couponForm, setCouponForm] = useState<Coupon>(INITIAL_COUPON_FORM);
 
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {
@@ -43,18 +39,25 @@ export function useCoupons({ addNotification }: UseCouponsProps) {
     [selectedCoupon, addNotification, setCoupons]
   );
 
+  const handleCouponSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      addCoupon(couponForm);
+      setCouponForm(INITIAL_COUPON_FORM);
+      setShowCouponForm(false);
+    },
+    [couponForm, addCoupon]
+  );
+
   return {
     coupons,
     selectedCoupon,
     couponForm,
     showCouponForm,
-
-    setCoupons,
-    setSelectedCoupon,
     setShowCouponForm,
     setCouponForm,
-
-    addCoupon,
+    setSelectedCoupon,
     deleteCoupon,
+    handleCouponSubmit,
   };
 }

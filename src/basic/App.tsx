@@ -1,6 +1,5 @@
-import { useState, useCallback } from 'react';
-import { Coupon } from '../types';
-import { ProductWithUI } from './constants/mocks';
+import { useState, useCallback, useMemo } from 'react';
+import { Coupon } from '@/types';
 import { AdminDashboard, Header, NotificationItem, UserDashboard } from './ui';
 import { useCoupons } from './entities/coupons';
 import { useProducts } from './entities/products';
@@ -12,7 +11,6 @@ import {
   validateCouponApplication,
 } from './utils';
 import { useCart, useDebounceValue, useNotifications, useTotalItemCount } from './hooks';
-import { INITIAL_PRODUCT_FORM, INITIAL_COUPON_FORM, EDITING_STATES } from './constants/forms';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -20,25 +18,23 @@ const App = () => {
   const {
     products,
     productForm,
-    editingProduct,
     showProductForm,
     setShowProductForm,
-    setEditingProduct,
     setProductForm,
-    addProduct,
-    updateProduct,
     deleteProduct,
+    startEditProduct,
+    handleProductSubmit,
   } = useProducts({ addNotification });
   const {
     coupons,
     selectedCoupon,
-    setSelectedCoupon,
-    showCouponForm,
-    setShowCouponForm,
     couponForm,
+    showCouponForm,
+    setSelectedCoupon,
+    setShowCouponForm,
     setCouponForm,
-    addCoupon,
     deleteCoupon,
+    handleCouponSubmit,
   } = useCoupons({ addNotification });
   const { cart, addToCart, removeFromCart, updateQuantity, completeOrder, getStock } = useCart({
     products,
@@ -81,44 +77,12 @@ const App = () => {
     [addNotification, cart, selectedCoupon]
   );
 
-  const handleProductSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editingProduct && editingProduct !== EDITING_STATES.NEW) {
-      updateProduct(editingProduct, productForm);
-      setEditingProduct(null);
-    } else {
-      addProduct({
-        ...productForm,
-        discounts: productForm.discounts,
-      });
-    }
-    setProductForm(INITIAL_PRODUCT_FORM);
-    setEditingProduct(null);
-    setShowProductForm(false);
-  };
+  const totals = useMemo(() => calculateCartTotal(cart, selectedCoupon), [cart, selectedCoupon]);
 
-  const handleCouponSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    addCoupon(couponForm);
-    setCouponForm(INITIAL_COUPON_FORM);
-    setShowCouponForm(false);
-  };
-
-  const startEditProduct = (product: ProductWithUI) => {
-    setEditingProduct(product.id);
-    setProductForm({
-      name: product.name,
-      price: product.price,
-      stock: product.stock,
-      description: product.description || '',
-      discounts: product.discounts || [],
-    });
-    setShowProductForm(true);
-  };
-
-  const totals = calculateCartTotal(cart, selectedCoupon);
-
-  const filteredProducts = filterProducts(products, debouncedSearchTerm);
+  const filteredProducts = useMemo(
+    () => filterProducts(products, debouncedSearchTerm),
+    [products, debouncedSearchTerm]
+  );
 
   return (
     <div className='min-h-screen bg-gray-50'>
