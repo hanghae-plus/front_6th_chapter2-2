@@ -1,13 +1,6 @@
 // hooks
-import { useState } from "react";
-import { useProducts } from "./hooks/useProducts";
-import { useCart } from "./hooks/useCart";
-import { useCoupons } from "./hooks/useCoupons";
 import { useNotification } from "./hooks/useNotification";
-import { useAutoCallback } from "./utils/hooks/useAutoCallbak";
-
-// utils
-import { useSearch } from "./utils/hooks/useSearch";
+import { useAppState } from "./hooks/useAppState";
 
 // components
 import { Header } from "./components/ui/header/Header";
@@ -17,28 +10,42 @@ import { Notification } from "./components/ui/notification/Notification";
 import AdminPage from "./pages/Admin/AdminPage";
 import ShopPage from "./pages/Main/ShopPage/ShopPage";
 
-// type
-
 const App = () => {
-  // 커스텀 훅 사용
+  // 알림 시스템
   const { notifications, addNotification, removeNotification } = useNotification();
 
-  const { products, addProduct, updateProduct, deleteProduct } = useProducts(addNotification);
-  const { cart, totalItemCount, addToCart, removeFromCart, updateQuantity, clearCart } = useCart(addNotification);
-  const { coupons, selectedCoupon, addCoupon, deleteCoupon, applyCoupon, setSelectedCoupon } =
-    useCoupons(addNotification);
+  // 앱 전체 상태 관리
+  const {
+    // 도메인별 상태
+    products,
+    cart,
+    coupons,
+    selectedCoupon,
 
-  const { searchTerm, setSearchTerm, filteredProducts, searchInfo } = useSearch(products);
+    // 도메인별 액션
+    addProduct,
+    updateProduct,
+    deleteProduct,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+    addCoupon,
+    deleteCoupon,
+    applyCoupon,
+    setSelectedCoupon,
+    completeOrder,
 
-  // 로컬 UI 상태
-  const [isAdmin, setIsAdmin] = useState(false);
+    // 검색 관련
+    searchTerm,
+    setSearchTerm,
+    filteredProducts,
+    searchInfo,
 
-  const completeOrder = useAutoCallback(() => {
-    const orderNumber = `ORD-${Date.now()}`;
-    addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, "success");
-    clearCart();
-    setSelectedCoupon(null);
-  });
+    // UI 상태
+    isAdmin,
+    toggleAdmin,
+    totalItemCount,
+  } = useAppState(addNotification);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -50,7 +57,7 @@ const App = () => {
         totalItemCount={totalItemCount}
         cartItemCount={cart.length}
         onSearchChange={setSearchTerm}
-        onToggleAdmin={() => setIsAdmin(!isAdmin)}
+        onToggleAdmin={toggleAdmin}
       />
 
       <main className="max-w-7xl mx-auto px-4 py-8">
