@@ -17,14 +17,8 @@ import {
   type ProductWithUI,
   useProductActions
 } from "../domains/product";
-import {
-  NotificationList,
-  useDebounceState,
-  useLocalStorageState,
-  useNotifications,
-  useToggle
-} from "../shared";
-import { Header } from "./components";
+import { useDebounceState, useLocalStorageState, useNotifications, useToggle } from "../shared";
+import { Header, NotificationList } from "./components";
 import { AdminPage, CartPage } from "./pages";
 
 export function App() {
