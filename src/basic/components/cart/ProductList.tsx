@@ -1,15 +1,18 @@
 import { ProductWithUI } from '../../constants';
 import { CartItem } from '../../../types.ts';
 import { getRemainingStock } from '../../models/cart.ts';
+import { useCart } from '../../hooks/useCart.ts';
 
 type ProductListProps = {
   filteredProducts: ProductWithUI[];
   formatPrice: (price: number, productId?: string) => string;
-  addToCart: (product: ProductWithUI) => void;
   cart: CartItem[];
+  addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
 };
 
-export const ProductList = ({ filteredProducts, formatPrice, addToCart, cart }: ProductListProps) => {
+export const ProductList = ({ filteredProducts, formatPrice, cart, addNotification }: ProductListProps) => {
+  // 임시 적용
+  const { addItemToCart } = useCart(filteredProducts, addNotification)
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {filteredProducts.map((product) => {
@@ -67,7 +70,7 @@ export const ProductList = ({ filteredProducts, formatPrice, addToCart, cart }: 
 
               {/* 장바구니 버튼 */}
               <button
-                onClick={() => addToCart(product)}
+                onClick={() => addItemToCart(product)}
                 disabled={remainingStock <= 0}
                 className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
                   remainingStock <= 0

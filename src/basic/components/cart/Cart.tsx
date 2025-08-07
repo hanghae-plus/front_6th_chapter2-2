@@ -1,33 +1,29 @@
-import { CartItem, Coupon } from '../../../types.ts';
-import React from 'react';
-import { calculateItemTotal } from '../../models/cart.ts';
+import { Coupon } from '../../../types.ts';
+import { useCart } from '../../hooks/useCart.ts';
+import { ProductWithUI } from '../../constants';
 
 type CartProps = {
-  cart: CartItem[];
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, newQuantity: number) => void;
   coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  applyCoupon: (coupon: Coupon) => void;
-  setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>;
   totals: {
     totalBeforeDiscount: number;
     totalAfterDiscount: number;
   };
   completeOrder: () => void;
+  products: ProductWithUI[];
+  addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
 };
 
-export const Cart = ({
-  cart,
-  removeFromCart,
-  updateQuantity,
-  coupons,
-  selectedCoupon,
-  applyCoupon,
-  setSelectedCoupon,
-  totals,
-  completeOrder,
-}: CartProps) => {
+export const Cart = ({ coupons, totals, completeOrder, addNotification, products }: CartProps) => {
+  const {
+    cart,
+    selectedCoupon,
+    setSelectedCoupon,
+    removeItemFromCart,
+    updateCartItemQuantity,
+    calculateItemTotal,
+    applyCoupon,
+  } = useCart(products, addNotification);
+
   return (
     <div className="lg:col-span-1">
       <div className="sticky top-24 space-y-4">
@@ -63,7 +59,7 @@ export const Cart = ({
           ) : (
             <div className="space-y-3">
               {cart.map((item) => {
-                const itemTotal = calculateItemTotal(item, cart);
+                const itemTotal = calculateItemTotal(item);
                 const originalPrice = item.product.price * item.quantity;
                 const hasDiscount = itemTotal < originalPrice;
                 const discountRate = hasDiscount ? Math.round((1 - itemTotal / originalPrice) * 100) : 0;
@@ -73,7 +69,7 @@ export const Cart = ({
                     <div className="flex justify-between items-start mb-2">
                       <h4 className="text-sm font-medium text-gray-900 flex-1">{item.product.name}</h4>
                       <button
-                        onClick={() => removeFromCart(item.product.id)}
+                        onClick={() => removeItemFromCart(item.product.id)}
                         className="text-gray-400 hover:text-red-500 ml-2"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -84,14 +80,14 @@ export const Cart = ({
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
                         <button
-                          onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                          onClick={() => updateCartItemQuantity(item.product.id, item.quantity - 1)}
                           className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                         >
                           <span className="text-xs">−</span>
                         </button>
                         <span className="mx-3 text-sm font-medium w-8 text-center">{item.quantity}</span>
                         <button
-                          onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                          onClick={() => updateCartItemQuantity(item.product.id, item.quantity + 1)}
                           className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                         >
                           <span className="text-xs">+</span>

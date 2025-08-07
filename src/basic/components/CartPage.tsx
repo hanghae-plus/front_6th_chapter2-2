@@ -19,22 +19,15 @@
 import { Cart } from './cart/Cart.tsx';
 import { ProductList } from './cart/ProductList.tsx';
 import { CartItem, Coupon } from '../../types.ts';
-import React from 'react';
 import { ProductWithUI } from '../constants';
 
 type CartPageProps = {
   // ProductListPros
   filteredProducts: ProductWithUI[];
   formatPrice: (price: number, productId?: string) => string;
-  addToCart: (product: ProductWithUI) => void;
   // CartProps
   cart: CartItem[];
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, newQuantity: number) => void;
   coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  applyCoupon: (coupon: Coupon) => void;
-  setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>;
   totals: {
     totalBeforeDiscount: number;
     totalAfterDiscount: number;
@@ -43,23 +36,19 @@ type CartPageProps = {
   //searchBar
   debouncedSearchTerm: string;
   products: ProductWithUI[];
+  addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
 };
 
 export function CartPage({
   filteredProducts,
   formatPrice,
-  addToCart,
   cart,
-  removeFromCart,
-  updateQuantity,
   coupons,
-  selectedCoupon,
-  applyCoupon,
-  setSelectedCoupon,
   totals,
   completeOrder,
   debouncedSearchTerm,
   products,
+  addNotification,
 }: CartPageProps) {
   return (
     <>
@@ -80,21 +69,17 @@ export function CartPage({
                 cart={cart}
                 filteredProducts={filteredProducts}
                 formatPrice={formatPrice}
-                addToCart={addToCart}
+                addNotification={addNotification}
               />
             )}
           </section>
         </div>
         <Cart
-          cart={cart}
-          removeFromCart={removeFromCart}
-          updateQuantity={updateQuantity}
           coupons={coupons}
-          selectedCoupon={selectedCoupon}
-          applyCoupon={applyCoupon}
-          setSelectedCoupon={setSelectedCoupon}
+          products={products}
           totals={totals}
           completeOrder={completeOrder}
+          addNotification={addNotification}
         />
       </div>
     </>
