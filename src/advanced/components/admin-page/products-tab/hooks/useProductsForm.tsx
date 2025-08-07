@@ -1,5 +1,6 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react';
-import type { Notify, ProductWithUI } from '../../../../../types';
+import type { ProductWithUI } from '../../../../../types';
+import { useNotify } from '../../../../hooks/useNotification';
 
 export interface ProductForm {
   name: string;
@@ -15,14 +16,13 @@ interface UseProductsFormParams {
     updates: Partial<ProductForm>;
   }) => void;
   addProduct: (params: { newProduct: Omit<ProductForm, 'id'> }) => void;
-  notify: Notify;
 }
 
 export function useProductsForm({
   addProduct,
   updateProduct,
-  notify,
 }: UseProductsFormParams) {
+  const notify = useNotify();
   const defaultValue: ProductForm = {
     name: '',
     price: 0,

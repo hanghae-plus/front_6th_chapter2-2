@@ -25,14 +25,11 @@
 // - clearCart: 장바구니 비우기 함수
 
 import { useCallback, useEffect } from 'react';
-import type { CartItem, Notify, Product } from '../../types';
+import type { CartItem, Product } from '../../types';
 import * as cartModel from '../models/cart';
 import * as productModel from '../models/product';
 import { useLocalStorage } from '../utils/hooks/useLocalStorage';
-
-interface UseCartParams {
-  notify: Notify;
-}
+import { useNotify } from './useNotification';
 
 interface UseCartReturn {
   cart: CartItem[];
@@ -47,7 +44,8 @@ interface UseCartReturn {
   clearCart: () => void;
 }
 
-export function useCart({ notify }: UseCartParams): UseCartReturn {
+export function useCart(): UseCartReturn {
+  const notify = useNotify();
   const LOCAL_STORAGE_KEY = 'cart';
   const [cart, setCart] = useLocalStorage<CartItem[]>({
     key: LOCAL_STORAGE_KEY,

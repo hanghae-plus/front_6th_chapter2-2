@@ -1,4 +1,4 @@
-import type { Coupon, Notify } from '../../../../types';
+import type { Coupon } from '../../../../types';
 import { TabTitle } from '../ui/TabTitle';
 import { CouponCard } from './CouponCard';
 import { CouponsForm } from './CouponsForm';
@@ -9,15 +9,9 @@ interface Props {
   coupons: Coupon[];
   addCoupon: (params: { newCoupon: Coupon }) => void;
   deleteCoupon: (params: { couponCode: string }) => void;
-  notify: Notify;
 }
 
-export function CouponsTab({
-  coupons,
-  addCoupon,
-  deleteCoupon,
-  notify,
-}: Props) {
+export function CouponsTab({ coupons, addCoupon, deleteCoupon }: Props) {
   const {
     showCouponForm,
     couponForm,
@@ -32,7 +26,7 @@ export function CouponsTab({
     getDisplayValue,
     getDiscountLabel,
     getDiscountPlaceholder,
-  } = useCouponsForm({ addCoupon, notify });
+  } = useCouponsForm({ addCoupon });
 
   return (
     <section className="bg-white rounded-lg border border-gray-200">

@@ -16,7 +16,7 @@
 // - CouponList: 쿠폰 목록 표시
 
 import { useState, type ReactNode } from 'react';
-import type { CartItem, Coupon, Notify, ProductWithUI } from '../../../types';
+import type { CartItem, Coupon, ProductWithUI } from '../../../types';
 import { AdminTabs, type AdminTab } from './AdminTabs';
 import { CouponsTab } from './coupons-tab/CouponsTab';
 import { ProductsTab } from './products-tab/ProductsTab';
@@ -37,8 +37,6 @@ interface Props {
   coupons: Coupon[];
   addCoupon: (params: { newCoupon: Coupon }) => void;
   deleteCoupon: (params: { couponCode: string }) => void;
-
-  notify: Notify;
 }
 
 export function AdminPage({
@@ -52,8 +50,6 @@ export function AdminPage({
   coupons,
   addCoupon,
   deleteCoupon,
-
-  notify,
 }: Props) {
   const [activeTab, setActiveTab] = useState<AdminTab>('products');
 
@@ -63,7 +59,6 @@ export function AdminPage({
         coupons={coupons}
         addCoupon={addCoupon}
         deleteCoupon={deleteCoupon}
-        notify={notify}
       />
     ),
     products: (
@@ -73,7 +68,6 @@ export function AdminPage({
         addProduct={addProduct}
         deleteProduct={deleteProduct}
         updateProduct={updateProduct}
-        notify={notify}
       />
     ),
   };

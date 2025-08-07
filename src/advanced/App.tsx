@@ -6,16 +6,12 @@ import { CartPageHeader } from './components/cart-page/CartPageHeader';
 import { Notifications } from './components/Notifications';
 import { useCart } from './hooks/useCart';
 import { useCoupons } from './hooks/useCoupons';
-import { useNotification } from './hooks/useNotification';
 import { useOrder } from './hooks/useOrder';
 import { useProducts } from './hooks/useProducts';
 import { useDebounce } from './utils/hooks/useDebounce';
 
 const App = () => {
-  const { notifications, notify, removeNotification } = useNotification();
-  const { products, addProduct, updateProduct, deleteProduct } = useProducts({
-    notify,
-  });
+  const { products, addProduct, updateProduct, deleteProduct } = useProducts();
   const {
     cart,
     totalItemCount,
@@ -23,9 +19,7 @@ const App = () => {
     removeFromCart,
     updateQuantity,
     clearCart,
-  } = useCart({
-    notify,
-  });
+  } = useCart();
   const {
     coupons,
     selectedCoupon,
@@ -33,9 +27,8 @@ const App = () => {
     deleteCoupon,
     applyCoupon,
     clearSelectedCoupon,
-  } = useCoupons({ notify });
+  } = useCoupons();
   const { completeOrder } = useOrder({
-    notify,
     clearCart,
     clearSelectedCoupon,
   });
@@ -46,10 +39,7 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Notifications
-        notifications={notifications}
-        removeNotification={removeNotification}
-      />
+      <Notifications />
 
       {isAdmin ? (
         <AdminPageHeader setIsAdmin={setIsAdmin} />
@@ -73,7 +63,6 @@ const App = () => {
             coupons={coupons}
             addCoupon={addCoupon}
             deleteCoupon={deleteCoupon}
-            notify={notify}
           />
         ) : (
           <CartPage

@@ -1,4 +1,4 @@
-import type { CartItem, Notify, ProductWithUI } from '../../../../types';
+import type { CartItem, ProductWithUI } from '../../../../types';
 import { TabTitle } from '../ui/TabTitle';
 import { useProductsForm } from './hooks/useProductsForm';
 import { ProductsForm } from './ProductsForm';
@@ -14,7 +14,6 @@ interface Props {
     productId: string;
     updates: Partial<ProductWithUI>;
   }) => void;
-  notify: Notify;
 }
 
 export function ProductsTab({
@@ -23,7 +22,6 @@ export function ProductsTab({
   addProduct,
   deleteProduct,
   updateProduct,
-  notify,
 }: Props) {
   const {
     showProductForm,
@@ -45,7 +43,7 @@ export function ProductsTab({
     handleAddDiscount,
     getDisplayValue,
     getDiscountRateDisplay,
-  } = useProductsForm({ addProduct, updateProduct, notify });
+  } = useProductsForm({ addProduct, updateProduct });
 
   return (
     <section className="bg-white rounded-lg border border-gray-200">

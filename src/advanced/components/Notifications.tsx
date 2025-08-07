@@ -1,12 +1,13 @@
-import type { Notification } from '../../types';
+import {
+  useNotifications,
+  useRemoveNotification,
+} from '../hooks/useNotification';
 import { UIToast } from './ui/UIToast';
 
-interface Props {
-  notifications: Notification[];
-  removeNotification: (params: { id: string }) => void;
-}
+export function Notifications() {
+  const notifications = useNotifications();
+  const removeNotification = useRemoveNotification();
 
-export function Notifications({ notifications, removeNotification }: Props) {
   return (
     notifications.length > 0 && (
       <div className="fixed top-20 right-4 z-50 space-y-2 max-w-sm">

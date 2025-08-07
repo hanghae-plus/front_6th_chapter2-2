@@ -1,42 +1,32 @@
-import { useCallback, useState } from 'react';
+import { useAtomValue, useSetAtom } from 'jotai';
 import type { Notification, Notify } from '../../types';
-import * as notificationModel from '../models/notification';
+import {
+  addNotificationAtom,
+  notificationsAtom,
+  removeNotificationAtom,
+} from '../atoms/notification';
 
-interface UseNotificationReturn {
-  notifications: Notification[];
-  notify: Notify;
-  removeNotification: (params: { id: string }) => void;
+export function useNotifications(): Notification[] {
+  return useAtomValue(notificationsAtom);
 }
 
-export function useNotification(): UseNotificationReturn {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+export function useNotify() {
+  const notify = useSetAtom(addNotificationAtom);
+  const removeNotification = useSetAtom(removeNotificationAtom);
 
-  return {
-    notifications,
+  const notifyAndRemove: Notify = ({ message, type = 'success' }) => {
+    const TOAST_DURATION = 3_000;
+    const id = Date.now().toString();
+    notify({ message, type, id });
 
-    notify: useCallback(({ message, type = 'success' }) => {
-      setNotifications((prevNotifications) => {
-        const TOAST_DURATION = 3_000;
-        const id = Date.now().toString();
-        setTimeout(() => {
-          setNotifications((prev) => prev.filter((n) => n.id !== id));
-        }, TOAST_DURATION);
-        return notificationModel.addNotification({
-          notifications: prevNotifications,
-          id,
-          message,
-          type,
-        });
-      });
-    }, []),
-
-    removeNotification: useCallback(({ id }) => {
-      setNotifications((prevNotifications) =>
-        notificationModel.removeNotification({
-          id,
-          notifications: prevNotifications,
-        })
-      );
-    }, []),
+    setTimeout(() => {
+      removeNotification({ id });
+    }, TOAST_DURATION);
   };
+
+  return notifyAndRemove;
+}
+
+export function useRemoveNotification() {
+  return useSetAtom(removeNotificationAtom);
 }

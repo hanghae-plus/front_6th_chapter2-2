@@ -1,17 +1,14 @@
 import { useCallback } from 'react';
-import type { Notify } from '../../types';
+import { useNotify } from './useNotification';
 
 interface UseOrderParams {
-  notify: Notify;
   clearCart: () => void;
   clearSelectedCoupon: () => void;
 }
 
-export function useOrder({
-  notify,
-  clearCart,
-  clearSelectedCoupon,
-}: UseOrderParams) {
+export function useOrder({ clearCart, clearSelectedCoupon }: UseOrderParams) {
+  const notify = useNotify();
+
   return {
     completeOrder: useCallback(() => {
       const orderNumber = `ORD-${Date.now()}`;

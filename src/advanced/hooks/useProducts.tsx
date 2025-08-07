@@ -14,14 +14,11 @@
 // - removeProductDiscount: 할인 규칙 삭제
 
 import { useCallback, type Dispatch, type SetStateAction } from 'react';
-import type { Notify, Product, ProductWithUI } from '../../types';
+import type { Product, ProductWithUI } from '../../types';
 import { initialProducts } from '../constants';
 import * as productModel from '../models/product';
 import { useLocalStorage } from '../utils/hooks/useLocalStorage';
-
-interface UseProductsParams {
-  notify: Notify;
-}
+import { useNotify } from './useNotification';
 
 interface UseProductsReturn {
   products: ProductWithUI[];
@@ -34,7 +31,8 @@ interface UseProductsReturn {
   deleteProduct: (params: { productId: string }) => void;
 }
 
-export function useProducts({ notify }: UseProductsParams): UseProductsReturn {
+export function useProducts(): UseProductsReturn {
+  const notify = useNotify();
   const [products, setProducts] = useLocalStorage({
     key: 'products',
     initialValue: initialProducts,
@@ -52,12 +50,12 @@ export function useProducts({ notify }: UseProductsParams): UseProductsReturn {
             newProduct: params.newProduct,
             products: prevProducts,
           });
-          
+
           notify({
             message: '상품이 추가되었습니다.',
             type: 'success',
           });
-          
+
           return newProducts;
         });
       },
@@ -72,12 +70,12 @@ export function useProducts({ notify }: UseProductsParams): UseProductsReturn {
             updates,
             products: prevProducts,
           });
-          
+
           notify({
             message: '상품이 수정되었습니다.',
             type: 'success',
           });
-          
+
           return newProducts;
         });
       },
@@ -91,12 +89,12 @@ export function useProducts({ notify }: UseProductsParams): UseProductsReturn {
             productId,
             products: prevProducts,
           });
-          
+
           notify({
             message: '상품이 삭제되었습니다.',
             type: 'success',
           });
-          
+
           return newProducts;
         });
       },

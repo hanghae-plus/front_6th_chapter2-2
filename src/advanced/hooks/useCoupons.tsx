@@ -9,15 +9,12 @@
 // - removeCoupon: 쿠폰 삭제
 
 import { useCallback, useState } from 'react';
-import type { CartItem, Coupon, Notify } from '../../types';
+import type { CartItem, Coupon } from '../../types';
 import { initialCoupons } from '../constants';
 import * as cartModel from '../models/cart';
 import * as couponModel from '../models/coupon';
 import { useLocalStorage } from '../utils/hooks/useLocalStorage';
-
-interface UseCouponsParams {
-  notify: Notify;
-}
+import { useNotify } from './useNotification';
 
 interface UseCouponsReturn {
   coupons: Coupon[];
@@ -28,7 +25,8 @@ interface UseCouponsReturn {
   clearSelectedCoupon: () => void;
 }
 
-export function useCoupons({ notify }: UseCouponsParams): UseCouponsReturn {
+export function useCoupons(): UseCouponsReturn {
+  const notify = useNotify();
   const [coupons, setCoupons] = useLocalStorage({
     key: 'coupons',
     initialValue: initialCoupons,
@@ -46,12 +44,12 @@ export function useCoupons({ notify }: UseCouponsParams): UseCouponsReturn {
             newCoupon,
             coupons: prevCoupons,
           });
-          
+
           if (!result.success) {
             notify({ message: result.message, type: 'error' });
             return prevCoupons;
           }
-          
+
           notify({ message: result.message, type: 'success' });
           return result.newCoupons;
         });
@@ -66,7 +64,7 @@ export function useCoupons({ notify }: UseCouponsParams): UseCouponsReturn {
             coupons: prevCoupons,
             couponCode,
           });
-          
+
           notify({ message: result.message, type: 'success' });
           return result.newCoupons;
         });
@@ -81,18 +79,18 @@ export function useCoupons({ notify }: UseCouponsParams): UseCouponsReturn {
             cart,
             applyCoupon: couponModel.getCouponApplier({ coupon }),
           });
-          
+
           const result = couponModel.applyCoupon({
             coupon,
             prevCoupon,
             cartTotal: totalAfterDiscount,
           });
-          
+
           if (!result.success) {
             notify({ message: result.message, type: 'error' });
             return prevCoupon;
           }
-          
+
           notify({ message: result.message, type: 'success' });
           return result.selectedCoupon;
         });
