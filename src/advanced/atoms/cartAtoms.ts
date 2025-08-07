@@ -173,7 +173,7 @@ export const completeOrderAtom = atom(null, (get, set) => {
 
   set(addNotificationAtom, {
     id: Date.now().toString(),
-    message: '주문이 완료되었습니다!',
+    message: `주문이 완료되었습니다. 주문번호: ${`ORD-${Date.now()}`}`,
     type: 'success',
   });
 });
