@@ -1,2 +1,2 @@
 export * from "./icons";
-export * from "./NotificationList";
+export * from "./ui";
