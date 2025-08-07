@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { CartItem, Product } from "../../types";
 import { useLocalStorage } from "./useLocalStorage";
 

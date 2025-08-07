@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Product } from "../../types";
 import { initialProducts } from "../data";
 import { useLocalStorage } from "./useLocalStorage";

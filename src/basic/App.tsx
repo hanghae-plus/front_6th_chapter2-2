@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { CartItem, Coupon, Product } from "../types";
 import { type ProductWithUI, useProducts } from "./hooks/useProducts";
-import { useTask } from "./hooks/useNotifyingTask";
+import { useTask } from "./hooks/useTask";
 import { useCart } from "./hooks/useCart";
 import { useCoupons } from "./hooks/useCoupons";
 
