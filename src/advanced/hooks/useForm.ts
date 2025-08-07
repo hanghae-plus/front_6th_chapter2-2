@@ -16,11 +16,12 @@ export function useCouponForm(
   ) => void,
 ) {
   const [showCouponForm, setShowCouponForm] = useState(false)
-  const toggleShowCouponForm = (isShow?: boolean) => {
+  const toggleShowCouponForm = (isShow?: boolean) => {    
     if (isShow !== undefined) {
       setShowCouponForm(isShow)
+    } else {
+      setShowCouponForm((prev) => !prev)
     }
-    setShowCouponForm((prev) => !prev)
   }
 
   const [couponForm, setCouponForm] = useState<Coupon>({
