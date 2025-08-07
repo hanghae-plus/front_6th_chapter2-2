@@ -1,13 +1,16 @@
 import { useCallback } from "react";
 import CartBagIcon from "@assets/icons/CartBagIcon.svg?react";
-import { formatPrice } from "@shared";
-import { Product } from "@/types";
 import { useCart } from "@entities/cart";
 import {
   useGlobalNotification,
   NotificationVariant,
 } from "@entities/notification";
-import { ProductWithUI, getStockDisplay, ProductList } from "@entities/product";
+import {
+  ProductWithUI,
+  getDisplayPrice,
+  ProductList,
+  Product,
+} from "@entities/product";
 import {
   useAddToCart,
   useUpdateCartQuantity,
@@ -44,11 +47,9 @@ export function CartPage({
   const couponActions = useApplyCoupon(cart.cart);
 
   const displayPrice = (product: Product) => {
-    const stockStatus = getStockDisplay(product.stock, 0);
-    if (stockStatus) return stockStatus;
-
-    const formattedPrice = formatPrice(product.price);
-    return `₩${formattedPrice}`;
+    const cartQuantity =
+      cart.cart.find((item) => item.product.id === product.id)?.quantity || 0;
+    return getDisplayPrice(product, cartQuantity);
   };
 
   const { totalAfterDiscount, totalBeforeDiscount } =

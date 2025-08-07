@@ -1,6 +1,8 @@
+// Hooks
 export * from "./hooks/useCart";
 
+// UI Components
 export * from "./ui/CartItem";
 
-export * from "./libs/cartCalculations";
-export * from "./libs/discountCalculations";
+// Libs
+export * from "./libs";

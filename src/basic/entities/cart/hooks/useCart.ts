@@ -1,5 +1,5 @@
 import { useLocalStorageObject } from "@shared";
-import { calculateItemTotal } from "@entities/cart/libs/cartCalculations";
+import { calculateItemTotal } from "@/basic/entities/cart/libs";
 import { type CartItem } from "@/types";
 
 export function useCart() {

@@ -10,3 +10,4 @@ export * from "./ui/ProductList";
 
 export * from "./libs/stock";
 export * from "./libs/validator";
+export * from "./libs/displayCalculations";
