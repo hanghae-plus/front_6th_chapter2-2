@@ -1,10 +1,11 @@
 import { useState, useMemo } from 'react';
-import { AdminDashboard, Header, NotificationItem, UserDashboard } from './ui';
+import { Header, NotificationItem } from './ui';
 import { useCoupons } from './entities/coupons';
 import { useProducts } from './entities/products';
 import { CartModel } from './models/cart';
 import { ProductModel } from './models/product';
 import { useCart, useDebounceValue, useNotifications, useTotalItemCount } from './hooks';
+import { AdminDashboard, UserDashboard } from './pages';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -75,7 +76,6 @@ const App = () => {
       />
       <main className='max-w-7xl mx-auto px-4 py-8'>
         {isAdmin ? (
-          // Admin Dashboard
           <AdminDashboard
             products={products}
             coupons={coupons}

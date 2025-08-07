@@ -1,6 +1,6 @@
 import { CartItem, Coupon, Product } from '@/types';
 import { ProductWithUI } from '../constants/mocks';
-import { Cart, Coupons, Payments, ProductList } from './index';
+import { Cart, Coupons, Payments, ProductList } from '../ui/index';
 
 interface UserDashboardProps {
   // 상품
@@ -57,11 +57,7 @@ export function UserDashboard({
 
       <div className='lg:col-span-1'>
         <div className='sticky top-24 space-y-4'>
-          <Cart
-            cart={cart}
-            removeFromCart={removeFromCart}
-            updateQuantity={updateQuantity}
-          />
+          <Cart cart={cart} removeFromCart={removeFromCart} updateQuantity={updateQuantity} />
 
           {cart.length > 0 && (
             <>
