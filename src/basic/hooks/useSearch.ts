@@ -11,15 +11,11 @@ const useSearch = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  const handleSearchTermChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  };
-
   const setSearchTermValue = (term: string) => {
     setSearchTerm(term);
   };
 
-  return { searchTerm, debouncedSearchTerm, handleSearchTermChange, setSearchTermValue };
+  return { searchTerm, debouncedSearchTerm, setSearchTermValue };
 };
 
 export { useSearch };

@@ -9,14 +9,13 @@ import { useProducts } from './hooks/useProducts';
 import { useCouponForm } from './hooks/form/useCouponForm';
 import { useProductForm } from './hooks/form/useProductForm';
 import { useSearch } from './hooks/useSearch';
+import { useOrder } from './hooks/useOrder';
 import { formatPrice } from './utils/formatters';
 import { calculateItemTotal } from './models/cart';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
-  // const [searchTerm, setSearchTerm] = useState('');
-  // const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
   const { addNotification, notifications, removeNotification } = useNotification();
   const { products, addProduct, updateProduct, deleteProduct } = useProducts(addNotification);
@@ -52,8 +51,12 @@ const App = () => {
     handleCancelProduct,
   } = useProductForm();
 
-  const { searchTerm, debouncedSearchTerm, handleSearchTermChange, setSearchTermValue } =
-    useSearch();
+  const { searchTerm, debouncedSearchTerm, setSearchTermValue } = useSearch();
+  const { completeOrder } = useOrder({
+    addNotification,
+    clearCart,
+    applyCoupon,
+  });
 
   // UI에 관련된 함수같다!
   const getDisplayPrice = (price: number, productId?: string): string => {
@@ -65,20 +68,6 @@ const App = () => {
     }
     return formatPrice(price, isAdmin);
   };
-
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     setDebouncedSearchTerm(searchTerm);
-  //   }, 500);
-  //   return () => clearTimeout(timer);
-  // }, [searchTerm]);
-
-  const completeOrder = useCallback(() => {
-    const orderNumber = `ORD-${Date.now()}`;
-    addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
-    clearCart();
-    applyCoupon(null);
-  }, [addNotification]);
 
   const handleProductSubmit = (e: React.FormEvent) => {
     e.preventDefault();
