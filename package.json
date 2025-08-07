@@ -18,7 +18,7 @@
     "build:basic": "vite build --mode basic",
     "build:advanced": "vite build --mode advanced",
     "predeploy": "npm run build:advanced",
-    "deploy": "gh-pages -d dist",
+    "deploy": "npm run build:gh-pages && gh-pages -d dist",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "build:gh-pages": "npm run build && cp dist/index.basic.html dist/basic.html && cp dist/index.advanced.html dist/advanced.html"
   },

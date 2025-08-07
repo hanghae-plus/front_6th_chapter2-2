@@ -13,6 +13,7 @@ export default mergeConfig(
           advanced: './index.advanced.html',
           origin: './index.origin.html',
         },
+        external: ['src/refactoring(hint)/**'],
       },
     },
   }),
