@@ -1,5 +1,3 @@
-import { Product, CartItem } from '../../types';
-
 const SOLD_OUT_MESSAGE = 'SOLD OUT';
 
 interface PriceFormatOptions {
@@ -29,24 +27,4 @@ export const formatPrice = (
   }
 
   return price.toLocaleString();
-};
-
-export const formatPriceWithStock = (
-  price: number,
-  productId: string,
-  products: Product[],
-  cart: CartItem[],
-  isAdmin: boolean = false
-): string => {
-  const product = products.find((p) => p.id === productId);
-  if (product) {
-    const cartItem = cart.find((item) => item.product.id === product.id);
-    const remainingStock = product.stock - (cartItem?.quantity || 0);
-
-    if (remainingStock <= 0) {
-      return SOLD_OUT_MESSAGE;
-    }
-  }
-
-  return formatPrice(price, { isAdmin, showSymbol: !isAdmin });
 };

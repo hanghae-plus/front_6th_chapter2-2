@@ -3,13 +3,7 @@ import { Coupon } from '@/types';
 import { AdminDashboard, Header, NotificationItem, UserDashboard } from './ui';
 import { useCoupons } from './entities/coupons';
 import { useProducts } from './entities/products';
-import {
-  formatPriceWithStock,
-  calculateItemTotal,
-  calculateCartTotal,
-  filterProducts,
-  validateCouponApplication,
-} from './utils';
+import { calculateItemTotal, calculateCartTotal, filterProducts } from './utils';
 import { useCart, useDebounceValue, useNotifications, useTotalItemCount } from './hooks';
 
 const App = () => {
@@ -35,6 +29,7 @@ const App = () => {
     setCouponForm,
     deleteCoupon,
     handleCouponSubmit,
+    applyCoupon: applyCouponFromHook,
   } = useCoupons({ addNotification });
   const { cart, addToCart, removeFromCart, updateQuantity, completeOrder, getStock } = useCart({
     products,
@@ -46,35 +41,9 @@ const App = () => {
 
   const debouncedSearchTerm = useDebounceValue(searchTerm, 500);
 
-  const formatPrice = useCallback(
-    (price: number, productId?: string): string => {
-      if (productId) {
-        return formatPriceWithStock(price, productId, products, cart, isAdmin);
-      }
-
-      if (isAdmin) {
-        return `${price.toLocaleString()}원`;
-      }
-
-      return `₩${price.toLocaleString()}`;
-    },
-    [products, cart, isAdmin]
-  );
-
   const applyCoupon = useCallback(
-    (coupon: Coupon) => {
-      const currentTotal = calculateCartTotal(cart, selectedCoupon).totalAfterDiscount;
-      const validation = validateCouponApplication(coupon, currentTotal);
-
-      if (!validation.isValid) {
-        addNotification(validation.errorMessage!, 'error');
-        return;
-      }
-
-      setSelectedCoupon(coupon);
-      addNotification('쿠폰이 적용되었습니다.', 'success');
-    },
-    [addNotification, cart, selectedCoupon]
+    (coupon: Coupon) => applyCouponFromHook(coupon, cart),
+    [applyCouponFromHook, cart]
   );
 
   const totals = useMemo(() => calculateCartTotal(cart, selectedCoupon), [cart, selectedCoupon]);
@@ -112,7 +81,7 @@ const App = () => {
           <AdminDashboard
             products={products}
             coupons={coupons}
-            formatPrice={formatPrice}
+            isAdmin={isAdmin}
             productForm={productForm}
             showProductForm={showProductForm}
             couponForm={couponForm}
@@ -133,7 +102,7 @@ const App = () => {
             products={products}
             filteredProducts={filteredProducts}
             debouncedSearchTerm={debouncedSearchTerm}
-            formatPrice={formatPrice}
+            isAdmin={isAdmin}
             cart={cart}
             addToCart={addToCart}
             removeFromCart={removeFromCart}

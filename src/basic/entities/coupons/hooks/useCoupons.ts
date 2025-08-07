@@ -1,8 +1,8 @@
 import { initialCoupons } from '@/basic/constants/mocks';
 import { useLocalStorage } from '@/basic/hooks';
-import { Coupon } from '@/types';
+import { Coupon, CartItem } from '@/types';
 import { useCallback, useState } from 'react';
-import { validateCouponCode } from '@/basic/utils';
+import { validateCouponCode, calculateCartTotal, validateCouponApplication } from '@/basic/utils';
 import { INITIAL_COUPON_FORM } from '@/basic/constants/forms';
 
 interface UseCouponsProps {
@@ -49,6 +49,22 @@ export function useCoupons({ addNotification }: UseCouponsProps) {
     [couponForm, addCoupon]
   );
 
+  const applyCoupon = useCallback(
+    (coupon: Coupon, cart: CartItem[]) => {
+      const currentTotal = calculateCartTotal(cart, selectedCoupon).totalAfterDiscount;
+      const validation = validateCouponApplication(coupon, currentTotal);
+
+      if (!validation.isValid) {
+        addNotification(validation.errorMessage!, 'error');
+        return;
+      }
+
+      setSelectedCoupon(coupon);
+      addNotification('쿠폰이 적용되었습니다.', 'success');
+    },
+    [addNotification, selectedCoupon]
+  );
+
   return {
     coupons,
     selectedCoupon,
@@ -59,5 +75,6 @@ export function useCoupons({ addNotification }: UseCouponsProps) {
     setSelectedCoupon,
     deleteCoupon,
     handleCouponSubmit,
+    applyCoupon,
   };
 }

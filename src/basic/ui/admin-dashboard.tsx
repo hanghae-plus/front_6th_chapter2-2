@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ProductWithUI } from '../constants/mocks';
 import { Coupon } from '../../types';
 import { CloseIcon, DeleteIcon, PlusIcon } from './icons';
+import { formatPrice } from '../utils';
 
 interface AdminDashboardProps {
   products: ProductWithUI[];
@@ -10,8 +11,7 @@ interface AdminDashboardProps {
   showProductForm: boolean;
   couponForm: Coupon;
   showCouponForm: boolean;
-
-  formatPrice: (price: number, productId?: string) => string;
+  isAdmin: boolean;
   setProductForm: (product: any) => void;
   setShowProductForm: (show: boolean) => void;
   setCouponForm: (coupon: Coupon) => void;
@@ -28,7 +28,7 @@ interface AdminDashboardProps {
 export function AdminDashboard({
   products,
   coupons,
-  formatPrice,
+  isAdmin,
   productForm,
   showProductForm,
   couponForm,
@@ -129,7 +129,7 @@ export function AdminDashboard({
                       {product.name}
                     </td>
                     <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>
-                      {formatPrice(product.price, product.id)}
+                      {formatPrice(product.price, { isAdmin })}
                     </td>
                     <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>
                       <span

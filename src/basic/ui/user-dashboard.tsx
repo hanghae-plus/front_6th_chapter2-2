@@ -7,7 +7,7 @@ interface UserDashboardProps {
   products: ProductWithUI[];
   filteredProducts: ProductWithUI[];
   debouncedSearchTerm: string;
-  formatPrice: (price: number, productId?: string) => string;
+  isAdmin: boolean;
 
   // 장바구니
   cart: CartItem[];
@@ -30,7 +30,7 @@ export function UserDashboard({
   products,
   filteredProducts,
   debouncedSearchTerm,
-  formatPrice,
+  isAdmin,
   cart,
   addToCart,
   removeFromCart,
@@ -52,7 +52,7 @@ export function UserDashboard({
           filteredProducts={filteredProducts}
           debouncedSearchTerm={debouncedSearchTerm}
           getRemainingStock={getStock}
-          formatPrice={formatPrice}
+          isAdmin={isAdmin}
           addToCart={addToCart}
         />
       </div>

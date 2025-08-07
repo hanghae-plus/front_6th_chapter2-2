@@ -1,12 +1,13 @@
 import { ProductWithUI } from '../constants/mocks';
 import { PictureIcon } from './icons';
+import { formatPrice } from '../utils';
 
 interface ProductListProps {
   products: ProductWithUI[];
   filteredProducts: ProductWithUI[];
   debouncedSearchTerm: string;
   getRemainingStock: (product: ProductWithUI) => number;
-  formatPrice: (price: number, productId?: string) => string;
+  isAdmin: boolean;
   addToCart: (product: ProductWithUI) => void;
 }
 
@@ -15,7 +16,7 @@ export function ProductList({
   filteredProducts,
   debouncedSearchTerm,
   getRemainingStock,
-  formatPrice,
+  isAdmin,
   addToCart,
 }: ProductListProps) {
   return (
@@ -65,7 +66,9 @@ export function ProductList({
                   {/* 가격 정보 */}
                   <div className='mb-3'>
                     <p className='text-lg font-bold text-gray-900'>
-                      {formatPrice(product.price, product.id)}
+                      {getRemainingStock(product) <= 0
+                        ? 'SOLD OUT'
+                        : formatPrice(product.price, { isAdmin, showSymbol: !isAdmin })}
                     </p>
                     {product.discounts.length > 0 && (
                       <p className='text-xs text-gray-500'>
