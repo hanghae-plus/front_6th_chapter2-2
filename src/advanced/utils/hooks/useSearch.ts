@@ -16,8 +16,11 @@ interface UseSearchOptions {
  * 상품 검색을 위한 커스텀 훅
  * @param options - 검색 옵션 (debounce 시간)
  */
-export const useProductSearch = (options: UseSearchOptions = {}) => {
-  const products = useAtomValue(productsAtom);
+export const useSearch = <T>(
+  data: T[],
+  searchFn: (items: T[], term: string) => T[],
+  options: UseSearchOptions = {}
+) => {
   const { debounceMs = 500 } = options;
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -25,15 +28,15 @@ export const useProductSearch = (options: UseSearchOptions = {}) => {
 
   // 새로운 models의 searchProducts 함수 사용
   const filteredProducts = useMemo(() => {
-    return searchProducts(products, debouncedSearchTerm);
-  }, [products, debouncedSearchTerm]);
+    return searchFn(data, debouncedSearchTerm);
+  }, [data, debouncedSearchTerm, searchFn]);
 
   // 검색 상태 정보
   const searchInfo = {
     isSearching: Boolean(debouncedSearchTerm.trim()),
     searchTerm: debouncedSearchTerm,
     resultCount: filteredProducts.length,
-    totalCount: products.length,
+    totalCount: data.length,
     hasResults: filteredProducts.length > 0,
   };
 

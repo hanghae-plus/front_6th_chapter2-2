@@ -1,6 +1,5 @@
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { Product } from "../../types";
-import { useAutoCallback } from "../utils/hooks/useAutoCallbak";
 import { useSetAtom as useNotificationSetAtom } from "jotai";
 import { addNotificationAtom } from "../stores/notificationStore";
 import {
