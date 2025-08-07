@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 import { Coupon } from '../../types';
 import { ProductWithUI } from '../shared/types';
-import * as cartModel from '../models/cart';
 import { formatKoreanPrice, formatPercentage } from '../shared/utils';
 import { STOCK } from '../constants/product';
 import { MESSAGES } from '../constants/message';
@@ -200,7 +199,7 @@ export function CartPage({
             ) : (
               <div className="space-y-3">
                 {cart.map((item) => {
-                  const itemTotal = cartModel.calculateItemTotal(item, cart);
+                  const itemTotal = calculateTotal().totalAfterDiscount;
                   const originalPrice = item.product.price * item.quantity;
                   const hasDiscount = itemTotal < originalPrice;
                   const discountRate = hasDiscount ? formatPercentage(1 - itemTotal / originalPrice) : 0;
