@@ -1,11 +1,12 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Coupon } from '../types';
 import { initialCoupons } from './shared/constants';
-import { ProductWithUI, Notification } from './shared/types';
+import { ProductWithUI } from './shared/types';
 import { useLocalStorage } from './shared/hooks';
 import { useCart } from './hooks/useCart';
 import * as cartModel from './models/cart';
 import { useProducts } from './hooks/useProducts';
+import { useNotification } from './hooks/useNotification';
 
 const App = () => {
   const [coupons, setCoupons] = useLocalStorage('coupons', initialCoupons);
@@ -30,8 +31,9 @@ const App = () => {
     deleteProduct: deleteProductHook,
   } = useProducts();
 
+  const { notifications, addNotification, removeNotification } = useNotification();
+
   const [isAdmin, setIsAdmin] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
   const [showProductForm, setShowProductForm] = useState(false);
@@ -75,20 +77,6 @@ const App = () => {
 
     return `₩${price.toLocaleString()}`;
   };
-
-  /**
-   * 알림 메시지를 추가하고, 3초 후에 알림을 삭제
-   * @param message - 알림 메시지
-   * @param type - 알림 메시지 타입
-   */
-  const addNotification = useCallback((message: string, type: 'error' | 'success' | 'warning' = 'success') => {
-    const id = Date.now().toString();
-    setNotifications((prev) => [...prev, { id, message, type }]);
-
-    setTimeout(() => {
-      setNotifications((prev) => prev.filter((n) => n.id !== id));
-    }, 3000);
-  }, []);
 
   const [totalItemCount, setTotalItemCount] = useState(0);
 
@@ -316,10 +304,7 @@ const App = () => {
               }`}
             >
               <span className="mr-2">{notif.message}</span>
-              <button
-                onClick={() => setNotifications((prev) => prev.filter((n) => n.id !== notif.id))}
-                className="text-white hover:text-gray-200"
-              >
+              <button onClick={() => removeNotification(notif.id)} className="text-white hover:text-gray-200">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
