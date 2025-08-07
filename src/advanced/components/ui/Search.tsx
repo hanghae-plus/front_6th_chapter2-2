@@ -1,11 +1,17 @@
 import { Dispatch, SetStateAction } from "react";
+import { searchTermAtom } from "../../atoms";
+import { useAtom } from "jotai";
+import { useDebounce } from "../../utils/hooks/useDebounce";
 
 interface SearchProps {
   searchTerm: string;
   setSearchTerm: Dispatch<SetStateAction<string>>;
 }
 
-function NoResults({ debouncedSearchTerm }: { debouncedSearchTerm: string }) {
+function NoResults() {
+  const [searchTerm, setSearchTerm] = useAtom(searchTermAtom);
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
   return (
     <div className="text-center py-12">
       <p className="text-gray-500">

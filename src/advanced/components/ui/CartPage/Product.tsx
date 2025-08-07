@@ -1,26 +1,24 @@
 import { CartItem } from "../../../../types";
 import { ProductWithUI } from "../../../App";
 import { ImageIcon } from "../../icons";
+import { useCart } from "../../../hooks/useCart";
+import { getRemainingStock } from "../../../models/cart";
+import { formatPrice } from "../../../utils/formatters";
 
-export function Product({
-  product,
-  cart,
-  addToCart,
-  remainingStock,
-  formattedPrice,
-}: {
-  product: ProductWithUI;
-  cart: CartItem[];
-  addToCart: ({
+export function Product({ product }: { product: ProductWithUI }) {
+  const { cart, addToCart } = useCart();
+  const remainingStock = getRemainingStock({
     product,
     cart,
-  }: {
-    product: ProductWithUI;
-    cart: CartItem[];
-  }) => void;
-  remainingStock: number;
-  formattedPrice: string;
-}) {
+  });
+  const formattedPrice = formatPrice({
+    price: product.price,
+    productId: product.id,
+    products: [product],
+    isAdmin: false,
+    cart,
+  });
+
   return (
     <div
       key={product.id}

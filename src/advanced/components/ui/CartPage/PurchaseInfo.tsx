@@ -1,13 +1,29 @@
-export function PurchaseInfo({
-  totals,
-  completeOrder,
-}: {
-  totals: {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
-  };
-  completeOrder: () => void;
-}) {
+import { useCallback } from "react";
+import { useNotification } from "../../../utils/hooks/useNotification";
+import { useCart } from "../../../hooks/useCart";
+import { useAtom } from "jotai";
+import { selectedCouponAtom } from "../../../atoms";
+
+export function PurchaseInfo() {
+  const { addNotification } = useNotification();
+  const { cart, clearCart, calculateCartTotal } = useCart();
+  const [selectedCoupon, setSelectedCoupon] = useAtom(selectedCouponAtom);
+
+  const totals = calculateCartTotal({
+    cart,
+    selectedCoupon,
+  });
+
+  const completeOrder = useCallback(() => {
+    const orderNumber = `ORD-${Date.now()}`;
+    addNotification(
+      `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
+      "success"
+    );
+    clearCart();
+    setSelectedCoupon(null);
+  }, [addNotification]);
+
   return (
     <section className="bg-white rounded-lg border border-gray-200 p-4">
       <h3 className="text-lg font-semibold mb-4">결제 정보</h3>

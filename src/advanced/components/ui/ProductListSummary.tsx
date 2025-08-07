@@ -1,10 +1,7 @@
-import { ProductWithUI } from "../../App";
+import { useProducts } from "../../hooks/useProducts";
 
-interface ProductListSummaryProps {
-  products: ProductWithUI[];
-}
-
-export function ProductListSummary({ products }: ProductListSummaryProps) {
+export function ProductListSummary() {
+  const { products } = useProducts();
   return (
     <div className="mb-6 flex justify-between items-center">
       <h2 className="text-2xl font-semibold text-gray-800">전체 상품</h2>
