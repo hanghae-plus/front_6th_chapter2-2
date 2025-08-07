@@ -636,7 +636,7 @@ const App = () => {
                               <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white text-indigo-700">
                                 {coupon.discountType === 'amount'
                                   ? `${formatKoreanPrice(coupon.discountValue)} 할인`
-                                  : `${formatPercentage(coupon.discountValue)} 할인`}
+                                  : `${formatPercentage(coupon.discountValue / 100)} 할인`}
                               </span>
                             </div>
                           </div>
