@@ -3,7 +3,7 @@ interface SelectProps<T> {
   value: string;
   className?: string;
   items: T[];
-  defaultText: string;
+  defaultText?: string;
   getLabel: (option: T) => string;
   getValue: (option: T) => string;
   onChange: (e: ChangeEvent<HTMLSelectElement>) => void;
@@ -20,7 +20,7 @@ const Select = <T,>({
 }: SelectProps<T>) => {
   return (
     <select className={className} value={String(value)} onChange={onChange}>
-      <option value="">{defaultText}</option>
+      {defaultText && <option value="">{defaultText}</option>}
       {items.map(option => (
         <option key={getValue(option)} value={getValue(option)}>
           {getLabel(option)}

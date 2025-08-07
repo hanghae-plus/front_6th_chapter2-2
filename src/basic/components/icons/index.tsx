@@ -8,3 +8,4 @@ export * from './AdminIcon';
 export * from './ProductIcon';
 export * from './BagIcon';
 export * from './EmptyCartIcon';
+export * from './PlusIcon';

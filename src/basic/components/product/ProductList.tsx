@@ -92,7 +92,7 @@ const ProductList = ({
                     </p>
                     {product.discounts.length > 0 && (
                       <p className="text-xs text-gray-500">
-                        {product.discounts[0].quantity}개 이상 구매시 할인{' '}
+                        {product.discounts[0].quantity}개 이상 구매시 할인
                         {product.discounts[0].rate * 100}%
                       </p>
                     )}

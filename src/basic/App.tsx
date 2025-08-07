@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Product } from './models/entities';
 
 import Header from './components/ui/_layout/Header.tsx';
-import { CartIcon } from './components/icons/CartIcon.tsx';
+import { CartIcon } from './components/icons';
 import ToastContainer from './components/ui/Toast/ToastContainer.tsx';
 import { useProducts } from './hooks/useProducts.ts';
 import { useNotifications } from './hooks/useNotifications.ts';
