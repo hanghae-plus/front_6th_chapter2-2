@@ -1,4 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect } from "react";
+import { useLocalStorage } from "./useLocalStorage";
+
+import { createStore } from "../utils/createStore";
 import { Product } from "../../types";
 
 // 초기 데이터
@@ -37,23 +40,9 @@ const initialProducts: Product[] = [
 ];
 
 export const useProducts = () => {
-  const [products, setProducts] = useState<Product[]>(() => {
-    const saved = localStorage.getItem("products");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialProducts;
-      }
-    }
-    return initialProducts;
-  });
+  const [products, setProducts] = useLocalStorage<Product[]>("products", initialProducts);
 
-  // localStorage에 상품 저장
-  useEffect(() => {
-    localStorage.setItem("products", JSON.stringify(products));
-  }, [products]);
-
+  // 상품 추가
   const addProduct = useCallback((newProduct: Omit<Product, "id">) => {
     const product: Product = {
       ...newProduct,
@@ -62,10 +51,12 @@ export const useProducts = () => {
     setProducts((prev) => [...prev, product]);
   }, []);
 
+  // 상품 수정
   const updateProduct = useCallback((productId: string, updates: Partial<Product>) => {
     setProducts((prev) => prev.map((product) => (product.id === productId ? { ...product, ...updates } : product)));
   }, []);
 
+  // 상품 삭제
   const deleteProduct = useCallback((productId: string) => {
     setProducts((prev) => prev.filter((p) => p.id !== productId));
   }, []);

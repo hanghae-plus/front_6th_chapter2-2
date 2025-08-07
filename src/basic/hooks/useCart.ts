@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { CartItem, Product } from "../../types";
 import { getMaxApplicableDiscount, calculateItemTotalWithDiscount } from "../utils/discounts";
+import { useLocalStorage } from "./useLocalStorage";
+import { createStore } from "../utils/createStore";
 
 const initCart = () => {
   const saved = localStorage.getItem("cart");
@@ -11,16 +13,16 @@ const initCart = () => {
 };
 
 export const useCart = () => {
-  const [cart, setCart] = useState<CartItem[]>(() => initCart());
+  const store = createStore("cart", window.localStorage);
+  const [cart, setCart] = useLocalStorage<CartItem[]>("cart", initCart);
 
   const [totalItemCount, setTotalItemCount] = useState(0);
 
-  // localStorage에 장바구니 저장
   useEffect(() => {
     if (cart.length > 0) {
-      localStorage.setItem("cart", JSON.stringify(cart));
+      store.set(cart);
     } else {
-      localStorage.removeItem("cart");
+      store.remove();
     }
   }, [cart]);
 

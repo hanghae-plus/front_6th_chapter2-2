@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { Coupon } from "../../types";
+import { useLocalStorage } from "./useLocalStorage";
 
 const initialCoupons: Coupon[] = [
   {
@@ -17,17 +18,7 @@ const initialCoupons: Coupon[] = [
 ];
 
 export const useCoupons = () => {
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem("coupons");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialCoupons;
-      }
-    }
-    return initialCoupons;
-  });
+  const [coupons, setCoupons] = useLocalStorage<Coupon[]>("coupons", initialCoupons);
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
@@ -58,11 +49,6 @@ export const useCoupons = () => {
     }
     setSelectedCoupon(coupon);
   }, []);
-
-  // localStorage에 쿠폰 저장
-  useEffect(() => {
-    localStorage.setItem("coupons", JSON.stringify(coupons));
-  }, [coupons]);
 
   return {
     coupons,

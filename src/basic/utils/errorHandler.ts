@@ -1,6 +1,4 @@
-/**
- * 시도해서 성공하면 알림을 보내는 Higher Order Function
- */
+// 시도해서 성공하면 알림을 보냄. 실패하면 에러 알림
 export const withTryNotifySuccess = <T extends unknown[], R>(
   action: (...args: T) => R,
   successMessage: string,
@@ -18,9 +16,7 @@ export const withTryNotifySuccess = <T extends unknown[], R>(
   };
 };
 
-/**
- * 비동기 함수용: 시도해서 성공하면 알림
- */
+// 비동기 함수용: 시도해서 성공하면 알림
 export const withAsyncTryNotifySuccess = <T extends unknown[], R>(
   action: (...args: T) => Promise<R>,
   successMessage: string,
@@ -38,9 +34,7 @@ export const withAsyncTryNotifySuccess = <T extends unknown[], R>(
   };
 };
 
-/**
- * 시도해서 에러만 알림 (성공 알림 없음)
- */
+// 시도해서 에러만 알림 (성공 알림 없음)
 export const withTryNotifyError = <T extends unknown[], R>(
   action: (...args: T) => R,
   addNotification: (message: string, type: "success" | "error") => void
@@ -54,8 +48,3 @@ export const withTryNotifyError = <T extends unknown[], R>(
     }
   };
 };
-
-// 하위 호환성을 위한 alias (기존 코드에서 사용 중)
-export const withErrorHandling = withTryNotifySuccess;
-export const withAsyncErrorHandling = withAsyncTryNotifySuccess;
-export const withErrorOnly = withTryNotifyError;
