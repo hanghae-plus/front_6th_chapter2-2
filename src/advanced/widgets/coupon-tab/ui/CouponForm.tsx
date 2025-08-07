@@ -1,10 +1,10 @@
 import { useSetAtom } from 'jotai';
 
-import { initialCouponForm } from '../../../basic/constants';
-import type { Coupon } from '../../../types';
-import { addNotificationAtom } from '../../entities/notification';
-import { useForm } from '../../shared/hooks';
-import { isEmptyValue, isNumber, isValidCouponCode } from '../../shared/lib';
+import { initialCouponForm } from '../../../../basic/constants';
+import type { Coupon } from '../../../../types';
+import { addNotificationAtom } from '../../../entities/notification';
+import { useForm } from '../../../shared/hooks';
+import { isEmptyValue, isNumber, isValidCouponCode } from '../../../shared/lib';
 
 interface CouponFormProps {
   onSubmit: (form: Coupon) => void;

@@ -1,8 +1,11 @@
 import { CouponAddButton } from './CouponAddButton';
 import { CouponForm } from './CouponForm';
 import { CouponList } from './CouponList';
-import { Coupon } from '../../../types';
-import { useCouponFormVisibility, useAdminCouponService } from '../../features/coupon-management';
+import { Coupon } from '../../../../types';
+import {
+  useCouponFormVisibility,
+  useAdminCouponService,
+} from '../../../features/coupon-management';
 
 export function CouponTab() {
   const { onAddCoupon, onDeleteCoupon } = useAdminCouponService();

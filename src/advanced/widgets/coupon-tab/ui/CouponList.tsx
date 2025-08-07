@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai';
 
-import { couponsAtom } from '../../entities/coupon';
-import { Icon } from '../../shared/icon';
+import { couponsAtom } from '../../../entities/coupon';
+import { Icon } from '../../../shared/icon';
 
 interface CouponListProps {
   onDelete: (couponCode: string) => void;

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-import { CouponTab } from '../../../components/ui/CouponTab';
 import { AdminHeader } from '../../../widgets/admin-header';
+import { CouponTab } from '../../../widgets/coupon-tab';
 import { ProductTab } from '../../../widgets/product-tab';
 import { TabNavigation } from '../../../widgets/tab-navigation';
 
