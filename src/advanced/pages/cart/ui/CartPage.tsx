@@ -6,9 +6,9 @@ import { PaymentSummary } from '../../../components/ui/PaymentSummary';
 import { ProductList } from '../../../components/ui/ProductList';
 import { calculateCartTotal } from '../../../entities/cart';
 import { productsAtom } from '../../../entities/product';
+import { useDebouncedSearch } from '../../../features/search';
 import { useCartService } from '../../../hooks/useCartService';
 import { useCouponService } from '../../../hooks/useCouponService';
-import { useDebouncedSearch } from '../../../hooks/useDebouncedSearch';
 import { Icon } from '../../../shared/icon';
 import { CartHeader } from '../../../widgets/cart-header';
 
@@ -24,7 +24,7 @@ export function CartPage({ onChangeAdminPage }: CartPageProps) {
     products,
     onResetSelectedCoupon,
   });
-  const { searchTerm, debouncedSearchTerm, handleChangeSearchTerm } = useDebouncedSearch();
+  const [searchTerm, debouncedSearchTerm, onChangeSearchTerm] = useDebouncedSearch();
 
   const totals = calculateCartTotal(cart, selectedCoupon);
 
@@ -33,7 +33,7 @@ export function CartPage({ onChangeAdminPage }: CartPageProps) {
       <CartHeader
         searchTerm={searchTerm}
         cart={cart}
-        onChangeSearchTerm={handleChangeSearchTerm}
+        onChangeSearchTerm={onChangeSearchTerm}
         onChangeAdminPage={onChangeAdminPage}
       />
 

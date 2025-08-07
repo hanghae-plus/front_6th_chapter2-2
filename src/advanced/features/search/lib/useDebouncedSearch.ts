@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { useDebounce } from '../shared/hooks';
+import { useDebounce } from '../../../shared/hooks';
 
 export function useDebouncedSearch() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -10,5 +10,5 @@ export function useDebouncedSearch() {
     setSearchTerm(e.target.value);
   };
 
-  return { searchTerm, debouncedSearchTerm, handleChangeSearchTerm };
+  return [searchTerm, debouncedSearchTerm, handleChangeSearchTerm] as const;
 }
