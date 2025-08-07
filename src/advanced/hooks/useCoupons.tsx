@@ -14,6 +14,7 @@ import type { CartItem, Coupon } from '../../types';
 import {
   addCouponAtom,
   couponsAtom,
+  deleteCouponAtom,
   selectedCouponAtom,
 } from '../atoms/coupon';
 import { initialCoupons } from '../constants';
@@ -25,7 +26,6 @@ import { useNotify } from './useNotification';
 interface UseCouponsReturn {
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
-  deleteCoupon: (params: { couponCode: string }) => void;
   applyCoupon: (params: { cart: CartItem[]; coupon: Coupon }) => void;
   clearSelectedCoupon: () => void;
 }
@@ -42,19 +42,6 @@ export function useCoupons(): UseCouponsReturn {
   return {
     coupons,
     selectedCoupon,
-
-    deleteCoupon: useCallback(
-      ({ couponCode }) => {
-        const result = couponModel.deleteCoupon({
-          coupons,
-          couponCode,
-        });
-
-        setCoupons(result.newCoupons);
-        notify({ message: result.message, type: 'success' });
-      },
-      [setCoupons, notify, coupons]
-    ),
 
     applyCoupon: useCallback(
       ({ cart, coupon }) => {
@@ -97,4 +84,17 @@ export function useAddCoupon() {
   };
 
   return addCoupon;
+}
+
+export function useDeleteCoupon() {
+  const notify = useNotify();
+  const _deleteCoupon = useSetAtom(deleteCouponAtom);
+
+  const deleteCoupon = ({ couponCode }: { couponCode: string }) => {
+    const { message, success } = _deleteCoupon({ couponCode });
+
+    notify({ message, type: success ? 'success' : 'error' });
+  };
+
+  return deleteCoupon;
 }

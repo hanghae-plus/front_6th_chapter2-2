@@ -24,3 +24,18 @@ export const addCouponAtom = atom(
     return result;
   }
 );
+
+export const deleteCouponAtom = atom(
+  null,
+  (get, set, { couponCode }: { couponCode: string }) => {
+    const coupons = get(couponsAtom);
+
+    const result = couponModel.deleteCoupon({ coupons, couponCode });
+
+    if (result.success) {
+      set(couponsAtom, result.newCoupons);
+    }
+
+    return result;
+  }
+);

@@ -11,13 +11,8 @@ import { useDebounce } from './utils/hooks/useDebounce';
 
 const App = () => {
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
-  const {
-    coupons,
-    selectedCoupon,
-    deleteCoupon,
-    applyCoupon,
-    clearSelectedCoupon,
-  } = useCoupons();
+  const { coupons, selectedCoupon, applyCoupon, clearSelectedCoupon } =
+    useCoupons();
   const { completeOrder } = useOrder({
     clearSelectedCoupon,
   });
@@ -48,7 +43,6 @@ const App = () => {
             deleteProduct={deleteProduct}
             updateProduct={updateProduct}
             coupons={coupons}
-            deleteCoupon={deleteCoupon}
           />
         ) : (
           <CartPage
