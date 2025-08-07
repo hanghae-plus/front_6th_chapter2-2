@@ -1,4 +1,4 @@
-ame: pnpm-deploy
+name: pnpm-deploy
 
 on:
   push:
