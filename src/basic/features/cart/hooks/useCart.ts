@@ -11,6 +11,7 @@ import { ProductWithUI } from "@/basic/features/product/types/product";
 import { DEFAULTS } from "@/basic/shared/constants/defaults";
 import { NOTIFICATION } from "@/basic/shared/constants/notification";
 import { PRODUCT } from "@/basic/shared/constants/product";
+import { NotificationError } from "@/basic/shared/errors/NotificationError";
 import { useLocalStorage } from "@/basic/shared/hooks/useLocalStorage";
 
 interface Props {
@@ -68,7 +69,10 @@ export function useCart({
         return [...prevCart, { product, quantity: 1 }];
       });
 
-      addNotification("장바구니에 담았습니다", NOTIFICATION.TYPES.SUCCESS);
+      throw new NotificationError(
+        "장바구니에 담았습니다",
+        NOTIFICATION.TYPES.SUCCESS
+      );
     },
     [addNotification]
   );

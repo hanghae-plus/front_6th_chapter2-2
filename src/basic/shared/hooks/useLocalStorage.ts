@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const getLocalStorageItem = <T>(key: string, defaultValue: T): T => {
   try {
