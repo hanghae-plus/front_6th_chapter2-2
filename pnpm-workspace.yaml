@@ -2,4 +2,9 @@ ignoredBuiltDependencies:
   - esbuild
 
 onlyBuiltDependencies:
-  - '@swc/core'
+  - "@swc/core"
+
+packages:
+  - "src/advanced"
+  - "src/basic"
+  - "src/origin"

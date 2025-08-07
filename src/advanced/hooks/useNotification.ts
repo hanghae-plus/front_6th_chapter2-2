@@ -1,0 +1,36 @@
+import { useCallback } from "react";
+import { useAtom } from "jotai";
+import { notificationAtom } from "../store/atom";
+import { INotification } from "../type";
+import { NOTIFICATION_DURATION } from "../constants/time";
+
+export const useNotification = () => {
+  // 토스트 모달 알람 배열
+  const [notifications, setNotifications] = useAtom(notificationAtom)
+
+  // 알림 생성
+  const addNotification = useCallback(
+    (message: string, type: "error" | "success" | "warning" = "success") => {
+      // 알림 구분을 위한 고유 식별자
+      const id = Date.now().toString();
+      setNotifications((prev) => [...prev, { id, message, type }]);
+
+      // 3초 후 해당 알림 제거
+      setTimeout(() => {
+        setNotifications((prev) => prev.filter((n) => n.id !== id));
+      }, NOTIFICATION_DURATION);
+    },
+    []
+  );
+
+  // 알림 삭제
+  const removeNotification = (notif: INotification) => {
+    setNotifications((prev) => prev.filter((n) => n.id !== notif.id));
+  };
+
+  return {
+    notifications,
+    addNotification,
+    removeNotification,
+  };
+};
