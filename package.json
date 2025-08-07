@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://adds9810.github.io/front_6th_chapter2-2/",
   "scripts": {
     "start:origin": "vite serve --open ./index.origin.html",
     "start:basic": "vite serve --open ./index.basic.html",
@@ -13,6 +14,11 @@
     "test:advanced": "vitest src/advanced",
     "test:ui": "vitest --ui",
     "build": "tsc -b && vite build",
+    "build:origin": "vite build --mode origin",
+    "build:basic": "vite build --mode basic",
+    "build:advanced": "vite build --mode advanced",
+    "predeploy": "npm run build:advanced",
+    "deploy": "gh-pages -d dist",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
@@ -38,6 +44,7 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
+    "gh-pages": "^6.3.0",
     "jsdom": "^26.1.0",
     "typescript": "^5.9.2",
     "vite": "^7.0.6",
