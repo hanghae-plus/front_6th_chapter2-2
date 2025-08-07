@@ -1,4 +1,4 @@
-import { Coupon, type CartItem as CartItemType } from "../../types";
+import { Coupon } from "../../types";
 import { Product, ProductWithUI } from "../entities/product/types";
 import { ProductList } from "../entities/product/ui/ProductList";
 import { formatPrice } from "../shared/libs/price";
@@ -18,22 +18,20 @@ import {
   calculateItemTotal,
   getCartDiscountSummary,
 } from "../entities/cart/libs/cartCalculations";
+import { useCartStorage } from "../entities/cart/hooks/useCartStorage";
 
 interface CartPageProps {
   products: ProductWithUI[];
   filteredProducts: ProductWithUI[];
   searchValue: string;
-  cart: CartItemType[];
-  setCart: (cart: CartItemType[]) => void;
 }
 
 export function CartPage({
   products,
   filteredProducts,
   searchValue,
-  cart,
-  setCart,
 }: CartPageProps) {
+  const { cart, setCart } = useCartStorage();
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const { addNotification } = useGlobalNotification();
   const { coupons, applyCoupon: applyCouponLogic } = useCoupon({

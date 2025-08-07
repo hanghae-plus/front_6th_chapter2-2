@@ -11,7 +11,7 @@ import { CartPage } from "./pages/CartPage";
 
 const App = () => {
   const { products } = useProductStorage();
-  const { cart, setCart, totalItemCount } = useCartStorage();
+  const { totalItemCount } = useCartStorage();
 
   const { filteredProducts, searchValue, searchTerm, onSearchChange } =
     useProductSearch(products);
@@ -40,8 +40,6 @@ const App = () => {
             products={products}
             filteredProducts={filteredProducts}
             searchValue={searchTerm}
-            cart={cart}
-            setCart={setCart}
           />
         )}
       </main>
