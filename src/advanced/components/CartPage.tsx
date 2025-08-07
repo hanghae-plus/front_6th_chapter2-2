@@ -1,10 +1,9 @@
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { CartHeader } from './ui/cart/CartHeader'
 import { ProductList } from './ui/cart/ProductList'
 import { Cart } from './ui/cart/Cart'
 import { useDebounce } from '../utils/hooks/useDebounce'
-import { ProductContext } from '../types/context'
-import { ProductsContext } from '../hooks/useProducts'
+import { useProductsContext } from '../hooks/useProducts'
 
 export function CartPage({
   isAdmin,
@@ -13,9 +12,7 @@ export function CartPage({
   isAdmin: boolean
   setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>
 }) {
-  const { products, getFilteredProducts } = useContext(
-    ProductsContext,
-  ) as ProductContext
+  const { products, getFilteredProducts } = useProductsContext()
   const [searchTerm, setSearchTerm] = useState('')
   const debouncedSearchTerm = useDebounce(searchTerm, 500)
   const filteredProducts = getFilteredProducts(debouncedSearchTerm)

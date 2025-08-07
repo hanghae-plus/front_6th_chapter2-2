@@ -24,7 +24,13 @@
 // - getRemainingStock: 재고 확인 함수
 // - clearCart: 장바구니 비우기 함수
 
-import { createContext, useCallback, useEffect, useState } from 'react'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { CartItem, Coupon } from '../../types'
 import { ProductWithUI } from '../types'
 import {
@@ -38,6 +44,14 @@ import { MIN_COUPON_AMOUNT } from '../constants'
 import { CartItemContext } from '../types/context'
 
 export const CartContext = createContext<CartItemContext | undefined>(undefined)
+
+export function useCartContext(): CartItemContext {
+  const context = useContext(CartContext)
+  if (context === undefined) {
+    throw new Error('useCartContext must be used within CartProvider')
+  }
+  return context
+}
 
 export function useCart(
   addNotification: (

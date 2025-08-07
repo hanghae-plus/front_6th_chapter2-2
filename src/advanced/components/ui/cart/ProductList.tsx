@@ -1,18 +1,15 @@
-import { useContext } from 'react'
 import { LOW_STOCK_THRESHOLD, MAX_DISCOUNT_RATE } from '../../../constants'
 import { ProductWithUI } from '../../../types'
 import { formatPrice } from '../../../utils/formatters'
-import { CartContext } from '../../../hooks/useCart'
-import { CartItemContext } from '../../../types/context'
+import { useCartContext } from '../../../hooks/useCart'
 
 export function ProductList({
   filteredProducts,
 }: {
   filteredProducts: ProductWithUI[]
 }) {
-  const { addToCart, getRemainingStock } = useContext(
-    CartContext,
-  ) as CartItemContext
+  const { addToCart, getRemainingStock } = useCartContext()
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {filteredProducts.map((product) => {

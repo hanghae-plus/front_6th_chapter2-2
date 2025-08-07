@@ -1,13 +1,7 @@
-import { useContext } from 'react'
 import { MAX_DISCOUNT_RATE } from '../../../constants'
-import { CartContext } from '../../../hooks/useCart'
-import {
-  CartItemContext,
-  CouponContext,
-  ProductContext,
-} from '../../../types/context'
-import { CouponsContext } from '../../../hooks/useCoupons'
-import { ProductsContext } from '../../../hooks/useProducts'
+import { useCartContext } from '../../../hooks/useCart'
+import { useCouponsContext } from '../../../hooks/useCoupons'
+import { useProductsContext } from '../../../hooks/useProducts'
 
 export const Cart = () => {
   const {
@@ -19,9 +13,9 @@ export const Cart = () => {
     updateQuantity,
     calculateTotal,
     calculateCartTotal,
-  } = useContext(CartContext) as CartItemContext
-  const { products } = useContext(ProductsContext) as ProductContext
-  const { coupons } = useContext(CouponsContext) as CouponContext
+  } = useCartContext()
+  const { products } = useProductsContext()
+  const { coupons } = useCouponsContext()
   const totals = calculateCartTotal()
 
   return (

@@ -1,9 +1,7 @@
-import { useContext } from 'react'
-import { CouponsContext } from '../../../hooks/useCoupons'
-import { CouponContext } from '../../../types/context'
+import { useCouponsContext } from '../../../hooks/useCoupons'
 
 export const CouponList = () => {
-  const { deleteCoupon, coupons } = useContext(CouponsContext) as CouponContext
+  const { deleteCoupon, coupons } = useCouponsContext()
 
   return (
     <>

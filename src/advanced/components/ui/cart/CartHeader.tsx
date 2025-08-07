@@ -1,6 +1,4 @@
-import { useContext } from 'react'
-import { CartContext } from '../../../hooks/useCart'
-import { CartItemContext } from '../../../types/context'
+import { useCartContext } from '../../../hooks/useCart'
 
 export const CartHeader = ({
   isAdmin,
@@ -13,7 +11,7 @@ export const CartHeader = ({
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>
   setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
-  const { cart, totalItemCount } = useContext(CartContext) as CartItemContext
+  const { cart, totalItemCount } = useCartContext()
 
   return (
     <>

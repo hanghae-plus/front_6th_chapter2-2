@@ -1,4 +1,4 @@
-import { useState, FocusEvent, createContext } from 'react'
+import { useState, FocusEvent } from 'react'
 import { ProductWithUI } from '../types'
 import { Coupon, Discount, ProductForm } from '../../types'
 import { isValidStrNumber } from '../utils/validators'
@@ -7,11 +7,6 @@ import {
   MAX_DISCOUNT_RATE,
   MAX_STOCK_LIMIT,
 } from '../constants'
-import { CouponFormContext, ProductFormContext } from '../types/context'
-
-export const CouponItemFormContext = createContext<
-  CouponFormContext | undefined
->(undefined)
 
 export function useCouponForm(
   addCoupon: (newCoupon: Coupon) => void,
@@ -109,10 +104,6 @@ export function useCouponForm(
     handleDiscountValueValidation,
   }
 }
-
-export const ProductItemFormContext = createContext<
-  ProductFormContext | undefined
->(undefined)
 
 export function useProductForm(
   addProduct: (newProduct: Omit<ProductWithUI, 'id'>) => void,

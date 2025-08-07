@@ -1,16 +1,22 @@
-import { useContext } from 'react'
-import { CouponFormContext } from '../../../types/context'
-import { CouponItemFormContext } from '../../../hooks/useForm'
+import { FocusEvent } from 'react'
+import { Coupon } from '../../../../types'
 
-export function CouponForm() {
-  const {
-    couponForm,
-    handleCouponSubmit,
-    handleDiscountValueValidation,
-    handleEditCouponForm,
-    toggleShowCouponForm,
-  } = useContext(CouponItemFormContext) as CouponFormContext
-
+export function CouponForm({
+  couponForm,
+  handleCouponSubmit,
+  toggleShowCouponForm,
+  handleEditCouponForm,
+  handleDiscountValueValidation,
+}: {
+  couponForm: Coupon
+  toggleShowCouponForm: (isShow?: boolean) => void
+  handleCouponSubmit: (e: React.FormEvent) => void
+  handleEditCouponForm: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    key: string,
+  ) => void
+  handleDiscountValueValidation: (e: FocusEvent<HTMLInputElement>) => void
+}) {
   return (
     <div className="mt-6 p-4 bg-gray-50 rounded-lg">
       <form onSubmit={handleCouponSubmit} className="space-y-4">

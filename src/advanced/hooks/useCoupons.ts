@@ -8,7 +8,7 @@
 // - addCoupon: 새 쿠폰 추가
 // - removeCoupon: 쿠폰 삭제
 
-import { createContext, useCallback } from 'react'
+import { createContext, useCallback, useContext } from 'react'
 import { initialCoupons } from '../constants'
 import { Coupon } from '../../types'
 import { useLocalStorage } from '../utils/hooks/useLocalStorage'
@@ -17,6 +17,14 @@ import { CouponContext } from '../types/context'
 export const CouponsContext = createContext<CouponContext | undefined>(
   undefined,
 )
+
+export function useCouponsContext(): CouponContext {
+  const context = useContext(CouponsContext)
+  if (context === undefined) {
+    throw new Error('useCartContext must be used within CartProvider')
+  }
+  return context
+}
 
 export function useCoupons(
   addNotification: (
