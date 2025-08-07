@@ -20,7 +20,7 @@ const App = () => {
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
 
   const { addNotification, notifications, removeNotification } = useNotification();
-  const { products, addProduct, updateProduct, deleteProduct } = useProducts(addNotification);
+  const { products, addProduct, updateProduct, deleteProduct } = useProducts();
   const {
     getRemainingStock,
     updateQuantity,
