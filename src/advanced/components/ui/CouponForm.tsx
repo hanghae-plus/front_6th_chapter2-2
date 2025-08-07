@@ -1,6 +1,6 @@
 import type { Coupon } from '../../../types';
 import type { NotificationVariant } from '../../constants';
-import { isEmptyValue, isNumber } from '../../utils/validators';
+import { isEmptyValue, isNumber } from '../../shared/lib';
 
 interface CouponFormProps {
   isOpen: boolean;

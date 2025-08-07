@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { initialProductForm, type ProductWithUI } from '../constants';
-import { useForm } from '../utils/hooks/useForm';
+import { useForm } from '../shared/hooks';
 
 interface UseProductFormProps {
   onAddProduct: (product: Omit<ProductWithUI, 'id'>) => void;

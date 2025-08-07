@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import type { CartItem } from '../../types';
 import type { ProductWithUI } from '../constants';
-import { useLocalStorage } from '../utils/hooks/useLocalStorage';
+import { useLocalStorage } from '../shared/hooks';
 
 export function useCartStore() {
   const [cart, setCart] = useLocalStorage<CartItem[]>('cart', []);

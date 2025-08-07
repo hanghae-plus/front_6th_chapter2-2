@@ -1,5 +1,5 @@
 import type { CartItem, Coupon } from '../../types';
-import { convertPercentageToRate } from '../utils/formatters';
+import { convertPercentageToRate } from '../shared/lib';
 
 /**
  * 장바구니 아이템 수량 계산

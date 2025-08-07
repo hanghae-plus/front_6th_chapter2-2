@@ -1,12 +1,13 @@
 import type { NotificationVariant, ProductWithUI } from '../../constants';
-import { convertPercentageToRate, convertRateToPercentage } from '../../utils/formatters';
 import {
+  convertPercentageToRate,
+  convertRateToPercentage,
   isEmptyValue,
   isNumber,
   isValidMaximumStock,
   isValidMinimumStock,
   isValidPrice,
-} from '../../utils/validators';
+} from '../../shared/lib';
 import { Icon } from '../icons';
 
 interface ProductFormProps {

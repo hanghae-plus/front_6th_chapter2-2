@@ -1,7 +1,7 @@
 import type { CartItem } from '../../../types';
 import type { ProductWithUI } from '../../constants';
 import { filterProducts, getRemainingStock } from '../../models/product';
-import { convertRateToPercentage, formatKRWPrice } from '../../utils/formatters';
+import { convertRateToPercentage, formatKRWPrice } from '../../shared/lib';
 import { Icon } from '../icons';
 
 interface ProductListProps {

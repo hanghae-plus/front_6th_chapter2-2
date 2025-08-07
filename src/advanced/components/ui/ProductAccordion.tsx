@@ -1,5 +1,5 @@
 import type { ProductWithUI } from '../../constants';
-import { formatKRWPrice } from '../../utils/formatters';
+import { formatKRWPrice } from '../../shared/lib';
 
 interface ProductAccordionProps {
   products: ProductWithUI[];
