@@ -6,7 +6,7 @@ import { useNotification } from './hooks/useNotification';
 import { useProductSearch } from './hooks/useProductSearch';
 import { SEARCH_DELAY } from './shared/constants/toast';
 import { CloseIcon } from './components/icons';
-import Header from './components/ui/Header';
+import Header from './components/Header';
 import { AdminPage } from './pages/AdminPage';
 import { CartPage } from './pages/CartPage';
 

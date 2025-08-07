@@ -1,11 +1,12 @@
-import { CartItem } from '../../../types';
-import { CartIcon } from '../icons';
+import type { CartItem as CartItemType } from '../../types';
+import { SearchBar } from './cart/SearchBar';
+import { CartIcon } from './icons';
 
 interface HeaderProps {
   isAdmin: boolean;
   searchTerm: string;
   handleSearchTermChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  cart: CartItem[];
+  cart: CartItemType[];
   totalItemCount: number;
   setIsAdmin: (value: boolean) => void;
 }
@@ -17,17 +18,7 @@ const Header = ({ isAdmin, searchTerm, handleSearchTermChange, cart, totalItemCo
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center flex-1">
             <h1 className="text-xl font-semibold text-gray-800">SHOP</h1>
-            {!isAdmin && (
-              <div className="ml-8 flex-1 max-w-md">
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={handleSearchTermChange}
-                  placeholder="상품 검색..."
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                />
-              </div>
-            )}
+            {!isAdmin && <SearchBar searchTerm={searchTerm} handleSearchTermChange={handleSearchTermChange} />}
           </div>
           <nav className="flex items-center space-x-4">
             <button
