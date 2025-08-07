@@ -5,10 +5,9 @@ import { useProducts } from "./hooks/useProducts";
 import { useCart } from "./hooks/useCart";
 import { useCoupons } from "./hooks/useCoupons";
 import { useNotification } from "./hooks/useNotification";
-import { useAutoCallback } from "./utils/hooks/useAutoCallbak";
 
 // utils
-import { useSearch } from "./utils/hooks/useSearch";
+import { useProductSearch } from "./utils/hooks/useSearch";
 
 // components
 import { Header } from "./components/ui/header/Header";
@@ -24,22 +23,13 @@ const AppContent = () => {
   // 커스텀 훅 사용
   const { notifications, addNotification, removeNotification } = useNotification();
 
-  const { products, addProduct, updateProduct, deleteProduct } = useProducts(addNotification);
-  const { cart, totalItemCount, addToCart, removeFromCart, updateQuantity, clearCart } = useCart(addNotification);
-  const { coupons, selectedCoupon, addCoupon, deleteCoupon, applyCoupon, setSelectedCoupon } =
-    useCoupons(addNotification);
+  const { addProduct, updateProduct, deleteProduct } = useProducts(addNotification);
+  const { addCoupon, deleteCoupon } = useCoupons(addNotification);
 
-  const { searchTerm, setSearchTerm, filteredProducts, searchInfo } = useSearch(products);
+  const { searchTerm, setSearchTerm } = useProductSearch();
 
   // 로컬 UI 상태
   const [isAdmin, setIsAdmin] = useState(false);
-
-  const completeOrder = useAutoCallback(() => {
-    const orderNumber = `ORD-${Date.now()}`;
-    addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, "success");
-    clearCart();
-    setSelectedCoupon(null);
-  });
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -65,7 +55,7 @@ const AppContent = () => {
             onAddCoupon={addCoupon}
           />
         ) : (
-          <ShopPage products={filteredProducts} searchInfo={searchInfo} onCompleteOrder={completeOrder} />
+          <ShopPage searchTerm={searchTerm} />
         )}
       </main>
     </div>

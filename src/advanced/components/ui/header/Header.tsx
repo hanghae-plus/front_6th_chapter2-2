@@ -1,4 +1,4 @@
-import { useAtom, useAtomValue } from "jotai";
+import { useAtomValue } from "jotai";
 import { totalItemCountAtom } from "../../../stores/cartStore";
 import { cartAtom } from "../../../stores/cartStore";
 

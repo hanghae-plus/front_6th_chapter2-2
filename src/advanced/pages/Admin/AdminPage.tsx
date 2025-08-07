@@ -12,9 +12,10 @@ import { cartAtom } from "../../stores/cartStore";
 import { couponsAtom } from "../../stores/couponStore";
 
 // types
-import type { NotificationType } from "../../types/admin";
+import type { Coupon, NotificationType } from "../../types/admin";
 
 import { ADMIN_TABS } from "../../constants/admin";
+import { Product } from "../../../types";
 
 interface AdminPageProps {
   // 상품 관련

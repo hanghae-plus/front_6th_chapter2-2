@@ -1,7 +1,12 @@
 import { useState, useCallback, useMemo } from "react";
-import { Product } from "../../../types";
 import { useDebounce } from "./useDebounce";
+import { useAtomValue } from "jotai";
+
+// models
 import { searchProducts } from "../../models/product";
+
+// stores
+import { productsAtom } from "../../stores/productStore";
 
 interface UseSearchOptions {
   debounceMs?: number;
@@ -9,10 +14,10 @@ interface UseSearchOptions {
 
 /**
  * 상품 검색을 위한 커스텀 훅
- * @param products - 검색할 상품 배열
  * @param options - 검색 옵션 (debounce 시간)
  */
-export const useSearch = (products: Product[], options: UseSearchOptions = {}) => {
+export const useProductSearch = (options: UseSearchOptions = {}) => {
+  const products = useAtomValue(productsAtom);
   const { debounceMs = 500 } = options;
 
   const [searchTerm, setSearchTerm] = useState("");
