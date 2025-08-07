@@ -17,6 +17,7 @@ import CouponSelector from './components/ui/coupon/CouponSelector';
 import ProductTab from './components/ui/product/ProductTab';
 import CartList from './components/ui/cart/CartList';
 import OrderSummary from './components/ui/cart/OrderSummary';
+import AdminPage from './components/AdminPage';
 
 const App = () => {
   const { notifications, addNotification, setNotifications } = useNotification();
@@ -98,58 +99,19 @@ const App = () => {
 
       <main className='max-w-7xl mx-auto px-4 py-8'>
         {isAdmin ? (
-          <div className='max-w-6xl mx-auto'>
-            <div className='mb-8'>
-              <h1 className='text-2xl font-bold text-gray-900'>관리자 대시보드</h1>
-              <p className='text-gray-600 mt-1'>상품과 쿠폰을 관리할 수 있습니다</p>
-            </div>
-            <div className='border-b border-gray-200 mb-6'>
-              <TabLayout activeTab={activeTab} handleActiveTab={handleActiveTab} />
-            </div>
-
-            {activeTab === 'products' ? (
-              <ProductTab
-                products={products as Product[]}
-                addProduct={addProduct}
-                updateProduct={updateProduct}
-                deleteProduct={deleteProduct}
-                getRemainingStock={getRemainingStock}
-                addNotification={addNotification}
-              />
-            ) : (
-              <section className='bg-white rounded-lg border border-gray-200'>
-                <div className='p-6 border-b border-gray-200'>
-                  <h2 className='text-lg font-semibold'>쿠폰 관리</h2>
-                </div>
-                <div className='p-6'>
-                  <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
-                    {coupons.map((coupon) => (
-                      <CouponGrid key={coupon.code} coupon={coupon} deleteCoupon={removeCoupon} />
-                    ))}
-
-                    <div className='border-2 border-dashed border-gray-300 rounded-lg p-4 flex items-center justify-center hover:border-gray-400 transition-colors'>
-                      <button
-                        onClick={() => setShowCouponForm(!showCouponForm)}
-                        className='text-gray-400 hover:text-gray-600 flex flex-col items-center'
-                      >
-                        <PlusIcon />
-                        <p className='mt-2 text-sm font-medium'>새 쿠폰 추가</p>
-                      </button>
-                    </div>
-                  </div>
-
-                  {showCouponForm && (
-                    <CouponForm
-                      coupons={coupons}
-                      setShowCouponForm={setShowCouponForm}
-                      addCoupon={addCoupon}
-                      addNotification={addNotification}
-                    />
-                  )}
-                </div>
-              </section>
-            )}
-          </div>
+          <AdminPage
+            products={products}
+            addProduct={addProduct}
+            updateProduct={updateProduct}
+            deleteProduct={deleteProduct}
+            getRemainingStock={getRemainingStock}
+            coupons={coupons}
+            addCoupon={addCoupon}
+            deleteCoupon={removeCoupon}
+            selectedCoupon={selectedCoupon}
+            setSelectedCoupon={setSelectedCoupon}
+            addNotification={addNotification}
+          />
         ) : (
           <div className='grid grid-cols-1 lg:grid-cols-4 gap-6'>
             <div className='lg:col-span-3'>
