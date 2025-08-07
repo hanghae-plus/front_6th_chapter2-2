@@ -1,5 +1,4 @@
 import { useState, useCallback } from "react";
-import { useUniqueId } from "../utils/hooks/useUniqueId";
 
 interface Notification {
   id: string;
@@ -11,19 +10,15 @@ const TIMEOUT = 3000 as const;
 
 export const useNotification = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const generateId = useUniqueId();
 
-  const addNotification = useCallback(
-    (message: string, type: "error" | "success" | "warning" = "success") => {
-      const id = `notification_${generateId()}`;
-      setNotifications((prev) => [...prev, { id, message, type }]);
+  const addNotification = useCallback((message: string, type: "error" | "success" | "warning" = "success") => {
+    const id = Math.random().toString(36).substring(2, 15);
+    setNotifications((prev) => [...prev, { id, message, type }]);
 
-      setTimeout(() => {
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
-      }, TIMEOUT);
-    },
-    [generateId]
-  );
+    setTimeout(() => {
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
+    }, TIMEOUT);
+  }, []);
 
   const removeNotification = useCallback((id: string) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
