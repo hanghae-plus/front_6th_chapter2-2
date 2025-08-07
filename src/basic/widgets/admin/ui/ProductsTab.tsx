@@ -3,7 +3,7 @@ import { Product, ProductWithUI } from "../../../entities/product/types";
 import { NotificationVariant } from "../../../entities/notification/types";
 import { ProductTable } from "../../../features/view-product-list/ui/ProductTable";
 import { formatPrice } from "../../../shared/libs/price";
-import { getProductStockStatus } from "../../../features/check-stock/libs";
+import { getStockDisplay } from "../../../entities/product/libs/stock";
 import { AddProductForm } from "../../../features/add-product/ui/AddProductForm";
 import { EditProductForm } from "../../../features/edit-product/ui/EditProductForm";
 import { useProductStorage } from "../../../entities/product/hooks/useProductStorage";
@@ -55,7 +55,7 @@ export function ProductsTab() {
   };
 
   const displayPrice = (product: Product) => {
-    const stockStatus = getProductStockStatus({ product, cartQuantity: 0 });
+    const stockStatus = getStockDisplay(product.stock, 0);
     if (stockStatus) return stockStatus;
     const formattedPrice = formatPrice(product.price);
     return `${formattedPrice}원`;

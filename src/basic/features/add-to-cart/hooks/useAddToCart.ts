@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 import { ProductWithUI } from "../../../entities/product/types";
-import { calculateStock } from "../../../entities/product/libs/stock";
 import { useGlobalNotification } from "../../../entities/notification/hooks/useGlobalNotification";
 import { NotificationVariant } from "../../../entities/notification/types";
+import { calculateRemainingStock } from "../../../entities/product/libs/stock";
 
 interface UseAddToCartOptions {
   cart: Array<{ product: ProductWithUI; quantity: number }>;
@@ -16,7 +16,7 @@ export function useAddToCart({ cart, onAddItem }: UseAddToCartOptions) {
     (product: ProductWithUI): number => {
       const cartItem = cart.find((item) => item.product.id === product.id);
       const cartQuantity = cartItem?.quantity || 0;
-      return calculateStock(product.stock, cartQuantity);
+      return calculateRemainingStock(product.stock, cartQuantity);
     },
     [cart]
   );

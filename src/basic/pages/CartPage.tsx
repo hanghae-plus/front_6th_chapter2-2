@@ -6,7 +6,7 @@ import { useCallback } from "react";
 import { CartItem } from "../entities/cart/ui/CartItem";
 import CartBagIcon from "../assets/icons/CartBagIcon.svg?react";
 import { NotificationVariant } from "../entities/notification/types";
-import { getProductStockStatus } from "../features/check-stock/libs";
+import { getStockDisplay } from "../entities/product/libs/stock";
 import { useGlobalNotification } from "../entities/notification/hooks/useGlobalNotification";
 import { useCart } from "../entities/cart/hooks/useCart";
 import { useAddToCart } from "../features/add-to-cart/hooks/useAddToCart";
@@ -40,7 +40,7 @@ export function CartPage({
   const couponFeature = useApplyCoupon(cart.cart);
 
   const displayPrice = (product: Product) => {
-    const stockStatus = getProductStockStatus({ product, cartQuantity: 0 });
+    const stockStatus = getStockDisplay(product.stock, 0);
     if (stockStatus) return stockStatus;
 
     const formattedPrice = formatPrice(product.price);
