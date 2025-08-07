@@ -2,7 +2,8 @@ import { useCallback, useState } from 'react';
 
 import { useCouponStore } from './useCouponStore';
 import type { CartItem, Coupon } from '../../types';
-import { MINIMUM_ORDER_AMOUNT, type NotificationVariant } from '../constants';
+import { MINIMUM_ORDER_AMOUNT } from '../constants';
+import { NotificationVariant } from '../entities/notification';
 import { calculateCartTotal } from '../models/cart';
 
 interface UseCouponServiceProps {

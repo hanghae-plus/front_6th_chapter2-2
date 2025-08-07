@@ -1,7 +1,8 @@
 import { useState } from 'react';
 
 import type { Coupon } from '../../types';
-import { initialCouponForm, type NotificationVariant } from '../constants';
+import { initialCouponForm } from '../constants';
+import type { NotificationVariant } from '../entities/notification';
 import { useForm } from '../shared/hooks';
 import { isValidCouponCode } from '../shared/lib';
 

@@ -1,8 +1,7 @@
 import { useState } from 'react';
 
-import { Notifications } from '../components/ui/Notifications';
+import { NotificationList, useNotificationStore } from '../entities/notification';
 import { useCouponService } from '../hooks/useCouponService';
-import { useNotificationStore } from '../hooks/useNotificationStore';
 import { useProductService } from '../hooks/useProductService';
 import { AdminPage } from '../pages/admin';
 import { CartPage } from '../pages/cart';
@@ -28,7 +27,7 @@ export const App = () => {
 
   return (
     <div className='min-h-screen bg-gray-50'>
-      <Notifications notifications={notifications} onRemoveNotification={removeNotification} />
+      <NotificationList notifications={notifications} onRemoveNotification={removeNotification} />
 
       {isAdmin ? (
         <AdminPage

@@ -4,7 +4,8 @@ import type { Coupon } from '../../../../types';
 import { CouponTab } from '../../../components/ui/CouponTab';
 import { ProductTab } from '../../../components/ui/ProductTab';
 import { TabNavigation } from '../../../components/ui/TabNavigation';
-import type { NotificationVariant, ProductWithUI } from '../../../constants';
+import type { ProductWithUI } from '../../../constants';
+import type { NotificationVariant } from '../../../entities/notification';
 import { AdminHeader } from '../../../widgets/admin-header';
 
 interface AdminPageProps {

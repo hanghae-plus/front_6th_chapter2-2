@@ -1,12 +1,12 @@
+import type { Notification as NotificationType } from '../consts';
 import { Notification } from './Notification';
-import type { Notification as NotificationType } from '../../constants';
 
-interface NotificationProps {
+interface NotificationListProps {
   notifications: NotificationType[];
   onRemoveNotification: (id: string) => void;
 }
 
-export function Notifications({ notifications, onRemoveNotification }: NotificationProps) {
+export function NotificationList({ notifications, onRemoveNotification }: NotificationListProps) {
   if (notifications.length === 0) return null;
 
   return (

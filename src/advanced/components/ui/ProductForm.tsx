@@ -1,4 +1,5 @@
-import type { NotificationVariant, ProductWithUI } from '../../constants';
+import type { ProductWithUI } from '../../constants';
+import type { NotificationVariant } from '../../entities/notification';
 import { Icon } from '../../shared/icon';
 import {
   convertPercentageToRate,

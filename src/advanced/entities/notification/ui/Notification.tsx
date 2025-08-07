@@ -1,7 +1,8 @@
-import { HTMLAttributes, useEffect } from 'react';
+import { useEffect } from 'react';
 
-import type { Notification as NotificationType, NotificationVariant } from '../../constants';
-import { Icon } from '../../shared/icon';
+import { Icon } from '../../../shared/icon';
+import type { Notification as NotificationType } from '../consts';
+import { getToastBgColorByVariant } from '../lib';
 
 interface NotificationProps {
   notification: NotificationType;
@@ -30,14 +31,4 @@ export function Notification({ notification, onRemoveNotification }: Notificatio
       </button>
     </div>
   );
-}
-
-function getToastBgColorByVariant(
-  variant: NotificationVariant
-): HTMLAttributes<HTMLDivElement>['className'] {
-  if (variant === 'error') return 'bg-red-600';
-  if (variant === 'warning') return 'bg-yellow-600';
-  if (variant === 'success') return 'bg-green-600';
-
-  return 'bg-gray-600';
 }

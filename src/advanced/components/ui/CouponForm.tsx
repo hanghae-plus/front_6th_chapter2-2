@@ -1,5 +1,5 @@
 import type { Coupon } from '../../../types';
-import type { NotificationVariant } from '../../constants';
+import type { NotificationVariant } from '../../entities/notification';
 import { isEmptyValue, isNumber } from '../../shared/lib';
 
 interface CouponFormProps {

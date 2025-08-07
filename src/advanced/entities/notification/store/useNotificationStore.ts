@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 
-import type { NotificationVariant, Notification } from '../constants';
+import type { NotificationVariant, Notification } from '../consts';
 
 export function useNotificationStore() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
