@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { useAtom } from "jotai";
-import { searchTermAtom, setSearchTermAtom } from "../../store";
+import { searchTermAtom, setSearchTermAtom } from "../../../store";
 
 export const SearchBar: FC = () => {
   const [searchTerm] = useAtom(searchTermAtom);

@@ -1,6 +1,6 @@
 import { useAtom } from "jotai";
-import { notificationsAtom } from "../../store/atoms/notificationAtoms";
-import { removeNotificationAtom } from "../../store/actions/notificationActions";
+import { notificationsAtom } from "../../../store/atoms/notificationAtoms";
+import { removeNotificationAtom } from "../../../store/actions/notificationActions";
 
 export const NotificationToast = () => {
   const [notifications] = useAtom(notificationsAtom);

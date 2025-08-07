@@ -1,8 +1,8 @@
 import { useAtom } from "jotai";
-import { isAdminAtom, toggleAdminAtom } from "../../store";
+import { isAdminAtom, toggleAdminAtom } from "../../../store";
 import { Icons } from "../icons";
-import { SearchBar } from "../searchBar";
-import { totalCartCountAtom } from "../../store/selectors/totalCartCountSelector";
+import { SearchBar } from "../SearchBar";
+import { totalCartCountAtom } from "../../../store/selectors/totalCartCountSelector";
 
 const Header = () => {
   const [isAdmin] = useAtom(isAdminAtom);
