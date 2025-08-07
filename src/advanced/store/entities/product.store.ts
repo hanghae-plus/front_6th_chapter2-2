@@ -4,6 +4,7 @@ import { initialProducts } from '../../constant/initValue.ts';
 import { atomWithStorage } from 'jotai/utils';
 import { debouncedSearchTermAtom } from '../common/search.store.ts';
 
+// 상품 전역상태 관리
 export const productAtom = atomWithStorage<ProductWithUI[]>(
   'products',
   initialProducts,
