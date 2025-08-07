@@ -9,7 +9,7 @@ import { useAutoCallback } from "./utils/hooks/useAutoCallbak";
 // utils
 import { useSearch } from "./utils/hooks/useSearch";
 import { calculateFinalTotal } from "./utils/calculations";
-import { withTryNotifySuccess, withTryNotifyError } from "./utils/errorHandler";
+import { withTryNotifySuccess, withTryNotifyError } from "./utils/withNotify";
 
 // components
 import { Header } from "./components/ui/header/Header";
