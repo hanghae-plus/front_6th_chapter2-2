@@ -1,13 +1,9 @@
 import { Coupon } from "../../../../types";
+import { useCoupons } from "../../../hooks/useCoupons";
 import { TrashIcon } from "../../icons";
 
-export function CouponCard({
-  coupon,
-  applyDeleteCoupon,
-}: {
-  coupon: Coupon;
-  applyDeleteCoupon: (code: string) => void;
-}) {
+export function CouponCard({ coupon }: { coupon: Coupon }) {
+  const { applyDeleteCoupon } = useCoupons();
   return (
     <div
       key={coupon.code}

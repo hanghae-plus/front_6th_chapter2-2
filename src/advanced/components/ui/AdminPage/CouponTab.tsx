@@ -6,7 +6,7 @@ import { CouponForm } from "./CouponForm";
 
 export function CouponTab() {
   const [showCouponForm, setShowCouponForm] = useState(false);
-  const { coupons, applyAddCoupon, applyDeleteCoupon } = useCoupons();
+  const { coupons } = useCoupons();
 
   return (
     <section className="bg-white rounded-lg border border-gray-200">
@@ -16,11 +16,7 @@ export function CouponTab() {
       <div className="p-6">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {coupons.map((coupon) => (
-            <CouponCard
-              key={coupon.code}
-              coupon={coupon}
-              applyDeleteCoupon={applyDeleteCoupon}
-            />
+            <CouponCard key={coupon.code} coupon={coupon} />
           ))}
           <AddNewCouponCard
             setShowCouponForm={setShowCouponForm}
@@ -28,12 +24,7 @@ export function CouponTab() {
           />
         </div>
 
-        {showCouponForm && (
-          <CouponForm
-            setShowCouponForm={setShowCouponForm}
-            applyAddCoupon={applyAddCoupon}
-          />
-        )}
+        {showCouponForm && <CouponForm setShowCouponForm={setShowCouponForm} />}
       </div>
     </section>
   );

@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { ProductWithUI } from "../../../App";
-import { useProducts } from "../../../hooks/useProducts";
-
 import { ProductListTable } from "./ProductListTable";
 import { ProductForm } from "./ProductForm";
 
@@ -19,9 +17,6 @@ export function ProductTab({
     description: "",
     discounts: [] as Array<{ quantity: number; rate: number }>,
   });
-
-  const { products, applyAddProduct, applyUpdateProduct, applyDeleteProduct } =
-    useProducts();
 
   const startEditProduct = (product: ProductWithUI) => {
     setEditingProduct(product.id);
@@ -62,9 +57,7 @@ export function ProductTab({
       <div className="overflow-x-auto">
         <ProductListTable
           activeTab={activeTab}
-          products={products}
           startEditProduct={startEditProduct}
-          applyDeleteProduct={applyDeleteProduct}
         />
       </div>
       {showProductForm && (
@@ -73,8 +66,6 @@ export function ProductTab({
           setEditingProduct={setEditingProduct}
           productForm={productForm}
           setProductForm={setProductForm}
-          applyAddProduct={applyAddProduct}
-          applyUpdateProduct={applyUpdateProduct}
           setShowProductForm={setShowProductForm}
         />
       )}

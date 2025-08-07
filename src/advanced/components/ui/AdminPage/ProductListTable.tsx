@@ -1,17 +1,15 @@
 import { ProductWithUI } from "../../../App";
 import { formatPrice } from "../../../utils/formatters";
+import { useProducts } from "../../../hooks/useProducts";
 
 export function ProductListTable({
   activeTab,
-  products,
   startEditProduct,
-  applyDeleteProduct,
 }: {
   activeTab: "products" | "coupons";
-  products: ProductWithUI[];
   startEditProduct: (product: ProductWithUI) => void;
-  applyDeleteProduct: (productId: string) => void;
 }) {
+  const { products, applyDeleteProduct } = useProducts();
   return (
     <table className="w-full">
       <thead className="bg-gray-50 border-b border-gray-200">
