@@ -1,13 +1,12 @@
 // src/basic/components/ProductList.tsx
-import { Product } from '../types';
+import { useProducts } from '../hooks/useProducts';
+import { useCart } from '../hooks/useCart';
 import { ProductCard } from './ProductCard';
 
-interface Props {
-  products: Product[];
-  onAddToCart: (product: Product) => void;
-}
+export const ProductList = () => {
+  const { products } = useProducts();
+  const { addToCart } = useCart();
 
-export const ProductList = ({ products, onAddToCart }: Props) => {
   return (
     <section>
       <div className='mb-6 flex justify-between items-center'>
@@ -20,7 +19,7 @@ export const ProductList = ({ products, onAddToCart }: Props) => {
       ) : (
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
           {products.map(product => (
-            <ProductCard key={product.id} product={product} onAddToCart={onAddToCart} />
+            <ProductCard key={product.id} product={product} onAddToCart={addToCart} />
           ))}
         </div>
       )}
