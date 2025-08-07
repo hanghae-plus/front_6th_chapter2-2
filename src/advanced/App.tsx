@@ -12,7 +12,7 @@ import { useDebounce } from './utils/hooks/useDebounce';
 
 const App = () => {
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
-  const { cart } = useCart();
+  const cart = useCart();
   const {
     coupons,
     selectedCoupon,

@@ -12,11 +12,7 @@ import {
 import { useAtomWithLocalStorage } from '../utils/hooks/useLocalStorage';
 import { useNotify } from './useNotification';
 
-interface UseCartReturn {
-  cart: CartItem[];
-}
-
-export function useCart(): UseCartReturn {
+export function useCart(): CartItem[] {
   const LOCAL_STORAGE_KEY = 'cart';
   const [cart] = useAtomWithLocalStorage<CartItem[]>({
     key: 'cart',
@@ -30,9 +26,7 @@ export function useCart(): UseCartReturn {
     }
   }, [cart]);
 
-  return {
-    cart,
-  };
+  return cart;
 }
 
 export function useAddToCart() {
