@@ -31,65 +31,59 @@ export function getCouponApplier({
 interface AddCouponParams {
   newCoupon: Coupon;
   coupons: Coupon[];
-  onFailure: (params: { message: string }) => void;
-  onSuccess: () => void;
 }
 
 // 쿠폰 추가
-export function addCoupon({
-  newCoupon,
-  coupons,
-  onFailure,
-  onSuccess,
-}: AddCouponParams) {
+export function addCoupon({ newCoupon, coupons }: AddCouponParams) {
   const existingCoupon = coupons.find(
     (coupon) => coupon.code === newCoupon.code
   );
 
   if (existingCoupon) {
-    onFailure({ message: '이미 존재하는 쿠폰 코드입니다.' });
-    return coupons;
+    return {
+      newCoupons: coupons,
+      success: false,
+      message: '이미 존재하는 쿠폰 코드입니다.',
+    };
   }
 
-  onSuccess();
-  return [...coupons, newCoupon];
+  const newCoupons = [...coupons, newCoupon];
+  return { newCoupons, success: true, message: '쿠폰이 추가되었습니다' };
 }
 
 interface DeleteCouponParams {
   coupons: Coupon[];
   couponCode: string;
-  onSuccess: () => void;
 }
 
 // 쿠폰 삭제
-export function deleteCoupon({
-  coupons,
-  couponCode,
-  onSuccess,
-}: DeleteCouponParams) {
-  onSuccess();
-  return coupons.filter((coupon) => coupon.code !== couponCode);
+export function deleteCoupon({ coupons, couponCode }: DeleteCouponParams) {
+  const newCoupons = coupons.filter((coupon) => coupon.code !== couponCode);
+  return { newCoupons, success: true, message: '쿠폰이 삭제되었습니다' };
 }
 
 interface ApplyCouponParams {
   coupon: Coupon;
   prevCoupon: Coupon | null;
   cartTotal: number;
-  onFailure: (params: { message: string }) => void;
 }
 
 export function applyCoupon({
   coupon,
   prevCoupon,
   cartTotal,
-  onFailure,
 }: ApplyCouponParams) {
   if (cartTotal < 10_000 && coupon.discountType === 'percentage') {
-    onFailure({
+    return {
+      selectedCoupon: prevCoupon,
+      success: false,
       message: 'percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.',
-    });
-    return prevCoupon;
+    };
   }
 
-  return coupon;
+  return {
+    selectedCoupon: coupon,
+    success: true,
+    message: '쿠폰이 적용되었습니다',
+  };
 }

@@ -146,49 +146,6 @@ export function calculateCartTotal({
   };
 }
 
-interface AddToCartParams {
-  cart: CartItem[];
-  product: Product;
-  checkSoldOut: () => boolean;
-  onFailure: (params: { message: string }) => void;
-  onSuccess: () => void;
-}
-
-// 재고 확인 후 상품 추가
-export function addToCart({
-  cart,
-  product,
-  checkSoldOut,
-  onFailure,
-  onSuccess,
-}: AddToCartParams) {
-  if (checkSoldOut()) {
-    onFailure({ message: '재고가 부족합니다!' });
-    return cart;
-  }
-
-  const existingItem = cart.find((item) => item.product.id === product.id);
-
-  if (existingItem) {
-    const newQuantity = existingItem.quantity + 1;
-
-    if (newQuantity > product.stock) {
-      onFailure({ message: `재고는 ${product.stock}개까지만 있습니다.` });
-      return cart;
-    }
-
-    onSuccess();
-    return updateCartItemQuantity({
-      cart,
-      productId: product.id,
-      quantity: newQuantity,
-    });
-  }
-
-  onSuccess();
-  return addItemToCart({ cart, product });
-}
-
 interface AddItemToCartParams {
   cart: CartItem[];
   product: Product;
@@ -197,47 +154,6 @@ interface AddItemToCartParams {
 // 상품 추가
 export function addItemToCart({ cart, product }: AddItemToCartParams) {
   return [...cart, { product, quantity: 1 }];
-}
-
-interface UpdateCartQuantityParams {
-  cart: CartItem[];
-  products: Product[];
-  productId: string;
-  newQuantity: number;
-  onFailure?: (params: { message: string }) => void;
-  onSuccess?: () => void;
-}
-
-export function updateCartQuantity({
-  cart,
-  products,
-  productId,
-  newQuantity,
-  onFailure = () => {},
-  onSuccess = () => {},
-}: UpdateCartQuantityParams) {
-  if (newQuantity <= 0) {
-    onSuccess();
-    return removeItemFromCart({ cart, productId });
-  }
-
-  const product = products.find((p) => p.id === productId);
-  if (!product) {
-    return cart;
-  }
-
-  const maxStock = product.stock;
-  if (newQuantity > maxStock) {
-    onFailure({ message: `재고는 ${maxStock}개까지만 있습니다.` });
-    return cart;
-  }
-
-  onSuccess();
-  return updateCartItemQuantity({
-    cart,
-    productId: productId,
-    quantity: newQuantity,
-  });
 }
 
 interface UpdateCartItemQuantityParams {
@@ -303,4 +219,92 @@ export function calculateItemDiscountRate({
       maximumFractionDigits: 2,
     },
   });
+}
+
+// 재고 확인 후 상품 추가
+interface AddToCartWithStockCheckParams {
+  cart: CartItem[];
+  product: Product;
+  isSoldOut: boolean;
+}
+
+export function addToCartWithStockCheck({
+  cart,
+  product,
+  isSoldOut,
+}: AddToCartWithStockCheckParams) {
+  if (isSoldOut) {
+    return { newCart: cart, success: false, message: '재고가 부족합니다!' };
+  }
+
+  const existingItem = cart.find((item) => item.product.id === product.id);
+
+  if (existingItem) {
+    const newQuantity = existingItem.quantity + 1;
+
+    if (newQuantity > product.stock) {
+      return {
+        newCart: cart,
+        success: false,
+        message: `재고는 ${product.stock}개까지만 있습니다.`,
+      };
+    }
+
+    const newCart = updateCartItemQuantity({
+      cart,
+      productId: product.id,
+      quantity: newQuantity,
+    });
+
+    return { newCart, success: true, message: '장바구니에 담았습니다' };
+  }
+
+  const newCart = addItemToCart({ cart, product });
+  return { newCart, success: true, message: '장바구니에 담았습니다' };
+}
+
+// 수량 변경
+interface UpdateCartQuantityWithValidationParams {
+  cart: CartItem[];
+  products: Product[];
+  productId: string;
+  newQuantity: number;
+}
+
+export function updateCartQuantityWithValidation({
+  cart,
+  products,
+  productId,
+  newQuantity,
+}: UpdateCartQuantityWithValidationParams) {
+  if (newQuantity <= 0) {
+    const newCart = removeItemFromCart({ cart, productId });
+    return { newCart, success: true, message: '상품이 제거되었습니다' };
+  }
+
+  const product = products.find((p) => p.id === productId);
+  if (!product) {
+    return {
+      newCart: cart,
+      success: false,
+      message: '상품을 찾을 수 없습니다',
+    };
+  }
+
+  const maxStock = product.stock;
+  if (newQuantity > maxStock) {
+    return {
+      newCart: cart,
+      success: false,
+      message: `재고는 ${maxStock}개까지만 있습니다.`,
+    };
+  }
+
+  const newCart = updateCartItemQuantity({
+    cart,
+    productId: productId,
+    quantity: newQuantity,
+  });
+
+  return { newCart, success: true, message: '수량이 변경되었습니다' };
 }

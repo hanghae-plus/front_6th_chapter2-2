@@ -14,12 +14,12 @@ export function getRemainingStock({ cart, product }: GetRemainingStockParams) {
 }
 
 interface IsSoldOutParams {
-  getRemainingStock: () => number;
+  remainingStock: number;
 }
 
 // 매진 확인
-export function isSoldOut({ getRemainingStock }: IsSoldOutParams) {
-  return getRemainingStock() === 0;
+export function isSoldOut({ remainingStock }: IsSoldOutParams) {
+  return remainingStock === 0;
 }
 
 interface FormatPriceParams {
@@ -30,9 +30,8 @@ interface FormatPriceParams {
 
 // 상품 가격 포맷팅
 export function formatPrice({ cart, product, formatter }: FormatPriceParams) {
-  const soldOut = isSoldOut({
-    getRemainingStock: () => getRemainingStock({ cart, product }),
-  });
+  const remainingStock = getRemainingStock({ cart, product });
+  const soldOut = isSoldOut({ remainingStock });
 
   return soldOut ? 'SOLD OUT' : formatter({ number: product.price });
 }
@@ -41,17 +40,10 @@ interface AddProductParams {
   id: string;
   newProduct: Omit<ProductWithUI, 'id'>;
   products: ProductWithUI[];
-  onSuccess: () => void;
 }
 
 // 상품 추가
-export function addProduct({
-  id,
-  newProduct,
-  products,
-  onSuccess,
-}: AddProductParams) {
-  onSuccess();
+export function addProduct({ id, newProduct, products }: AddProductParams) {
   return [
     ...products,
     {
@@ -65,7 +57,6 @@ interface UpdateProductParams {
   productId: string;
   updates: Partial<ProductWithUI>;
   products: ProductWithUI[];
-  onSuccess: () => void;
 }
 
 // 상품 수정
@@ -73,9 +64,7 @@ export function updateProduct({
   productId,
   updates,
   products,
-  onSuccess,
 }: UpdateProductParams) {
-  onSuccess();
   return products.map((product) =>
     product.id === productId ? { ...product, ...updates } : product
   );
@@ -84,16 +73,10 @@ export function updateProduct({
 interface DeleteProductParams {
   productId: string;
   products: ProductWithUI[];
-  onSuccess: () => void;
 }
 
 // 상품 삭제
-export function deleteProduct({
-  productId,
-  products,
-  onSuccess,
-}: DeleteProductParams) {
-  onSuccess();
+export function deleteProduct({ productId, products }: DeleteProductParams) {
   return products.filter((product) => product.id !== productId);
 }
 

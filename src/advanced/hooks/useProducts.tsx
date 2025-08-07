@@ -47,17 +47,18 @@ export function useProducts({ notify }: UseProductsParams): UseProductsReturn {
     addProduct: useCallback(
       (params) => {
         setProducts((prevProducts) => {
-          return productModel.addProduct({
+          const newProducts = productModel.addProduct({
             id: `p${Date.now()}`,
             newProduct: params.newProduct,
             products: prevProducts,
-            onSuccess: () => {
-              notify({
-                message: '상품이 추가되었습니다.',
-                type: 'success',
-              });
-            },
           });
+          
+          notify({
+            message: '상품이 추가되었습니다.',
+            type: 'success',
+          });
+          
+          return newProducts;
         });
       },
       [setProducts, notify]
@@ -66,17 +67,18 @@ export function useProducts({ notify }: UseProductsParams): UseProductsReturn {
     updateProduct: useCallback(
       ({ productId, updates }) => {
         setProducts((prevProducts) => {
-          return productModel.updateProduct({
+          const newProducts = productModel.updateProduct({
             productId,
             updates,
             products: prevProducts,
-            onSuccess: () => {
-              notify({
-                message: '상품이 수정되었습니다.',
-                type: 'success',
-              });
-            },
           });
+          
+          notify({
+            message: '상품이 수정되었습니다.',
+            type: 'success',
+          });
+          
+          return newProducts;
         });
       },
       [setProducts, notify]
@@ -85,16 +87,17 @@ export function useProducts({ notify }: UseProductsParams): UseProductsReturn {
     deleteProduct: useCallback(
       ({ productId }) => {
         setProducts((prevProducts) => {
-          return productModel.deleteProduct({
+          const newProducts = productModel.deleteProduct({
             productId,
             products: prevProducts,
-            onSuccess: () => {
-              notify({
-                message: '상품이 삭제되었습니다.',
-                type: 'success',
-              });
-            },
           });
+          
+          notify({
+            message: '상품이 삭제되었습니다.',
+            type: 'success',
+          });
+          
+          return newProducts;
         });
       },
       [setProducts, notify]

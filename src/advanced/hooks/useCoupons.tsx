@@ -42,19 +42,18 @@ export function useCoupons({ notify }: UseCouponsParams): UseCouponsReturn {
     addCoupon: useCallback(
       ({ newCoupon }) => {
         setCoupons((prevCoupons) => {
-          return couponModel.addCoupon({
+          const result = couponModel.addCoupon({
             newCoupon,
             coupons: prevCoupons,
-            onFailure: ({ message }) => {
-              notify({ message, type: 'error' });
-            },
-            onSuccess: () => {
-              notify({
-                message: '쿠폰이 추가되었습니다.',
-                type: 'success',
-              });
-            },
           });
+          
+          if (!result.success) {
+            notify({ message: result.message, type: 'error' });
+            return prevCoupons;
+          }
+          
+          notify({ message: result.message, type: 'success' });
+          return result.newCoupons;
         });
       },
       [setCoupons, notify]
@@ -63,16 +62,13 @@ export function useCoupons({ notify }: UseCouponsParams): UseCouponsReturn {
     deleteCoupon: useCallback(
       ({ couponCode }) => {
         setCoupons((prevCoupons) => {
-          return couponModel.deleteCoupon({
+          const result = couponModel.deleteCoupon({
             coupons: prevCoupons,
             couponCode,
-            onSuccess: () => {
-              notify({
-                message: '쿠폰이 삭제되었습니다.',
-                type: 'success',
-              });
-            },
           });
+          
+          notify({ message: result.message, type: 'success' });
+          return result.newCoupons;
         });
       },
       [setCoupons, notify]
@@ -85,14 +81,20 @@ export function useCoupons({ notify }: UseCouponsParams): UseCouponsReturn {
             cart,
             applyCoupon: couponModel.getCouponApplier({ coupon }),
           });
-          return couponModel.applyCoupon({
+          
+          const result = couponModel.applyCoupon({
             coupon,
             prevCoupon,
             cartTotal: totalAfterDiscount,
-            onFailure: ({ message }) => {
-              notify({ message, type: 'error' });
-            },
           });
+          
+          if (!result.success) {
+            notify({ message: result.message, type: 'error' });
+            return prevCoupon;
+          }
+          
+          notify({ message: result.message, type: 'success' });
+          return result.selectedCoupon;
         });
       },
       [notify]

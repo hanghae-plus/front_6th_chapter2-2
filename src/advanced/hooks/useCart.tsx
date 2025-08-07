@@ -67,25 +67,25 @@ export function useCart({ notify }: UseCartParams): UseCartReturn {
     addToCart: useCallback(
       ({ product }) => {
         setCart((prevCart) => {
-          return cartModel.addToCart({
+          const remainingStock = productModel.getRemainingStock({
             cart: prevCart,
             product,
-            checkSoldOut: () => {
-              return productModel.isSoldOut({
-                getRemainingStock: () =>
-                  productModel.getRemainingStock({ cart: prevCart, product }),
-              });
-            },
-            onFailure: ({ message }) => {
-              notify({ message, type: 'error' });
-            },
-            onSuccess: () => {
-              notify({
-                message: '장바구니에 담았습니다',
-                type: 'success',
-              });
-            },
           });
+          const isSoldOut = productModel.isSoldOut({ remainingStock });
+
+          const result = cartModel.addToCartWithStockCheck({
+            cart: prevCart,
+            product,
+            isSoldOut,
+          });
+
+          if (!result.success) {
+            notify({ message: result.message, type: 'error' });
+            return prevCart;
+          }
+
+          notify({ message: result.message, type: 'success' });
+          return result.newCart;
         });
       },
       [setCart, notify]
@@ -106,15 +106,20 @@ export function useCart({ notify }: UseCartParams): UseCartReturn {
     updateQuantity: useCallback(
       ({ productId, newQuantity, products }) => {
         setCart((prevCart) => {
-          return cartModel.updateCartQuantity({
+          const result = cartModel.updateCartQuantityWithValidation({
             cart: prevCart,
             newQuantity,
             productId,
             products,
-            onFailure: ({ message }) => {
-              notify({ message, type: 'error' });
-            },
           });
+
+          if (!result.success) {
+            notify({ message: result.message, type: 'error' });
+            return prevCart;
+          }
+
+          notify({ message: result.message, type: 'success' });
+          return result.newCart;
         });
       },
       [setCart, notify]
