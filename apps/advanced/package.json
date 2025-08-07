@@ -12,7 +12,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "gh-pages": "pnpm run build && gh-pages -d dist"
   },
   "keywords": [],
   "author": "",
@@ -26,7 +27,8 @@
     "react-router-dom": "catalog:react",
     "uuid": "^11.1.0",
     "valtio": "^2.1.5",
-    "zod": "^4.0.14"
+    "zod": "^4.0.14",
+    "gh-pages": "^6.3.0"
   },
   "devDependencies": {
     "@clean-code/eslint": "workspace:*",

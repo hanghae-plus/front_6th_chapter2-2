@@ -5,6 +5,7 @@ import { defineConfig as defineTestConfig, mergeConfig } from 'vitest/config';
 
 export default mergeConfig(
   defineConfig({
+    base: process.env.NODE_ENV === 'production' ? '/front_6th_chapter2-2/' : '',
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src')
