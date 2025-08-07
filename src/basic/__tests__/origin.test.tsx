@@ -390,7 +390,7 @@ describe('쇼핑몰 앱 통합 테스트', () => {
       // 삭제 버튼 찾기 (SVG 아이콘을 포함한 버튼)
       const deleteButtons = screen.getAllByRole('button').filter(button => {
         return button.querySelector('svg') && 
-               button.querySelector('path[d*="M19 7l"]'); // 삭제 아이콘 path
+               button.querySelector('use[href="#trash-icon"]'); // 삭제 아이콘 path (use 태그로 찾기)
       });
       
       // 첫 번째 쿠폰 삭제
