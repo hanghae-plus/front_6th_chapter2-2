@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { Coupon } from "../../types";
 import { useLocalStorage } from "./useLocalStorage";
+import { DuplicateCouponCodeError, CouponUsageConditionError } from "../errors/Coupon.error";
 
 const initialCoupons: Coupon[] = [
   {
@@ -26,7 +27,7 @@ export const useCoupons = () => {
     (newCoupon: Coupon) => {
       const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
       if (existingCoupon) {
-        throw new Error("이미 존재하는 쿠폰 코드입니다.");
+        throw new DuplicateCouponCodeError(newCoupon.code);
       }
       setCoupons((prev) => [...prev, newCoupon]);
     },
@@ -45,7 +46,7 @@ export const useCoupons = () => {
 
   const applyCoupon = useCallback((coupon: Coupon, currentTotal: number) => {
     if (currentTotal < 10000 && coupon.discountType === "percentage") {
-      throw new Error("percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.");
+      throw new CouponUsageConditionError(coupon.discountType, 10000);
     }
     setSelectedCoupon(coupon);
   }, []);

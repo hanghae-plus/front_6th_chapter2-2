@@ -3,6 +3,7 @@ import { CartItem, Product } from "../../types";
 import { getMaxApplicableDiscount, calculateItemTotalWithDiscount } from "../utils/discounts";
 import { useLocalStorage } from "./useLocalStorage";
 import { createStore } from "../utils/createStore";
+import { InsufficientStockError, StockExceededError, ProductNotFoundError } from "../errors/Cart.error";
 
 const initCart = () => {
   const saved = localStorage.getItem("cart");
@@ -78,7 +79,7 @@ export const useCart = () => {
     (product: Product) => {
       const remainingStock = getRemainingStock(product);
       if (remainingStock <= 0) {
-        throw new Error("재고가 부족합니다!");
+        throw new InsufficientStockError(product.name, remainingStock);
       }
 
       setCart((prevCart) => {
@@ -88,7 +89,7 @@ export const useCart = () => {
           const newQuantity = existingItem.quantity + 1;
 
           if (newQuantity > product.stock) {
-            throw new Error(`재고는 ${product.stock}개까지만 있습니다.`);
+            throw new StockExceededError(product.name, product.stock, newQuantity);
           }
 
           return prevCart.map((item) => (item.product.id === product.id ? { ...item, quantity: newQuantity } : item));
@@ -112,11 +113,13 @@ export const useCart = () => {
       }
 
       const product = products.find((p) => p.id === productId);
-      if (!product) return;
+      if (!product) {
+        throw new ProductNotFoundError(productId);
+      }
 
       const maxStock = product.stock;
       if (newQuantity > maxStock) {
-        throw new Error(`재고는 ${maxStock}개까지만 있습니다.`);
+        throw new StockExceededError(product.name, maxStock, newQuantity);
       }
 
       setCart((prevCart) =>

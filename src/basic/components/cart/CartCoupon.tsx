@@ -1,4 +1,4 @@
-import { Coupon } from "../../../types";
+import type { Coupon } from "../../../types";
 
 interface CartCouponProps {
   coupons: Coupon[];
