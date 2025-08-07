@@ -6,41 +6,44 @@ import { Tabs } from "../../components/ui/tabs";
 // hooks
 import { useProductForm } from "../../hooks/useProductForm";
 import { useCouponForm } from "../../hooks/useCouponForm";
+import { useAtomValue } from "jotai";
+import { productsAtom } from "../../stores/productStore";
+import { cartAtom } from "../../stores/cartStore";
+import { couponsAtom } from "../../stores/couponStore";
 
 // types
-import type { Coupon, NotificationType } from "../../types/admin";
-import type { CartItem, Product } from "../../../types";
+import type { NotificationType } from "../../types/admin";
 
 import { ADMIN_TABS } from "../../constants/admin";
+
 interface AdminPageProps {
   // 상품 관련
-  products: Product[];
-  cart: CartItem[];
   onDeleteProduct: (productId: string) => void;
   onAddProduct: (product: Omit<Product, "id">) => void;
   onUpdateProduct: (productId: string, updates: Partial<Product>) => void;
   addNotification: (message: string, type: NotificationType) => void;
 
   // 쿠폰 관련
-  coupons: Coupon[];
   onDeleteCoupon: (couponCode: string) => void;
   onAddCoupon: (coupon: Coupon) => void;
 }
 
 export default function AdminPage({
   // 상품 관련 props
-  products,
-  cart,
   onDeleteProduct,
   onAddProduct,
   onUpdateProduct,
   addNotification,
 
   // 쿠폰 관련 props
-  coupons,
   onDeleteCoupon,
   onAddCoupon,
 }: AdminPageProps) {
+  // Jotai atom에서 직접 값 가져오기
+  const products = useAtomValue(productsAtom);
+  const cart = useAtomValue(cartAtom);
+  const coupons = useAtomValue(couponsAtom);
+
   const {
     editingProduct,
     productForm,
@@ -64,6 +67,7 @@ export default function AdminPage({
   const handleCouponFormSubmit = (e: React.FormEvent) => {
     handleCouponSubmit(e, onAddCoupon);
   };
+
   return (
     <div className="max-w-6xl mx-auto">
       <div className="mb-8">

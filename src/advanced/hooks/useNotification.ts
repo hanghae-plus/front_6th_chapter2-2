@@ -1,28 +1,18 @@
-import { useState, useCallback } from "react";
-
-interface Notification {
-  id: string;
-  message: string;
-  type: "error" | "success" | "warning";
-}
-
-const TIMEOUT = 3000 as const;
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { notificationsAtom, addNotificationAtom, removeNotificationAtom } from "../stores/notificationStore";
 
 export const useNotification = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifications] = useAtom(notificationsAtom);
+  const addNotificationSet = useSetAtom(addNotificationAtom);
+  const removeNotificationSet = useSetAtom(removeNotificationAtom);
 
-  const addNotification = useCallback((message: string, type: "error" | "success" | "warning" = "success") => {
-    const id = Math.random().toString(36).substring(2, 15);
-    setNotifications((prev) => [...prev, { id, message, type }]);
+  const addNotification = (message: string, type: "error" | "success" | "warning" = "success") => {
+    addNotificationSet({ message, type });
+  };
 
-    setTimeout(() => {
-      setNotifications((prev) => prev.filter((n) => n.id !== id));
-    }, TIMEOUT);
-  }, []);
-
-  const removeNotification = useCallback((id: string) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
-  }, []);
+  const removeNotification = (id: string) => {
+    removeNotificationSet(id);
+  };
 
   return {
     notifications,

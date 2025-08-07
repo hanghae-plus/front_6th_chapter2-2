@@ -1,3 +1,7 @@
+import { useAtom, useAtomValue } from "jotai";
+import { totalItemCountAtom } from "../../../stores/cartStore";
+import { cartAtom } from "../../../stores/cartStore";
+
 // Admin 헤더용 인터페이스
 interface AdminHeaderProps {
   onToggleAdmin: () => void;
@@ -6,8 +10,6 @@ interface AdminHeaderProps {
 // 일반 헤더용 인터페이스
 interface ShopHeaderProps {
   searchTerm: string;
-  totalItemCount: number;
-  cartItemCount: number;
   onSearchChange: (value: string) => void;
   onToggleAdmin: () => void;
 }
@@ -36,13 +38,12 @@ export const AdminHeader = ({ onToggleAdmin }: AdminHeaderProps) => {
 };
 
 // 일반 쇼핑몰 헤더 컴포넌트
-export const ShopHeader = ({
-  searchTerm,
-  totalItemCount,
-  cartItemCount,
-  onSearchChange,
-  onToggleAdmin,
-}: ShopHeaderProps) => {
+export const ShopHeader = ({ searchTerm, onSearchChange, onToggleAdmin }: ShopHeaderProps) => {
+  // Jotai atom에서 직접 값 가져오기
+  const totalItemCount = useAtomValue(totalItemCountAtom);
+  const cart = useAtomValue(cartAtom);
+  const cartItemCount = cart.length;
+
   return (
     <header className="bg-white shadow-sm sticky top-0 z-40 border-b">
       <div className="max-w-7xl mx-auto px-4">
@@ -92,31 +93,14 @@ export const ShopHeader = ({
 interface HeaderProps {
   isAdmin: boolean;
   searchTerm: string;
-  totalItemCount: number;
-  cartItemCount: number;
   onSearchChange: (value: string) => void;
   onToggleAdmin: () => void;
 }
 
-export const Header = ({
-  isAdmin,
-  searchTerm,
-  totalItemCount,
-  cartItemCount,
-  onSearchChange,
-  onToggleAdmin,
-}: HeaderProps) => {
+export const Header = ({ isAdmin, searchTerm, onSearchChange, onToggleAdmin }: HeaderProps) => {
   if (isAdmin) {
     return <AdminHeader onToggleAdmin={onToggleAdmin} />;
   }
 
-  return (
-    <ShopHeader
-      searchTerm={searchTerm}
-      totalItemCount={totalItemCount}
-      cartItemCount={cartItemCount}
-      onSearchChange={onSearchChange}
-      onToggleAdmin={onToggleAdmin}
-    />
-  );
+  return <ShopHeader searchTerm={searchTerm} onSearchChange={onSearchChange} onToggleAdmin={onToggleAdmin} />;
 };
