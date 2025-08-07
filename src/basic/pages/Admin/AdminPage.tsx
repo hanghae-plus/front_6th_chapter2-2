@@ -6,6 +6,8 @@ import { Tabs } from "../../components/ui/tabs";
 // hooks
 import { useProductForm } from "../../hooks/useProductForm";
 import { useCouponForm } from "../../hooks/useCouponForm";
+import { useProducts } from "../../hooks/useProducts";
+import { useCart } from "../../hooks/useCart";
 
 // types
 import type { Coupon, NotificationType } from "../../types/admin";
@@ -13,34 +15,22 @@ import type { CartItem, Product } from "../../../types";
 
 import { ADMIN_TABS } from "../../constants/admin";
 interface AdminPageProps {
-  // 상품 관련
-  products: Product[];
-  cart: CartItem[];
-  onDeleteProduct: (productId: string) => void;
-  onAddProduct: (product: Omit<Product, "id">) => void;
-  onUpdateProduct: (productId: string, updates: Partial<Product>) => void;
-  addNotification: (message: string, type: NotificationType) => void;
-
   // 쿠폰 관련
   coupons: Coupon[];
   onDeleteCoupon: (couponCode: string) => void;
   onAddCoupon: (coupon: Coupon) => void;
+  addNotification: (message: string, type: NotificationType) => void;
 }
 
 export default function AdminPage({
-  // 상품 관련 props
-  products,
-  cart,
-  onDeleteProduct,
-  onAddProduct,
-  onUpdateProduct,
-  addNotification,
-
   // 쿠폰 관련 props
   coupons,
   onDeleteCoupon,
   onAddCoupon,
+  addNotification,
 }: AdminPageProps) {
+  const { products, addProduct, updateProduct, deleteProduct } = useProducts();
+  const { cart } = useCart();
   const {
     editingProduct,
     productForm,
@@ -57,7 +47,7 @@ export default function AdminPage({
 
   // Product Form 제출 처리
   const handleProductFormSubmit = (e: React.FormEvent) => {
-    handleProductSubmit(e, onAddProduct, onUpdateProduct);
+    handleProductSubmit(e, addProduct, updateProduct);
   };
 
   // Coupon Form 제출 처리
@@ -83,7 +73,7 @@ export default function AdminPage({
               products={products}
               cart={cart}
               onEditProduct={startEditProduct}
-              onDeleteProduct={onDeleteProduct}
+              onDeleteProduct={deleteProduct}
               onAddProduct={startAddProduct}
               showProductForm={showProductForm}
               productForm={productForm}

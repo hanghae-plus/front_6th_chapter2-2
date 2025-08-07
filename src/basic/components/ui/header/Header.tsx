@@ -1,3 +1,6 @@
+import { useSearch } from "../../../utils/hooks/useSearch";
+import { useProducts } from "../../../hooks/useProducts";
+
 // Admin 헤더용 인터페이스
 interface AdminHeaderProps {
   onToggleAdmin: () => void;
@@ -5,10 +8,8 @@ interface AdminHeaderProps {
 
 // 일반 헤더용 인터페이스
 interface ShopHeaderProps {
-  searchTerm: string;
   totalItemCount: number;
   cartItemCount: number;
-  onSearchChange: (value: string) => void;
   onToggleAdmin: () => void;
 }
 
@@ -37,10 +38,8 @@ export const AdminHeader = ({ onToggleAdmin }: AdminHeaderProps) => {
 
 // 일반 쇼핑몰 헤더 컴포넌트
 export const ShopHeader = ({
-  searchTerm,
   totalItemCount,
   cartItemCount,
-  onSearchChange,
   onToggleAdmin,
 }: ShopHeaderProps) => {
   return (
@@ -49,15 +48,6 @@ export const ShopHeader = ({
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center flex-1">
             <h1 className="text-xl font-semibold text-gray-800">SHOP</h1>
-            <div className="ml-8 flex-1 max-w-md">
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => onSearchChange(e.target.value)}
-                placeholder="상품 검색..."
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-              />
-            </div>
           </div>
           <nav className="flex items-center space-x-4">
             <button
@@ -91,19 +81,15 @@ export const ShopHeader = ({
 // 기존 Header 컴포넌트 (하위 호환성을 위해 유지)
 interface HeaderProps {
   isAdmin: boolean;
-  searchTerm: string;
   totalItemCount: number;
   cartItemCount: number;
-  onSearchChange: (value: string) => void;
   onToggleAdmin: () => void;
 }
 
 export const Header = ({
   isAdmin,
-  searchTerm,
   totalItemCount,
   cartItemCount,
-  onSearchChange,
   onToggleAdmin,
 }: HeaderProps) => {
   if (isAdmin) {
@@ -112,10 +98,8 @@ export const Header = ({
 
   return (
     <ShopHeader
-      searchTerm={searchTerm}
       totalItemCount={totalItemCount}
       cartItemCount={cartItemCount}
-      onSearchChange={onSearchChange}
       onToggleAdmin={onToggleAdmin}
     />
   );

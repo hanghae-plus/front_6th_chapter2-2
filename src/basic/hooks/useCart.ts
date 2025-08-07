@@ -63,17 +63,18 @@ export const useCart = (addNotification?: (message: string, type?: "error" | "su
   }, []);
 
   const updateQuantity = useCallback(
-    (productId: string, newQuantity: number, products: Product[]) => {
+    (productId: string, newQuantity: number) => {
       if (newQuantity <= 0) {
         removeFromCart(productId);
         return;
       }
 
-      const product = products.find((p) => p.id === productId);
-      if (!product) {
+      const cartItem = cart.find((item) => item.product.id === productId);
+      if (!cartItem) {
         throw new ProductNotFoundError(productId);
       }
 
+      const product = cartItem.product;
       const maxStock = product.stock;
       if (newQuantity > maxStock) {
         throw new StockExceededError(product.name, maxStock, newQuantity);
@@ -83,7 +84,7 @@ export const useCart = (addNotification?: (message: string, type?: "error" | "su
         prevCart.map((item) => (item.product.id === productId ? { ...item, quantity: newQuantity } : item))
       );
     },
-    [removeFromCart]
+    [removeFromCart, cart]
   );
 
   const clearCart = useCallback(() => {

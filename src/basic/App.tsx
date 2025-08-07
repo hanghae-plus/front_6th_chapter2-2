@@ -17,15 +17,11 @@ const App = () => {
   // 앱 전체 상태 관리
   const {
     // 도메인별 상태
-    products,
     cart,
     coupons,
     selectedCoupon,
 
     // 도메인별 액션
-    addProduct,
-    updateProduct,
-    deleteProduct,
     addToCart,
     removeFromCart,
     updateQuantity,
@@ -34,12 +30,6 @@ const App = () => {
     applyCoupon,
     setSelectedCoupon,
     completeOrder,
-
-    // 검색 관련
-    searchTerm,
-    setSearchTerm,
-    filteredProducts,
-    searchInfo,
 
     // UI 상태
     isAdmin,
@@ -53,37 +43,27 @@ const App = () => {
 
       <Header
         isAdmin={isAdmin}
-        searchTerm={searchTerm}
         totalItemCount={totalItemCount}
         cartItemCount={cart.length}
-        onSearchChange={setSearchTerm}
         onToggleAdmin={toggleAdmin}
       />
 
       <main className="max-w-7xl mx-auto px-4 py-8">
         {isAdmin ? (
           <AdminPage
-            // 상품 관련 props
-            products={products}
-            cart={cart}
-            onDeleteProduct={deleteProduct}
-            onAddProduct={addProduct}
-            onUpdateProduct={updateProduct}
-            addNotification={addNotification}
             // 쿠폰 관련 props
             coupons={coupons}
             onDeleteCoupon={deleteCoupon}
             onAddCoupon={addCoupon}
+            addNotification={addNotification}
           />
         ) : (
           <ShopPage
-            products={filteredProducts}
             cart={cart}
             coupons={coupons}
             selectedCoupon={selectedCoupon}
-            searchInfo={searchInfo}
             onRemoveFromCart={removeFromCart}
-            onUpdateQuantity={(productId, quantity) => updateQuantity(productId, quantity, products)}
+            onUpdateQuantity={updateQuantity}
             onApplyCoupon={applyCoupon}
             onRemoveCoupon={() => setSelectedCoupon(null)}
             onCompleteOrder={completeOrder}
