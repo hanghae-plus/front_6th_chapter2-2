@@ -1,5 +1,10 @@
 import { useState, useCallback, useEffect } from 'react';
+import { initialProducts, initialCoupons } from './constants/initialData';
 import { CartItem, Coupon, Product } from '../types';
+import { useCart } from './hooks/useCart';
+import { useProducts } from './hooks/useProducts';
+import { useCoupons } from './hooks/useCoupons';
+import { useDebounce } from './hooks/useDebounce';
 import { calculateCartTotal, calculateItemTotal } from './utils/cart';
 
 interface ProductWithUI extends Product {
@@ -13,9 +18,8 @@ interface Notification {
   type: 'error' | 'success' | 'warning';
 }
 
-// 초기 데이터
-const initialProducts: ProductWithUI[] = [
-  {
+
+/*  {
     id: 'p1',
     name: '상품1',
     price: 10000,
@@ -50,7 +54,7 @@ const initialProducts: ProductWithUI[] = [
   }
 ];
 
-const initialCoupons: Coupon[] = [
+
   {
     name: '5000원 할인',
     code: 'AMOUNT5000',
@@ -63,7 +67,7 @@ const initialCoupons: Coupon[] = [
     discountType: 'percentage',
     discountValue: 10
   }
-];
+];*/
 
 const App = () => {
 
@@ -110,7 +114,7 @@ const App = () => {
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
   const [showProductForm, setShowProductForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   // Admin
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
@@ -191,12 +195,7 @@ const App = () => {
     }
   }, [cart]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
+
 
   const addToCart = useCallback((product: ProductWithUI) => {
     const remainingStock = getRemainingStock(product);
