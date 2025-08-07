@@ -10,6 +10,7 @@
 import { useAtom, type PrimitiveAtom } from 'jotai';
 import {
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type Dispatch,
@@ -62,7 +63,7 @@ export function useAtomWithLocalStorage<T>({
   const [value, setValue] = useAtom(atom);
   const initialValueRef = useRef(initialValue);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const saved = localStorage.getItem(key);
     if (saved) {
       try {

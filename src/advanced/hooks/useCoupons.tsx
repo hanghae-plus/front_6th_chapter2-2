@@ -10,10 +10,11 @@
 
 import { useCallback, useState } from 'react';
 import type { CartItem, Coupon } from '../../types';
+import { couponsAtom } from '../atoms/coupon';
 import { initialCoupons } from '../constants';
 import * as cartModel from '../models/cart';
 import * as couponModel from '../models/coupon';
-import { useLocalStorage } from '../utils/hooks/useLocalStorage';
+import { useAtomWithLocalStorage } from '../utils/hooks/useLocalStorage';
 import { useNotify } from './useNotification';
 
 interface UseCouponsReturn {
@@ -27,9 +28,10 @@ interface UseCouponsReturn {
 
 export function useCoupons(): UseCouponsReturn {
   const notify = useNotify();
-  const [coupons, setCoupons] = useLocalStorage({
+  const [coupons, setCoupons] = useAtomWithLocalStorage({
     key: 'coupons',
     initialValue: initialCoupons,
+    atom: couponsAtom,
   });
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
