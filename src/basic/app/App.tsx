@@ -8,6 +8,7 @@ import {
   getRemainingStock,
   useCartActions
 } from "../domains/cart";
+import { INITIAL_COUPONS, useCouponActions } from "../domains/coupon";
 import { Header } from "./components";
 import { AdminPage, CartPage } from "./pages";
 
@@ -57,21 +58,6 @@ const initialProducts: ProductWithUI[] = [
   }
 ];
 
-const initialCoupons: Coupon[] = [
-  {
-    name: "5000원 할인",
-    code: "AMOUNT5000",
-    discountType: "amount",
-    discountValue: 5000
-  },
-  {
-    name: "10% 할인",
-    code: "PERCENT10",
-    discountType: "percentage",
-    discountValue: 10
-  }
-];
-
 export function App() {
   const [products, setProducts] = useState<ProductWithUI[]>(() => {
     const saved = localStorage.getItem("products");
@@ -103,10 +89,10 @@ export function App() {
       try {
         return JSON.parse(saved);
       } catch {
-        return initialCoupons;
+        return INITIAL_COUPONS;
       }
     }
-    return initialCoupons;
+    return INITIAL_COUPONS;
   });
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
@@ -128,10 +114,10 @@ export function App() {
     discounts: [] as Array<{ quantity: number; rate: number }>
   });
 
-  const [couponForm, setCouponForm] = useState({
+  const [couponForm, setCouponForm] = useState<Coupon>({
     name: "",
     code: "",
-    discountType: "amount" as "amount" | "percentage",
+    discountType: "amount",
     discountValue: 0
   });
 
@@ -165,14 +151,35 @@ export function App() {
   const [totalItemCount, setTotalItemCount] = useState(0);
 
   // Cart actions using domain hook
-  const { addToCart, removeFromCart, updateQuantity, applyCoupon, completeOrder } = useCartActions({
+  const { addToCart, removeFromCart, updateQuantity, completeOrder } = useCartActions({
     cart,
     products,
-    selectedCoupon,
     setCart,
     setSelectedCoupon,
     addNotification
   });
+
+  // Coupon actions using domain hook
+  const {
+    deleteCoupon,
+    applyCoupon: applyCouponBase,
+    handleCouponSubmit
+  } = useCouponActions({
+    coupons,
+    selectedCoupon,
+    setCoupons,
+    setSelectedCoupon,
+    addNotification
+  });
+
+  // Wrapper for applyCoupon with cart total calculation
+  const applyCoupon = useCallback(
+    (coupon: Coupon) => {
+      const currentTotal = calculateCartTotal(cart, selectedCoupon).totalAfterDiscount;
+      applyCouponBase(coupon, currentTotal);
+    },
+    [applyCouponBase, cart, selectedCoupon]
+  );
 
   useEffect(() => {
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -232,30 +239,6 @@ export function App() {
     [addNotification]
   );
 
-  const addCoupon = useCallback(
-    (newCoupon: Coupon) => {
-      const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
-      if (existingCoupon) {
-        addNotification("이미 존재하는 쿠폰 코드입니다.", "error");
-        return;
-      }
-      setCoupons((prev) => [...prev, newCoupon]);
-      addNotification("쿠폰이 추가되었습니다.", "success");
-    },
-    [coupons, addNotification]
-  );
-
-  const deleteCoupon = useCallback(
-    (couponCode: string) => {
-      setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
-      if (selectedCoupon?.code === couponCode) {
-        setSelectedCoupon(null);
-      }
-      addNotification("쿠폰이 삭제되었습니다.", "success");
-    },
-    [selectedCoupon, addNotification]
-  );
-
   const handleProductSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (editingProduct && editingProduct !== "new") {
@@ -272,16 +255,19 @@ export function App() {
     setShowProductForm(false);
   };
 
-  const handleCouponSubmit = (e: FormEvent) => {
+  const handleCouponSubmitWrapper = (e: FormEvent) => {
     e.preventDefault();
-    addCoupon(couponForm);
-    setCouponForm({
-      name: "",
-      code: "",
-      discountType: "amount",
-      discountValue: 0
-    });
-    setShowCouponForm(false);
+    handleCouponSubmit(
+      couponForm,
+      () =>
+        setCouponForm({
+          name: "",
+          code: "",
+          discountType: "amount",
+          discountValue: 0
+        }),
+      setShowCouponForm
+    );
   };
 
   const startEditProduct = (product: ProductWithUI) => {
@@ -329,7 +315,7 @@ export function App() {
             deleteProduct={deleteProduct}
             editingProduct={editingProduct}
             formatPrice={formatPrice}
-            handleCouponSubmit={handleCouponSubmit}
+            handleCouponSubmit={handleCouponSubmitWrapper}
             handleProductSubmit={handleProductSubmit}
             productForm={productForm}
             products={products}
