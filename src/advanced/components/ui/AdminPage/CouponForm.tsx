@@ -1,18 +1,15 @@
 import { useState } from "react";
-import { Coupon } from "../../../types";
+import { Coupon } from "../../../../types";
+import { useNotification } from "../../../utils/hooks/useNotification";
 
 export function CouponForm({
-  addNotification,
   setShowCouponForm,
   applyAddCoupon,
 }: {
-  addNotification: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
   setShowCouponForm: (show: boolean) => void;
   applyAddCoupon: (coupon: Coupon) => void;
 }) {
+  const { addNotification } = useNotification();
   const [couponForm, setCouponForm] = useState({
     name: "",
     code: "",

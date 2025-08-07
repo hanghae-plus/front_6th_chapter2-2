@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction } from "react";
 import { ProductWithUI } from "../../../App";
 import { CloseIcon } from "../../icons";
+import { useNotification } from "../../../utils/hooks/useNotification";
 
 export function ProductForm({
   editingProduct,
@@ -10,7 +11,6 @@ export function ProductForm({
   applyAddProduct,
   applyUpdateProduct,
   setShowProductForm,
-  addNotification,
 }: {
   editingProduct: string | null;
   setEditingProduct: Dispatch<SetStateAction<string | null>>;
@@ -22,11 +22,8 @@ export function ProductForm({
     product: Partial<ProductWithUI>
   ) => void;
   setShowProductForm: (show: boolean) => void;
-  addNotification: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
 }) {
+  const { addNotification } = useNotification();
   const handleProductSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (editingProduct && editingProduct !== "new") {

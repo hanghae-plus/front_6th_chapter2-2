@@ -7,13 +7,8 @@ import { ProductForm } from "./ProductForm";
 
 export function ProductTab({
   activeTab,
-  addNotification,
 }: {
   activeTab: "products" | "coupons";
-  addNotification: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
 }) {
   const [showProductForm, setShowProductForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
@@ -26,9 +21,7 @@ export function ProductTab({
   });
 
   const { products, applyAddProduct, applyUpdateProduct, applyDeleteProduct } =
-    useProducts({
-      addNotification,
-    });
+    useProducts();
 
   const startEditProduct = (product: ProductWithUI) => {
     setEditingProduct(product.id);
@@ -83,7 +76,6 @@ export function ProductTab({
           applyAddProduct={applyAddProduct}
           applyUpdateProduct={applyUpdateProduct}
           setShowProductForm={setShowProductForm}
-          addNotification={addNotification}
         />
       )}
     </section>

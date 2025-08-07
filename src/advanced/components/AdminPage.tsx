@@ -20,14 +20,7 @@ import { AdminTab } from "./ui/AdminPage/AdminTab";
 import { ProductTab } from "./ui/AdminPage/ProductTab";
 import { CouponTab } from "./ui/AdminPage/CouponTab";
 
-interface AdminPageProps {
-  addNotification: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
-}
-
-export function AdminPage({ addNotification }: AdminPageProps) {
+export function AdminPage() {
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
     "products"
   );
@@ -48,9 +41,9 @@ export function AdminPage({ addNotification }: AdminPageProps) {
       />
 
       {activeTab === "products" ? (
-        <ProductTab activeTab={activeTab} addNotification={addNotification} />
+        <ProductTab activeTab={activeTab} />
       ) : (
-        <CouponTab addNotification={addNotification} />
+        <CouponTab />
       )}
     </div>
   );

@@ -1,10 +1,4 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { Dispatch, SetStateAction, useCallback, useEffect } from "react";
 import { CartItem, Coupon } from "../../types";
 import { ProductWithUI } from "../App";
 import {
@@ -17,6 +11,7 @@ import {
   calculateItemTotal,
 } from "../models/cart";
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
+import { useNotification } from "../utils/hooks/useNotification";
 
 // TODO: 장바구니 관리 Hook
 // 힌트:
@@ -46,22 +41,17 @@ import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 
 export function useCart({
   products,
-  addNotification,
   selectedCoupon,
   setSelectedCoupon,
   setTotalItemCount,
 }: {
   products: ProductWithUI[];
-  addNotification: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
   selectedCoupon: Coupon | null;
   setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
   setTotalItemCount: Dispatch<SetStateAction<number>>;
 }) {
-  // TODO: 구현
   const [cart, setCart] = useLocalStorage<CartItem[]>("cart", []);
+  const { addNotification } = useNotification();
 
   useEffect(() => {
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);

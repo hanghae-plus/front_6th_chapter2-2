@@ -1,27 +1,12 @@
 import { useState } from "react";
-import { Coupon } from "../../../../types";
 import { useCoupons } from "../../../hooks/useCoupons";
 import { CouponCard } from "./CouponCard";
 import { AddNewCouponCard } from "./AddNewCouponCard";
 import { CouponForm } from "./CouponForm";
-import { selectedCouponAtom } from "../../../atoms";
-import { useAtom } from "jotai";
 
-export function CouponTab({
-  addNotification,
-}: {
-  addNotification: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
-}) {
+export function CouponTab() {
   const [showCouponForm, setShowCouponForm] = useState(false);
-  const [selectedCoupon, setSelectedCoupon] = useAtom(selectedCouponAtom);
-  const { coupons, applyAddCoupon, applyDeleteCoupon } = useCoupons({
-    addNotification,
-    selectedCoupon,
-    setSelectedCoupon,
-  });
+  const { coupons, applyAddCoupon, applyDeleteCoupon } = useCoupons();
 
   return (
     <section className="bg-white rounded-lg border border-gray-200">
@@ -45,7 +30,6 @@ export function CouponTab({
 
         {showCouponForm && (
           <CouponForm
-            addNotification={addNotification}
             setShowCouponForm={setShowCouponForm}
             applyAddCoupon={applyAddCoupon}
           />

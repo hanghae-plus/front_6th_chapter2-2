@@ -1,17 +1,9 @@
 import { CloseIcon } from "../icons";
+import { notificationsAtom } from "../../atoms";
+import { useAtom } from "jotai";
 
-interface Notification {
-  id: string;
-  message: string;
-  type: "error" | "success" | "warning";
-}
-
-interface UIToastProps {
-  notifications: Notification[];
-  setNotifications: React.Dispatch<React.SetStateAction<Notification[]>>;
-}
-
-export function UIToast({ notifications, setNotifications }: UIToastProps) {
+export function UIToast() {
+  const [notifications, setNotifications] = useAtom(notificationsAtom);
   return (
     <>
       {notifications.length > 0 && (

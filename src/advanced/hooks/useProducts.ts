@@ -17,15 +17,10 @@ import { ProductWithUI } from "../App";
 import { initialProducts } from "../constants";
 import { addProduct, deleteProduct, updateProduct } from "../models/product";
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
+import { useNotification } from "../utils/hooks/useNotification";
 
-export function useProducts({
-  addNotification,
-}: {
-  addNotification: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
-}) {
+export function useProducts() {
+  const { addNotification } = useNotification();
   const [products, setProducts] = useLocalStorage<ProductWithUI[]>(
     "products",
     initialProducts

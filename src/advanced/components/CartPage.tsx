@@ -10,6 +10,7 @@ import { CouponInfo } from "./ui/CartPage/CouponInfo";
 import { PurchaseInfo } from "./ui/CartPage/PurchaseInfo";
 import { selectedCouponAtom, totalItemCountAtom } from "../atoms";
 import { useAtom } from "jotai";
+import { useNotification } from "../utils/hooks/useNotification";
 
 // TODO: 장바구니 페이지 컴포넌트
 // 힌트:
@@ -30,23 +31,14 @@ import { useAtom } from "jotai";
 // - Cart: 장바구니 표시 및 결제
 
 interface CartPageProps {
-  addNotification: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
   debouncedSearchTerm: string;
 }
 
-export function CartPage({
-  addNotification,
-  debouncedSearchTerm,
-}: CartPageProps) {
+export function CartPage({ debouncedSearchTerm }: CartPageProps) {
   const [selectedCoupon, setSelectedCoupon] = useAtom(selectedCouponAtom);
   const [totalItemCount, setTotalItemCount] = useAtom(totalItemCountAtom);
-
-  const { products } = useProducts({
-    addNotification,
-  });
+  const { addNotification } = useNotification();
+  const { products } = useProducts();
 
   const {
     cart,
@@ -58,17 +50,12 @@ export function CartPage({
     clearCart,
   } = useCart({
     products,
-    addNotification,
     selectedCoupon,
     setSelectedCoupon,
     setTotalItemCount,
   });
 
-  const { coupons } = useCoupons({
-    addNotification,
-    selectedCoupon,
-    setSelectedCoupon,
-  });
+  const { coupons } = useCoupons();
 
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;

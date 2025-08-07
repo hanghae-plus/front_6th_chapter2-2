@@ -13,19 +13,13 @@ import { Coupon } from "../../types";
 import { initialCoupons } from "../constants";
 import { addCoupon, deleteCoupon } from "../models/coupon";
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
+import { useNotification } from "../utils/hooks/useNotification";
+import { useAtom } from "jotai";
+import { selectedCouponAtom } from "../atoms";
 
-export function useCoupons({
-  addNotification,
-  selectedCoupon,
-  setSelectedCoupon,
-}: {
-  addNotification: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
-}) {
+export function useCoupons() {
+  const { addNotification } = useNotification();
+  const [selectedCoupon, setSelectedCoupon] = useAtom(selectedCouponAtom);
   const [coupons, setCoupons] = useLocalStorage<Coupon[]>(
     "coupons",
     initialCoupons
