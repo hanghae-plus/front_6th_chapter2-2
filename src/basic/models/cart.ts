@@ -6,23 +6,29 @@ export const calculateItemTotal = (item: CartItem): number => {
   return item.price * item.quantity;
 };
 
-// 적용 가능한 최대 할인율 계산
+// 적용 가능한 최대 할인율 계산 (보너스 할인 로직 추가)
 export const getMaxApplicableDiscount = (item: CartItem): Discount => {
   const { quantity, discounts } = item;
   
-  let applicableDiscount: Discount = { quantity: 0, rate: 0 };
-
+  let baseDiscount: Discount = { quantity: 0, rate: 0 };
   for (const discount of discounts) {
     if (quantity >= discount.quantity) {
-      if (discount.rate > applicableDiscount.rate) {
-        applicableDiscount = discount;
+      if (discount.rate > baseDiscount.rate) {
+        baseDiscount = discount;
       }
     }
   }
-  return applicableDiscount;
+
+  // 10개당 5% 보너스 할인 추가
+  const bonusDiscountRate = Math.floor(quantity / 10) * 0.05;
+  
+  return {
+    quantity: baseDiscount.quantity,
+    rate: baseDiscount.rate + bonusDiscountRate,
+  };
 };
 
-// 장바구니 전체 총액 정보 계산
+// 장바구니 전체 총액 정보 계산 (쿠폰 적용 로직 수정)
 export const calculateCartTotal = (cart: CartItem[], selectedCoupon: Coupon | null) => {
   const totalBeforeDiscount = cart.reduce((total, item) => total + calculateItemTotal(item), 0);
   
@@ -32,16 +38,19 @@ export const calculateCartTotal = (cart: CartItem[], selectedCoupon: Coupon | nu
     return total + (itemTotal * discount.rate);
   }, 0);
 
+  const subtotalAfterItemDiscount = totalBeforeDiscount - totalDiscount;
+
   let couponDiscount = 0;
   if (selectedCoupon) {
     if (selectedCoupon.discountType === 'amount') {
       couponDiscount = selectedCoupon.discountValue;
     } else {
-      couponDiscount = totalBeforeDiscount * (selectedCoupon.discountValue / 100);
+      // 쿠폰은 상품 할인 후 금액에 적용
+      couponDiscount = subtotalAfterItemDiscount * (selectedCoupon.discountValue / 100);
     }
   }
 
-  const finalTotal = totalBeforeDiscount - totalDiscount - couponDiscount;
+  const finalTotal = subtotalAfterItemDiscount - couponDiscount;
 
   return {
     totalBeforeDiscount,
@@ -78,4 +87,14 @@ export const updateCartItemQuantity = (cart: CartItem[], productId: string, newQ
     }
     return item;
   }).filter(item => item.quantity > 0); // 수량이 0이 되면 장바구니에서 제거
+};
+
+// 장바구니의 총 아이템 수량 계산
+export const getCartTotalQuantity = (cart: CartItem[]): number => {
+  return cart.reduce((total, item) => total + item.quantity, 0);
+};
+
+// 새로운 함수: 장바구니 비우기
+export const clearCart = (): CartItem[] => {
+  return [];
 };
