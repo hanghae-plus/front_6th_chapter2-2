@@ -64,21 +64,10 @@ export default function ProductCard({
 
         {/* 재고 상태 */}
         <div className='mb-3'>
-          {/* 임시 해결책: 상품1에 대해서만 재고 5개로 하드코딩 */}
-          {product.id === 'p1' ? (
-            <p className='text-xs text-red-600 font-medium'>품절임박! 5개 남음</p>
-          ) : (
-            <>
-              {remainingStock <= 5 && remainingStock > 0 && (
-                <p className='text-xs text-red-600 font-medium'>
-                  품절임박! {remainingStock}개 남음
-                </p>
-              )}
-              {remainingStock > 5 && (
-                <p className='text-xs text-gray-500'>재고 {remainingStock}개</p>
-              )}
-            </>
+          {remainingStock <= 5 && remainingStock > 0 && (
+            <p className='text-xs text-red-600 font-medium'>품절임박! {remainingStock}개 남음</p>
           )}
+          {remainingStock > 5 && <p className='text-xs text-gray-500'>재고 {remainingStock}개</p>}
         </div>
 
         {/* 장바구니 버튼 */}
