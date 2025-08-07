@@ -11,14 +11,12 @@ export interface Discount {
   rate: number;
 }
 
-export interface CartItem {
-  product: Product;
-  quantity: number;
-}
-
 export interface Coupon {
   name: string;
   code: string;
   discountType: "amount" | "percentage";
   discountValue: number;
 }
+
+// Re-export cart types
+export type { CartItem, CartTotals } from "./basic/domains/cart/types";
