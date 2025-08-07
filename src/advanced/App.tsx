@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useAtom, useAtomValue } from 'jotai';
 
+import { isAdminAtom, activeTabAtom, debouncedSearchTermAtom } from './atoms/uiAtoms';
 import { AdminPage } from './components/AdminPage';
 import { CartPage } from './components/CartList';
 import { Header } from './components/Header';
@@ -12,14 +13,15 @@ import { useCoupon } from './hooks/useCoupon';
 import { useNotification } from './hooks/useNotification';
 import { useOrder } from './hooks/useOrder';
 import { useProducts } from './hooks/useProducts';
-import { useSearch } from './hooks/useSearch';
 import { formatPrice } from './utils/formatters';
 
 const App = () => {
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
+  // UI atoms 사용
+  const [isAdmin] = useAtom(isAdminAtom);
+  const [activeTab, setActiveTab] = useAtom(activeTabAtom);
+  const debouncedSearchTerm = useAtomValue(debouncedSearchTermAtom);
 
-  const { addNotification, notifications, removeNotification } = useNotification();
+  const { addNotification } = useNotification();
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
   const {
     getRemainingStock,
@@ -27,13 +29,25 @@ const App = () => {
     addToCart,
     removeFromCart,
     calculateTotal,
-    clearCart,
     applyCoupon,
     cart,
     selectedCoupon,
-    totalItemCount,
   } = useCart();
+
   const { coupons, addCoupon, deleteCoupon } = useCoupon();
+
+  const {
+    productForm,
+    showProductForm,
+    editingProduct,
+    handleProductFormSubmit,
+    startEditProduct,
+    handleCancelProduct,
+    resetEditingProduct,
+    updateProductForm,
+    updateShowProductForm,
+  } = useProductForm();
+
   const {
     couponForm,
     showCouponForm,
@@ -41,24 +55,8 @@ const App = () => {
     updateCouponForm,
     updateShowCouponForm,
   } = useCouponForm();
-  const {
-    productForm,
-    showProductForm,
-    editingProduct,
-    handleProductFormSubmit,
-    startEditProduct,
-    resetEditingProduct,
-    updateProductForm,
-    updateShowProductForm,
-    handleCancelProduct,
-  } = useProductForm();
 
-  const { searchTerm, debouncedSearchTerm, setSearchTermValue } = useSearch();
-  const { completeOrder } = useOrder({
-    addNotification,
-    clearCart,
-    applyCoupon,
-  });
+  const { completeOrder } = useOrder();
 
   // UI에 관련된 함수같다!
   const getDisplayPrice = (price: number, productId?: string): string => {
@@ -107,16 +105,9 @@ const App = () => {
 
   return (
     <div className='min-h-screen bg-gray-50'>
-      <Toast notifications={notifications} onRemove={removeNotification} />
+      <Toast />
 
-      <Header
-        isAdmin={isAdmin}
-        searchTerm={searchTerm}
-        cart={cart}
-        totalItemCount={totalItemCount}
-        setSearchTerm={setSearchTermValue}
-        setIsAdmin={setIsAdmin}
-      />
+      <Header />
       <main className='max-w-7xl mx-auto px-4 py-8'>
         {isAdmin ? (
           <AdminPage

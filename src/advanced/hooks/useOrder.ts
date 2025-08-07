@@ -1,18 +1,26 @@
+import { useSetAtom } from 'jotai';
 import { useCallback } from 'react';
 
-interface UseOrderProps {
-  addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
-  clearCart: () => void;
-  applyCoupon: (coupon: null) => void;
-}
+import { clearCartAtom, applyCouponAtom } from '../atoms/cartAtoms';
+import { addNotificationAtom } from '../atoms/notificationAtoms';
 
-const useOrder = ({ addNotification, clearCart, applyCoupon }: UseOrderProps) => {
+const useOrder = () => {
+  // atoms 사용
+  const addNotificationAction = useSetAtom(addNotificationAtom);
+  const clearCartAction = useSetAtom(clearCartAtom);
+  const applyCouponAction = useSetAtom(applyCouponAtom);
+
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
-    addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
-    clearCart();
-    applyCoupon(null);
-  }, [addNotification, clearCart, applyCoupon]);
+    const id = Date.now().toString();
+    addNotificationAction({
+      id,
+      message: `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
+      type: 'success',
+    });
+    clearCartAction();
+    applyCouponAction(null);
+  }, [addNotificationAction, clearCartAction, applyCouponAction]);
 
   return {
     completeOrder,

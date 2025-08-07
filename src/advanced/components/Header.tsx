@@ -1,22 +1,16 @@
-import { CartItem } from '../types';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 
-interface HeaderProps {
-  isAdmin: boolean;
-  searchTerm: string;
-  cart: CartItem[];
-  totalItemCount: number;
-  setSearchTerm: (term: string) => void;
-  setIsAdmin: (isAdmin: boolean) => void;
-}
+import { cartAtom, totalItemCountAtom } from '../atoms/cartAtoms';
+import { isAdminAtom, searchTermAtom, setSearchTermAtom } from '../atoms/uiAtoms';
 
-const Header = ({
-  isAdmin,
-  searchTerm,
-  cart,
-  totalItemCount,
-  setSearchTerm,
-  setIsAdmin,
-}: HeaderProps) => {
+const Header = () => {
+  // atoms 직접 사용
+  const [isAdmin, setIsAdmin] = useAtom(isAdminAtom);
+  const [searchTerm] = useAtom(searchTermAtom);
+  const cart = useAtomValue(cartAtom);
+  const totalItemCount = useAtomValue(totalItemCountAtom);
+  const setSearchTermAction = useSetAtom(setSearchTermAtom);
+
   return (
     <header className='bg-white shadow-sm sticky top-0 z-40 border-b'>
       <div className='max-w-7xl mx-auto px-4'>
@@ -29,7 +23,7 @@ const Header = ({
                 <input
                   type='text'
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => setSearchTermAction(e.target.value)}
                   placeholder='상품 검색...'
                   className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500'
                 />

@@ -1,8 +1,9 @@
 import { atom } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
 
-// UI 상태 atoms
-export const isAdminAtom = atom<boolean>(false);
-export const activeTabAtom = atom<'products' | 'coupons'>('products');
+// UI 상태 atoms - localStorage와 동기화
+export const isAdminAtom = atomWithStorage<boolean>('isAdmin', false);
+export const activeTabAtom = atomWithStorage<'products' | 'coupons'>('activeTab', 'products');
 export const searchTermAtom = atom<string>('');
 
 // 디바운스된 검색어 (derived atom)

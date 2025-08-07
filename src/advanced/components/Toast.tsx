@@ -1,11 +1,8 @@
+import { useAtomValue, useSetAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 
+import { notificationsAtom, removeNotificationAtom } from '../atoms/notificationAtoms';
 import { Notification } from '../types';
-
-interface ToastProps {
-  notifications: Notification[];
-  onRemove: (id: string) => void;
-}
 
 interface ToastItemProps {
   notification: Notification;
@@ -80,13 +77,21 @@ const ToastItem = ({ notification, onRemove }: ToastItemProps) => {
   );
 };
 
-export const Toast = ({ notifications, onRemove }: ToastProps) => {
+export const Toast = () => {
+  // atoms 직접 사용
+  const notifications = useAtomValue(notificationsAtom);
+  const removeNotification = useSetAtom(removeNotificationAtom);
+
   if (notifications.length === 0) return null;
 
   return (
     <div className='fixed top-20 right-4 z-50 space-y-2 max-w-sm w-full pr-4'>
       {notifications.map((notification) => (
-        <ToastItem key={notification.id} notification={notification} onRemove={onRemove} />
+        <ToastItem
+          key={notification.id}
+          notification={notification}
+          onRemove={removeNotification}
+        />
       ))}
     </div>
   );
