@@ -1,9 +1,10 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { Coupon, Product } from "../types";
 import { AdminPage } from "./components/AdminPage";
 import { CartPage } from "./components/CartPage";
 import { UIToast } from "./components/ui/UIToast";
 import { Layout } from "./components/layout/Layout";
+import { useDebounce } from "./utils/hooks/useDebounce";
 
 export interface ProductWithUI extends Product {
   description?: string;
@@ -21,8 +22,8 @@ const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [totalItemCount, setTotalItemCount] = useState(0);
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   const addNotification = useCallback(
     (message: string, type: "error" | "success" | "warning" = "success") => {
@@ -36,13 +37,6 @@ const App = () => {
     []
   );
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
-
   return (
     <Layout>
       <UIToast
@@ -51,7 +45,7 @@ const App = () => {
       />
       <Layout.Header
         isAdmin={isAdmin}
-        searchTerm={searchTerm}
+        searchTerm={debouncedSearchTerm}
         setSearchTerm={setSearchTerm}
         setIsAdmin={setIsAdmin}
         totalItemCount={totalItemCount}
