@@ -13,11 +13,14 @@
     "test:advanced": "vitest src/advanced",
     "test:ui": "vitest --ui",
     "build": "tsc -b && vite build",
+    "build:advanced": "vite build --config vite.config.advanced.js",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "gh-pages": "pnpm run build:advanced && mv dist/index.advanced.html dist/index.html && gh-pages -d dist"
   },
   "dependencies": {
+    "gh-pages": "^6.3.0",
     "jotai": "^2.13.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
