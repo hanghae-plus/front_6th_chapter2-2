@@ -6,6 +6,7 @@ export interface Product {
   price: number;
   stock: number;
   discounts: Discount[];
+  description: string;
 }
 
 export interface Discount {
