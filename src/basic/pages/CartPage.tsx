@@ -1,6 +1,6 @@
 import { ProductWithUI, CartItem, Coupon } from '../../types';
-import Cart from '../components/shopping/Cart';
-import ProductList from '../components/shopping/ProductList';
+import Cart from '../components/cart/Cart';
+import ProductList from '../components/product/ProductList';
 
 interface CartPageProps {
   debouncedSearchTerm: string;
