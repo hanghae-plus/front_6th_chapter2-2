@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { type Notification as NotificationType } from "@entities/notification";
+import { NotificationType } from "@entities/notification";
 import {
   addGlobalNotification,
   removeGlobalNotification,

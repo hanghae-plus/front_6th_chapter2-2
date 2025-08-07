@@ -1,7 +1,10 @@
-import { NotificationVariant, type Notification } from "@entities/notification";
+import {
+  NotificationVariant,
+  type NotificationType,
+} from "@entities/notification";
 
-let globalNotifications: Notification[] = [];
-const listeners: Array<(notifications: Notification[]) => void> = [];
+let globalNotifications: NotificationType[] = [];
+const listeners: Array<(notifications: NotificationType[]) => void> = [];
 
 const notify = () => {
   listeners.forEach((listener) => listener([...globalNotifications]));
@@ -27,7 +30,7 @@ export const removeGlobalNotification = (id: string) => {
 };
 
 export const subscribeToNotifications = (
-  listener: (notifications: Notification[]) => void
+  listener: (notifications: NotificationType[]) => void
 ) => {
   listeners.push(listener);
   listener([...globalNotifications]);

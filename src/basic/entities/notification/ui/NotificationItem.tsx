@@ -1,7 +1,10 @@
 import CloseIcon from "@assets/icons/CloseIcon.svg?react";
-import { NotificationVariant, type Notification } from "@entities/notification";
+import {
+  NotificationVariant,
+  type NotificationType,
+} from "@entities/notification";
 
-interface NotificationItemProps extends Notification {
+interface NotificationItemProps extends NotificationType {
   onRemove: (id: string) => void;
 }
 

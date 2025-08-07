@@ -1,15 +1,15 @@
 import { NotificationItem } from "./NotificationItem";
-import { type Notification } from "@entities/notification";
+import { type NotificationType } from "@entities/notification";
 
-interface NotificationProps {
-  notifications: Notification[];
+interface NotificationListProps {
+  notifications: NotificationType[];
   onRemoveNotification: (id: string) => void;
 }
 
-export function Notification({
+export function NotificationList({
   notifications,
   onRemoveNotification,
-}: NotificationProps) {
+}: NotificationListProps) {
   if (notifications.length === 0) return null;
 
   return (

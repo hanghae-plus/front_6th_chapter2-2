@@ -1,7 +1,7 @@
 import Header from "./app/components/Header";
 
 import { useState } from "react";
-import { NotificationComponent as Notification } from "@entities/notification";
+import { NotificationList } from "@entities/notification";
 import { useProductStorage } from "@entities/product";
 import { useProductSearch } from "./features/search-product/hooks/useProductSearch";
 import { useNotification } from "./features/show-notification";
@@ -19,7 +19,7 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Notification
+      <NotificationList
         notifications={notifications}
         onRemoveNotification={removeNotification}
       />

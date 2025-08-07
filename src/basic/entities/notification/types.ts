@@ -1,4 +1,4 @@
-export interface Notification {
+export interface NotificationType {
   id: string;
   message: string;
   variant: NotificationVariant;
