@@ -1,9 +1,7 @@
-import { Product } from "@entities/product";
+import { ProductWithUI } from "@entities/product";
 
-interface ProductWithDisplayInfo extends Product {
+interface ProductWithDisplayInfo extends ProductWithUI {
   displayedPrice: string;
-  description?: string;
-  isRecommended?: boolean;
 }
 
 interface ProductTableProps {

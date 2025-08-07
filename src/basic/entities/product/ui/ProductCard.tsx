@@ -1,16 +1,11 @@
-import { Product } from "@entities/product";
+import { Product, ProductWithUI } from "@entities/product";
 import ImageIcon from "@assets/icons/ImageIcon.svg?react";
 
 interface ProductCardProps {
-  product: Product & {
-    description?: string;
-    isRecommended?: boolean;
-  };
+  product: ProductWithUI;
   remainingStock: number;
   displayPrice: (product: Product) => string;
-  onAddToCart: (
-    product: Product & { description?: string; isRecommended?: boolean }
-  ) => void;
+  onAddToCart: (product: ProductWithUI) => void;
 }
 
 export const ProductCard = ({

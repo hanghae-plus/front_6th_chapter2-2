@@ -1,20 +1,12 @@
-import { Product, ProductCard } from "@entities/product";
+import { Product, ProductCard, ProductWithUI } from "@entities/product";
 
 interface ProductListProps {
-  products: (Product & {
-    description?: string;
-    isRecommended?: boolean;
-  })[];
-  filteredProducts: (Product & {
-    description?: string;
-    isRecommended?: boolean;
-  })[];
+  products: ProductWithUI[];
+  filteredProducts: ProductWithUI[];
   searchValue: string;
   getProductRemainingStock: (product: Product) => number;
   displayPrice: (product: Product) => string;
-  onAddToCart: (
-    product: Product & { description?: string; isRecommended?: boolean }
-  ) => void;
+  onAddToCart: (product: ProductWithUI) => void;
 }
 
 export const ProductList = ({
