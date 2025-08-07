@@ -10,7 +10,6 @@ import {
   hasBulkPurchase,
   calculateItemTotal,
 } from "../models/cart";
-import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 import { useNotification } from "../utils/hooks/useNotification";
 import { useAtom } from "jotai";
 import {
@@ -20,7 +19,7 @@ import {
   totalItemCountAtom,
 } from "../atoms";
 
-// TODO: 장바구니 관리 Hook
+// 장바구니 관리 Hook
 // 힌트:
 // 1. 장바구니 상태 관리 (localStorage 연동)
 // 2. 상품 추가/삭제/수량 변경

@@ -4,7 +4,7 @@ import { Cart } from "./ui/CartPage/Cart";
 import { CouponInfo } from "./ui/CartPage/CouponInfo";
 import { PurchaseInfo } from "./ui/CartPage/PurchaseInfo";
 
-// TODO: 장바구니 페이지 컴포넌트
+// 장바구니 페이지 컴포넌트
 // 힌트:
 // 1. 상품 목록 표시 (검색 기능 포함)
 // 2. 장바구니 관리

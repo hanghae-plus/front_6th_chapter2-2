@@ -1,4 +1,4 @@
-// TODO: 상품 관리 Hook
+// 상품 관리 Hook
 // 힌트:
 // 1. 상품 목록 상태 관리 (localStorage 연동 고려)
 // 2. 상품 CRUD 작업

@@ -1,4 +1,4 @@
-// TODO: LocalStorage Hook
+// LocalStorage Hook
 // 힌트:
 // 1. localStorage와 React state 동기화
 // 2. 초기값 로드 시 에러 처리

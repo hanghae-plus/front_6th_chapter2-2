@@ -1,4 +1,4 @@
-// TODO: 관리자 페이지 컴포넌트
+// 관리자 페이지 컴포넌트
 // 힌트:
 // 1. 탭 UI로 상품 관리와 쿠폰 관리 분리
 // 2. 상품 추가/수정/삭제 기능
@@ -35,7 +35,6 @@ export function AdminPage({
   selectedCoupon,
   setSelectedCoupon,
 }: AdminPageProps) {
-  // TODO: 구현
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
     "products"
   );

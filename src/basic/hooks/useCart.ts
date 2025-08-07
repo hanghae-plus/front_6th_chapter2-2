@@ -1,10 +1,4 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { Dispatch, SetStateAction, useCallback, useEffect } from "react";
 import { CartItem, Coupon } from "../../types";
 import { ProductWithUI } from "../App";
 import {
@@ -18,7 +12,7 @@ import {
 } from "../models/cart";
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 
-// TODO: 장바구니 관리 Hook
+// 장바구니 관리 Hook
 // 힌트:
 // 1. 장바구니 상태 관리 (localStorage 연동)
 // 2. 상품 추가/삭제/수량 변경
@@ -60,7 +54,6 @@ export function useCart({
   setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
   setTotalItemCount: Dispatch<SetStateAction<number>>;
 }) {
-  // TODO: 구현
   const [cart, setCart] = useLocalStorage<CartItem[]>("cart", []);
 
   useEffect(() => {

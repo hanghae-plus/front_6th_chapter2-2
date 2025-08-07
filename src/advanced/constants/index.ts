@@ -1,4 +1,4 @@
-// TODO: 초기 데이터 상수
+// 초기 데이터 상수
 // 정의할 상수들:
 // - initialProducts: 초기 상품 목록 (상품1, 상품2, 상품3 + 설명 필드 포함)
 // - initialCoupons: 초기 쿠폰 목록 (5000원 할인, 10% 할인)
@@ -7,8 +7,6 @@
 
 import { Coupon } from "../../types";
 import { ProductWithUI } from "../App";
-
-// TODO: 구현
 
 // 초기 데이터
 export const initialProducts: ProductWithUI[] = [

@@ -1,4 +1,4 @@
-// TODO: 장바구니 비즈니스 로직 (순수 함수)
+// 장바구니 비즈니스 로직 (순수 함수)
 // 힌트: 모든 함수는 순수 함수로 구현 (부작용 없음, 같은 입력에 항상 같은 출력)
 //
 // 구현할 함수들:
@@ -19,7 +19,6 @@
 import { CartItem, Product } from "../../types";
 import { ProductWithUI } from "../App";
 
-// TODO: 구현
 const hasBulkPurchase = (x: CartItem[]) =>
   x.some((item) => item.quantity >= 10);
 
