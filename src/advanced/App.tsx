@@ -14,7 +14,6 @@ const App = () => {
   const {
     coupons,
     selectedCoupon,
-    addCoupon,
     deleteCoupon,
     applyCoupon,
     clearSelectedCoupon,
@@ -49,7 +48,6 @@ const App = () => {
             deleteProduct={deleteProduct}
             updateProduct={updateProduct}
             coupons={coupons}
-            addCoupon={addCoupon}
             deleteCoupon={deleteCoupon}
           />
         ) : (

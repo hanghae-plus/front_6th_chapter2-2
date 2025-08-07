@@ -17,6 +17,7 @@
 
 import { useState, type ReactNode } from 'react';
 import type { Coupon, ProductWithUI } from '../../../types';
+import { useAddCoupon } from '../../hooks/useCoupons';
 import { AdminTabs, type AdminTab } from './AdminTabs';
 import { CouponsTab } from './coupons-tab/CouponsTab';
 import { ProductsTab } from './products-tab/ProductsTab';
@@ -33,7 +34,6 @@ interface Props {
   }) => void;
 
   coupons: Coupon[];
-  addCoupon: (params: { newCoupon: Coupon }) => void;
   deleteCoupon: (params: { couponCode: string }) => void;
 }
 
@@ -44,10 +44,10 @@ export function AdminPage({
   updateProduct,
 
   coupons,
-  addCoupon,
   deleteCoupon,
 }: Props) {
   const [activeTab, setActiveTab] = useState<AdminTab>('products');
+  const addCoupon = useAddCoupon();
 
   const tabContent: Record<AdminTab, ReactNode> = {
     coupons: (

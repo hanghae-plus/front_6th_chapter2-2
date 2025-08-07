@@ -8,10 +8,14 @@
 // - addCoupon: 새 쿠폰 추가
 // - removeCoupon: 쿠폰 삭제
 
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import { useCallback } from 'react';
 import type { CartItem, Coupon } from '../../types';
-import { couponsAtom, selectedCouponAtom } from '../atoms/coupon';
+import {
+  addCouponAtom,
+  couponsAtom,
+  selectedCouponAtom,
+} from '../atoms/coupon';
 import { initialCoupons } from '../constants';
 import * as cartModel from '../models/cart';
 import * as couponModel from '../models/coupon';
@@ -21,7 +25,6 @@ import { useNotify } from './useNotification';
 interface UseCouponsReturn {
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
-  addCoupon: (params: { newCoupon: Coupon }) => void;
   deleteCoupon: (params: { couponCode: string }) => void;
   applyCoupon: (params: { cart: CartItem[]; coupon: Coupon }) => void;
   clearSelectedCoupon: () => void;
@@ -39,24 +42,6 @@ export function useCoupons(): UseCouponsReturn {
   return {
     coupons,
     selectedCoupon,
-
-    addCoupon: useCallback(
-      ({ newCoupon }) => {
-        const result = couponModel.addCoupon({
-          newCoupon,
-          coupons,
-        });
-
-        if (!result.success) {
-          notify({ message: result.message, type: 'error' });
-          return;
-        }
-
-        setCoupons(result.newCoupons);
-        notify({ message: result.message, type: 'success' });
-      },
-      [setCoupons, notify, coupons]
-    ),
 
     deleteCoupon: useCallback(
       ({ couponCode }) => {
@@ -99,4 +84,17 @@ export function useCoupons(): UseCouponsReturn {
       setSelectedCoupon(null);
     }, []),
   };
+}
+
+export function useAddCoupon() {
+  const notify = useNotify();
+  const _addCoupon = useSetAtom(addCouponAtom);
+
+  const addCoupon = ({ newCoupon }: { newCoupon: Coupon }) => {
+    const { message, success } = _addCoupon({ newCoupon });
+
+    notify({ message, type: success ? 'success' : 'error' });
+  };
+
+  return addCoupon;
 }
