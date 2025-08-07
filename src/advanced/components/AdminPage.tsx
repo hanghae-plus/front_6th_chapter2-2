@@ -16,7 +16,6 @@
 // - CouponList: 쿠폰 목록 표시
 
 import { useState } from "react";
-import { Coupon } from "../../types";
 import { AdminTab } from "./ui/AdminPage/AdminTab";
 import { ProductTab } from "./ui/AdminPage/ProductTab";
 import { CouponTab } from "./ui/AdminPage/CouponTab";
@@ -26,16 +25,9 @@ interface AdminPageProps {
     message: string,
     type: "error" | "success" | "warning"
   ) => void;
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
 }
 
-export function AdminPage({
-  addNotification,
-  selectedCoupon,
-  setSelectedCoupon,
-}: AdminPageProps) {
-  // TODO: 구현
+export function AdminPage({ addNotification }: AdminPageProps) {
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
     "products"
   );
@@ -58,11 +50,7 @@ export function AdminPage({
       {activeTab === "products" ? (
         <ProductTab activeTab={activeTab} addNotification={addNotification} />
       ) : (
-        <CouponTab
-          addNotification={addNotification}
-          selectedCoupon={selectedCoupon}
-          setSelectedCoupon={setSelectedCoupon}
-        />
+        <CouponTab addNotification={addNotification} />
       )}
     </div>
   );

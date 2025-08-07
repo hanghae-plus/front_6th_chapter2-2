@@ -1,33 +1,23 @@
-import { Dispatch, SetStateAction } from "react";
 import { ShoppingCartIcon } from "../icons";
 import { Search } from "../ui/Search";
+import { isAdminAtom, searchTermAtom, totalItemCountAtom } from "../../atoms";
+import { useAtom } from "jotai";
 
 function Layout({ children }: { children: React.ReactNode }) {
   return <div className="min-h-screen bg-gray-50">{children}</div>;
 }
 
-interface HeaderProps {
-  isAdmin: boolean;
-  searchTerm: string;
-  setSearchTerm: Dispatch<SetStateAction<string>>;
-  setIsAdmin: Dispatch<SetStateAction<boolean>>;
-  totalItemCount: number;
-}
+function Header() {
+  const [searchTerm, setSearchTerm] = useAtom(searchTermAtom);
+  const [isAdmin, setIsAdmin] = useAtom(isAdminAtom);
+  const [totalItemCount, setTotalItemCount] = useAtom(totalItemCountAtom);
 
-function Header({
-  isAdmin,
-  searchTerm,
-  setSearchTerm,
-  setIsAdmin,
-  totalItemCount,
-}: HeaderProps) {
   return (
     <header className="bg-white shadow-sm sticky top-0 z-40 border-b">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center flex-1">
             <h1 className="text-xl font-semibold text-gray-800">SHOP</h1>
-            {/* 검색창 - 안티패턴: 검색 로직이 컴포넌트에 직접 포함 */}
             {!isAdmin && (
               <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
             )}

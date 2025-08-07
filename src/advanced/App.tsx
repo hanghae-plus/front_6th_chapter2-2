@@ -1,10 +1,12 @@
-import { useState, useCallback } from "react";
-import { Coupon, Product } from "../types";
+import { useCallback } from "react";
+import { Product } from "../types";
 import { AdminPage } from "./components/AdminPage";
 import { CartPage } from "./components/CartPage";
 import { UIToast } from "./components/ui/UIToast";
 import { Layout } from "./components/layout/Layout";
 import { useDebounce } from "./utils/hooks/useDebounce";
+import { useAtom } from "jotai";
+import { searchTermAtom, isAdminAtom, notificationsAtom } from "./atoms";
 
 export interface ProductWithUI extends Product {
   description?: string;
@@ -18,11 +20,10 @@ export interface Notification {
 }
 
 const App = () => {
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [totalItemCount, setTotalItemCount] = useState(0);
+  const [isAdmin, setIsAdmin] = useAtom(isAdminAtom);
+  const [searchTerm, setSearchTerm] = useAtom(searchTermAtom);
+  const [notifications, setNotifications] = useAtom(notificationsAtom);
+
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   const addNotification = useCallback(
@@ -43,27 +44,14 @@ const App = () => {
         notifications={notifications}
         setNotifications={setNotifications}
       />
-      <Layout.Header
-        isAdmin={isAdmin}
-        searchTerm={debouncedSearchTerm}
-        setSearchTerm={setSearchTerm}
-        setIsAdmin={setIsAdmin}
-        totalItemCount={totalItemCount}
-      />
+      <Layout.Header />
       <Layout.Main>
         {isAdmin ? (
-          <AdminPage
-            addNotification={addNotification}
-            selectedCoupon={selectedCoupon}
-            setSelectedCoupon={setSelectedCoupon}
-          />
+          <AdminPage addNotification={addNotification} />
         ) : (
           <CartPage
             addNotification={addNotification}
-            selectedCoupon={selectedCoupon}
-            setSelectedCoupon={setSelectedCoupon}
             debouncedSearchTerm={debouncedSearchTerm}
-            setTotalItemCount={setTotalItemCount}
           />
         )}
       </Layout.Main>

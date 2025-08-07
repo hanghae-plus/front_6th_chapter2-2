@@ -4,20 +4,19 @@ import { useCoupons } from "../../../hooks/useCoupons";
 import { CouponCard } from "./CouponCard";
 import { AddNewCouponCard } from "./AddNewCouponCard";
 import { CouponForm } from "./CouponForm";
+import { selectedCouponAtom } from "../../../atoms";
+import { useAtom } from "jotai";
 
 export function CouponTab({
-  selectedCoupon,
-  setSelectedCoupon,
   addNotification,
 }: {
   addNotification: (
     message: string,
     type: "error" | "success" | "warning"
   ) => void;
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
 }) {
   const [showCouponForm, setShowCouponForm] = useState(false);
+  const [selectedCoupon, setSelectedCoupon] = useAtom(selectedCouponAtom);
   const { coupons, applyAddCoupon, applyDeleteCoupon } = useCoupons({
     addNotification,
     selectedCoupon,

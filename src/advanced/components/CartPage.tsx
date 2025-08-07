@@ -8,6 +8,8 @@ import { ProductList } from "./ui/CartPage/ProductList";
 import { Cart } from "./ui/CartPage/Cart";
 import { CouponInfo } from "./ui/CartPage/CouponInfo";
 import { PurchaseInfo } from "./ui/CartPage/PurchaseInfo";
+import { selectedCouponAtom, totalItemCountAtom } from "../atoms";
+import { useAtom } from "jotai";
 
 // TODO: 장바구니 페이지 컴포넌트
 // 힌트:
@@ -32,20 +34,15 @@ interface CartPageProps {
     message: string,
     type: "error" | "success" | "warning"
   ) => void;
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: Dispatch<SetStateAction<Coupon | null>>;
   debouncedSearchTerm: string;
-  setTotalItemCount: Dispatch<SetStateAction<number>>;
 }
 
 export function CartPage({
   addNotification,
-  selectedCoupon,
-  setSelectedCoupon,
   debouncedSearchTerm,
-  setTotalItemCount,
 }: CartPageProps) {
-  // TODO: 구현
+  const [selectedCoupon, setSelectedCoupon] = useAtom(selectedCouponAtom);
+  const [totalItemCount, setTotalItemCount] = useAtom(totalItemCountAtom);
 
   const { products } = useProducts({
     addNotification,
