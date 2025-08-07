@@ -13,7 +13,10 @@ const getBaseDiscount = (item: CartItem): number => {
   return baseDiscount;
 };
 
-const getMaxApplicableDiscount = (item: CartItem, cart: CartItem[]): number => {
+export const getMaxApplicableDiscount = (
+  item: CartItem,
+  cart: CartItem[]
+): number => {
   const baseDiscount = getBaseDiscount(item);
 
   const hasBulkPurchase = cart.some(cartItem => cartItem.quantity >= 10);

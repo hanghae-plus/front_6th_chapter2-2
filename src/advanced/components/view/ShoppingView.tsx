@@ -1,5 +1,5 @@
 import ProductArea from '../shop/product/ProductArea.tsx';
-import CheckArea from '../shop/checkout/checkoutInfo/CheckArea.tsx';
+import CheckOutArea from '../shop/checkout/checkoutInfo/CheckOutArea.tsx';
 
 const ShoppingView = () => {
   return (
@@ -9,7 +9,7 @@ const ShoppingView = () => {
         <ProductArea />
       </div>
 
-      <CheckArea />
+      <CheckOutArea />
     </div>
   );
 };

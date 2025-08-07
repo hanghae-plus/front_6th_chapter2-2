@@ -1,6 +1,6 @@
 // components/layout/AppMain.tsx
 import AdminView from '../view/AdminView.tsx';
-import CartView from '../view/CartView.tsx';
+import ShoppingView from '../view/ShoppingView.tsx';
 import { ProductWithUI, CartItem, Coupon } from '../../models/entities';
 
 // 관심사별 interface 분리
@@ -80,7 +80,7 @@ const AppMain = ({
           addCoupon={couponActions.addCoupon}
         />
       ) : (
-        <CartView
+        <ShoppingView
           products={products}
           addNotification={commonActions.addNotification}
           debouncedSearchTerm={searchState.debouncedSearchTerm}

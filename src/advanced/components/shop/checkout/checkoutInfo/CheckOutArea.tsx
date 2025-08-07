@@ -11,9 +11,9 @@ import { cartAtom } from '../../../../store/entities/cart.store.ts';
 import { useAtomValue } from 'jotai';
 import { selectedCouponAtom } from '../../../../store/entities/coupon.store.ts';
 import CouponDiscountContent from '../coupon/CouponDiscountContent.tsx';
-import CheckoutContent from './CheckoutContent.tsx';
+import ResultContent from './ResultContent.tsx';
 
-const CheckArea = () => {
+const CheckOutArea = () => {
   const cart = useAtomValue(cartAtom);
   const selectedCoupon = useAtomValue(selectedCouponAtom);
   const totals = calculateCartTotal(cart, selectedCoupon);
@@ -50,7 +50,7 @@ const CheckArea = () => {
             </CartSection>
 
             <CartSection>
-              <CheckoutContent totals={totals} />
+              <ResultContent totals={totals} />
             </CartSection>
           </>
         )}
@@ -59,4 +59,4 @@ const CheckArea = () => {
   );
 };
 
-export default CheckArea;
+export default CheckOutArea;

@@ -1,6 +1,6 @@
-import { CartItem } from '../../models/entities';
-import Button from '../ui/Button.tsx';
-import { CloseIcon } from '../icons';
+import { CartItem } from '../../../../models/entities';
+import Button from '../../../ui/Button.tsx';
+import { CloseIcon } from '../../../icons';
 
 const CartListItem = ({
   item,

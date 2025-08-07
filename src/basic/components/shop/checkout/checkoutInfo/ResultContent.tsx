@@ -1,28 +1,34 @@
-import { useCallback } from 'react';
 import Button from '../../../ui/Button.tsx';
-import { addNotificationAtom } from '../../../../store/common/notification.store.ts';
-import { useSetAtom } from 'jotai/index';
-import { resetCartAtom } from '../../../../store/entities/cart.store.ts';
-import { resetCouponAtom } from '../../../../store/entities/coupon.store.ts';
-interface totalType {
+import { useCallback } from 'react';
+import { NotificationHandler } from '../../../../models/components/toast.types.ts';
+
+interface totalsType {
   totalBeforeDiscount: number;
   totalAfterDiscount: number;
 }
 
-const CheckoutContent = ({ totals }: { totals: totalType }) => {
-  const addNotification = useSetAtom(addNotificationAtom);
-  const onResetCart = useSetAtom(resetCartAtom);
-  const resetCoupon = useSetAtom(resetCouponAtom);
-
+interface ResultContentProps {
+  addNotification: NotificationHandler;
+  totals: totalsType;
+  onResetCart: () => void;
+  onResetCoupon: () => void;
+}
+const ResultContent = ({
+  totals,
+  addNotification,
+  onResetCart,
+  onResetCoupon,
+}: ResultContentProps) => {
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
-    addNotification({
-      message: `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
-      type: 'success',
-    });
+    addNotification(
+      `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
+      'success'
+    );
     onResetCart();
-    resetCoupon();
+    onResetCoupon();
   }, [addNotification]);
+
   return (
     <>
       <h3 className="text-lg font-semibold mb-4">결제 정보</h3>
@@ -52,14 +58,12 @@ const CheckoutContent = ({ totals }: { totals: totalType }) => {
           </span>
         </div>
       </div>
-
       <Button
         onClick={completeOrder}
         className="w-full mt-4 py-3 bg-yellow-400 text-gray-900 rounded-md font-medium hover:bg-yellow-500 transition-colors"
       >
         {totals.totalAfterDiscount.toLocaleString()}원 결제하기
       </Button>
-
       <div className="mt-3 text-xs text-gray-500 text-center">
         <p>* 실제 결제는 이루어지지 않습니다</p>
       </div>
@@ -67,4 +71,4 @@ const CheckoutContent = ({ totals }: { totals: totalType }) => {
   );
 };
 
-export default CheckoutContent;
+export default ResultContent;

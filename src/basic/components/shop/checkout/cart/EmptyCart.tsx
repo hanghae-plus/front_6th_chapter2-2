@@ -1,4 +1,4 @@
-import { EmptyCartIcon } from '../icons';
+import { EmptyCartIcon } from '../../../icons';
 
 const EmptyCart = () => {
   return (

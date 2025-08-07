@@ -1,5 +1,5 @@
-import ProductList from '../product/ProductList.tsx';
-import CartList from '../cart/CartList.tsx';
+import CheckOutArea from '../shop/checkout/checkoutInfo/CheckOutArea.tsx';
+import CartArea from '../shop/checkout/cart/CartArea.tsx';
 import {
   CartItem,
   Coupon,
@@ -25,7 +25,7 @@ interface CartViewProps {
   onResetCoupon: () => void;
 }
 
-const CartView = ({
+const ShoppingView = ({
   debouncedSearchTerm,
   cart,
   selectedCoupon,
@@ -43,7 +43,7 @@ const CartView = ({
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
       <div className="lg:col-span-3">
         {/* 상품 목록 */}
-        <ProductList
+        <CheckOutArea
           products={products}
           debouncedSearchTerm={debouncedSearchTerm}
           cart={cart}
@@ -51,7 +51,7 @@ const CartView = ({
         />
       </div>
 
-      <CartList
+      <CartArea
         selectedCoupon={selectedCoupon}
         onResetCoupon={onResetCoupon}
         cart={cart}
@@ -67,4 +67,4 @@ const CartView = ({
   );
 };
 
-export default CartView;
+export default ShoppingView;
