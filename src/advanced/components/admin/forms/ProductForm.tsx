@@ -3,7 +3,7 @@ import Button from '../../ui/Button';
 import IconButton from '../../ui/IconButton';
 import { DeleteIcon } from '../../ui/Icons';
 import Input from '../../ui/Input';
-import { addNotificationAtom } from '../../../atoms/notificationsAtoms';
+import { addNotificationAtom } from '../../../atoms/notificationsAtom';
 import { useProductForm } from '../../../hooks/product/useProductForm';
 import { useEffect } from 'react';
 
@@ -30,11 +30,9 @@ export default function ProductForm({
 
   useEffect(() => {
     if (propEditingProduct && initialFormData) {
-      // 편집 모드인 경우 전달받은 데이터로 폼 초기화
       setEditingProduct(propEditingProduct);
       setProductForm(initialFormData);
     } else if (propEditingProduct === 'new') {
-      // 새 상품 추가 모드
       setEditingProduct('new');
       setProductForm({
         name: '',

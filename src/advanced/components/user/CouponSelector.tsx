@@ -1,6 +1,6 @@
 import { useAtomValue } from 'jotai';
 import Button from '../ui/Button';
-import { cartAtom } from '../../atoms/cartAtoms';
+import { cartAtom } from '../../atoms/cartAtom';
 import { couponsAtom, selectedCouponAtom } from '../../atoms/couponsAtom';
 import { useCoupons } from '../../hooks/coupons/useCoupons';
 

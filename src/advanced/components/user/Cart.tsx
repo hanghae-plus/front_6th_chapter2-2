@@ -4,7 +4,7 @@ import { BagIcon } from '../ui/Icons';
 import CartItem from './CartItem';
 import Checkout from './Checkout';
 import CouponSelector from './CouponSelector';
-import { cartAtom } from '../../atoms/cartAtoms';
+import { cartAtom } from '../../atoms/cartAtom';
 import { useCart } from '../../hooks/cart/useCart';
 
 export default function Cart() {

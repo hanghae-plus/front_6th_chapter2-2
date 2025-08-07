@@ -4,7 +4,7 @@ import { filteredProducts } from '../../utils/calculations/productCalculations';
 import ProductCard from '../ui/ProductCard';
 import Cart from './Cart';
 import { productsAtom } from '../../atoms/productsAtom';
-import { cartAtom } from '../../atoms/cartAtoms';
+import { cartAtom } from '../../atoms/cartAtom';
 import { useCart } from '../../hooks/cart/useCart';
 import { useSearch } from '../../hooks/search/useSearch';
 import useCheckout from '../../hooks/checkout/useCheckout';

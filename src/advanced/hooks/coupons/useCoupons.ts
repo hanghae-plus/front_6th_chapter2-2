@@ -3,7 +3,7 @@ import { useAtom, useSetAtom } from 'jotai';
 import { CartItem, Coupon } from '../../../types';
 import { calculateCartTotal } from '../../utils/calculations/cartCalculations';
 import { couponsAtom, selectedCouponAtom } from '../../atoms/couponsAtom';
-import { addNotificationAtom } from '../../atoms/notificationsAtoms';
+import { addNotificationAtom } from '../../atoms/notificationsAtom';
 
 export const useCoupons = () => {
   const [coupons, setCoupons] = useAtom(couponsAtom);

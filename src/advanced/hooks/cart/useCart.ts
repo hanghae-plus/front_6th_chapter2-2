@@ -1,9 +1,9 @@
-import { addNotificationAtom } from './../../atoms/notificationsAtoms';
+import { addNotificationAtom } from '../../atoms/notificationsAtom';
 import { useCallback } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { ProductWithUI } from '../../../types';
 import { getRemainingStock } from '../../utils/calculations/stockCalculations';
-import { cartAtom, totalCartItemAtom } from '../../atoms/cartAtoms';
+import { cartAtom, totalCartItemAtom } from '../../atoms/cartAtom';
 
 export const useCart = () => {
   const [cart, setCart] = useAtom(cartAtom);

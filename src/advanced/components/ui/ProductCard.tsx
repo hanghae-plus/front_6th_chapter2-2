@@ -4,7 +4,7 @@ import { getRemainingStock } from '../../utils/calculations/stockCalculations';
 import { formatPriceWithSoldOut } from '../../utils/formatters/priceFormatter';
 import Button from './Button';
 import { ImageIcon } from './Icons';
-import { isAdminAtom } from '../../atoms/uiAtoms';
+import { isAdminAtom } from '../../atoms/uiAtom';
 
 interface ProductCardProps {
   product: ProductWithUI;

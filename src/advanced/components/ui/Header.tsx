@@ -1,9 +1,9 @@
 import { useAtom, useAtomValue } from 'jotai';
-import { isAdminAtom } from '../../atoms/uiAtoms';
+import { isAdminAtom } from '../../atoms/uiAtom';
 import Button from './Button';
 import { CartIcon } from './Icons';
 import { searchQueryAtom } from '../../atoms/searchAtom';
-import { cartAtom, totalCartItemAtom } from '../../atoms/cartAtoms';
+import { cartAtom, totalCartItemAtom } from '../../atoms/cartAtom';
 
 export default function Header() {
   const [isAdmin, setIsAdmin] = useAtom(isAdminAtom);

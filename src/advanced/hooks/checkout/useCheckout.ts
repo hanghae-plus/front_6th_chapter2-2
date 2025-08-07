@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 import { useSetAtom } from 'jotai';
-import { cartAtom } from '../../atoms/cartAtoms';
+import { cartAtom } from '../../atoms/cartAtom';
 import { selectedCouponAtom } from '../../atoms/couponsAtom';
-import { addNotificationAtom } from '../../atoms/notificationsAtoms';
+import { addNotificationAtom } from '../../atoms/notificationsAtom';
 
 export default function useCheckout() {
   const setCart = useSetAtom(cartAtom);

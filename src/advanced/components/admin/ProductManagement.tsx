@@ -4,10 +4,10 @@ import { formatPriceWithSoldOut } from '../../utils/formatters/priceFormatter';
 import Button from '../ui/Button';
 import ProductForm from './forms/ProductForm';
 import { useAtomValue } from 'jotai';
-import { isAdminAtom } from '../../atoms/uiAtoms';
+import { isAdminAtom } from '../../atoms/uiAtom';
 import { productsAtom } from '../../atoms/productsAtom';
 import { useProducts } from '../../hooks/product/useProducts';
-import { cartAtom } from '../../atoms/cartAtoms';
+import { cartAtom } from '../../atoms/cartAtom';
 
 export default function ProductManagement() {
   const [showProductForm, setShowProductForm] = useState(false);

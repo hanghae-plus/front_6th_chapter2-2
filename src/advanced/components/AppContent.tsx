@@ -1,6 +1,6 @@
 import { useAtom, useAtomValue } from 'jotai';
-import { notificationsAtom } from '../atoms/notificationsAtoms';
-import { isAdminAtom } from '../atoms/uiAtoms';
+import { notificationsAtom } from '../atoms/notificationsAtom';
+import { isAdminAtom } from '../atoms/uiAtom';
 import Toast from './ui/Toast';
 import Header from './ui/Header';
 import AdminDashboard from './admin/AdminDashboard';

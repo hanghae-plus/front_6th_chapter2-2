@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import IconButton from './IconButton';
 import { DeleteIcon } from './Icons';
 import { useSetAtom } from 'jotai';
-import { removeNotificationAtom } from '../../atoms/notificationsAtoms';
+import { removeNotificationAtom } from '../../atoms/notificationsAtom';
 
 interface ToastProps {
   id: string;

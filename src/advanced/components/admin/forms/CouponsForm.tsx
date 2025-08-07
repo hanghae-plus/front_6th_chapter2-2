@@ -2,7 +2,7 @@ import { useSetAtom } from 'jotai';
 import { CouponForm } from '../../../../types';
 import Button from '../../ui/Button';
 import Input from '../../ui/Input';
-import { addNotificationAtom } from '../../../atoms/notificationsAtoms';
+import { addNotificationAtom } from '../../../atoms/notificationsAtom';
 
 interface CouponsManagementProps {
   couponForm: CouponForm;

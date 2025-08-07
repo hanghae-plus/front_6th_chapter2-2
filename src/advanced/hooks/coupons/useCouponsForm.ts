@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { Coupon } from '../../../types';
 import { useAtom, useSetAtom } from 'jotai';
 import { couponsAtom, selectedCouponAtom } from '../../atoms/couponsAtom';
-import { addNotificationAtom } from '../../atoms/notificationsAtoms';
+import { addNotificationAtom } from '../../atoms/notificationsAtom';
 
 export const useCouponsForm = () => {
   const [coupons, setCoupons] = useAtom(couponsAtom);

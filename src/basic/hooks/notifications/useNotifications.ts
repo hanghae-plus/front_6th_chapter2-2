@@ -1,4 +1,4 @@
-import { removeNotificationAtom } from './../../../advanced/atoms/notificationsAtoms';
+import { removeNotificationAtom } from '../../../advanced/atoms/notificationsAtom';
 import { useCallback, useState } from 'react';
 import { Notification } from '../../../types';
 

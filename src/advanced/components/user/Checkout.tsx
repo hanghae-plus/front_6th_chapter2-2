@@ -1,6 +1,6 @@
 import { useAtomValue } from 'jotai';
 import Button from '../ui/Button';
-import { cartAtom } from '../../atoms/cartAtoms';
+import { cartAtom } from '../../atoms/cartAtom';
 import { selectedCouponAtom } from '../../atoms/couponsAtom';
 import { calculateCartTotal } from '../../utils/calculations/cartCalculations';
 import useCheckout from '../../hooks/checkout/useCheckout';
