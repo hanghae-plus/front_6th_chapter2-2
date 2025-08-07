@@ -1,34 +1,30 @@
 // src/basic/components/Cart.tsx
-import { CartItem, Coupon } from '../types';
+import { useCart } from '../hooks/useCart';
+import { useCoupons } from '../hooks/useCoupons';
 import { CartItemCard } from './CartItemCard';
 import { CartSummary } from './CartSummary';
 
 interface Props {
-  cart: CartItem[];
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  onUpdateQuantity: (productId: string, quantity: number) => void;
-  onRemoveFromCart: (productId: string) => void;
-  onApplyCoupon: (coupon: Coupon | null) => void;
-  cartTotal: {
-    totalBeforeDiscount: number;
-    totalDiscount: number;
-    couponDiscount: number;
-    finalTotal: number;
-  };
   onCheckout: () => void;
 }
 
-export const Cart = ({
-  cart,
-  coupons,
-  selectedCoupon,
-  onUpdateQuantity,
-  onRemoveFromCart,
-  onApplyCoupon,
-  cartTotal,
-  onCheckout,
-}: Props) => {
+export const Cart = ({ onCheckout }: Props) => {
+  const { 
+    cart, 
+    updateQuantity, 
+    removeFromCart, 
+    applyCoupon, 
+    selectedCoupon, 
+    cartTotal,
+    clearCart
+  } = useCart();
+  const { coupons } = useCoupons();
+
+  const handleCheckout = () => {
+    onCheckout();
+    clearCart();
+  }
+
   return (
     <div data-testid="cart">
       <section className="bg-white rounded-lg border border-gray-200 p-4">
@@ -51,8 +47,8 @@ export const Cart = ({
               <CartItemCard 
                 key={item.id}
                 item={item}
-                onUpdateQuantity={onUpdateQuantity}
-                onRemoveFromCart={onRemoveFromCart}
+                onUpdateQuantity={updateQuantity}
+                onRemoveFromCart={removeFromCart}
               />
             ))}
           </div>
@@ -71,7 +67,7 @@ export const Cart = ({
                 value={selectedCoupon?.code || ''}
                 onChange={(e) => {
                   const coupon = coupons.find(c => c.code === e.target.value);
-                  onApplyCoupon(coupon || null);
+                  applyCoupon(coupon || null);
                 }}
                 role="combobox"
               >
@@ -87,7 +83,7 @@ export const Cart = ({
             )}
           </section>
 
-          <CartSummary cartTotal={cartTotal} onCheckout={onCheckout} />
+          <CartSummary cartTotal={cartTotal} onCheckout={handleCheckout} />
         </>
       )}
     </div>
