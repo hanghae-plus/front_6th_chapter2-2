@@ -1,10 +1,10 @@
 import { useState, useCallback } from 'react'
 import { Notification } from './types'
 import { AdminPage } from './components/AdminPage'
-import { useProducts } from './hooks/useProducts'
+import { ProductsContext, useProducts } from './hooks/useProducts'
 import { CartPage } from './components/CartPage'
-import { useCart } from './hooks/useCart'
-import { useCoupons } from './hooks/useCoupons'
+import { CartContext, useCart } from './hooks/useCart'
+import { CouponsContext, useCoupons } from './hooks/useCoupons'
 import { Notifications } from './components/ui/Notifications'
 
 const App = () => {
@@ -49,47 +49,57 @@ const App = () => {
   )
   const [isAdmin, setIsAdmin] = useState(false)
 
-  const adminProps = {
-    isAdmin,
-    setIsAdmin,
-    products,
-    cart,
-    deleteProduct,
-    addNotification,
-    coupons,
-    deleteCoupon,
-    updateProduct,
-    addProduct,
-    addCoupon,
-    getRemainingStock,
-  }
-
-  const cartProps = {
-    isAdmin,
-    setIsAdmin,
-    products,
-    cart,
-    coupons,
-    totals: calculateCartTotal(),
-    selectedCoupon,
-    addToCart,
-    removeFromCart,
-    handleSelectCoupon,
-    updateQuantity,
-    completeOrder,
-    getRemainingStock,
-    getFilteredProducts,
-    calculateTotal,
-    totalItemCount,
-  }
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Notifications
         notifications={notifications}
         setNotifications={setNotifications}
       />
-      {isAdmin ? <AdminPage {...adminProps} /> : <CartPage {...cartProps} />}
+      <CartContext.Provider
+        value={{
+          cart,
+          completeOrder,
+          removeFromCart,
+          updateQuantity,
+          selectedCoupon,
+          setSelectedCoupon,
+          addToCart,
+          calculateCartTotal,
+          getRemainingStock,
+          handleSelectCoupon,
+          calculateTotal,
+          totalItemCount,
+        }}
+      >
+        <ProductsContext.Provider
+          value={{
+            products,
+            addProduct,
+            updateProduct,
+            deleteProduct,
+            getFilteredProducts,
+          }}
+        >
+          <CouponsContext.Provider value={{ coupons, addCoupon, deleteCoupon }}>
+            {isAdmin ? (
+              <AdminPage
+                {...{
+                  isAdmin,
+                  setIsAdmin,
+                  addNotification,
+                }}
+              />
+            ) : (
+              <CartPage
+                {...{
+                  isAdmin,
+                  setIsAdmin,
+                }}
+              />
+            )}
+          </CouponsContext.Provider>
+        </ProductsContext.Provider>
+      </CartContext.Provider>
     </div>
   )
 }

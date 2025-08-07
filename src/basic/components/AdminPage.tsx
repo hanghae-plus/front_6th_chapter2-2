@@ -13,7 +13,7 @@ import { ProductWithUI } from '../types'
 import { useCouponForm, useProductForm } from '../hooks/useForm'
 import { useState } from 'react'
 import { AdminHeader } from './ui/admin/AdminHeader'
-import { ProductFom } from './ui/admin/ProductFom'
+import { ProductForm } from './ui/admin/ProductForm'
 import { CouponForm } from './ui/admin/CouponForm'
 import { CouponList } from './ui/admin/CouponList'
 import { ProductAccordion } from './ui/admin/ProductAccordion'
@@ -153,7 +153,7 @@ export function AdminPage({
               </div>
 
               <ProductAccordion {...productAccordionProps} />
-              {showProductForm && <ProductFom {...productFormProps} />}
+              {showProductForm && <ProductForm {...productFormProps} />}
             </section>
           ) : (
             <section className="bg-white rounded-lg border border-gray-200">

@@ -1,12 +1,10 @@
-import { Coupon } from '../../../../types'
+import { useContext } from 'react'
+import { CouponsContext } from '../../../hooks/useCoupons'
+import { CouponContext } from '../../../types/context'
 
-export const CouponList = ({
-  coupons,
-  deleteCoupon,
-}: {
-  coupons: Coupon[]
-  deleteCoupon: (couponCode: string) => void
-}) => {
+export const CouponList = () => {
+  const { deleteCoupon, coupons } = useContext(CouponsContext) as CouponContext
+
   return (
     <>
       {coupons.map((coupon) => (

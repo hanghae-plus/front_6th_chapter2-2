@@ -1,19 +1,23 @@
-import { CartItem } from '../../../../types'
-import { ProductWithUI } from '../../../types'
+import { useContext } from 'react'
+import { ProductsContext } from '../../../hooks/useProducts'
+import {
+  CartItemContext,
+  ProductContext,
+  ProductFormContext,
+} from '../../../types/context'
 import { formatPrice } from '../../../utils/formatters'
+import { ProductItemFormContext } from '../../../hooks/useForm'
+import { CartContext } from '../../../hooks/useCart'
 
-export const ProductAccordion = ({
-  products,
-  startEditProduct,
-  deleteProduct,
-  getRemainingStock,
-}: {
-  products: ProductWithUI[]
-  cart: CartItem[]
-  startEditProduct: (product: ProductWithUI) => void
-  deleteProduct: (productId: string) => void
-  getRemainingStock: (product: ProductWithUI) => number
-}) => {
+export const ProductAccordion = () => {
+  const { getRemainingStock } = useContext(CartContext) as CartItemContext
+  const { startEditProduct } = useContext(
+    ProductItemFormContext,
+  ) as ProductFormContext
+  const { products, deleteProduct } = useContext(
+    ProductsContext,
+  ) as ProductContext
+
   return (
     <div className="overflow-x-auto">
       <table className="w-full">

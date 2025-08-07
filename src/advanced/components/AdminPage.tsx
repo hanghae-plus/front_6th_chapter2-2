@@ -1,60 +1,41 @@
-// 힌트:
-// 1. 탭 UI로 상품 관리와 쿠폰 관리 분리
-// 2. 상품 추가/수정/삭제 기능
-// 3. 쿠폰 생성 기능
-// 4. 할인 규칙 설정
-//
-// 필요한 hooks:
-// - useProducts: 상품 CRUD
-// - useCoupons: 쿠폰 CRUD
-
-import { CartItem, Coupon } from '../../types'
-import { ProductWithUI } from '../types'
-import { useCouponForm, useProductForm } from '../hooks/useForm'
-import { useState } from 'react'
+import {
+  CouponItemFormContext,
+  ProductItemFormContext,
+  useCouponForm,
+  useProductForm,
+} from '../hooks/useForm'
+import { useContext, useState } from 'react'
 import { AdminHeader } from './ui/admin/AdminHeader'
-import { ProductFom } from './ui/admin/ProductFom'
+import { ProductForm } from './ui/admin/ProductForm'
 import { CouponForm } from './ui/admin/CouponForm'
 import { CouponList } from './ui/admin/CouponList'
 import { ProductAccordion } from './ui/admin/ProductAccordion'
+import { ProductsContext } from '../hooks/useProducts'
+import { CouponContext, ProductContext } from '../types/context'
+import { CouponsContext } from '../hooks/useCoupons'
 
 export function AdminPage({
   isAdmin,
-  cart,
   setIsAdmin,
-  products,
-  deleteProduct,
   addNotification,
-  coupons,
-  deleteCoupon,
-  updateProduct,
-  addProduct,
-  addCoupon,
-  getRemainingStock,
 }: {
   isAdmin: boolean
-  cart: CartItem[]
   setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>
-  products: ProductWithUI[]
-  deleteProduct: (productId: string) => void
   addNotification: (
     message: string,
     type?: 'error' | 'success' | 'warning',
   ) => void
-  coupons: Coupon[]
-  deleteCoupon: (couponCode: string) => void
-  updateProduct: (productId: string, updates: Partial<ProductWithUI>) => void
-  addProduct: (newProduct: Omit<ProductWithUI, 'id'>) => void
-  addCoupon: (newCoupon: Coupon) => void
-  getRemainingStock: (product: ProductWithUI) => number
 }) {
-  // TODO: 구현
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products')
+  const { addProduct, updateProduct } = useContext(
+    ProductsContext,
+  ) as ProductContext
+  const { addCoupon } = useContext(CouponsContext) as CouponContext
   const {
     couponForm,
     handleEditCouponForm,
     showCouponForm,
-    setShowCouponForm,
+    toggleShowCouponForm,
     handleCouponSubmit,
     handleDiscountValueValidation,
   } = useCouponForm(addCoupon, addNotification)
@@ -71,34 +52,6 @@ export function AdminPage({
     handlePriceValidation,
     handleStockValidation,
   } = useProductForm(addProduct, updateProduct, addNotification)
-
-  const productFormProps = {
-    productForm,
-    handleProductSubmit,
-    editingProduct,
-    handleAddDiscount,
-    handleDeleteDiscount,
-    handleEditProuctForm,
-    handleAddOrCloseProductForm,
-    handlePriceValidation,
-    handleStockValidation,
-  }
-
-  const productAccordionProps = {
-    products,
-    cart,
-    startEditProduct,
-    deleteProduct,
-    getRemainingStock,
-  }
-
-  const cuponFormProps = {
-    couponForm,
-    handleCouponSubmit,
-    setShowCouponForm,
-    handleEditCouponForm,
-    handleDiscountValueValidation,
-  }
 
   return (
     <>
@@ -139,56 +92,81 @@ export function AdminPage({
           </div>
 
           {activeTab === 'products' ? (
-            <section className="bg-white rounded-lg border border-gray-200">
-              <div className="p-6 border-b border-gray-200">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-lg font-semibold">상품 목록</h2>
-                  <button
-                    onClick={() => handleAddOrCloseProductForm('new', true)}
-                    className="px-4 py-2 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800"
-                  >
-                    새 상품 추가
-                  </button>
-                </div>
-              </div>
-
-              <ProductAccordion {...productAccordionProps} />
-              {showProductForm && <ProductFom {...productFormProps} />}
-            </section>
-          ) : (
-            <section className="bg-white rounded-lg border border-gray-200">
-              <div className="p-6 border-b border-gray-200">
-                <h2 className="text-lg font-semibold">쿠폰 관리</h2>
-              </div>
-              <div className="p-6">
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  <CouponList coupons={coupons} deleteCoupon={deleteCoupon} />
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 flex items-center justify-center hover:border-gray-400 transition-colors">
+            <ProductItemFormContext.Provider
+              value={{
+                productForm,
+                handleProductSubmit,
+                editingProduct,
+                handleAddDiscount,
+                handleDeleteDiscount,
+                handleEditProuctForm,
+                handleAddOrCloseProductForm,
+                handlePriceValidation,
+                handleStockValidation,
+                startEditProduct,
+              }}
+            >
+              <section className="bg-white rounded-lg border border-gray-200">
+                <div className="p-6 border-b border-gray-200">
+                  <div className="flex justify-between items-center">
+                    <h2 className="text-lg font-semibold">상품 목록</h2>
                     <button
-                      onClick={() => setShowCouponForm(!showCouponForm)}
-                      className="text-gray-400 hover:text-gray-600 flex flex-col items-center"
+                      onClick={() => handleAddOrCloseProductForm('new', true)}
+                      className="px-4 py-2 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800"
                     >
-                      <svg
-                        className="w-8 h-8"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 4v16m8-8H4"
-                        />
-                      </svg>
-                      <p className="mt-2 text-sm font-medium">새 쿠폰 추가</p>
+                      새 상품 추가
                     </button>
                   </div>
                 </div>
 
-                {showCouponForm && <CouponForm {...cuponFormProps} />}
-              </div>
-            </section>
+                <ProductAccordion />
+                {showProductForm && <ProductForm />}
+              </section>
+            </ProductItemFormContext.Provider>
+          ) : (
+            <CouponItemFormContext.Provider
+              value={{
+                couponForm,
+                handleCouponSubmit,
+                toggleShowCouponForm,
+                handleEditCouponForm,
+                handleDiscountValueValidation,
+              }}
+            >
+              <section className="bg-white rounded-lg border border-gray-200">
+                <div className="p-6 border-b border-gray-200">
+                  <h2 className="text-lg font-semibold">쿠폰 관리</h2>
+                </div>
+                <div className="p-6">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <CouponList />
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 flex items-center justify-center hover:border-gray-400 transition-colors">
+                      <button
+                        onClick={() => toggleShowCouponForm()}
+                        className="text-gray-400 hover:text-gray-600 flex flex-col items-center"
+                      >
+                        <svg
+                          className="w-8 h-8"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 4v16m8-8H4"
+                          />
+                        </svg>
+                        <p className="mt-2 text-sm font-medium">새 쿠폰 추가</p>
+                      </button>
+                    </div>
+                  </div>
+
+                  {showCouponForm && <CouponForm />}
+                </div>
+              </section>
+            </CouponItemFormContext.Provider>
           )}
         </div>
       </main>

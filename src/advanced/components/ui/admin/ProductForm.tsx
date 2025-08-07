@@ -1,35 +1,21 @@
-import React, { FocusEvent } from 'react'
-import { ProductForm } from '../../../../types'
+import { useContext } from 'react'
 import { MAX_DISCOUNT_RATE } from '../../../constants'
+import { ProductItemFormContext } from '../../../hooks/useForm'
+import { ProductFormContext } from '../../../types/context'
 
-export function ProductFom({
-  productForm,
-  handleProductSubmit,
-  editingProduct,
-  handleAddDiscount,
-  handleDeleteDiscount,
-  handleEditProuctForm,
-  handleAddOrCloseProductForm,
-  handlePriceValidation,
-  handleStockValidation,
-}: {
-  productForm: ProductForm
-  handleProductSubmit: (e: React.FormEvent) => void
-  editingProduct: string | null
-  handleAddDiscount: () => void
-  handleDeleteDiscount: (index: number) => void
-  handleEditProuctForm: (
-    e: React.ChangeEvent<HTMLInputElement>,
-    key: string,
-    index?: number,
-  ) => void
-  handleAddOrCloseProductForm: (
-    type: string | null,
-    isShowProductForm: boolean,
-  ) => void
-  handlePriceValidation: (e: FocusEvent<HTMLInputElement>) => void
-  handleStockValidation: (e: FocusEvent<HTMLInputElement>) => void
-}) {
+export function ProductForm() {
+  const {
+    productForm,
+    handleProductSubmit,
+    editingProduct,
+    handleAddDiscount,
+    handleDeleteDiscount,
+    handleEditProuctForm,
+    handleAddOrCloseProductForm,
+    handlePriceValidation,
+    handleStockValidation,
+  } = useContext(ProductItemFormContext) as ProductFormContext
+
   return (
     <>
       <div className="p-6 border-t border-gray-200 bg-gray-50">

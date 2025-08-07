@@ -1,40 +1,29 @@
-import { CartItem, Coupon } from '../../../../types'
+import { useContext } from 'react'
 import { MAX_DISCOUNT_RATE } from '../../../constants'
-import { ProductWithUI } from '../../../types'
+import { CartContext } from '../../../hooks/useCart'
+import {
+  CartItemContext,
+  CouponContext,
+  ProductContext,
+} from '../../../types/context'
+import { CouponsContext } from '../../../hooks/useCoupons'
+import { ProductsContext } from '../../../hooks/useProducts'
 
-export const Cart = ({
-  cart,
-  coupons,
-  products,
-  selectedCoupon,
-  removeFromCart,
-  updateQuantity,
-  totals,
-  completeOrder,
-  handleSelectCoupon,
-  calculateTotal,
-}: {
-  cart: CartItem[]
-  coupons: Coupon[]
-  products: ProductWithUI[]
-  selectedCoupon: Coupon | null
-  totals: {
-    totalBeforeDiscount: number
-    totalAfterDiscount: number
-  }
-  removeFromCart: (productId: string) => void
-  updateQuantity: (
-    productId: string,
-    newQuantity: number,
-    products: ProductWithUI[],
-  ) => void
-  completeOrder: () => void
-  handleSelectCoupon: (
-    e: React.ChangeEvent<HTMLSelectElement>,
-    coupons: Coupon[],
-  ) => void
-  calculateTotal: (item: CartItem) => number
-}) => {
+export const Cart = () => {
+  const {
+    cart,
+    removeFromCart,
+    selectedCoupon,
+    handleSelectCoupon,
+    completeOrder,
+    updateQuantity,
+    calculateTotal,
+    calculateCartTotal,
+  } = useContext(CartContext) as CartItemContext
+  const { products } = useContext(ProductsContext) as ProductContext
+  const { coupons } = useContext(CouponsContext) as CouponContext
+  const totals = calculateCartTotal()
+
   return (
     <div className="lg:col-span-1">
       <div className="sticky top-24 space-y-4">

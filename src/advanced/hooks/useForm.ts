@@ -1,4 +1,4 @@
-import { useState, FocusEvent } from 'react'
+import { useState, FocusEvent, createContext } from 'react'
 import { ProductWithUI } from '../types'
 import { Coupon, Discount, ProductForm } from '../../types'
 import { isValidStrNumber } from '../utils/validators'
@@ -7,6 +7,11 @@ import {
   MAX_DISCOUNT_RATE,
   MAX_STOCK_LIMIT,
 } from '../constants'
+import { CouponFormContext, ProductFormContext } from '../types/context'
+
+export const CouponItemFormContext = createContext<
+  CouponFormContext | undefined
+>(undefined)
 
 export function useCouponForm(
   addCoupon: (newCoupon: Coupon) => void,
@@ -16,6 +21,13 @@ export function useCouponForm(
   ) => void,
 ) {
   const [showCouponForm, setShowCouponForm] = useState(false)
+  const toggleShowCouponForm = (isShow?: boolean) => {
+    if (isShow !== undefined) {
+      setShowCouponForm(isShow)
+    }
+    setShowCouponForm((prev) => !prev)
+  }
+
   const [couponForm, setCouponForm] = useState<Coupon>({
     name: '',
     code: '',
@@ -91,12 +103,16 @@ export function useCouponForm(
     couponForm,
     setCouponForm,
     showCouponForm,
-    setShowCouponForm,
+    toggleShowCouponForm,
     handleCouponSubmit,
     handleEditCouponForm,
     handleDiscountValueValidation,
   }
 }
+
+export const ProductItemFormContext = createContext<
+  ProductFormContext | undefined
+>(undefined)
 
 export function useProductForm(
   addProduct: (newProduct: Omit<ProductWithUI, 'id'>) => void,

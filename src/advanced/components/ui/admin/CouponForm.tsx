@@ -1,22 +1,16 @@
-import { FocusEvent } from 'react'
-import { Coupon } from '../../../../types'
+import { useContext } from 'react'
+import { CouponFormContext } from '../../../types/context'
+import { CouponItemFormContext } from '../../../hooks/useForm'
 
-export function CouponForm({
-  couponForm,
-  handleCouponSubmit,
-  setShowCouponForm,
-  handleEditCouponForm,
-  handleDiscountValueValidation,
-}: {
-  couponForm: Coupon
-  setShowCouponForm: React.Dispatch<React.SetStateAction<boolean>>
-  handleCouponSubmit: (e: React.FormEvent) => void
-  handleEditCouponForm: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-    key: string,
-  ) => void
-  handleDiscountValueValidation: (e: FocusEvent<HTMLInputElement>) => void
-}) {
+export function CouponForm() {
+  const {
+    couponForm,
+    handleCouponSubmit,
+    handleDiscountValueValidation,
+    handleEditCouponForm,
+    toggleShowCouponForm,
+  } = useContext(CouponItemFormContext) as CouponFormContext
+
   return (
     <div className="mt-6 p-4 bg-gray-50 rounded-lg">
       <form onSubmit={handleCouponSubmit} className="space-y-4">
@@ -81,7 +75,7 @@ export function CouponForm({
         <div className="flex justify-end gap-3">
           <button
             type="button"
-            onClick={() => setShowCouponForm(false)}
+            onClick={() => toggleShowCouponForm(false)}
             className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
             취소

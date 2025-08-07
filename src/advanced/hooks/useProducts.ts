@@ -13,11 +13,16 @@
 // - addProductDiscount: 할인 규칙 추가
 // - removeProductDiscount: 할인 규칙 삭제
 
-import { useCallback } from 'react'
+import { createContext, useCallback } from 'react'
 import { initialProducts } from '../constants'
 import { ProductWithUI } from '../types'
 import { useLocalStorage } from '../utils/hooks/useLocalStorage'
 import { getFilteredProducts as _getFilteredProducts } from '../models/product'
+import { ProductContext } from '../types/context'
+
+export const ProductsContext = createContext<ProductContext | undefined>(
+  undefined,
+)
 
 export function useProducts(
   addNotification: (

@@ -1,20 +1,20 @@
-import { CartItem } from '../../../../types'
+import { useContext } from 'react'
+import { CartContext } from '../../../hooks/useCart'
+import { CartItemContext } from '../../../types/context'
 
 export const CartHeader = ({
   isAdmin,
   searchTerm,
-  cart,
-  totalItemCount,
   setSearchTerm,
   setIsAdmin,
 }: {
   isAdmin: boolean
   searchTerm: string
-  cart: CartItem[]
-  totalItemCount: number
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>
   setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
+  const { cart, totalItemCount } = useContext(CartContext) as CartItemContext
+
   return (
     <>
       <header className="bg-white shadow-sm sticky top-0 z-40 border-b">

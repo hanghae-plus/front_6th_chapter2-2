@@ -1,8 +1,8 @@
 import React, { FocusEvent } from 'react'
-import { ProductForm } from '../../../../types'
+import { ProductForm as ProductItemForm } from '../../../../types'
 import { MAX_DISCOUNT_RATE } from '../../../constants'
 
-export function ProductFom({
+export function ProductForm({
   productForm,
   handleProductSubmit,
   editingProduct,
@@ -13,7 +13,7 @@ export function ProductFom({
   handlePriceValidation,
   handleStockValidation,
 }: {
-  productForm: ProductForm
+  productForm: ProductItemForm
   handleProductSubmit: (e: React.FormEvent) => void
   editingProduct: string | null
   handleAddDiscount: () => void
