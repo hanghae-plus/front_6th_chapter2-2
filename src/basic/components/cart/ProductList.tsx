@@ -1,7 +1,7 @@
-import { ProductWithUI } from '../shared/types';
-import { STOCK } from '../constants/product';
-import { MESSAGES } from '../constants/message';
-import { ImageIcon } from './icons';
+import type { ProductWithUI } from '../../shared/types';
+import { STOCK } from '../../constants/product';
+import { MESSAGES } from '../../constants/message';
+import { ImageIcon } from '../icons';
 
 interface ProductListProps {
   products: ProductWithUI[];
@@ -40,7 +40,7 @@ export function ProductList({
                 key={product.id}
                 className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
               >
-                {/* 상품 이미지 영역 (placeholder) */}
+                {/* 상품 이미지 영역 */}
                 <div className="relative">
                   <div className="aspect-square bg-gray-100 flex items-center justify-center">
                     <ImageIcon />
