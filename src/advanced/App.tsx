@@ -1,5 +1,6 @@
 // hooks
 import { useState } from "react";
+import { Provider } from "jotai";
 import { useProducts } from "./hooks/useProducts";
 import { useCart } from "./hooks/useCart";
 import { useCoupons } from "./hooks/useCoupons";
@@ -19,7 +20,7 @@ import ShopPage from "./pages/Main/ShopPage/ShopPage";
 
 // type
 
-const App = () => {
+const AppContent = () => {
   // 커스텀 훅 사용
   const { notifications, addNotification, removeNotification } = useNotification();
 
@@ -85,6 +86,14 @@ const App = () => {
         )}
       </main>
     </div>
+  );
+};
+
+const App = () => {
+  return (
+    <Provider>
+      <AppContent />
+    </Provider>
   );
 };
 
