@@ -1,4 +1,4 @@
-import { ShoppingBagIcon } from "../icons";
+import { ShoppingBagIcon } from "../../icons";
 
 export function CartIsEmpty() {
   return (

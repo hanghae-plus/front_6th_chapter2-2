@@ -1,6 +1,6 @@
-import { CartItem } from "../../../types";
-import { ProductWithUI } from "../../App";
-import { ImageIcon } from "../icons";
+import { CartItem } from "../../../../types";
+import { ProductWithUI } from "../../../App";
+import { ImageIcon } from "../../icons";
 
 export function Product({
   product,

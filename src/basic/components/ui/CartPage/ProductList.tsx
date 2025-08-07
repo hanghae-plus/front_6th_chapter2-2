@@ -1,10 +1,10 @@
-import { CartItem } from "../../../types";
-import { ProductWithUI } from "../../App";
-import { getRemainingStock } from "../../models/cart";
-import { formatPrice } from "../../utils/formatters";
+import { CartItem } from "../../../../types";
+import { ProductWithUI } from "../../../App";
+import { getRemainingStock } from "../../../models/cart";
+import { formatPrice } from "../../../utils/formatters";
 import { Product } from "./Product";
-import { ProductListSummary } from "./ProductListSummary";
-import { Search } from "./Search";
+import { ProductListSummary } from "../ProductListSummary";
+import { Search } from "../Search";
 
 export function ProductList({
   products,

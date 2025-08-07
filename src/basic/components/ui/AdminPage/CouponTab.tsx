@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Coupon } from "../../../types";
-import { useCoupons } from "../../hooks/useCoupons";
+import { Coupon } from "../../../../types";
+import { useCoupons } from "../../../hooks/useCoupons";
 import { CouponCard } from "./CouponCard";
 import { AddNewCouponCard } from "./AddNewCouponCard";
 import { CouponForm } from "./CouponForm";

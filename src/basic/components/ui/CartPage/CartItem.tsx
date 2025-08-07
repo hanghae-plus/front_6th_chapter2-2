@@ -1,6 +1,6 @@
-import { CartItem as CartItemType } from "../../../types";
-import { ProductWithUI } from "../../App";
-import { CloseIcon } from "../icons";
+import { CartItem as CartItemType } from "../../../../types";
+import { ProductWithUI } from "../../../App";
+import { CloseIcon } from "../../icons";
 
 export function CartItem({
   item,

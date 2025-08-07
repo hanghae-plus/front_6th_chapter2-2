@@ -1,5 +1,5 @@
-import { ProductWithUI } from "../../App";
-import { formatPrice } from "../../utils/formatters";
+import { ProductWithUI } from "../../../App";
+import { formatPrice } from "../../../utils/formatters";
 
 export function ProductListTable({
   activeTab,

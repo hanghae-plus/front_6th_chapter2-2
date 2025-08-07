@@ -1,4 +1,4 @@
-import { PlusIcon } from "../icons";
+import { PlusIcon } from "../../icons";
 
 export function AddNewCouponCard({
   setShowCouponForm,

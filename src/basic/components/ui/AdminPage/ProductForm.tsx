@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
-import { ProductWithUI } from "../../App";
-import { CloseIcon } from "../icons";
+import { ProductWithUI } from "../../../App";
+import { CloseIcon } from "../../icons";
 
 export function ProductForm({
   editingProduct,

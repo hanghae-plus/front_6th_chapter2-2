@@ -4,10 +4,10 @@ import { getMaxApplicableDiscount, hasBulkPurchase } from "../models/cart";
 import { useCart } from "../hooks/useCart";
 import { useCoupons } from "../hooks/useCoupons";
 import { useProducts } from "../hooks/useProducts";
-import { ProductList } from "./ui/ProductList";
-import { Cart } from "./ui/Cart";
-import { CouponInfo } from "./ui/CouponInfo";
-import { PurchaseInfo } from "./ui/PurchaseInfo";
+import { ProductList } from "./ui/CartPage/ProductList";
+import { Cart } from "./ui/CartPage/Cart";
+import { CouponInfo } from "./ui/CartPage/CouponInfo";
+import { PurchaseInfo } from "./ui/CartPage/PurchaseInfo";
 
 // TODO: 장바구니 페이지 컴포넌트
 // 힌트:

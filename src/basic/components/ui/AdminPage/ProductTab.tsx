@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { ProductWithUI } from "../../App";
-import { useProducts } from "../../hooks/useProducts";
+import { ProductWithUI } from "../../../App";
+import { useProducts } from "../../../hooks/useProducts";
 
 import { ProductListTable } from "./ProductListTable";
 import { ProductForm } from "./ProductForm";

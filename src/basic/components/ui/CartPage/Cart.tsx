@@ -1,9 +1,9 @@
-import { CartItem as CartItemType } from "../../../types";
-import { ShoppingBagIcon } from "../icons";
+import { CartItem as CartItemType } from "../../../../types";
+import { ShoppingBagIcon } from "../../icons";
 import { CartIsEmpty } from "./CartIsEmpty";
 import { CartItem } from "./CartItem";
-import { ProductWithUI } from "../../App";
-import { calculateItemTotal } from "../../models/cart";
+import { ProductWithUI } from "../../../App";
+import { calculateItemTotal } from "../../../models/cart";
 
 export function Cart({
   cart,

@@ -1,5 +1,5 @@
-import { Coupon } from "../../../types";
-import { CartItem } from "../../../types";
+import { Coupon } from "../../../../types";
+import { CartItem } from "../../../../types";
 
 export function CouponSelector({
   selectedCoupon,

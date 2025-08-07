@@ -17,9 +17,9 @@
 
 import { useState } from "react";
 import { Coupon } from "../../types";
-import { AdminTab } from "./AdminTab";
-import { ProductTab } from "./ui/ProductTab";
-import { CouponTab } from "./ui/CouponTab";
+import { AdminTab } from "./ui/AdminPage/AdminTab";
+import { ProductTab } from "./ui/AdminPage/ProductTab";
+import { CouponTab } from "./ui/AdminPage/CouponTab";
 
 interface AdminPageProps {
   addNotification: (

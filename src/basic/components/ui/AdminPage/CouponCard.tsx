@@ -1,5 +1,5 @@
-import { Coupon } from "../../../types";
-import { TrashIcon } from "../icons";
+import { Coupon } from "../../../../types";
+import { TrashIcon } from "../../icons";
 
 export function CouponCard({
   coupon,
