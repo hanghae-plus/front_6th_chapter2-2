@@ -1,21 +1,25 @@
 // src/basic/hooks/useCoupons.ts
-import { useLocalStorage } from '../utils/hooks/useLocalStorage';
-import { INITIAL_COUPONS } from '../constants';
+import { useAtom } from 'jotai';
+import { couponsAtom } from '../store/atoms';
 import { Coupon } from '../types';
 
 export const useCoupons = () => {
-  const [coupons, setCoupons] = useLocalStorage<Coupon[]>('coupons', INITIAL_COUPONS);
+  const [coupons, setCoupons] = useAtom(couponsAtom);
 
   const addCoupon = (newCoupon: Coupon) => {
-    setCoupons(prevCoupons => [
-      ...prevCoupons,
-      newCoupon
-    ]);
+    // Prevent adding duplicate coupon codes
+    if (coupons.some(c => c.code === newCoupon.code)) {
+      // In a real app, you might want to show a toast notification
+      console.error("Coupon code already exists.");
+      return;
+    }
+    setCoupons(prev => [...prev, newCoupon]);
   };
 
   const removeCoupon = (couponCode: string) => {
-    setCoupons(prevCoupons => prevCoupons.filter(c => c.code !== couponCode));
+    setCoupons(prev => prev.filter(c => c.code !== couponCode));
   };
 
   return { coupons, addCoupon, removeCoupon };
 };
+
