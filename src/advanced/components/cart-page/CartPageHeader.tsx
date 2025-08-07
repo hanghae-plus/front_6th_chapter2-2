@@ -1,6 +1,6 @@
-import { useTotalItemCount } from '../../hooks/useCart';
-import { useGotoAdminPage } from '../../hooks/usePage';
-import { useSearch } from '../../hooks/useSearch';
+import { useTotalItemCount } from '../../hooks/cart';
+import { useGotoAdminPage } from '../../hooks/page';
+import { useSearch } from '../../hooks/search';
 import { CartIcon } from '../icons';
 import { Badge } from '../ui/Badge';
 import { Header } from '../ui/Header';

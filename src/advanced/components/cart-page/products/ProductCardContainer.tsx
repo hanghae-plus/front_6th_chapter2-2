@@ -1,5 +1,5 @@
 import type { ProductWithUI } from '../../../../types';
-import { useAddToCart, useCart } from '../../../hooks/useCart';
+import { useAddToCart, useCart } from '../../../hooks/cart';
 import * as discountModel from '../../../models/discount';
 import * as productModel from '../../../models/product';
 import { formatNumberKRW, formatNumberRate } from '../../../utils/formatters';

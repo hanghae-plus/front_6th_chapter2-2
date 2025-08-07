@@ -1,7 +1,7 @@
 import { atom } from 'jotai';
-import type { CartItem, Product } from '../../types';
-import * as cartModel from '../models/cart';
-import * as productModel from '../models/product';
+import type { CartItem, Product } from '../../../types';
+import * as cartModel from '../../models/cart';
+import * as productModel from '../../models/product';
 
 export const cartAtom = atom<CartItem[]>([]);
 

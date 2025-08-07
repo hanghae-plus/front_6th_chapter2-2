@@ -1,7 +1,7 @@
 import type { CartItem, Product } from '../../../types';
-import { useCart } from '../../hooks/useCart';
-import { useProducts } from '../../hooks/useProducts';
-import { useDebouncedSearch } from '../../hooks/useSearch';
+import { useCart } from '../../hooks/cart';
+import { useProducts } from '../../hooks/product';
+import { useDebouncedSearch } from '../../hooks/search';
 import * as cartModel from '../../models/cart';
 import * as productModel from '../../models/product';
 import { CartPageUI } from './CartPageUI';

@@ -1,7 +1,7 @@
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useState } from 'react';
-import { debouncedSearchAtom, setDebouncedSearchAtom } from '../atoms/search';
-import { useSetDebounce } from '../utils/hooks/useDebounce';
+import { debouncedSearchAtom, setDebouncedSearchAtom } from './atoms';
+import { useSetDebounce } from '../../utils/hooks/useDebounce';
 
 export function useSearch() {
   const [searchTerm, setSearchTerm] = useState('');

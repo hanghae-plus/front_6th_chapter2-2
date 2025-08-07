@@ -1,4 +1,4 @@
-import { useGotoCartPage } from '../../hooks/usePage';
+import { useGotoCartPage } from '../../hooks/page';
 import { Header } from '../ui/Header';
 
 export function AdminPageHeader() {

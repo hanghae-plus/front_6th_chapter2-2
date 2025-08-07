@@ -1,6 +1,6 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react';
-import { useAddCoupon } from '../../../../hooks/useCoupons';
-import { useNotify } from '../../../../hooks/useNotification';
+import { useAddCoupon } from '../../../../hooks/coupon';
+import { useNotify } from '../../../../hooks/notification';
 import { useCouponFormValidation } from '../../../../utils/hooks/useValidate';
 
 export interface CouponForm {

@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
-import type { Notification } from '../../types';
-import * as notificationModel from '../models/notification';
+import type { Notification } from '../../../types';
+import * as notificationModel from '../../models/notification';
 
 export const notificationsAtom = atom<Notification[]>([]);
 

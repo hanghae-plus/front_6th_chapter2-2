@@ -1,6 +1,6 @@
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useCallback, useEffect } from 'react';
-import type { CartItem, Product } from '../../types';
+import type { CartItem, Product } from '../../../types';
 import {
   addCartAtom,
   cartAtom,
@@ -8,9 +8,9 @@ import {
   removeFromCartAtom,
   totalItemCountAtom,
   updateQuantityAtom,
-} from '../atoms/cart';
-import { useAtomWithLocalStorage } from '../utils/hooks/useLocalStorage';
-import { useNotify } from './useNotification';
+} from './atoms';
+import { useAtomWithLocalStorage } from '../../utils/hooks/useLocalStorage';
+import { useNotify } from '../notification/hooks';
 
 export function useCart(): CartItem[] {
   const LOCAL_STORAGE_KEY = 'cart';

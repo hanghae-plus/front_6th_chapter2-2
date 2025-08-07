@@ -1,7 +1,7 @@
 import {
   useNotifications,
   useRemoveNotification,
-} from '../hooks/useNotification';
+} from '../hooks/notification';
 import { UIToast } from './ui/UIToast';
 
 export function Notifications() {

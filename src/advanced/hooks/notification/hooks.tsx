@@ -1,10 +1,10 @@
 import { useAtomValue, useSetAtom } from 'jotai';
-import type { Notification, Notify } from '../../types';
+import type { Notification, Notify } from '../../../types';
 import {
   addNotificationAtom,
   notificationsAtom,
   removeNotificationAtom,
-} from '../atoms/notification';
+} from './atoms';
 
 export function useNotifications(): Notification[] {
   return useAtomValue(notificationsAtom);

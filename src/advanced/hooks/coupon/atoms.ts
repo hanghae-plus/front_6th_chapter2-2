@@ -1,9 +1,9 @@
 import { atom } from 'jotai';
-import type { Coupon } from '../../types';
-import { initialCoupons } from '../constants';
-import * as cartModel from '../models/cart';
-import * as couponModel from '../models/coupon';
-import { cartAtom } from './cart';
+import type { Coupon } from '../../../types';
+import { initialCoupons } from '../../constants';
+import * as cartModel from '../../models/cart';
+import * as couponModel from '../../models/coupon';
+import { cartAtom } from '../cart/atoms';
 
 export const couponsAtom = atom<Coupon[]>(initialCoupons);
 

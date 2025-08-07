@@ -1,4 +1,4 @@
-import { useCoupons, useDeleteCoupon } from '../../../hooks/useCoupons';
+import { useCoupons, useDeleteCoupon } from '../../../hooks/coupon';
 import { TabTitle } from '../../ui/TabTitle';
 import { CouponCard } from './CouponCard';
 import { CouponsForm } from './CouponsForm';

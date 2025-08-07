@@ -1,7 +1,7 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react';
 import type { ProductWithUI } from '../../../../../types';
-import { useNotify } from '../../../../hooks/useNotification';
-import { useAddProduct, useUpdateProduct } from '../../../../hooks/useProducts';
+import { useNotify } from '../../../../hooks/notification';
+import { useAddProduct, useUpdateProduct } from '../../../../hooks/product';
 import { useProductFormValidation } from '../../../../utils/hooks/useValidate';
 
 export interface ProductForm {

@@ -1,6 +1,6 @@
 import type { ProductWithUI } from '../../../../types';
-import { useCart } from '../../../hooks/useCart';
-import { useDeleteProduct, useProducts } from '../../../hooks/useProducts';
+import { useCart } from '../../../hooks/cart';
+import { useDeleteProduct, useProducts } from '../../../hooks/product';
 import * as productModel from '../../../models/product';
 import { formatNumberWon } from '../../../utils/formatters';
 import { ProductsTableUI } from './ProductsTableUI';

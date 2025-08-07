@@ -1,6 +1,6 @@
-import { useCart } from '../../../hooks/useCart';
-import { useSelectedCoupon } from '../../../hooks/useCoupons';
-import { useCompleteOrder } from '../../../hooks/useOrder';
+import { useCart } from '../../../hooks/cart';
+import { useSelectedCoupon } from '../../../hooks/coupon';
+import { useCompleteOrder } from '../../../hooks/order';
 import * as cartModel from '../../../models/cart';
 import * as couponModel from '../../../models/coupon';
 import { formatNumberWon } from '../../../utils/formatters';

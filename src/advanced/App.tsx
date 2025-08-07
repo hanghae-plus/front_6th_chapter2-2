@@ -4,7 +4,7 @@ import { AdminPageHeader } from './components/admin-page/AdminPageHeader';
 import { CartPageContainer } from './components/cart-page/CartPageContainer';
 import { CartPageHeader } from './components/cart-page/CartPageHeader';
 import { Notifications } from './components/Notifications';
-import { usePage } from './hooks/usePage';
+import { usePage } from './hooks/page';
 
 const App = () => {
   const page = usePage();

@@ -1,5 +1,5 @@
 import { useAtomValue, useSetAtom } from 'jotai';
-import { gotoAdminPageAtom, gotoCartPageAtom, pageAtom } from '../atoms/page';
+import { gotoAdminPageAtom, gotoCartPageAtom, pageAtom } from './atoms';
 
 export function usePage() {
   return useAtomValue(pageAtom);

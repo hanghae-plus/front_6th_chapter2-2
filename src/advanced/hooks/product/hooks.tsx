@@ -1,14 +1,14 @@
 import { useSetAtom } from 'jotai';
-import type { ProductWithUI } from '../../types';
+import type { ProductWithUI } from '../../../types';
 import {
   addProductAtom,
   deleteProductAtom,
   productsAtom,
   updateProductAtom,
-} from '../atoms/product';
-import { initialProducts } from '../constants';
-import { useAtomWithLocalStorage } from '../utils/hooks/useLocalStorage';
-import { useNotify } from './useNotification';
+} from './atoms';
+import { initialProducts } from '../../constants';
+import { useAtomWithLocalStorage } from '../../utils/hooks/useLocalStorage';
+import { useNotify } from '../notification/hooks';
 
 export function useProducts(): ProductWithUI[] {
   const [products] = useAtomWithLocalStorage({

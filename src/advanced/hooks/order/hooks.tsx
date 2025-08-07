@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
-import { useClearCart } from './useCart';
-import { useClearSelectedCoupon } from './useCoupons';
-import { useNotify } from './useNotification';
+import { useClearCart } from '../cart/hooks';
+import { useClearSelectedCoupon } from '../coupon/hooks';
+import { useNotify } from '../notification/hooks';
 
 export function useCompleteOrder() {
   const notify = useNotify();

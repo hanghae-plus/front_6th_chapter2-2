@@ -1,5 +1,5 @@
 import { useAtomValue, useSetAtom } from 'jotai';
-import type { Coupon } from '../../types';
+import type { Coupon } from '../../../types';
 import {
   addCouponAtom,
   applyCouponAtom,
@@ -7,10 +7,10 @@ import {
   couponsAtom,
   deleteCouponAtom,
   selectedCouponAtom,
-} from '../atoms/coupon';
-import { initialCoupons } from '../constants';
-import { useAtomWithLocalStorage } from '../utils/hooks/useLocalStorage';
-import { useNotify } from './useNotification';
+} from './atoms';
+import { initialCoupons } from '../../constants';
+import { useAtomWithLocalStorage } from '../../utils/hooks/useLocalStorage';
+import { useNotify } from '../notification/hooks';
 
 export function useCoupons(): Coupon[] {
   const [coupons] = useAtomWithLocalStorage({

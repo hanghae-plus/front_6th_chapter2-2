@@ -1,7 +1,7 @@
 import { atom } from 'jotai';
-import type { ProductWithUI } from '../../types';
-import { initialProducts } from '../constants';
-import * as productModel from '../models/product';
+import type { ProductWithUI } from '../../../types';
+import { initialProducts } from '../../constants';
+import * as productModel from '../../models/product';
 
 export const productsAtom = atom<ProductWithUI[]>(initialProducts);
 

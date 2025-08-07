@@ -1,6 +1,6 @@
 import type { CartItem } from '../../../../types';
-import { useRemoveFromCart, useUpdateQuantity } from '../../../hooks/useCart';
-import { useProducts } from '../../../hooks/useProducts';
+import { useRemoveFromCart, useUpdateQuantity } from '../../../hooks/cart';
+import { useProducts } from '../../../hooks/product';
 import { formatNumberRate, formatNumberWon } from '../../../utils/formatters';
 import { CloseIcon } from '../../icons';
 

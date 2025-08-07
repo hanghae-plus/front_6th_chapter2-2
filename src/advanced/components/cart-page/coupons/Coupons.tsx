@@ -3,7 +3,7 @@ import {
   useClearSelectedCoupon,
   useCoupons,
   useSelectedCoupon,
-} from '../../../hooks/useCoupons';
+} from '../../../hooks/coupon';
 import { formatNumberRate, formatNumberWon } from '../../../utils/formatters';
 
 export function Coupons() {
