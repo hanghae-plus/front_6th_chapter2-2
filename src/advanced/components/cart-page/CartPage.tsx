@@ -16,7 +16,7 @@
 // - ProductList: 상품 목록 표시
 // - Cart: 장바구니 표시 및 결제
 
-import type { CartItem, Coupon, Product, ProductWithUI } from '../../../types';
+import type { CartItem, Coupon, ProductWithUI } from '../../../types';
 import * as cartModel from '../../models/cart';
 import * as productModel from '../../models/product';
 import { CartItemInfo } from './cart/CartItem';
@@ -32,12 +32,6 @@ interface Props {
   searchTerm: string;
   products: ProductWithUI[];
   cart: CartItem[];
-  updateQuantity: (params: {
-    productId: string;
-    newQuantity: number;
-    products: Product[];
-  }) => void;
-
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
   applyCoupon: (params: { cart: CartItem[]; coupon: Coupon }) => void;
@@ -49,7 +43,6 @@ export function CartPage({
   searchTerm,
   products,
   cart,
-  updateQuantity,
   coupons,
   selectedCoupon,
   applyCoupon,
@@ -90,27 +83,29 @@ export function CartPage({
               <EmptyCart />
             ) : (
               <div className="space-y-3">
-                {cart.map((item) => {
-                  const {
-                    product: { id },
-                  } = item;
-                  const itemTotal = cartModel.calculateItemTotal({
-                    item,
+                {cart.map((cartItem) => {
+                  const product = products.find(
+                    (p) => p.id === cartItem.product.id
+                  );
+                  if (!product) return null;
+
+                  const discountRate = cartModel.calculateItemDiscountRate({
+                    item: cartItem,
                     cart,
                   });
-                  const discountRate = cartModel.calculateItemDiscountRate({
-                    item,
+
+                  const itemTotal = cartModel.calculateItemTotal({
+                    item: cartItem,
                     cart,
                   });
 
                   return (
                     <CartItemInfo
-                      key={id}
-                      cartItem={item}
+                      key={cartItem.product.id}
+                      cartItem={cartItem}
                       products={products}
                       discountRate={discountRate}
                       itemTotal={itemTotal}
-                      updateQuantity={updateQuantity}
                     />
                   );
                 })}
@@ -118,23 +113,19 @@ export function CartPage({
             )}
           </section>
 
-          {cart.length > 0 && (
-            <>
-              <Coupons
-                cart={cart}
-                coupons={coupons}
-                selectedCoupon={selectedCoupon}
-                applyCoupon={applyCoupon}
-                clearSelectedCoupon={clearSelectedCoupon}
-              />
+          <Coupons
+            cart={cart}
+            coupons={coupons}
+            selectedCoupon={selectedCoupon}
+            applyCoupon={applyCoupon}
+            clearSelectedCoupon={clearSelectedCoupon}
+          />
 
-              <OrderSummary
-                cart={cart}
-                selectedCoupon={selectedCoupon}
-                completeOrder={completeOrder}
-              />
-            </>
-          )}
+          <OrderSummary
+            cart={cart}
+            selectedCoupon={selectedCoupon}
+            completeOrder={completeOrder}
+          />
         </div>
       </div>
     </div>

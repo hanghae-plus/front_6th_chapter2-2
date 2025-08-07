@@ -12,7 +12,7 @@ import { useDebounce } from './utils/hooks/useDebounce';
 
 const App = () => {
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
-  const { cart, totalItemCount, updateQuantity, clearCart } = useCart();
+  const { cart, totalItemCount, clearCart } = useCart();
   const {
     coupons,
     selectedCoupon,
@@ -62,7 +62,6 @@ const App = () => {
             searchTerm={debouncedSearchTerm}
             products={products}
             cart={cart}
-            updateQuantity={updateQuantity}
             coupons={coupons}
             selectedCoupon={selectedCoupon}
             applyCoupon={applyCoupon}

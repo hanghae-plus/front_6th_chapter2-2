@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import type { CartItem, Notify, Product } from '../../types';
+import type { CartItem, Product } from '../../types';
 import * as cartModel from '../models/cart';
 import * as productModel from '../models/product';
 
@@ -12,31 +12,28 @@ export const addCartAtom = atom(
     set,
     {
       product,
-      notify,
     }: {
       product: Product;
-      notify: Notify;
     }
   ) => {
     const cart = get(cartAtom);
+
     const remainingStock = productModel.getRemainingStock({
       cart,
       product,
     });
     const isSoldOut = productModel.isSoldOut({ remainingStock });
-    const { message, newCart, success } = cartModel.addToCartWithStockCheck({
+    const result = cartModel.addToCartWithStockCheck({
       cart,
       product,
       isSoldOut,
     });
 
-    if (!success) {
-      notify({ message, type: 'error' });
-      return;
+    if (result.success) {
+      set(cartAtom, result.newCart);
     }
 
-    notify({ message, type: 'success' });
-    set(cartAtom, newCart);
+    return result;
   }
 );
 
@@ -44,8 +41,37 @@ export const removeFromCartAtom = atom(
   null,
   (get, set, { productId }: { productId: string }) => {
     const cart = get(cartAtom);
+
     const newCart = cartModel.removeItemFromCart({ cart, productId });
 
     set(cartAtom, newCart);
+  }
+);
+
+export const updateQuantityAtom = atom(
+  null,
+  (
+    get,
+    set,
+    {
+      productId,
+      newQuantity,
+      products,
+    }: { productId: string; newQuantity: number; products: Product[] }
+  ) => {
+    const cart = get(cartAtom);
+
+    const result = cartModel.updateCartQuantityWithValidation({
+      cart,
+      newQuantity,
+      productId,
+      products,
+    });
+
+    if (result.success) {
+      set(cartAtom, result.newCart);
+    }
+
+    return result;
   }
 );
