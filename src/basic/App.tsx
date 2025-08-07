@@ -1,9 +1,9 @@
 import { useState, useCallback, useEffect } from "react";
 import { CartItem, Coupon, Product } from "../types";
-import { initialCoupons } from "./data";
 import { type ProductWithUI, useProducts } from "./hooks/useProducts";
 import { useTask } from "./hooks/useNotifyingTask";
 import { useCart } from "./hooks/useCart";
+import { useCoupons } from "./hooks/useCoupons";
 
 interface Notification {
   id: string;
@@ -17,19 +17,9 @@ const App = () => {
   const { cart, addToCart, removeFromCart, updateQuantity, clearCart } =
     useCart();
 
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem("coupons");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialCoupons;
-      }
-    }
-    return initialCoupons;
-  });
-
+  const { coupons, addCoupon, deleteCoupon } = useCoupons();
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+
   const [isAdmin, setIsAdmin] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showCouponForm, setShowCouponForm] = useState(false);
@@ -245,28 +235,29 @@ const App = () => {
     },
   });
 
-  const addCoupon = useCallback(
-    (newCoupon: Coupon) => {
-      const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
-      if (existingCoupon) {
-        addNotification("이미 존재하는 쿠폰 코드입니다.", "error");
-        return;
-      }
-      setCoupons((prev) => [...prev, newCoupon]);
+  const addCouponTask = useTask(addCoupon, {
+    onSuccess: () => {
       addNotification("쿠폰이 추가되었습니다.", "success");
     },
-    [coupons, addNotification]
-  );
+    onError: (e) => {
+      addNotification((e as Error).message, "error");
+    },
+    deps: [coupons, addNotification],
+  });
 
-  const deleteCoupon = useCallback(
+  const deleteCouponTask = useTask(
     (couponCode: string) => {
-      setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
+      deleteCoupon(couponCode);
+
       if (selectedCoupon?.code === couponCode) {
         setSelectedCoupon(null);
       }
-      addNotification("쿠폰이 삭제되었습니다.", "success");
     },
-    [selectedCoupon, addNotification]
+    {
+      onSuccess: () => {
+        addNotification("쿠폰이 삭제되었습니다.", "success");
+      },
+    }
   );
 
   const handleProductSubmit = (e: React.FormEvent) => {
@@ -293,7 +284,7 @@ const App = () => {
 
   const handleCouponSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    addCoupon(couponForm);
+    addCouponTask(couponForm);
     setCouponForm({
       name: "",
       code: "",
@@ -829,7 +820,7 @@ const App = () => {
                             </div>
                           </div>
                           <button
-                            onClick={() => deleteCoupon(coupon.code)}
+                            onClick={() => deleteCouponTask(coupon.code)}
                             className="text-gray-400 hover:text-red-600 transition-colors"
                           >
                             <svg
