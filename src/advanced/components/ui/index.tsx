@@ -5,6 +5,7 @@ export { CartTitle } from './CartTitle';
 export { FormTitle } from './FormTitle';
 export { Header } from './Header';
 export { InputWithLabel } from './InputWithLabel';
+export { Label } from './Label';
 export { PageHeader } from './PageHeader';
 export { SelectWithLabel } from './SelectWithLabel';
 export { Tab } from './Tab';

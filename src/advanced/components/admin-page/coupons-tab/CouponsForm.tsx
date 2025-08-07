@@ -1,7 +1,7 @@
 import type { FormEvent } from 'react';
 import { SelectWithLabel } from '../../ui/SelectWithLabel';
-import { InputWithLabel } from '../ui/InputWithLabel';
 import { FormTitle } from './ui/FormTitle';
+import { InputWithLabel } from './ui/InputWithLabel';
 
 export interface CouponForm {
   name: string;

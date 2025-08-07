@@ -1,7 +1,7 @@
 import type { ChangeEvent, FormEvent } from 'react';
 import { Fragment } from 'react/jsx-runtime';
 import { CloseIcon } from '../../icons';
-import { Label } from '../ui/Label';
+import { Label } from '../../ui/Label';
 import { FormTitle } from './ui/FormTitle';
 import { InputWithLabel } from './ui/InputWithLabel';
 

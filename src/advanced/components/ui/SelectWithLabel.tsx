@@ -1,5 +1,5 @@
 import type { SelectHTMLAttributes } from 'react';
-import { Label } from '../admin-page/ui/Label';
+import { Label } from './Label';
 
 interface SelectWithLabelProps extends SelectHTMLAttributes<HTMLSelectElement> {
   label: string;

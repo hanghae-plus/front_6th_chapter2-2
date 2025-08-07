@@ -1,5 +1,5 @@
 import type { InputHTMLAttributes } from 'react';
-import { Label } from '../admin-page/ui/Label';
+import { Label } from './Label';
 
 type Variant = 'default' | 'products' | 'coupons';
 
