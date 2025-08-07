@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
-import { Product } from "../../types";
-import { ProductFormState, INITIAL_PRODUCT_FORM } from "../types/admin";
+import type { Product } from "../../types";
+import type { ProductFormState } from "../types/admin";
+import { INITIAL_PRODUCT_FORM } from "../constants/admin";
 
 export const useProductForm = () => {
   const [editingProduct, setEditingProduct] = useState<string | null>(null);

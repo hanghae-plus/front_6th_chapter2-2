@@ -47,7 +47,7 @@ export const useCoupons = (addNotification?: (message: string, type?: "error" | 
   );
 
   const applyCoupon = useCallback((coupon: Coupon, currentTotal: number) => {
-    const { canUse, reason } = checkCouponUsageConditions(currentTotal, coupon);
+    const { canUse } = checkCouponUsageConditions(currentTotal, coupon);
     if (!canUse) {
       throw new CouponUsageConditionError(coupon.discountType, 10000);
     }

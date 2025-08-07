@@ -1,11 +1,11 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useId } from "react";
 import { useLocalStorage } from "./useLocalStorage";
 
-import { createStore } from "../utils/createStore";
 import { Product } from "../../types";
 import { ProductNotFoundError, DuplicateProductNameError, ProductValidationError } from "../errors/Product.error";
 import { useAutoCallback } from "../utils/hooks/useAutoCallbak";
 import { withTryNotifySuccess } from "../utils/withNotify";
+import { useUniqueId } from "../utils/hooks/useUniqueId";
 
 // 초기 데이터
 const initialProducts: Product[] = [
@@ -42,15 +42,9 @@ const initialProducts: Product[] = [
   },
 ];
 
-// 고유한 ID 생성 함수
-let idCounter = 0;
-const generateUniqueId = () => {
-  idCounter += 1;
-  return `p${Date.now()}_${idCounter}`;
-};
-
 export const useProducts = (addNotification?: (message: string, type?: "error" | "success" | "warning") => void) => {
   const [products, setProducts] = useLocalStorage<Product[]>("products", initialProducts);
+  const generateId = useUniqueId();
 
   // 상품 추가
   const addProduct = useCallback(
@@ -72,11 +66,11 @@ export const useProducts = (addNotification?: (message: string, type?: "error" |
 
       const product: Product = {
         ...newProduct,
-        id: generateUniqueId(),
+        id: `product_${generateId()}`,
       };
       setProducts((prev) => [...prev, product]);
     },
-    [products]
+    [products, generateId]
   );
 
   // 상품 수정

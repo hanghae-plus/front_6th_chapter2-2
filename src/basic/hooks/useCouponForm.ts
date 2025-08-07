@@ -1,6 +1,8 @@
 import { useState, useCallback } from "react";
-import { CouponFormState, INITIAL_COUPON_FORM } from "../types/admin";
-import { Coupon } from "../../types";
+import type { CouponFormState } from "../types/admin";
+import type { Coupon } from "../../types";
+
+import { INITIAL_COUPON_FORM } from "../constants/admin";
 
 export const useCouponForm = () => {
   const [couponForm, setCouponForm] = useState<CouponFormState>(INITIAL_COUPON_FORM);
@@ -40,11 +42,9 @@ export const useCouponForm = () => {
   );
 
   return {
-    // 상태 (읽기 전용)
     couponForm,
     showCouponForm,
 
-    // ✅ 범용 필드 업데이트
     updateField,
     showForm,
     hideForm,

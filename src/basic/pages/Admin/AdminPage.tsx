@@ -8,9 +8,10 @@ import { useProductForm } from "../../hooks/useProductForm";
 import { useCouponForm } from "../../hooks/useCouponForm";
 
 // types
-import { ADMIN_TABS } from "../../types/admin";
 import type { Coupon, NotificationType } from "../../types/admin";
 import type { CartItem, Product } from "../../../types";
+
+import { ADMIN_TABS } from "../../constants/admin";
 interface AdminPageProps {
   // 상품 관련
   products: Product[];
