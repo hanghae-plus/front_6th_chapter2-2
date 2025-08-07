@@ -6,13 +6,10 @@ import { Coupon } from '../types';
 export const useCoupons = () => {
   const [coupons, setCoupons] = useLocalStorage<Coupon[]>('coupons', INITIAL_COUPONS);
 
-  const addCoupon = (newCoupon: Omit<Coupon, 'code'>) => {
+  const addCoupon = (newCoupon: Coupon) => {
     setCoupons(prevCoupons => [
       ...prevCoupons,
-      {
-        ...newCoupon,
-        code: newCoupon.name.toUpperCase().replace(/\s/g, '') + Date.now()
-      }
+      newCoupon
     ]);
   };
 
