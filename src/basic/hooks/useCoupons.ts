@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { Coupon } from '../../types';
 import { initialCoupons } from '../constants/initialData';
+import { couponsAtom } from '../atoms';
+import { useAtom } from 'jotai';
 
 interface UseCouponsOptions {
   storageKey?: string;
@@ -19,18 +21,7 @@ export const useCoupons = (
   const storageKey = options?.storageKey ?? 'coupons';
   const defaultCoupons = options?.defaultCoupons ?? initialCoupons;
 
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    if (typeof window === 'undefined') return defaultCoupons;
-    const saved = localStorage.getItem(storageKey);
-    if (saved) {
-      try {
-        return JSON.parse(saved) as Coupon[];
-      } catch {
-        return defaultCoupons;
-      }
-    }
-    return defaultCoupons;
-  });
+  const [coupons, setCoupons] = useAtom(couponsAtom);
 
   const persist = (next: Coupon[]) => {
     setCoupons(next);
@@ -68,11 +59,6 @@ export const useCoupons = (
     },
     [storageKey]
   );
-
-  useEffect(() => {
-    window.addEventListener('storage', onStorage);
-    return () => window.removeEventListener('storage', onStorage);
-  }, [onStorage]);
 
   return {
     coupons,

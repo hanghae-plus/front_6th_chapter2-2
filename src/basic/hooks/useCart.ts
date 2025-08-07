@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { CartItem, Coupon, Product } from '../../types';
 import {
   calculateCartTotal,
   calculateItemTotal,
   updateCartItemQuantity,
 } from '../utils/cart';
+import { cartAtom } from '../atoms';
+import { useAtom } from 'jotai';
 
 interface UseCartOptions {
   /** localStorage key, default: 'cart' */
@@ -31,18 +33,7 @@ export interface UseCartReturn {
 export const useCart = (options?: UseCartOptions): UseCartReturn => {
   const storageKey = options?.storageKey ?? 'cart';
 
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    if (typeof window === 'undefined') return [];
-    const saved = localStorage.getItem(storageKey);
-    if (saved) {
-      try {
-        return JSON.parse(saved) as CartItem[];
-      } catch {
-        return [];
-      }
-    }
-    return [];
-  });
+  const [cart, setCart] = useAtom(cartAtom);
 
   /* ----------------------------- Helpers ----------------------------- */
   const persist = (next: CartItem[]) => {
@@ -136,10 +127,6 @@ export const useCart = (options?: UseCartOptions): UseCartReturn => {
     [storageKey]
   );
 
-  useEffect(() => {
-    window.addEventListener('storage', onStorage);
-    return () => window.removeEventListener('storage', onStorage);
-  }, [onStorage]);
 
   return {
     cart,

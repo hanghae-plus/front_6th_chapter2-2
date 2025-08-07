@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Product } from '../../types';
+import { useCallback } from 'react';
+import { useAtom } from 'jotai';
+import { productsAtom } from '../atoms';
 import { ProductWithUI, initialProducts } from '../constants/initialData';
 
 interface UseProductsOptions {
@@ -23,18 +24,7 @@ export const useProducts = (
   const storageKey = options?.storageKey ?? 'products';
   const defaultProducts = options?.defaultProducts ?? initialProducts;
 
-  const [products, setProducts] = useState<ProductWithUI[]>(() => {
-    if (typeof window === 'undefined') return defaultProducts;
-    const saved = localStorage.getItem(storageKey);
-    if (saved) {
-      try {
-        return JSON.parse(saved) as ProductWithUI[];
-      } catch {
-        return defaultProducts;
-      }
-    }
-    return defaultProducts;
-  });
+  const [products, setProducts] = useAtom(productsAtom);
 
   /* ----------------------------- helpers ----------------------------- */
   const persist = (next: ProductWithUI[]) => {
@@ -91,10 +81,6 @@ export const useProducts = (
     [storageKey]
   );
 
-  useEffect(() => {
-    window.addEventListener('storage', onStorage);
-    return () => window.removeEventListener('storage', onStorage);
-  }, [onStorage]);
 
   return {
     products,
