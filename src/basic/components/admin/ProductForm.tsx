@@ -1,10 +1,9 @@
-import { useState } from 'react';
-import { ProductWithUI, ProductForm as ProductFormType } from '../../../types';
+import { ProductForm as ProductFormType } from '../../../types';
+import { defaultProductForm } from '../../constants';
+import { isValidPrice, isValidStock } from '../../utils/validators';
 import { CloseIcon } from '../icons';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
-import { defaultProductForm } from '../../constants';
-import { isValidPrice, isValidStock } from '../../utils/validators';
 
 interface ProductFormProps {
   editingProduct: string | null;
@@ -50,9 +49,7 @@ const ProductForm = ({
               label='설명'
               type='text'
               value={productForm.description}
-              onChange={(e) =>
-                setProductForm({ ...productForm, description: e.target.value })
-              }
+              onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}
             />
           </div>
           <div>
@@ -150,9 +147,7 @@ const ProductForm = ({
                 <Button
                   type='button'
                   onClick={() => {
-                    const newDiscounts = productForm.discounts.filter(
-                      (_, i) => i !== index
-                    );
+                    const newDiscounts = productForm.discounts.filter((_, i) => i !== index);
                     setProductForm({ ...productForm, discounts: newDiscounts });
                   }}
                   className='text-red-600 hover:text-red-800'

@@ -1,13 +1,12 @@
 import { CouponForm as CouponFormType } from '../../../types';
-import Button from '../ui/Button';
-import Input from '../ui/Input';
-import Select from '../ui/Selector';
-import { defaultCouponForm } from '../../constants';
 import {
   validateCouponDiscountValue,
   getCouponDiscountLabel,
   getCouponDiscountPlaceholder,
 } from '../../models/coupon';
+import Button from '../ui/Button';
+import Input from '../ui/Input';
+import Select from '../ui/Selector';
 
 interface CouponFormProps {
   couponForm: CouponFormType;
@@ -49,18 +48,14 @@ const CouponForm = ({
               label='쿠폰 코드'
               type='text'
               value={couponForm.code}
-              onChange={(e) =>
-                setCouponForm({ ...couponForm, code: e.target.value.toUpperCase() })
-              }
+              onChange={(e) => setCouponForm({ ...couponForm, code: e.target.value.toUpperCase() })}
               className='text-sm font-mono'
               placeholder='WELCOME2024'
               required
             />
           </div>
           <div>
-            <label className='block text-sm font-medium text-gray-700 mb-1'>
-              할인 타입
-            </label>
+            <label className='block text-sm font-medium text-gray-700 mb-1'>할인 타입</label>
             <Select
               focusStyle='indigo'
               className='shadow-sm'
@@ -92,10 +87,7 @@ const CouponForm = ({
               }}
               onBlur={(e) => {
                 const value = parseInt(e.target.value) || 0;
-                const validation = validateCouponDiscountValue(
-                  couponForm.discountType,
-                  value
-                );
+                const validation = validateCouponDiscountValue(couponForm.discountType, value);
 
                 if (!validation.isValid) {
                   if (validation.errorMessage) {

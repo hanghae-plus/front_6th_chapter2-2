@@ -1,12 +1,13 @@
 import { useState } from 'react';
+
 import { Coupon, CouponForm as CouponFormType } from '../../../types';
+import { defaultCouponForm } from '../../constants';
+import { formatCouponDisplay } from '../../models/coupon';
 import { TrashIcon, PlusIcon } from '../icons';
+import CouponForm from './CouponForm';
 import Badge from '../ui/Badge';
 import Button from '../ui/Button';
 import Card from '../ui/Card';
-import { defaultCouponForm } from '../../constants';
-import { formatCouponDisplay } from '../../models/coupon';
-import CouponForm from './CouponForm';
 
 interface CouponManagementProps {
   coupons: Coupon[];

@@ -1,12 +1,12 @@
 import { useState } from 'react';
+
+import ProductForm from './ProductForm';
 import { ProductWithUI, ProductForm as ProductFormType, CartItem } from '../../../types';
-import { TrashIcon } from '../icons';
+import { defaultProductForm } from '../../constants';
+import { formatPrice } from '../../utils/formatters';
 import Badge from '../ui/Badge';
 import Button from '../ui/Button';
 import Card from '../ui/Card';
-import { defaultProductForm } from '../../constants';
-import { formatPrice } from '../../utils/formatters';
-import ProductForm from './ProductForm';
 
 interface ProductManagementProps {
   products: ProductWithUI[];
