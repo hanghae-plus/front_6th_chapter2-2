@@ -30,3 +30,18 @@ export interface Notification {
   message: string;
   type: 'error' | 'success' | 'warning';
 }
+
+export interface ProductFormData {
+  name: string;
+  price: number;
+  stock: number;
+  description: string;
+  discounts: Discount[];
+}
+
+export interface CouponFormData {
+  name: string;
+  code: string;
+  discountType: 'amount' | 'percentage';
+  discountValue: number;
+}

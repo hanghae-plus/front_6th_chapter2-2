@@ -1,6 +1,13 @@
+import { Product } from '../../../types';
 import { formatPrice } from '../../utils/formatters';
 
-export const ProductItem = ({ product, remainingStock, addToCart }) => {
+interface ProductItemProps {
+  product: Product;
+  remainingStock: number;
+  addToCart: (product: Product) => void;
+}
+
+export const ProductItem = ({ product, remainingStock, addToCart }: ProductItemProps) => {
   return (
     <div
       key={product.id}

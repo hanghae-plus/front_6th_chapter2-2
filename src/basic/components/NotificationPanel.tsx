@@ -1,4 +1,11 @@
-export const NotificationPanel = ({ notifications, addNotification }) => {
+import { Notification } from '../../types';
+
+interface NotificationPanelProps {
+  notifications: Notification[];
+  onDismiss: (id: string) => void;
+}
+
+export const NotificationPanel = ({ notifications, onDismiss }: NotificationPanelProps) => {
   return (
     notifications.length > 0 && (
       <div className='fixed top-20 right-4 z-50 space-y-2 max-w-sm'>
@@ -14,10 +21,7 @@ export const NotificationPanel = ({ notifications, addNotification }) => {
             }`}
           >
             <span className='mr-2'>{notif.message}</span>
-            <button
-              onClick={() => addNotification((prev) => prev.filter((n) => n.id !== notif.id))}
-              className='text-white hover:text-gray-200'
-            >
+            <button onClick={() => onDismiss(notif.id)} className='text-white hover:text-gray-200'>
               <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                 <path
                   strokeLinecap='round'

@@ -1,3 +1,14 @@
+import { ProductFormData } from '../../../types';
+
+interface ProductFormProps {
+  productForm: ProductFormData;
+  setProductForm: React.Dispatch<React.SetStateAction<ProductFormData>>;
+  onSubmit: (e: React.FormEvent) => void;
+  onCancel: () => void;
+  editingProduct: string | null;
+  addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
+}
+
 export const ProductForm = ({
   productForm,
   setProductForm,
@@ -5,7 +16,7 @@ export const ProductForm = ({
   onCancel,
   editingProduct,
   addNotification,
-}) => {
+}: ProductFormProps) => {
   return (
     <div className='p-6 border-t border-gray-200 bg-gray-50'>
       <form onSubmit={onSubmit} className='space-y-4'>

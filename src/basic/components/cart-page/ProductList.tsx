@@ -1,6 +1,19 @@
 import { ProductItem } from './ProductItem';
+import { Product } from '../../../types';
 
-export const ProductList = ({ products, searchTerm, getRemainingStock, addToCart }) => {
+interface ProductListProps {
+  products: Product[];
+  searchTerm: string;
+  getRemainingStock: (product: Product) => number;
+  addToCart: (product: Product) => void;
+}
+
+export const ProductList = ({
+  products,
+  searchTerm,
+  getRemainingStock,
+  addToCart,
+}: ProductListProps) => {
   const filteredProducts = searchTerm
     ? products.filter(
         (product) =>

@@ -14,6 +14,7 @@ const App = () => {
   const {
     notifications,
     addNotification,
+    dismissNotification,
     products,
     addProduct,
     updateProduct,
@@ -34,7 +35,7 @@ const App = () => {
 
   return (
     <div className='min-h-screen bg-gray-50'>
-      <NotificationPanel notifications={notifications} addNotification={addNotification} />
+      <NotificationPanel notifications={notifications} onDismiss={dismissNotification} />
       <Header
         isAdmin={isAdmin}
         setIsAdmin={setIsAdmin}

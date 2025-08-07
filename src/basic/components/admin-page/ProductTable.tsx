@@ -1,6 +1,14 @@
+import { Product } from '../../../types';
 import { formatPrice } from '../../utils/formatters';
 
-export const ProductTable = ({ activeTab, products, onEdit, onDelete }) => {
+interface ProductTableProps {
+  activeTab: 'products' | 'coupons';
+  products: Product[];
+  onEdit: (product: Product) => void;
+  onDelete: (productId: string) => void;
+}
+
+export const ProductTable = ({ activeTab, products, onEdit, onDelete }: ProductTableProps) => {
   return (
     <div className='overflow-x-auto'>
       <table className='w-full'>

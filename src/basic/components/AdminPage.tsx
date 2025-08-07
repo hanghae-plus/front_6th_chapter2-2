@@ -1,14 +1,20 @@
 import { useState } from 'react';
 
-import { Product } from '../../types';
+import { Product, Coupon, ProductFormData } from '../../types';
 import { CouponForm } from './admin-page/CouponForm';
 import { CouponList } from './admin-page/CouponList';
 import { ProductForm } from './admin-page/ProductForm';
 import { ProductTable } from './admin-page/ProductTable';
 
-interface ProductWithUI extends Product {
-  description?: string;
-  isRecommended?: boolean;
+interface AdminPageProps {
+  products: Product[];
+  coupons: Coupon[];
+  addProduct: (newProduct: Omit<Product, 'id'>) => void;
+  updateProduct: (productId: string, updates: Partial<Product>) => void;
+  deleteProduct: (productId: string) => void;
+  addCoupon: (newCoupon: Coupon) => void;
+  deleteCoupon: (couponCode: string) => void;
+  addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
 }
 
 export function AdminPage({
@@ -20,13 +26,13 @@ export function AdminPage({
   addCoupon,
   deleteCoupon,
   addNotification,
-}) {
+}: AdminPageProps) {
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
   const [showProductForm, setShowProductForm] = useState(false);
   const [showCouponForm, setShowCouponForm] = useState(false);
 
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
-  const [productForm, setProductForm] = useState({
+  const [productForm, setProductForm] = useState<ProductFormData>({
     name: '',
     price: 0,
     stock: 0,
@@ -69,7 +75,7 @@ export function AdminPage({
     setShowCouponForm(false);
   };
 
-  const editProduct = (product: ProductWithUI) => {
+  const editProduct = (product: Product) => {
     setEditingProduct(product.id);
     setProductForm({
       name: product.name,

@@ -1,10 +1,20 @@
+import { CouponFormData } from '../../../types';
+
+interface CouponFormProps {
+  onSubmit: (e: React.FormEvent) => void;
+  couponForm: CouponFormData;
+  setCouponForm: React.Dispatch<React.SetStateAction<CouponFormData>>;
+  closeCouponForm: () => void;
+  addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
+}
+
 export const CouponForm = ({
   onSubmit,
   couponForm,
   setCouponForm,
   closeCouponForm,
   addNotification,
-}) => {
+}: CouponFormProps) => {
   return (
     <div className='mt-6 p-4 bg-gray-50 rounded-lg'>
       <form onSubmit={onSubmit} className='space-y-4'>

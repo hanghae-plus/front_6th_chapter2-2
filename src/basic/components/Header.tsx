@@ -1,7 +1,17 @@
 import { useState, useEffect } from 'react';
-import { SearchBar } from './header/SearchBar';
 
-export const Header = ({ isAdmin, searchTerm, setSearchTerm, setIsAdmin, cart }) => {
+import { SearchBar } from './header/SearchBar';
+import { CartItem } from '../../types';
+
+interface HeaderProps {
+  isAdmin: boolean;
+  searchTerm: string;
+  setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
+  setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>;
+  cart: CartItem[];
+}
+
+export const Header = ({ isAdmin, searchTerm, setSearchTerm, setIsAdmin, cart }: HeaderProps) => {
   const [totalItemCount, setTotalItemCount] = useState(0);
 
   useEffect(() => {

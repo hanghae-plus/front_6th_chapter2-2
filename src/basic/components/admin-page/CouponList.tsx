@@ -1,4 +1,12 @@
-export const CouponList = ({ coupons, deleteCoupon, toggleCouponForm }) => {
+import { Coupon } from '../../../types';
+
+interface CouponListProps {
+  coupons: Coupon[];
+  deleteCoupon: (couponCode: string) => void;
+  toggleCouponForm: () => void;
+}
+
+export const CouponList = ({ coupons, deleteCoupon, toggleCouponForm }: CouponListProps) => {
   return (
     <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
       {coupons.map((coupon) => (
