@@ -15,7 +15,6 @@ const Cart = () => {
       {cart.length > 0 && (
         <>
           <CouponSelector />
-
           <PaymentSummary />
         </>
       )}

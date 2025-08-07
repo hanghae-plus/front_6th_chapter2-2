@@ -1,4 +1,3 @@
-import { ProductWithUI } from '../../../types';
 import Cart from '../cart/Cart';
 import ProductList from '../product/ProductList';
 

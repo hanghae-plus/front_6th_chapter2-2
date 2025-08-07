@@ -1,12 +1,13 @@
 import { useAtom } from 'jotai';
+
 import { CartItem as CartItemType } from '../../../types';
 import { calculateItemTotal, calculateOriginalPrice } from '../../models/cart';
 import { hasDiscount, calculateDiscountRate } from '../../models/discount';
+import { updateQuantityAtom, removeFromCartAtom, addNotificationAtom } from '../../store/actions';
+import { cartAtom } from '../../store/atoms';
 import { CloseIcon } from '../icons';
 import Badge from '../ui/Badge';
 import Button from '../ui/Button';
-import { cartAtom } from '../../store/atoms';
-import { updateQuantityAtom, removeFromCartAtom, addNotificationAtom } from '../../store/actions';
 
 interface CartItemProps {
   item: CartItemType;

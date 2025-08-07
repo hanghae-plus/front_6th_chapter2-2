@@ -1,18 +1,13 @@
 import { useAtom } from 'jotai';
 
 import { Coupon, NotificationCallback } from '../../types';
-import { couponsAtom } from '../store/atoms';
-import { addCouponAtom, removeCouponAtom } from '../store/actions';
 import { calculateCouponDiscount } from '../models/coupon';
+import { addCouponAtom, removeCouponAtom } from '../store/actions';
 
 export function useCoupons() {
-  const [coupons, setCoupons] = useAtom(couponsAtom);
-
-  // Jotai action atoms 사용
   const [, addCouponAction] = useAtom(addCouponAtom);
   const [, removeCouponAction] = useAtom(removeCouponAtom);
 
-  // 기존 인터페이스 유지를 위한 래퍼 함수들
   const addCoupon = (newCoupon: Coupon, onNotification?: NotificationCallback) => {
     addCouponAction({
       newCoupon,
@@ -36,7 +31,6 @@ export function useCoupons() {
   };
 
   return {
-    coupons,
     addCoupon,
     removeCoupon,
     getCouponDiscountAmount,

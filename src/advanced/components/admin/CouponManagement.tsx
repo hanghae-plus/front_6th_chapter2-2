@@ -1,16 +1,16 @@
-import { useState } from 'react';
 import { useAtom } from 'jotai';
+import { useState } from 'react';
 
-import { Coupon, CouponForm as CouponFormType } from '../../../types';
+import { CouponForm as CouponFormType } from '../../../types';
 import { defaultCouponForm } from '../../constants';
 import { formatCouponDisplay } from '../../models/coupon';
+import { addCouponAtom, removeCouponAtom } from '../../store/actions';
 import { TrashIcon, PlusIcon } from '../icons';
 import CouponForm from './CouponForm';
+import { couponsAtom, selectedCouponAtom } from '../../store/atoms';
 import Badge from '../ui/Badge';
 import Button from '../ui/Button';
 import Card from '../ui/Card';
-import { couponsAtom, selectedCouponAtom } from '../../store/atoms';
-import { addCouponAtom, removeCouponAtom } from '../../store/actions';
 
 const CouponManagement = () => {
   const [coupons] = useAtom(couponsAtom);

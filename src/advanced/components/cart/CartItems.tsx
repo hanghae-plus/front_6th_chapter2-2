@@ -1,9 +1,9 @@
 import { useAtom } from 'jotai';
-import { CartItem as CartItemType } from '../../../types';
+
 import { CartHeaderIcon, EmptyCartIcon } from '../icons';
 import CartItem from './CartItem';
-import Card from '../ui/Card';
 import { cartAtom } from '../../store/atoms';
+import Card from '../ui/Card';
 
 const CartItems = () => {
   const [cart] = useAtom(cartAtom);

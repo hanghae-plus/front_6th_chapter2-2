@@ -1,30 +1,22 @@
 import { useAtom, useAtomValue } from 'jotai';
 
-import { CartItem, Coupon, ProductWithUI, NotificationCallback } from '../../types';
+import { Coupon, ProductWithUI, NotificationCallback } from '../../types';
 import { getRemainingStock } from '../models/cart';
-import { 
-  cartAtom, 
-  selectedCouponAtom, 
-  totalItemCountAtom, 
-  cartTotalAtom,
-  productsAtom 
-} from '../store/atoms';
-import { 
-  addToCartAtom, 
-  removeFromCartAtom, 
-  updateQuantityAtom, 
-  applyCouponAtom, 
+import {
+  addToCartAtom,
+  removeFromCartAtom,
+  updateQuantityAtom,
+  applyCouponAtom,
   completeOrderAtom,
-  clearCartAtom 
+  clearCartAtom,
 } from '../store/actions';
+import { selectedCouponAtom, totalItemCountAtom, cartTotalAtom } from '../store/atoms';
 
 export function useCart() {
   // Jotai atoms 사용
-  const [cart, setCart] = useAtom(cartAtom);
   const [selectedCoupon, setSelectedCoupon] = useAtom(selectedCouponAtom);
   const totalItemCount = useAtomValue(totalItemCountAtom);
   const cartTotal = useAtomValue(cartTotalAtom);
-  const products = useAtomValue(productsAtom);
 
   // Jotai action atoms 사용
   const [, addToCartAction] = useAtom(addToCartAtom);
@@ -36,9 +28,11 @@ export function useCart() {
 
   // 기존 인터페이스 유지를 위한 래퍼 함수들
   const addToCart = (product: ProductWithUI, onNotification?: NotificationCallback) => {
-    addToCartAction({ 
-      product, 
-      onNotification: onNotification as ((message: string, type?: 'success' | 'error' | 'warning') => void) | undefined 
+    addToCartAction({
+      product,
+      onNotification: onNotification as
+        | ((message: string, type?: 'success' | 'error' | 'warning') => void)
+        | undefined,
     });
   };
 
@@ -46,23 +40,31 @@ export function useCart() {
     removeFromCartAction(productId);
   };
 
-  const updateQuantity = (productId: string, newQuantity: number, onNotification?: NotificationCallback) => {
-    updateQuantityAction({ 
-      productId, 
-      newQuantity, 
-      onNotification: onNotification as ((message: string, type?: 'success' | 'error' | 'warning') => void) | undefined 
+  const updateQuantity = (
+    productId: string,
+    newQuantity: number,
+    onNotification?: NotificationCallback
+  ) => {
+    updateQuantityAction({
+      productId,
+      newQuantity,
+      onNotification: onNotification as
+        | ((message: string, type?: 'success' | 'error' | 'warning') => void)
+        | undefined,
     });
   };
 
   const applyCoupon = (coupon: Coupon, onNotification?: NotificationCallback) => {
-    applyCouponAction({ 
-      coupon, 
-      onNotification: onNotification as ((message: string, type?: 'success' | 'error' | 'warning') => void) | undefined 
+    applyCouponAction({
+      coupon,
+      onNotification: onNotification as
+        | ((message: string, type?: 'success' | 'error' | 'warning') => void)
+        | undefined,
     });
   };
 
-  const completeOrder = (onNotification?: NotificationCallback) => {
-    completeOrderAction(onNotification as ((message: string, type?: 'success' | 'error' | 'warning') => void) | undefined);
+  const completeOrder = () => {
+    completeOrderAction();
   };
 
   const clearCart = () => {
@@ -74,7 +76,6 @@ export function useCart() {
   };
 
   return {
-    cart,
     selectedCoupon,
     setSelectedCoupon,
     totalItemCount,

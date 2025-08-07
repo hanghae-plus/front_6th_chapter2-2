@@ -1,14 +1,15 @@
 import { useAtom } from 'jotai';
+
 import { CouponForm as CouponFormType } from '../../../types';
 import {
   validateCouponDiscountValue,
   getCouponDiscountLabel,
   getCouponDiscountPlaceholder,
 } from '../../models/coupon';
+import { addNotificationAtom } from '../../store/actions';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 import Select from '../ui/Selector';
-import { addNotificationAtom } from '../../store/actions';
 
 interface CouponFormProps {
   couponForm: CouponFormType;

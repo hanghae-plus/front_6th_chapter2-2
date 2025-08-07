@@ -1,9 +1,9 @@
 import { useAtom } from 'jotai';
-import { Notification } from '../../../types';
+
+import { removeNotificationAtom } from '../../store/actions';
+import { notificationsAtom } from '../../store/atoms';
 import { CloseIcon } from '../icons';
 import Button from '../ui/Button';
-import { notificationsAtom } from '../../store/atoms';
-import { removeNotificationAtom } from '../../store/actions';
 
 const NotificationComponent = () => {
   const [notifications] = useAtom(notificationsAtom);

@@ -1,10 +1,11 @@
 import { useAtom } from 'jotai';
+
 import { Coupon } from '../../../types';
+import { applyCouponAtom } from '../../store/actions';
+import { couponsAtom, selectedCouponAtom } from '../../store/atoms';
 import Button from '../ui/Button';
 import Card from '../ui/Card';
 import Select from '../ui/Selector';
-import { couponsAtom, selectedCouponAtom } from '../../store/atoms';
-import { applyCouponAtom } from '../../store/actions';
 
 const CouponSelector = () => {
   const [coupons] = useAtom(couponsAtom);

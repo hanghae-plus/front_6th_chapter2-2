@@ -1,15 +1,15 @@
-import { useState } from 'react';
 import { useAtom } from 'jotai';
+import { useState } from 'react';
 
 import ProductForm from './ProductForm';
 import { ProductWithUI, ProductForm as ProductFormType } from '../../../types';
 import { defaultProductForm } from '../../constants';
+import { addProductAtom, updateProductAtom, deleteProductAtom } from '../../store/actions';
+import { productsAtom, cartAtom } from '../../store/atoms';
 import { formatPrice } from '../../utils/formatters';
 import Badge from '../ui/Badge';
 import Button from '../ui/Button';
 import Card from '../ui/Card';
-import { productsAtom, cartAtom } from '../../store/atoms';
-import { addProductAtom, updateProductAtom, deleteProductAtom } from '../../store/actions';
 
 const ProductManagement = () => {
   const [products] = useAtom(productsAtom);
@@ -18,7 +18,6 @@ const ProductManagement = () => {
   const [, updateProduct] = useAtom(updateProductAtom);
   const [, deleteProduct] = useAtom(deleteProductAtom);
 
-  const [showProductForm, setShowProductForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [productForm, setProductForm] = useState<ProductFormType>(defaultProductForm);
 
@@ -28,21 +27,14 @@ const ProductManagement = () => {
       updateProduct({
         productId: editingProduct,
         updates: productForm,
-        onNotification: () => {
-          // 알림은 이미 updateProductAtom 내부에서 처리됨
-        },
       });
       setEditingProduct(null);
     } else {
       addProduct({
         newProduct: productForm,
-        onNotification: () => {
-          // 알림은 이미 addProductAtom 내부에서 처리됨
-        },
       });
     }
     setProductForm(defaultProductForm);
-    setShowProductForm(false);
   };
 
   const startEditProduct = (product: ProductWithUI) => {
@@ -54,15 +46,11 @@ const ProductManagement = () => {
       stock: product.stock,
       discounts: product.discounts,
     });
-    setShowProductForm(true);
   };
 
   const handleDeleteProduct = (productId: string) => {
     deleteProduct({
       productId,
-      onNotification: () => {
-        // 알림은 이미 deleteProductAtom 내부에서 처리됨
-      },
     });
   };
 
@@ -78,7 +66,6 @@ const ProductManagement = () => {
             onClick={() => {
               setEditingProduct('new');
               setProductForm(defaultProductForm);
-              setShowProductForm(true);
             }}
             hasTextSm
             hasRounded
@@ -160,10 +147,10 @@ const ProductManagement = () => {
         editingProduct={editingProduct}
         productForm={productForm}
         setProductForm={setProductForm}
-        showProductForm={showProductForm}
-        setShowProductForm={setShowProductForm}
+        setShowProductForm={() => {}}
         setEditingProduct={setEditingProduct}
         handleProductSubmit={handleProductSubmit}
+        addNotification={() => {}}
       />
     </Card>
   );

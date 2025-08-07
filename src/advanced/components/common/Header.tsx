@@ -1,9 +1,9 @@
 import { useAtom } from 'jotai';
-import { CartItem } from '../../../types';
+
+import { searchTermAtom, cartAtom, totalItemCountAtom } from '../../store/atoms';
 import { CartIcon } from '../icons';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
-import { searchTermAtom, cartAtom, totalItemCountAtom } from '../../store/atoms';
 
 interface HeaderProps {
   isAdmin: boolean;

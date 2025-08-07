@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { ProductForm as ProductFormType } from '../../../types';
 import { defaultProductForm } from '../../constants';
 import { isValidPrice, isValidStock } from '../../utils/validators';
@@ -9,7 +11,6 @@ interface ProductFormProps {
   editingProduct: string | null;
   productForm: ProductFormType;
   setProductForm: (form: ProductFormType) => void;
-  showProductForm: boolean;
   setShowProductForm: (show: boolean) => void;
   setEditingProduct: (id: string | null) => void;
   handleProductSubmit: (e: React.FormEvent) => void;
@@ -20,12 +21,25 @@ const ProductForm = ({
   editingProduct,
   productForm,
   setProductForm,
-  showProductForm,
   setShowProductForm,
   setEditingProduct,
   handleProductSubmit,
   addNotification,
 }: ProductFormProps) => {
+  // showProductForm을 내부에서 관리
+  const [showProductForm, setShowProductFormInternal] = useState(false);
+
+  // 부모의 setShowProductForm과 동기화
+  const handleSetShowProductForm = (show: boolean) => {
+    setShowProductFormInternal(show);
+    setShowProductForm(show);
+  };
+
+  // 부모의 버튼 클릭을 감지하여 폼을 표시
+  if (editingProduct && !showProductForm) {
+    setShowProductFormInternal(true);
+  }
+
   if (!showProductForm) return null;
 
   return (
@@ -59,6 +73,7 @@ const ProductForm = ({
               value={productForm.price === 0 ? '' : productForm.price}
               onChange={(e) => {
                 const { value } = e.target;
+                // 숫자만 허용
                 if (value === '' || /^\d+$/.test(value)) {
                   setProductForm({
                     ...productForm,
@@ -178,7 +193,7 @@ const ProductForm = ({
             onClick={() => {
               setEditingProduct(null);
               setProductForm(defaultProductForm);
-              setShowProductForm(false);
+              handleSetShowProductForm(false);
             }}
             hasTextSm
             hasFontMedium

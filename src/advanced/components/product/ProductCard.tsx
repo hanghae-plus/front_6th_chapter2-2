@@ -1,15 +1,16 @@
 import { useAtom } from 'jotai';
+
 import { ProductWithUI } from '../../../types';
+import { getRemainingStock } from '../../models/cart';
 import { getMaxDiscountRate, formatDiscountDescription } from '../../models/discount';
 import { isRecommended } from '../../models/product';
+import { addToCartAtom, addNotificationAtom } from '../../store/actions';
+import { cartAtom, productsAtom } from '../../store/atoms';
 import { formatPrice } from '../../utils/formatters';
 import { ImageIcon } from '../icons';
 import Badge from '../ui/Badge';
 import Button from '../ui/Button';
 import Card from '../ui/Card';
-import { cartAtom, productsAtom } from '../../store/atoms';
-import { addToCartAtom, addNotificationAtom } from '../../store/actions';
-import { getRemainingStock } from '../../models/cart';
 
 const ProductCard = ({ product, isAdmin }: { product: ProductWithUI; isAdmin: boolean }) => {
   const [cart] = useAtom(cartAtom);

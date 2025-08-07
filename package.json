@@ -19,7 +19,8 @@
     "build:advanced": "vite build --mode advanced",
     "predeploy": "npm run build:advanced",
     "deploy": "gh-pages -d dist",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "gh-pages": "pnpm build && cp dist/index.advanced.html dist/index.html && cp dist/index.html dist/404.html && gh-pages -d dist"
   },
   "dependencies": {
     "jotai": "^2.13.0",
