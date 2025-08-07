@@ -1,6 +1,6 @@
-import type { CartItem } from '../../../types';
-import { calculateItemTotal } from '../../entities/cart';
-import { Icon } from '../../shared/icon';
+import type { CartItem } from '../../../../types';
+import { calculateItemTotal } from '../../../entities/cart';
+import { Icon } from '../../../shared/icon';
 
 interface CartItemListProps {
   cart: CartItem[];

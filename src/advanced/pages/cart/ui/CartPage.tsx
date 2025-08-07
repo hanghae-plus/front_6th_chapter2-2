@@ -1,17 +1,11 @@
 import { useAtomValue } from 'jotai';
 
-import { CartItemList } from '../../../components/ui/CartItemList';
-import { CouponSelector } from '../../../components/ui/CouponSelector';
-import { PaymentSummary } from '../../../components/ui/PaymentSummary';
-import { ProductList } from '../../../components/ui/ProductList';
-import { calculateCartTotal } from '../../../entities/cart';
 import { productsAtom } from '../../../entities/product';
-import { useCouponApplyService } from '../../../features/cart-coupon';
 import { useCartService } from '../../../features/cart-management';
-import { usePaymentService } from '../../../features/payment';
 import { useDebouncedSearch } from '../../../features/search';
-import { Icon } from '../../../shared/icon';
 import { CartHeader } from '../../../widgets/cart-header';
+import { CartSidebar } from '../../../widgets/cart-sidebar';
+import { ProductList } from '../../../widgets/shopping-product-list';
 
 interface CartPageProps {
   onChangeAdminPage: () => void;
@@ -20,20 +14,8 @@ interface CartPageProps {
 export function CartPage({ onChangeAdminPage }: CartPageProps) {
   const products = useAtomValue(productsAtom);
 
-  const { selectedCoupon, onApplyCoupon, resetSelectedCoupon } = useCouponApplyService();
-  const { cart, handleAddToCart, updateQuantity, removeFromCart, resetCart } = useCartService({
-    products,
-  });
-  const { completeOrder } = usePaymentService();
+  const { cart, handleAddToCart } = useCartService({ products });
   const [searchTerm, debouncedSearchTerm, onChangeSearchTerm] = useDebouncedSearch();
-
-  const totals = calculateCartTotal(cart, selectedCoupon);
-
-  const handleCompleteOrder = () => {
-    completeOrder(selectedCoupon);
-    resetCart();
-    resetSelectedCoupon();
-  };
 
   return (
     <>
@@ -62,30 +44,7 @@ export function CartPage({ onChangeAdminPage }: CartPageProps) {
             </section>
           </div>
 
-          <div className='lg:col-span-1'>
-            <div className='sticky top-24 space-y-4'>
-              <section className='bg-white rounded-lg border border-gray-200 p-4'>
-                <h2 className='text-lg font-semibold mb-4 flex items-center'>
-                  <Icon name='cartBagRegular' width={20} height={20} className='mr-2' />
-                  장바구니
-                </h2>
-
-                <CartItemList
-                  cart={cart}
-                  onRemoveFromCart={removeFromCart}
-                  onUpdateQuantity={updateQuantity}
-                />
-              </section>
-
-              {cart.length > 0 && (
-                <>
-                  <CouponSelector onApplyCoupon={(coupon) => onApplyCoupon(cart, coupon)} />
-
-                  <PaymentSummary totals={totals} completeOrder={handleCompleteOrder} />
-                </>
-              )}
-            </div>
-          </div>
+          <CartSidebar products={products} />
         </div>
       </main>
     </>

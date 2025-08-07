@@ -1,8 +1,8 @@
 import { useAtomValue } from 'jotai';
 
-import type { Coupon } from '../../../types';
-import { couponsAtom } from '../../entities/coupon';
-import { useSelectedCoupon } from '../../features/cart-coupon';
+import type { Coupon } from '../../../../types';
+import { couponsAtom } from '../../../entities/coupon';
+import { useSelectedCoupon } from '../../../features/cart-coupon';
 
 interface CouponSelectorProps {
   onApplyCoupon: (coupon: Coupon) => void;
