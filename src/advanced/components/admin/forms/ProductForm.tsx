@@ -9,19 +9,42 @@ import { useEffect } from 'react';
 
 interface ProductFormProps {
   onToggleForm: (show: boolean) => void;
+  editingProduct?: string | null;
+  initialFormData?: {
+    name: string;
+    price: number;
+    stock: number;
+    description: string;
+    discounts: { quantity: number; rate: number }[];
+  };
 }
 
-export default function ProductForm({ onToggleForm }: ProductFormProps) {
+export default function ProductForm({
+  onToggleForm,
+  editingProduct: propEditingProduct,
+  initialFormData,
+}: ProductFormProps) {
   const addNotification = useSetAtom(addNotificationAtom);
   const { handleProductSubmit, setProductForm, productForm, editingProduct, setEditingProduct } =
     useProductForm();
 
-  // ProductForm이 마운트될 때 editingProduct가 null이면 'new' 모드로 설정
   useEffect(() => {
-    if (editingProduct === null) {
+    if (propEditingProduct && initialFormData) {
+      // 편집 모드인 경우 전달받은 데이터로 폼 초기화
+      setEditingProduct(propEditingProduct);
+      setProductForm(initialFormData);
+    } else if (propEditingProduct === 'new') {
+      // 새 상품 추가 모드
       setEditingProduct('new');
+      setProductForm({
+        name: '',
+        price: 0,
+        stock: 0,
+        description: '',
+        discounts: [],
+      });
     }
-  }, [editingProduct, setEditingProduct]);
+  }, [propEditingProduct, initialFormData, setEditingProduct, setProductForm]);
 
   return (
     <div className='p-6 border-t border-gray-200 bg-gray-50'>
@@ -55,19 +78,16 @@ export default function ProductForm({ onToggleForm }: ProductFormProps) {
           <div>
             <label className='block text-sm font-medium text-gray-700 mb-1'>가격</label>
             <Input
-              required
               type='text'
-              value={productForm.price.toString()}
+              value={productForm.price === 0 ? '' : productForm.price}
               onChange={(e) => {
                 const value = e.target.value;
-                // 빈 문자열이거나 숫자로만 구성된 경우에만 허용
                 if (value === '' || /^\d+$/.test(value)) {
                   setProductForm({
                     ...productForm,
                     price: value === '' ? 0 : parseInt(value),
                   });
                 }
-                // 잘못된 입력은 무시 (이전 값 유지)
               }}
               onBlur={(e) => {
                 const value = e.target.value;
@@ -79,6 +99,7 @@ export default function ProductForm({ onToggleForm }: ProductFormProps) {
                 }
               }}
               placeholder='숫자만 입력'
+              required
             />
           </div>
           <div>
@@ -177,14 +198,6 @@ export default function ProductForm({ onToggleForm }: ProductFormProps) {
           <Button
             type='button'
             onClick={() => {
-              setEditingProduct(null);
-              setProductForm({
-                name: '',
-                price: 0,
-                stock: 0,
-                description: '',
-                discounts: [],
-              });
               onToggleForm(false);
             }}
             variant='outline'

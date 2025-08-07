@@ -7,18 +7,17 @@ import { useAtomValue } from 'jotai';
 import { isAdminAtom } from '../../atoms/uiAtoms';
 import { productsAtom } from '../../atoms/productsAtom';
 import { useProducts } from '../../hooks/product/useProducts';
-import { useProductForm } from '../../hooks/product/useProductForm';
 import { cartAtom } from '../../atoms/cartAtoms';
 
 export default function ProductManagement() {
   const [showProductForm, setShowProductForm] = useState(false);
+  const [editingProductId, setEditingProductId] = useState<string | null>(null);
+  const [editingProductData, setEditingProductData] = useState<any>(null);
   const isAdmin = useAtomValue(isAdminAtom);
 
   const products = useAtomValue(productsAtom);
   const cart = useAtomValue(cartAtom);
   const { deleteProduct } = useProducts();
-
-  const { setProductForm, handleProductEdit, setEditingProduct } = useProductForm();
 
   return (
     <section className='bg-white rounded-lg border border-gray-200'>
@@ -30,14 +29,8 @@ export default function ProductManagement() {
             variant='primary'
             size='md'
             onClick={() => {
-              setEditingProduct('new');
-              setProductForm({
-                name: '',
-                price: 0,
-                stock: 0,
-                description: '',
-                discounts: [],
-              });
+              setEditingProductId('new');
+              setEditingProductData(null);
               setShowProductForm(true);
             }}
           >
@@ -100,7 +93,14 @@ export default function ProductManagement() {
                   <Button
                     variant='link'
                     onClick={() => {
-                      handleProductEdit(product);
+                      setEditingProductId(product.id);
+                      setEditingProductData({
+                        name: product.name,
+                        price: product.price,
+                        stock: product.stock,
+                        description: product.description || '',
+                        discounts: product.discounts || [],
+                      });
                       setShowProductForm(true);
                     }}
                     className='text-indigo-600 hover:text-indigo-900 mr-3'
@@ -111,7 +111,7 @@ export default function ProductManagement() {
                   <Button
                     variant='link'
                     onClick={() => deleteProduct(product.id)}
-                    className='text-red-600 hover:text-red-900'
+                    className='!text-red-600 !hover:text-red-900'
                   >
                     삭제
                   </Button>
@@ -121,7 +121,13 @@ export default function ProductManagement() {
           </tbody>
         </table>
       </div>
-      {showProductForm && <ProductForm onToggleForm={setShowProductForm} />}
+      {showProductForm && (
+        <ProductForm
+          onToggleForm={setShowProductForm}
+          editingProduct={editingProductId}
+          initialFormData={editingProductData}
+        />
+      )}
     </section>
   );
 }

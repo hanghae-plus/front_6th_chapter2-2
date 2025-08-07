@@ -4,7 +4,6 @@ import { initialProducts } from '../data/mockProducts';
 
 export const productsAtom = atomWithStorage<ProductWithUI[]>('products', initialProducts, {
   getItem: (key: string, initialValue: ProductWithUI[]) => {
-    // 항상 최신 initialProducts 반환 (localStorage 무시)
     return initialProducts;
   },
   setItem: (key: string, value: ProductWithUI[]) => {
