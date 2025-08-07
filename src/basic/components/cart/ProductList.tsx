@@ -1,17 +1,19 @@
 import { ProductWithUI } from '../../constants';
+import { CartItem } from '../../../types.ts';
+import { getRemainingStock } from '../../models/cart.ts';
 
 type ProductListProps = {
   filteredProducts: ProductWithUI[];
-  getRemainingStock: (product: ProductWithUI) => number;
   formatPrice: (price: number, productId?: string) => string;
   addToCart: (product: ProductWithUI) => void;
+  cart: CartItem[];
 };
 
-export const ProductList = ({ filteredProducts, getRemainingStock, formatPrice, addToCart }: ProductListProps) => {
+export const ProductList = ({ filteredProducts, formatPrice, addToCart, cart }: ProductListProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {filteredProducts.map((product) => {
-        const remainingStock = getRemainingStock(product);
+        const remainingStock = getRemainingStock(product, cart);
 
         return (
           <div

@@ -25,12 +25,10 @@ import { ProductWithUI } from '../constants';
 type CartPageProps = {
   // ProductListPros
   filteredProducts: ProductWithUI[];
-  getRemainingStock: (product: ProductWithUI) => number;
   formatPrice: (price: number, productId?: string) => string;
   addToCart: (product: ProductWithUI) => void;
   // CartProps
   cart: CartItem[];
-  calculateItemTotal: (item: CartItem) => number;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, newQuantity: number) => void;
   coupons: Coupon[];
@@ -49,11 +47,9 @@ type CartPageProps = {
 
 export function CartPage({
   filteredProducts,
-  getRemainingStock,
   formatPrice,
   addToCart,
   cart,
-  calculateItemTotal,
   removeFromCart,
   updateQuantity,
   coupons,
@@ -81,8 +77,8 @@ export function CartPage({
               </div>
             ) : (
               <ProductList
+                cart={cart}
                 filteredProducts={filteredProducts}
-                getRemainingStock={getRemainingStock}
                 formatPrice={formatPrice}
                 addToCart={addToCart}
               />
@@ -91,7 +87,6 @@ export function CartPage({
         </div>
         <Cart
           cart={cart}
-          calculateItemTotal={calculateItemTotal}
           removeFromCart={removeFromCart}
           updateQuantity={updateQuantity}
           coupons={coupons}

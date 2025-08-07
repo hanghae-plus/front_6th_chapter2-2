@@ -1,9 +1,9 @@
 import { CartItem, Coupon } from '../../../types.ts';
 import React from 'react';
+import { calculateItemTotal } from '../../models/cart.ts';
 
 type CartProps = {
   cart: CartItem[];
-  calculateItemTotal: (item: CartItem) => number;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, newQuantity: number) => void;
   coupons: Coupon[];
@@ -15,12 +15,10 @@ type CartProps = {
     totalAfterDiscount: number;
   };
   completeOrder: () => void;
-
 };
 
 export const Cart = ({
   cart,
-  calculateItemTotal,
   removeFromCart,
   updateQuantity,
   coupons,
@@ -65,7 +63,7 @@ export const Cart = ({
           ) : (
             <div className="space-y-3">
               {cart.map((item) => {
-                const itemTotal = calculateItemTotal(item);
+                const itemTotal = calculateItemTotal(item, cart);
                 const originalPrice = item.product.price * item.quantity;
                 const hasDiscount = itemTotal < originalPrice;
                 const discountRate = hasDiscount ? Math.round((1 - itemTotal / originalPrice) * 100) : 0;

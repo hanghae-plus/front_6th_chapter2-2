@@ -15,4 +15,96 @@
 // - 외부 상태에 의존하지 않음
 // - 모든 필요한 데이터는 파라미터로 전달받음
 
-// TODO: 구현
+import { CartItem, Coupon, Product } from '../../types.ts';
+import { ProductWithUI } from '../constants';
+
+export const calculateItemTotal = (item: CartItem, cart: CartItem[]): number => {
+  const { price } = item.product;
+  const { quantity } = item;
+  const discount = getMaxApplicableDiscount(item, cart);
+
+  return Math.round(price * quantity * (1 - discount));
+};
+
+export const getMaxApplicableDiscount = (item: CartItem, cart: CartItem[]): number => {
+  const { discounts } = item.product;
+  const { quantity } = item;
+
+  const baseDiscount = discounts.reduce((maxDiscount, discount) => {
+    return quantity >= discount.quantity && discount.rate > maxDiscount ? discount.rate : maxDiscount;
+  }, 0);
+
+  const hasBulkPurchase = cart.some((cartItem) => cartItem.quantity >= 10);
+  if (hasBulkPurchase) {
+    return Math.min(baseDiscount + 0.05, 0.5); // 대량 구매 시 추가 5% 할인
+  }
+
+  return baseDiscount;
+};
+
+export const calculateCartTotal = (
+  cart: CartItem[],
+  selectedCoupon: Coupon | null
+): {
+  totalBeforeDiscount: number;
+  totalAfterDiscount: number;
+} => {
+  let totalBeforeDiscount = 0;
+  let totalAfterDiscount = 0;
+
+  cart.forEach((item) => {
+    const itemPrice = item.product.price * item.quantity;
+    totalBeforeDiscount += itemPrice;
+    totalAfterDiscount += calculateItemTotal(item, cart);
+  });
+
+  if (selectedCoupon) {
+    if (selectedCoupon.discountType === 'amount') {
+      totalAfterDiscount = Math.max(0, totalAfterDiscount - selectedCoupon.discountValue);
+    } else {
+      totalAfterDiscount = Math.round(totalAfterDiscount * (1 - selectedCoupon.discountValue / 100));
+    }
+  }
+
+  return {
+    totalBeforeDiscount: Math.round(totalBeforeDiscount),
+    totalAfterDiscount: Math.round(totalAfterDiscount),
+  };
+};
+
+export const getRemainingStock = (product: Product, cart: CartItem[]): number => {
+  const cartItem = cart.find((item) => item.product.id === product.id);
+  const remaining = product.stock - (cartItem?.quantity || 0);
+
+  return remaining;
+};
+
+export const updateCartItemQuantity = (
+  cart: CartItem[],
+  productId: string,
+  quantity: number,
+
+): CartItem[] => {
+  if (quantity <= 0) {
+    return removeItemFromCart(productId, cart);
+  }
+  return cart.map((item) => (item.product.id === productId ? { ...item, quantity: quantity } : item));
+};
+
+export const removeItemFromCart = (productId: string, cart: CartItem[]) => {
+  return cart.filter((item) => item.product.id !== productId);
+};
+
+export const addItemToCart = (product: ProductWithUI, cart: CartItem[]) => {
+  const existingItem = cart.find((item) => item.product.id === product.id);
+
+  if (existingItem) {
+    return cart.map((item) =>
+      item.product.id === product.id
+        ? { ...item, quantity: item.quantity + 1 }
+        : item
+    );
+  }
+
+  return [...cart, { product, quantity: 1 }];
+};
