@@ -5,6 +5,7 @@ import { cartAtom } from '../../../store/entities/cart.store.ts';
 import { filterProductAtom } from '../../../store/entities/product.store.ts';
 import ProductItem from './ProductItem.tsx';
 
+// 상품 리스트
 const ProductGrid = () => {
   const cart = useAtomValue(cartAtom);
   const filteredProducts = useAtomValue(filterProductAtom);
