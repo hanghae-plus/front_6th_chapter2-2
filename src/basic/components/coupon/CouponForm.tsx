@@ -3,6 +3,7 @@ import { Button } from "../ui/button/Button";
 import { Input } from "../ui/input/Input";
 import { Select } from "../ui/select/Select";
 import { CouponFormState } from "../../types/admin";
+import { validateNumericInput, validateDiscountValue } from "../../utils/validators";
 
 interface CouponFormProps {
   couponForm: CouponFormState;
@@ -19,28 +20,19 @@ const discountTypeOptions = [
 
 export const CouponForm = ({ couponForm, updateField, onSubmit, onCancel, addNotification }: CouponFormProps) => {
   const handleDiscountValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (value === "" || /^\d+$/.test(value)) {
-      updateField("discountValue", value === "" ? 0 : parseInt(value));
+    const validation = validateNumericInput(e.target.value);
+    if (validation.isValid) {
+      updateField("discountValue", validation.numericValue);
     }
   };
 
   const handleDiscountValueBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value) || 0;
-    if (couponForm.discountType === "percentage") {
-      if (value > 100) {
-        addNotification("할인율은 100%를 초과할 수 없습니다", "error");
-        updateField("discountValue", 100);
-      } else if (value < 0) {
-        updateField("discountValue", 0);
-      }
-    } else {
-      if (value > 100000) {
-        addNotification("할인 금액은 100,000원을 초과할 수 없습니다", "error");
-        updateField("discountValue", 100000);
-      } else if (value < 0) {
-        updateField("discountValue", 0);
-      }
+    const validation = validateDiscountValue(value, couponForm.discountType);
+
+    if (!validation.isValid) {
+      addNotification(validation.errorMessage!, "error");
+      updateField("discountValue", validation.correctedValue!);
     }
   };
 
