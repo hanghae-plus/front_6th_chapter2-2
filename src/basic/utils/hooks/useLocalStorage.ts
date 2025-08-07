@@ -7,9 +7,41 @@
 //
 // 반환값: [저장된 값, 값 설정 함수]
 
+import { useState, useEffect, useCallback } from "react";
+
 export function useLocalStorage<T>(
   key: string,
   initialValue: T
 ): [T, (value: T | ((val: T) => T)) => void] {
-  // TODO: 구현
+  const [state, setState] = useState<T>(() => {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw !== null ? JSON.parse(raw) : initialValue;
+    } catch (err) {
+      console.warn(`useLocalStorageState: parse error on key "${key}"`, err);
+      return initialValue;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      if (
+        state === undefined ||
+        state === null ||
+        (Array.isArray(state) && state.length === 0)
+      ) {
+        localStorage.removeItem(key);
+      } else {
+        localStorage.setItem(key, JSON.stringify(state));
+      }
+    } catch (err) {
+      console.error(`useLocalStorageState: set error on key "${key}"`, err);
+    }
+  }, [key, state]);
+
+  const setValue = useCallback((value: T | ((prev: T) => T)) => {
+    setState(value);
+  }, []);
+
+  return [state, setValue];
 }

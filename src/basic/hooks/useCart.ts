@@ -16,6 +16,7 @@ import {
   hasBulkPurchase,
   calculateItemTotal,
 } from "../models/cart";
+import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 
 // TODO: 장바구니 관리 Hook
 // 힌트:
@@ -60,29 +61,11 @@ export function useCart({
   setTotalItemCount: Dispatch<SetStateAction<number>>;
 }) {
   // TODO: 구현
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem("cart");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return [];
-      }
-    }
-    return [];
-  });
+  const [cart, setCart] = useLocalStorage<CartItem[]>("cart", []);
 
   useEffect(() => {
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);
     setTotalItemCount(count);
-  }, [cart]);
-
-  useEffect(() => {
-    if (cart.length > 0) {
-      localStorage.setItem("cart", JSON.stringify(cart));
-    } else {
-      localStorage.removeItem("cart");
-    }
   }, [cart]);
 
   const addToCart = useCallback(
