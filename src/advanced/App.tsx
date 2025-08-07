@@ -4,7 +4,7 @@ import { useNotification } from './hooks/useNotification';
 import { useCart } from './hooks/useCart';
 import Header from './components/ui/layout/Header';
 import Notification from './components/ui/notification/Notification';
-import { cartAtom, isAdminAtom, totalItemCountAtom } from './store/atoms';
+import { isAdminAtom, totalItemCountAtom } from './store/atoms';
 
 import AdminPage from './components/AdminPage';
 import ShopPage from './components/ShopPage';
