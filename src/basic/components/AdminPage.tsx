@@ -1,12 +1,12 @@
-import { Product, Coupon } from '../types';
+import { Product, Coupon, ProductWithUI } from '../types';
 
 interface AdminPageProps {
   activeTab: 'products' | 'coupons';
   setActiveTab: (tab: 'products' | 'coupons') => void;
-  products: Product[];
+  products: ProductWithUI[];
   coupons: Coupon[];
   getDisplayPrice: (price: number, productId?: string) => string;
-  startEditProduct: (product: Product | 'new') => void;
+  startEditProduct: (product: ProductWithUI | 'new') => void;
   deleteProduct: (id: string) => void;
   deleteCoupon: (code: string) => void;
   showProductForm: boolean;
@@ -188,13 +188,13 @@ const AdminPage = ({
                     type='text'
                     value={productForm.price === 0 ? '' : productForm.price}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const { value } = e.target;
                       if (value === '' || /^\d+$/.test(value)) {
                         updateProductForm({ price: value === '' ? 0 : parseInt(value) });
                       }
                     }}
                     onBlur={(e) => {
-                      const value = e.target.value;
+                      const { value } = e.target;
                       if (value === '') {
                         updateProductForm({ price: 0 });
                       } else if (parseInt(value) < 0) {
@@ -213,13 +213,13 @@ const AdminPage = ({
                     type='text'
                     value={productForm.stock === 0 ? '' : productForm.stock}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const { value } = e.target;
                       if (value === '' || /^\d+$/.test(value)) {
                         updateProductForm({ stock: value === '' ? 0 : parseInt(value) });
                       }
                     }}
                     onBlur={(e) => {
-                      const value = e.target.value;
+                      const { value } = e.target;
                       if (value === '') {
                         updateProductForm({ stock: 0 });
                       } else if (parseInt(value) < 0) {
@@ -443,7 +443,7 @@ const AdminPage = ({
                       type='text'
                       value={couponForm.discountValue === 0 ? '' : couponForm.discountValue}
                       onChange={(e) => {
-                        const value = e.target.value;
+                        const { value } = e.target;
                         if (value === '' || /^\d+$/.test(value)) {
                           updateCouponForm({
                             ...couponForm,
