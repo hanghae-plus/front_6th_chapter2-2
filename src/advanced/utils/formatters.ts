@@ -17,7 +17,7 @@ export const formatPrice = ({
   cart,
 }: {
   price: number;
-  productId: string;
+  productId?: string;
   products: ProductWithUI[];
   isAdmin: boolean;
   cart: CartItem[];
@@ -34,4 +34,8 @@ export const formatPrice = ({
   }
 
   return `₩${price.toLocaleString()}`;
+};
+
+export const formatPercentage = (rate: number): string => {
+  return `${Math.round(rate * 100)}%`;
 };
