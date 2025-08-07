@@ -7,6 +7,7 @@ import * as cartModel from './models/cart';
 import { useProducts } from './hooks/useProducts';
 import { useNotification } from './hooks/useNotification';
 import { useProductSearch } from './hooks/useProductSearch';
+import { formatKoreanPrice, formatPercentage } from './shared/utils';
 
 const App = () => {
   const {
@@ -72,7 +73,7 @@ const App = () => {
     }
 
     if (isAdmin) {
-      return `${price.toLocaleString()}원`;
+      return formatKoreanPrice(price);
     }
 
     return `₩${price.toLocaleString()}`;
@@ -638,8 +639,8 @@ const App = () => {
                             <div className="mt-2">
                               <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white text-indigo-700">
                                 {coupon.discountType === 'amount'
-                                  ? `${coupon.discountValue.toLocaleString()}원 할인`
-                                  : `${coupon.discountValue}% 할인`}
+                                  ? `${formatKoreanPrice(coupon.discountValue)} 할인`
+                                  : `${formatPercentage(coupon.discountValue)} 할인`}
                               </span>
                             </div>
                           </div>
@@ -912,7 +913,7 @@ const App = () => {
                         const itemTotal = cartModel.calculateItemTotal(item, cart);
                         const originalPrice = item.product.price * item.quantity;
                         const hasDiscount = itemTotal < originalPrice;
-                        const discountRate = hasDiscount ? Math.round((1 - itemTotal / originalPrice) * 100) : 0;
+                        const discountRate = hasDiscount ? formatPercentage(1 - itemTotal / originalPrice) : 0;
 
                         return (
                           <div key={item.product.id} className="border-b pb-3 last:border-b-0">
@@ -950,11 +951,9 @@ const App = () => {
                               </div>
                               <div className="text-right">
                                 {hasDiscount && (
-                                  <span className="text-xs text-red-500 font-medium block">-{discountRate}%</span>
+                                  <span className="text-xs text-red-500 font-medium block">-{discountRate}</span>
                                 )}
-                                <p className="text-sm font-medium text-gray-900">
-                                  {Math.round(itemTotal).toLocaleString()}원
-                                </p>
+                                <p className="text-sm font-medium text-gray-900">{formatKoreanPrice(itemTotal)}</p>
                               </div>
                             </div>
                           </div>
@@ -986,7 +985,7 @@ const App = () => {
                             <option key={coupon.code} value={coupon.code}>
                               {coupon.name} (
                               {coupon.discountType === 'amount'
-                                ? `${coupon.discountValue.toLocaleString()}원`
+                                ? `${formatKoreanPrice(coupon.discountValue)}`
                                 : `${coupon.discountValue}%`}
                               )
                             </option>
@@ -1000,18 +999,18 @@ const App = () => {
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
                           <span className="text-gray-600">상품 금액</span>
-                          <span className="font-medium">{totals.totalBeforeDiscount.toLocaleString()}원</span>
+                          <span className="font-medium">{formatKoreanPrice(totals.totalBeforeDiscount)}</span>
                         </div>
                         {totals.totalBeforeDiscount - totals.totalAfterDiscount > 0 && (
                           <div className="flex justify-between text-red-500">
                             <span>할인 금액</span>
-                            <span>-{(totals.totalBeforeDiscount - totals.totalAfterDiscount).toLocaleString()}원</span>
+                            <span>-{formatKoreanPrice(totals.totalBeforeDiscount - totals.totalAfterDiscount)}</span>
                           </div>
                         )}
                         <div className="flex justify-between py-2 border-t border-gray-200">
                           <span className="font-semibold">결제 예정 금액</span>
                           <span className="font-bold text-lg text-gray-900">
-                            {totals.totalAfterDiscount.toLocaleString()}원
+                            {formatKoreanPrice(totals.totalAfterDiscount)}
                           </span>
                         </div>
                       </div>
@@ -1020,7 +1019,7 @@ const App = () => {
                         onClick={completeOrder}
                         className="w-full mt-4 py-3 bg-yellow-400 text-gray-900 rounded-md font-medium hover:bg-yellow-500 transition-colors"
                       >
-                        {totals.totalAfterDiscount.toLocaleString()}원 결제하기
+                        {formatKoreanPrice(totals.totalAfterDiscount)} 결제하기
                       </button>
 
                       <div className="mt-3 text-xs text-gray-500 text-center">
