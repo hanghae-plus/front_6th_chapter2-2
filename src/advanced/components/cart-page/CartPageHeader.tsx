@@ -2,7 +2,6 @@ import { useTotalItemCount } from '../../hooks/cart';
 import { useGotoAdminPage } from '../../hooks/page';
 import { useSearch } from '../../hooks/search';
 import { CartIcon } from '../icons';
-import { Badge } from '../ui/Badge';
 import { Header } from '../ui/Header';
 
 export function CartPageHeader() {
@@ -35,12 +34,9 @@ export function CartPageHeader() {
           <div className="relative">
             <CartIcon />
             {totalItemCount > 0 && (
-              <Badge
-                variant="red"
-                className="absolute -top-2 -right-2 w-5 h-5 flex items-center justify-center"
-              >
+              <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                 {totalItemCount}
-              </Badge>
+              </div>
             )}
           </div>
         </>

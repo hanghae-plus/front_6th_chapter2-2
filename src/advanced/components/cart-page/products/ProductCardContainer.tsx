@@ -42,12 +42,22 @@ export function ProductCardContainer({ product }: Props) {
 
   const stockStatus = getStockStatus(remainingStock);
 
+  // 할인 정보 계산
+  const discountInfo =
+    discounts.length > 0
+      ? {
+          quantity: discounts[0].quantity,
+          rate: discounts[0].rate * 100,
+        }
+      : null;
+
   return (
     <ProductCardUI
       name={name}
       description={description}
       price={formattedPrice}
       discountRate={formattedDiscountRate}
+      discountInfo={discountInfo}
       isRecommended={isRecommended}
       stockStatus={stockStatus}
       remainingStock={remainingStock}

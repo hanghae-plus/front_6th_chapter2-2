@@ -6,6 +6,7 @@ interface ProductCardUIProps {
   description?: string;
   price: string;
   discountRate?: string;
+  discountInfo?: { quantity: number; rate: number } | null;
   isRecommended: boolean;
   stockStatus: 'sufficient' | 'low' | 'out';
   remainingStock: number;
@@ -17,6 +18,7 @@ export function ProductCardUI({
   description,
   price,
   discountRate,
+  discountInfo,
   isRecommended,
   stockStatus,
   remainingStock,
@@ -30,12 +32,18 @@ export function ProductCardUI({
           <ImagePlaceholderIcon />
         </div>
         {isRecommended && (
-          <Badge variant="red" className="absolute top-2 right-2">
+          <Badge
+            variant="red"
+            className="absolute top-2 right-2 rounded px-2 py-1 text-xs"
+          >
             BEST
           </Badge>
         )}
         {discountRate && (
-          <Badge variant="orange" className="absolute top-2 left-2">
+          <Badge
+            variant="orange"
+            className="absolute top-2 left-2 rounded px-2 py-1 text-xs"
+          >
             ~{discountRate}
           </Badge>
         )}
@@ -53,8 +61,10 @@ export function ProductCardUI({
         {/* 가격 정보 */}
         <div className="mb-3">
           <p className="text-lg font-bold text-gray-900">{price}</p>
-          {discountRate && (
-            <p className="text-xs text-gray-500">할인율: {discountRate}</p>
+          {discountInfo && (
+            <p className="text-xs text-gray-500">
+              {discountInfo.quantity}개 이상 구매시 할인 {discountInfo.rate}%
+            </p>
           )}
         </div>
 

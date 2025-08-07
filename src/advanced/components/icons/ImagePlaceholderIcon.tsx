@@ -1,7 +1,7 @@
 export function ImagePlaceholderIcon() {
   return (
     <svg
-      className="w-24 h-24"
+      className="w-24 h-24 text-gray-300"
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"

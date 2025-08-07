@@ -2,12 +2,9 @@ import type { ReactNode } from 'react';
 
 type Variant = 'error' | 'discount' | 'stock' | 'yellow' | 'red' | 'orange';
 
-type Size = 'md' | 'lg';
-
 interface BadgeProps {
   children: ReactNode;
-  variant?: Variant;
-  size?: Size;
+  variant: Variant;
   className?: string;
 }
 
@@ -20,22 +17,11 @@ const badgeVariants: Record<Variant, string> = {
   orange: 'bg-orange-500 text-white',
 };
 
-const badgeSizes: Record<Size, string> = {
-  md: 'px-2.5 py-0.5 text-xs',
-  lg: 'px-3 py-1 text-sm',
-};
-
-export function Badge({
-  children,
-  variant = 'error',
-  size = 'md',
-  className = '',
-}: BadgeProps) {
+export function Badge({ children, variant, className = '' }: BadgeProps) {
   const variantClasses = badgeVariants[variant];
-  const sizeClasses = badgeSizes[size];
-  const baseClasses = 'inline-flex items-center rounded-full font-medium';
+  const baseClasses = 'inline-flex items-center font-medium';
 
-  const combinedClasses = `${baseClasses} ${variantClasses} ${sizeClasses} ${className}`;
+  const combinedClasses = `${baseClasses} ${variantClasses} ${className}`;
 
   return <span className={combinedClasses}>{children}</span>;
 }

@@ -42,7 +42,10 @@ export function ProductsTableUI({
           className: 'px-6 py-4 whitespace-nowrap text-sm text-gray-500',
           children: ({ stock, stockVariant }) => {
             return (
-              <Badge variant={stockVariant} size="md">
+              <Badge
+                variant={stockVariant}
+                className="rounded-full px-2.5 py-0.5 text-xs"
+              >
                 {stock}개
               </Badge>
             );
