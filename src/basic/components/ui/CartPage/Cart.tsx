@@ -57,6 +57,7 @@ export function Cart({
 
             return (
               <CartItem
+                key={item.product.id}
                 item={item}
                 itemTotal={itemTotal}
                 hasDiscount={hasDiscount}

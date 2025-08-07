@@ -17,7 +17,7 @@ export function Cart() {
       ) : (
         <div className="space-y-3">
           {cart.map((item) => (
-            <CartItem item={item} />
+            <CartItem key={item.product.id} item={item} />
           ))}
         </div>
       )}
