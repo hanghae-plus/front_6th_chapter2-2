@@ -1,8 +1,7 @@
 import { CouponAddButton } from './CouponAddButton';
 import { CouponForm } from './CouponForm';
 import { CouponList } from './CouponList';
-import { useCouponForm } from '../../hooks/useCouponForm';
-import { useCouponService } from '../../hooks/useCouponService';
+import { useCouponForm, useCouponService } from '../../features/coupon-management';
 
 export function CouponTab() {
   const { onAddCoupon, onDeleteCoupon } = useCouponService();

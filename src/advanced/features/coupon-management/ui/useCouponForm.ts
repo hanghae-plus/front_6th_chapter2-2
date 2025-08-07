@@ -1,10 +1,10 @@
 import { useSetAtom } from 'jotai';
 import { useState } from 'react';
 
-import type { Coupon } from '../../types';
-import { addNotificationAtom } from '../entities/notification';
-import { useForm } from '../shared/hooks';
-import { isValidCouponCode } from '../shared/lib';
+import type { Coupon } from '../../../../types';
+import { addNotificationAtom } from '../../../entities/notification';
+import { useForm } from '../../../shared/hooks';
+import { isValidCouponCode } from '../../../shared/lib';
 
 const initialCouponForm: Coupon = {
   name: '',

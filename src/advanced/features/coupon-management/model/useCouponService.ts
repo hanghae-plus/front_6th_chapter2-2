@@ -1,11 +1,12 @@
 import { useAtomValue, useSetAtom } from 'jotai';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 
-import type { CartItem, Coupon } from '../../types';
-import { calculateCartTotal } from '../entities/cart';
-import { MINIMUM_ORDER_AMOUNT } from '../entities/coupon';
-import { addCouponAtom, couponsAtom, deleteCouponAtom } from '../entities/coupon';
-import { addNotificationAtom } from '../entities/notification';
+import type { CartItem, Coupon } from '../../../../types';
+import { calculateCartTotal } from '../../../entities/cart';
+import { MINIMUM_ORDER_AMOUNT } from '../../../entities/coupon';
+import { addCouponAtom, couponsAtom, deleteCouponAtom } from '../../../entities/coupon';
+import { addNotificationAtom } from '../../../entities/notification';
+import { useSelectedCoupon } from '../ui/useSelectedCoupon';
 
 export function useCouponService() {
   const coupons = useAtomValue(couponsAtom);
@@ -13,11 +14,7 @@ export function useCouponService() {
   const deleteCoupon = useSetAtom(deleteCouponAtom);
   const addNotification = useSetAtom(addNotificationAtom);
 
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
-
-  const onResetSelectedCoupon = useCallback(() => {
-    setSelectedCoupon(null);
-  }, []);
+  const { selectedCoupon, selectCoupon, resetSelectedCoupon } = useSelectedCoupon();
 
   const onAddCoupon = useCallback(
     (newCoupon: Coupon) => {
@@ -36,11 +33,11 @@ export function useCouponService() {
     (couponCode: string) => {
       deleteCoupon(couponCode);
       if (selectedCoupon?.code === couponCode) {
-        onResetSelectedCoupon();
+        resetSelectedCoupon();
       }
       addNotification('쿠폰이 삭제되었습니다.', 'success');
     },
-    [selectedCoupon, addNotification, deleteCoupon, onResetSelectedCoupon]
+    [selectedCoupon, addNotification, deleteCoupon, resetSelectedCoupon]
   );
 
   const onApplyCoupon = useCallback(
@@ -55,18 +52,11 @@ export function useCouponService() {
         return;
       }
 
-      setSelectedCoupon(coupon);
+      selectCoupon(coupon);
       addNotification('쿠폰이 적용되었습니다.', 'success');
     },
-    [selectedCoupon, addNotification]
+    [selectedCoupon, addNotification, selectCoupon]
   );
 
-  return {
-    coupons,
-    selectedCoupon,
-    onAddCoupon,
-    onDeleteCoupon,
-    onApplyCoupon,
-    onResetSelectedCoupon,
-  };
+  return { coupons, selectedCoupon, onAddCoupon, onDeleteCoupon, onApplyCoupon };
 }

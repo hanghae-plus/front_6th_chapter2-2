@@ -2,19 +2,16 @@ import { useAtomValue } from 'jotai';
 
 import type { Coupon } from '../../../types';
 import { couponsAtom } from '../../entities/coupon';
+import { useSelectedCoupon } from '../../features/coupon-management';
 
 interface CouponSelectorProps {
-  selectedCoupon: Coupon | null;
   onApplyCoupon: (coupon: Coupon) => void;
-  onResetSelectedCoupon: () => void;
 }
 
-export function CouponSelector({
-  selectedCoupon,
-  onApplyCoupon,
-  onResetSelectedCoupon,
-}: CouponSelectorProps) {
+export function CouponSelector({ onApplyCoupon }: CouponSelectorProps) {
   const coupons = useAtomValue(couponsAtom);
+  const { selectedCoupon, resetSelectedCoupon } = useSelectedCoupon();
+
   const hasCoupons = coupons.length > 0;
 
   return (
@@ -30,7 +27,7 @@ export function CouponSelector({
           onChange={(e) => {
             const coupon = coupons.find((c) => c.code === e.target.value);
             if (coupon) onApplyCoupon(coupon);
-            else onResetSelectedCoupon();
+            else resetSelectedCoupon();
           }}
         >
           <option value=''>쿠폰 선택</option>

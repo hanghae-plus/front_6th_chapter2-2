@@ -10,19 +10,21 @@ import {
 } from '../entities/cart';
 import { addNotificationAtom } from '../entities/notification';
 import { getRemainingStock, type ProductWithUI } from '../entities/product';
+import { useSelectedCoupon } from '../features/coupon-management';
 
 interface UseCartServiceProps {
   products: ProductWithUI[];
-  onResetSelectedCoupon: () => void;
 }
 
-export function useCartService({ products, onResetSelectedCoupon }: UseCartServiceProps) {
+export function useCartService({ products }: UseCartServiceProps) {
   const cart = useAtomValue(cartAtom);
   const addToCart = useSetAtom(addToCartAtom);
   const updateToCart = useSetAtom(updateToCartAtom);
   const removeFromCart = useSetAtom(removeFromCartAtom);
   const resetCart = useSetAtom(resetCartAtom);
   const addNotification = useSetAtom(addNotificationAtom);
+
+  const { resetSelectedCoupon } = useSelectedCoupon();
 
   const handleAddToCart = useCallback(
     (product: ProductWithUI) => {
@@ -77,8 +79,8 @@ export function useCartService({ products, onResetSelectedCoupon }: UseCartServi
     const orderNumber = `ORD-${Date.now()}`;
     addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
     resetCart();
-    onResetSelectedCoupon();
-  }, [addNotification, resetCart, onResetSelectedCoupon]);
+    resetSelectedCoupon();
+  }, [addNotification, resetCart, resetSelectedCoupon]);
 
   return {
     cart,
