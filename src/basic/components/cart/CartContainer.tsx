@@ -3,8 +3,7 @@ import { CartSummary } from "./CartSummary";
 import { CartCoupon } from "./CartCoupon";
 import CartEmpty from "./CartEmpty";
 import { CartItem as CartItemType, Coupon } from "../../../types";
-import { calculateItemDiscount, calculateCartTotalAmount, calculateFinalTotal } from "../../utils/calculations";
-import { calculateItemTotalWithDiscount } from "../../utils/discounts";
+import { calculateItemTotal, calculateCartTotal, calculateItemDiscount } from "../../models/cart";
 
 // 장바구니 아이콘 컴포넌트
 const CartIcon = () => (
@@ -34,16 +33,11 @@ export const CartContainer = ({
   onRemoveCoupon,
   onCompleteOrder,
 }: CartContainerProps) => {
-  // 여기서 직접 계산
-  const calculateItemTotal = (item: CartItemType): number => {
-    return calculateItemTotalWithDiscount(item, cart);
-  };
-
-  const cartTotals = calculateCartTotalAmount(cart, calculateItemTotal);
-  const finalTotals = calculateFinalTotal(cartTotals, selectedCoupon);
+  // 새로운 models의 함수들 사용
+  const cartTotals = calculateCartTotal(cart, selectedCoupon);
 
   const cartItemsWithDiscount = cart.map((item) => {
-    const itemTotal = calculateItemTotal(item);
+    const itemTotal = calculateItemTotal(item, cart);
     const { hasDiscount, discountRate } = calculateItemDiscount(item, itemTotal);
 
     return {
@@ -83,13 +77,13 @@ export const CartContainer = ({
       <CartCoupon
         coupons={coupons}
         selectedCoupon={selectedCoupon}
-        onApplyCoupon={(coupon) => onApplyCoupon(coupon, finalTotals.totalAfterDiscount)}
+        onApplyCoupon={(coupon) => onApplyCoupon(coupon, cartTotals.totalAfterDiscount)}
         onRemoveCoupon={onRemoveCoupon}
       />
 
       <CartSummary
-        totalBeforeDiscount={finalTotals.totalBeforeDiscount}
-        totalAfterDiscount={finalTotals.totalAfterDiscount}
+        totalBeforeDiscount={cartTotals.totalBeforeDiscount}
+        totalAfterDiscount={cartTotals.totalAfterDiscount}
         onCompleteOrder={onCompleteOrder}
       />
     </div>

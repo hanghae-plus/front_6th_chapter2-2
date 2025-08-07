@@ -3,7 +3,7 @@ import { CartItem, Product } from "../../types";
 import { useLocalStorage } from "./useLocalStorage";
 import { InsufficientStockError, StockExceededError } from "../errors/Cart.error";
 import { ProductNotFoundError } from "../errors/Product.error";
-import { calculateTotalItemCount } from "../utils/calculations";
+import { calculateTotalItemCount, getRemainingStock as getRemainingStockModel } from "../models/cart";
 import { withTryNotifySuccess } from "../utils/withNotify";
 import { useAutoCallback } from "../utils/hooks/useAutoCallbak";
 
@@ -27,9 +27,7 @@ export const useCart = (addNotification?: (message: string, type?: "error" | "su
 
   const getRemainingStock = useCallback(
     (product: Product): number => {
-      const cartItem = cart.find((item) => item.product.id === product.id);
-      const remaining = product.stock - (cartItem?.quantity || 0);
-      return remaining;
+      return getRemainingStockModel(product, cart);
     },
     [cart]
   );

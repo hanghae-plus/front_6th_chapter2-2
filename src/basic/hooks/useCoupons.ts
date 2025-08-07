@@ -4,6 +4,7 @@ import { useLocalStorage } from "./useLocalStorage";
 import { DuplicateCouponCodeError, CouponUsageConditionError } from "../errors/Coupon.error";
 import { useAutoCallback } from "../utils/hooks/useAutoCallbak";
 import { withTryNotifySuccess } from "../utils/withNotify";
+import { isDuplicateCoupon, checkCouponUsageConditions } from "../models/coupon";
 
 const initialCoupons: Coupon[] = [
   {
@@ -27,8 +28,7 @@ export const useCoupons = (addNotification?: (message: string, type?: "error" | 
 
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {
-      const existingCoupon = coupons.find((c) => c.code === newCoupon.code);
-      if (existingCoupon) {
+      if (isDuplicateCoupon(coupons, newCoupon)) {
         throw new DuplicateCouponCodeError(newCoupon.code);
       }
       setCoupons((prev) => [...prev, newCoupon]);
@@ -47,7 +47,8 @@ export const useCoupons = (addNotification?: (message: string, type?: "error" | 
   );
 
   const applyCoupon = useCallback((coupon: Coupon, currentTotal: number) => {
-    if (currentTotal < 10000 && coupon.discountType === "percentage") {
+    const { canUse, reason } = checkCouponUsageConditions(currentTotal, coupon);
+    if (!canUse) {
       throw new CouponUsageConditionError(coupon.discountType, 10000);
     }
     setSelectedCoupon(coupon);

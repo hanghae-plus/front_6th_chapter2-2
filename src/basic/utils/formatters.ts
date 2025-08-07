@@ -1,4 +1,6 @@
 import { Product, CartItem } from "../../types";
+import { getRemainingStock as getRemainingStockModel } from "../models/cart";
+import { formatDiscountRate as formatDiscountRateModel } from "../models/discount";
 
 /**
  * 기본 가격 포맷팅 (고객용)
@@ -23,7 +25,7 @@ export const formatPriceWithStock = (
   cart: CartItem[],
   isAdmin: boolean = false
 ): string => {
-  if (getRemainingStock(product, cart) <= 0) {
+  if (getRemainingStockModel(product, cart) <= 0) {
     return "SOLD OUT";
   }
 
@@ -46,19 +48,17 @@ export const formatPriceWithRemainingStock = (
 };
 
 /**
- * 남은 재고 계산
+ * 남은 재고 계산 (models에서 가져온 함수 사용)
  */
 export const getRemainingStock = (product: Product, cart: CartItem[]): number => {
-  const cartItem = cart.find((item) => item.product.id === product.id);
-  const remaining = product.stock - (cartItem?.quantity || 0);
-  return remaining;
+  return getRemainingStockModel(product, cart);
 };
 
 /**
- * 할인율을 백분율로 포맷팅
+ * 할인율을 백분율로 포맷팅 (models에서 가져온 함수 사용)
  */
 export const formatDiscountRate = (rate: number): string => {
-  return `${Math.round(rate * 100)}%`;
+  return formatDiscountRateModel(rate);
 };
 
 /**
