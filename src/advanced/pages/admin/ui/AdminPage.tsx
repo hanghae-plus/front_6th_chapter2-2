@@ -28,13 +28,7 @@ export function AdminPage({ onChangeCartPage }: AdminPageProps) {
             handleClickCouponTab={() => setActiveTab('coupons')}
           />
 
-          {(() => {
-            if (activeTab === 'products') {
-              return <ProductTab />;
-            }
-
-            return <CouponTab />;
-          })()}
+          {activeTab === 'products' ? <ProductTab /> : <CouponTab />}
         </div>
       </main>
     </>
