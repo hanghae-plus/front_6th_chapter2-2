@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Notification } from '../shared/types';
+import type { Notification } from '../shared/types';
 import { NOTIFICATION_DURATION } from '../shared/constants/toast';
 
 /**
