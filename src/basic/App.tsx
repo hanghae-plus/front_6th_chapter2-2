@@ -10,6 +10,7 @@ import {
   getMaxApplicableDiscount,
   getRemainingStock,
 } from "./models/cart";
+import { useSearch } from "./hooks/useSearch";
 
 interface Notification {
   id: string;
@@ -34,8 +35,9 @@ const App = () => {
     "products"
   );
   const [showProductForm, setShowProductForm] = useState(false);
+
   const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+  const { searchResult } = useSearch(searchTerm, products);
 
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [productForm, setProductForm] = useState({
@@ -86,17 +88,6 @@ const App = () => {
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);
     setTotalItemCount(count);
   }, [cart]);
-
-  useEffect(() => {
-    localStorage.setItem("coupons", JSON.stringify(coupons));
-  }, [coupons]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
 
   const addToCartTask = useCallback(
     (product: ProductWithUI) => {
@@ -251,19 +242,6 @@ const App = () => {
   };
 
   const totals = calculateCartTotal(cart, selectedCoupon);
-
-  const filteredProducts = debouncedSearchTerm
-    ? products.filter(
-        (product) =>
-          product.name
-            .toLowerCase()
-            .includes(debouncedSearchTerm.toLowerCase()) ||
-          (product.description &&
-            product.description
-              .toLowerCase()
-              .includes(debouncedSearchTerm.toLowerCase()))
-      )
-    : products;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -975,7 +953,7 @@ const App = () => {
                     총 {products.length}개 상품
                   </div>
                 </div>
-                {filteredProducts.length === 0 ? (
+                {searchResult.length === 0 ? (
                   <div className="text-center py-12">
                     <p className="text-gray-500">
                       "{debouncedSearchTerm}"에 대한 검색 결과가 없습니다.
@@ -983,7 +961,7 @@ const App = () => {
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {filteredProducts.map((product) => {
+                    {searchResult.map((product) => {
                       const remainingStock = getRemainingStock(product, cart);
 
                       return (
