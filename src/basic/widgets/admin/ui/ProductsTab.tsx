@@ -9,10 +9,6 @@ import { EditProductForm } from "../../../features/edit-product/ui/EditProductFo
 import { useProductStorage } from "../../../entities/product/hooks/useProductStorage";
 import { useGlobalNotification } from "../../../entities/notification/hooks/useGlobalNotification";
 
-interface ProductWithDisplayInfo extends ProductWithUI {
-  displayedPrice: string;
-}
-
 export function ProductsTab() {
   const productStorage = useProductStorage();
   const { addNotification } = useGlobalNotification();
@@ -65,11 +61,10 @@ export function ProductsTab() {
     return `${formattedPrice}원`;
   };
 
-  const productsWithDisplayInfo: ProductWithDisplayInfo[] =
-    productStorage.products.map((product) => ({
-      ...product,
-      displayedPrice: displayPrice(product),
-    }));
+  const productsWithDisplayInfo = productStorage.products.map((product) => ({
+    ...product,
+    displayedPrice: displayPrice(product),
+  }));
 
   return (
     <section className="bg-white rounded-lg border border-gray-200">
