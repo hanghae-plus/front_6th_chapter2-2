@@ -8,7 +8,8 @@ import { useAutoCallback } from "./utils/hooks/useAutoCallbak";
 
 // utils
 import { useSearch } from "./utils/hooks/useSearch";
-import { calculateFinalTotal } from "./utils/calculations";
+import { calculateCartTotalAmount, calculateFinalTotal } from "./utils/calculations";
+import { calculateItemTotalWithDiscount } from "./utils/discounts";
 import { withTryNotifySuccess, withTryNotifyError } from "./utils/withNotify";
 
 // components
@@ -29,7 +30,6 @@ const App = () => {
     cart,
     totalItemCount,
     calculateItemTotal,
-    calculateCartTotal,
     addToCart: addToCartHook,
     removeFromCart,
     updateQuantity,
@@ -44,7 +44,7 @@ const App = () => {
   // 로컬 UI 상태
   const [isAdmin, setIsAdmin] = useState(false);
 
-  const cartTotals = calculateCartTotal();
+  const cartTotals = calculateCartTotalAmount(cart, calculateItemTotal);
 
   // 쿠폰 적용된 총합 계산
   const getFinalTotal = useAutoCallback(() => calculateFinalTotal(cartTotals, selectedCoupon));
@@ -63,8 +63,8 @@ const App = () => {
   const handleApplyCoupon = useAutoCallback(
     withTryNotifySuccess(
       (coupon: Coupon) => {
-        const currentTotal = calculateCartTotal().totalAfterDiscount;
-        applyCoupon(coupon, currentTotal);
+        const currentTotal = calculateCartTotalAmount(cart, calculateItemTotal);
+        applyCoupon(coupon, currentTotal.totalAfterDiscount);
       },
       "쿠폰이 적용되었습니다.",
       addNotification

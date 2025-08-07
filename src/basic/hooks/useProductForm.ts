@@ -51,16 +51,18 @@ export const useProductForm = () => {
     ) => {
       e.preventDefault();
 
+      const productData = {
+        ...productForm,
+        discounts: productForm.discounts,
+      };
+
       // 수정
       if (editingProduct && editingProduct !== "new") {
-        onUpdate(editingProduct, productForm);
+        onUpdate(editingProduct, productData);
       }
       // 추가
       else {
-        onAdd({
-          ...productForm,
-          discounts: productForm.discounts,
-        });
+        onAdd(productData);
       }
 
       // 폼 리셋

@@ -22,14 +22,6 @@ export class StockExceededError extends CartError {
   }
 }
 
-// 상품을 찾을 수 없는 에러
-export class ProductNotFoundError extends CartError {
-  constructor(productId: string) {
-    super(`상품을 찾을 수 없습니다: ${productId}`);
-    this.name = "ProductNotFoundError";
-  }
-}
-
 // 장바구니가 비어있는 에러
 export class EmptyCartError extends CartError {
   constructor() {

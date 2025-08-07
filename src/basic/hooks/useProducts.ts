@@ -3,6 +3,7 @@ import { useLocalStorage } from "./useLocalStorage";
 
 import { createStore } from "../utils/createStore";
 import { Product } from "../../types";
+import { ProductNotFoundError, DuplicateProductNameError, ProductValidationError } from "../errors/Product.error";
 
 // 초기 데이터
 const initialProducts: Product[] = [
@@ -43,23 +44,76 @@ export const useProducts = () => {
   const [products, setProducts] = useLocalStorage<Product[]>("products", initialProducts);
 
   // 상품 추가
-  const addProduct = useCallback((newProduct: Omit<Product, "id">) => {
-    const product: Product = {
-      ...newProduct,
-      id: `p${Date.now()}`,
-    };
-    setProducts((prev) => [...prev, product]);
-  }, []);
+  const addProduct = useCallback(
+    (newProduct: Omit<Product, "id">) => {
+      // 상품명 중복 검사
+      const existingProduct = products.find((p) => p.name === newProduct.name);
+      if (existingProduct) {
+        throw new DuplicateProductNameError(newProduct.name);
+      }
+
+      // 상품 유효성 검사
+      if (newProduct.price < 0) {
+        throw new ProductValidationError("상품 가격은 0원 이상이어야 합니다.");
+      }
+
+      if (newProduct.stock < 0) {
+        throw new ProductValidationError("상품 재고는 0개 이상이어야 합니다.");
+      }
+
+      const product: Product = {
+        ...newProduct,
+        id: `p${Date.now()}`,
+      };
+      setProducts((prev) => [...prev, product]);
+    },
+    [products]
+  );
 
   // 상품 수정
-  const updateProduct = useCallback((productId: string, updates: Partial<Product>) => {
-    setProducts((prev) => prev.map((product) => (product.id === productId ? { ...product, ...updates } : product)));
-  }, []);
+  const updateProduct = useCallback(
+    (productId: string, updates: Partial<Product>) => {
+      // 상품 존재 여부 확인
+      const existingProduct = products.find((p) => p.id === productId);
+      if (!existingProduct) {
+        throw new ProductNotFoundError(productId);
+      }
+
+      // 상품명 중복 검사 (다른 상품과 중복되지 않도록)
+      if (updates.name) {
+        const duplicateProduct = products.find((p) => p.name === updates.name && p.id !== productId);
+        if (duplicateProduct) {
+          throw new DuplicateProductNameError(updates.name);
+        }
+      }
+
+      // 유효성 검사
+      if (updates.price !== undefined && updates.price < 0) {
+        throw new ProductValidationError("상품 가격은 0원 이상이어야 합니다.");
+      }
+
+      if (updates.stock !== undefined && updates.stock < 0) {
+        throw new ProductValidationError("상품 재고는 0개 이상이어야 합니다.");
+      }
+
+      setProducts((prev) => prev.map((product) => (product.id === productId ? { ...product, ...updates } : product)));
+    },
+    [products]
+  );
 
   // 상품 삭제
-  const deleteProduct = useCallback((productId: string) => {
-    setProducts((prev) => prev.filter((p) => p.id !== productId));
-  }, []);
+  const deleteProduct = useCallback(
+    (productId: string) => {
+      // 상품 존재 여부 확인
+      const existingProduct = products.find((p) => p.id === productId);
+      if (!existingProduct) {
+        throw new ProductNotFoundError(productId);
+      }
+
+      setProducts((prev) => prev.filter((p) => p.id !== productId));
+    },
+    [products]
+  );
 
   return {
     products,
