@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-import { type ProductWithUI } from '../entities/product';
-import { useForm } from '../shared/hooks';
+import { type ProductWithUI } from '../../../entities/product';
+import { useForm } from '../../../shared/hooks';
 
 const initialProductForm: Omit<ProductWithUI, 'id'> = {
   name: '',
@@ -11,12 +11,7 @@ const initialProductForm: Omit<ProductWithUI, 'id'> = {
   discounts: [],
 };
 
-interface UseProductFormProps {
-  onAddProduct: (product: Omit<ProductWithUI, 'id'>) => void;
-  onUpdateProduct: (productId: string, product: Omit<ProductWithUI, 'id'>) => void;
-}
-
-export function useProductForm({ onAddProduct, onUpdateProduct }: UseProductFormProps) {
+export function useProductForm() {
   const [showProductForm, setShowProductForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [productFormData, updateProductFormData, resetProductFormData] =
@@ -26,19 +21,6 @@ export function useProductForm({ onAddProduct, onUpdateProduct }: UseProductForm
     setEditingProduct(product.id);
     updateProductFormData(product);
     setShowProductForm(true);
-  };
-
-  const handleProductSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editingProduct && editingProduct !== 'new') {
-      onUpdateProduct(editingProduct, productFormData);
-      setEditingProduct(null);
-    } else {
-      onAddProduct(productFormData);
-    }
-    resetProductFormData();
-    setEditingProduct(null);
-    setShowProductForm(false);
   };
 
   const handleShowProductForm = () => {
@@ -59,7 +41,6 @@ export function useProductForm({ onAddProduct, onUpdateProduct }: UseProductForm
     productFormData,
     updateProductFormData,
     startEditProduct,
-    handleProductSubmit,
     handleShowProductForm,
     handleCancelProductForm,
   };

@@ -1,7 +1,6 @@
 import { ProductAccordion } from './ProductAccordion';
 import { ProductForm } from './ProductForm';
-import { useProductForm } from '../../hooks/useProductForm';
-import { useProductService } from '../../hooks/useProductService';
+import { useProductForm, useProductService } from '../../features/product-management';
 
 export function ProductTab() {
   const { onAddProduct, onUpdateProduct, onDeleteProduct } = useProductService();
@@ -12,13 +11,20 @@ export function ProductTab() {
     productFormData,
     updateProductFormData,
     startEditProduct,
-    handleProductSubmit,
     handleShowProductForm,
     handleCancelProductForm,
-  } = useProductForm({
-    onAddProduct,
-    onUpdateProduct,
-  });
+  } = useProductForm();
+
+  const handleProductSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editingProduct && editingProduct !== 'new') {
+      onUpdateProduct(editingProduct, productFormData);
+    } else {
+      onAddProduct(productFormData);
+    }
+
+    handleCancelProductForm();
+  };
 
   return (
     <section className='bg-white rounded-lg border border-gray-200'>
