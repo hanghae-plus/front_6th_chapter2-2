@@ -1,10 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { CartItem, Product } from "../../types";
-import { getMaxApplicableDiscount, calculateItemTotalWithDiscount } from "../utils/discounts";
 import { useLocalStorage } from "./useLocalStorage";
 import { InsufficientStockError, StockExceededError } from "../errors/Cart.error";
 import { ProductNotFoundError } from "../errors/Product.error";
-import { calculateCartTotalAmount, calculateTotalItemCount } from "../utils/calculations";
+import { calculateTotalItemCount } from "../utils/calculations";
 
 const initCart = () => {
   const saved = localStorage.getItem("cart");
@@ -29,13 +28,6 @@ export const useCart = () => {
       const cartItem = cart.find((item) => item.product.id === product.id);
       const remaining = product.stock - (cartItem?.quantity || 0);
       return remaining;
-    },
-    [cart]
-  );
-
-  const calculateItemTotal = useCallback(
-    (item: CartItem): number => {
-      return calculateItemTotalWithDiscount(item, cart);
     },
     [cart]
   );
@@ -102,7 +94,6 @@ export const useCart = () => {
     cart,
     totalItemCount,
     getRemainingStock,
-    calculateItemTotal,
     addToCart,
     removeFromCart,
     updateQuantity,

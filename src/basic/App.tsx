@@ -11,6 +11,7 @@ import { useSearch } from "./utils/hooks/useSearch";
 import { calculateCartTotalAmount, calculateFinalTotal } from "./utils/calculations";
 import { calculateItemTotalWithDiscount } from "./utils/discounts";
 import { withTryNotifySuccess, withTryNotifyError } from "./utils/withNotify";
+import { useCallback } from "react";
 
 // components
 import { Header } from "./components/ui/header/Header";
@@ -21,20 +22,12 @@ import AdminPage from "./pages/Admin/AdminPage";
 import ShopPage from "./pages/Main/ShopPage/ShopPage";
 
 // type
-import { Coupon, Product } from "../types";
+import { Coupon, Product, CartItem } from "../types";
 
 const App = () => {
   // 커스텀 훅 사용
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
-  const {
-    cart,
-    totalItemCount,
-    calculateItemTotal,
-    addToCart: addToCartHook,
-    removeFromCart,
-    updateQuantity,
-    clearCart,
-  } = useCart();
+  const { cart, totalItemCount, addToCart: addToCartHook, removeFromCart, updateQuantity, clearCart } = useCart();
   const { coupons, selectedCoupon, addCoupon, deleteCoupon, applyCoupon, setSelectedCoupon } = useCoupons();
   const { notifications, addNotification, removeNotification } = useNotification();
 
@@ -43,6 +36,11 @@ const App = () => {
 
   // 로컬 UI 상태
   const [isAdmin, setIsAdmin] = useState(false);
+
+  // calculateItemTotal 함수를 App.tsx에서 생성
+  const calculateItemTotal = (item: CartItem): number => {
+    return calculateItemTotalWithDiscount(item, cart);
+  };
 
   const cartTotals = calculateCartTotalAmount(cart, calculateItemTotal);
 
