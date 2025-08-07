@@ -8,7 +8,7 @@ export function useCart(products: ProductWithUI[] = []) {
   const [cart, setCart] = useLocalStorage<CartItem[]>('cart', []);
 
   // selectedCoupon 상태 관리
-  const [selectedCoupon, setSelectedCoupon] = useLocalStorage<Coupon | null>('selectedCoupon', null);
+  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
   // totalItemCount 상태 관리
   const [totalItemCount, setTotalItemCount] = useState(0);
@@ -130,13 +130,13 @@ export function useCart(products: ProductWithUI[] = []) {
     onNotification?.(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
     setCart([]);
     setSelectedCoupon(null);
-  }, [setCart, setSelectedCoupon]);
+  }, [setCart]);
 
   // clearCart 함수
   const clearCart = useCallback(() => {
     setCart([]);
     setSelectedCoupon(null);
-  }, [setCart, setSelectedCoupon]);
+  }, [setCart]);
 
   return {
     cart,
