@@ -29,17 +29,17 @@ export function CartPage({
   const cart = useCart();
   const { addNotification } = useGlobalNotification();
 
-  const addToCartFeature = useAddToCart({
+  const { addToCart, getProductRemainingStock } = useAddToCart({
     cart: cart.cart,
     onAddItem: cart.addItem,
   });
 
-  const updateQuantityFeature = useUpdateCartQuantity({
+  const { updateQuantity } = useUpdateCartQuantity({
     products,
     onUpdateQuantity: cart.updateItemQuantity,
   });
 
-  const couponFeature = useApplyCoupon(cart.cart);
+  const couponActions = useApplyCoupon(cart.cart);
 
   const displayPrice = (product: Product) => {
     const stockStatus = getStockDisplay(product.stock, 0);
@@ -50,10 +50,7 @@ export function CartPage({
   };
 
   const { totalAfterDiscount, totalBeforeDiscount } =
-    couponFeature.getCartSummaryWithCoupon();
-
-  const { addToCart, getProductRemainingStock } = addToCartFeature;
-  const { updateQuantity } = updateQuantityFeature;
+    couponActions.getCartSummaryWithCoupon();
 
   const removeFromCart = useCallback(
     (productId: string) => {
@@ -69,8 +66,8 @@ export function CartPage({
       NotificationVariant.SUCCESS
     );
     cart.clearCart();
-    couponFeature.clearCoupon();
-  }, [addNotification, cart, couponFeature]);
+    couponActions.clearCoupon();
+  }, [addNotification, cart, couponActions]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -104,11 +101,11 @@ export function CartPage({
           {cart.cart.length > 0 && (
             <>
               <CouponSelector
-                coupons={couponFeature.coupons}
-                selectedCoupon={couponFeature.selectedCoupon}
+                coupons={couponActions.coupons}
+                selectedCoupon={couponActions.selectedCoupon}
                 onCouponSelect={(coupon) => {
-                  if (coupon) couponFeature.applyCoupon(coupon);
-                  else couponFeature.removeCoupon();
+                  if (coupon) couponActions.applyCoupon(coupon);
+                  else couponActions.removeCoupon();
                 }}
               />
 
