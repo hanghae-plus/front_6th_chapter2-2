@@ -1,5 +1,4 @@
 import { Dispatch, SetStateAction } from "react";
-import { CartItem } from "../../../types";
 import { ShoppingCartIcon } from "../icons";
 import { Search } from "../ui/Search";
 
@@ -22,12 +21,6 @@ function Header({
   setIsAdmin,
   totalItemCount,
 }: HeaderProps) {
-  const cart = localStorage.getItem("cart");
-  let cartItems: CartItem[] = [];
-  if (cart) {
-    cartItems = JSON.parse(cart);
-  }
-
   return (
     <header className="bg-white shadow-sm sticky top-0 z-40 border-b">
       <div className="max-w-7xl mx-auto px-4">
@@ -53,7 +46,7 @@ function Header({
             {!isAdmin && (
               <div className="relative">
                 <ShoppingCartIcon />
-                {cartItems.length > 0 && (
+                {totalItemCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                     {totalItemCount}
                   </span>
