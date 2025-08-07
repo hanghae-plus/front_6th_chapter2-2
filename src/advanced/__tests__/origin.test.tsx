@@ -1,8 +1,17 @@
 // @ts-nocheck
-import { render, screen, fireEvent, within, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { Provider } from 'jotai';
 import { vi } from 'vitest';
-import App from '../App';
+import BaseApp from '../App';
 import '../../setupTests';
+
+const App = () => {
+  return (
+    <Provider>
+      <BaseApp />
+    </Provider>
+  );
+};
 
 describe('쇼핑몰 앱 통합 테스트', () => {
   beforeEach(() => {
