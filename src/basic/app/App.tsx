@@ -17,45 +17,24 @@ import {
   type ProductWithUI,
   useProductActions
 } from "../domains/product";
-import { NotificationList, useNotifications } from "../shared";
+import { NotificationList, useLocalStorageState, useNotifications } from "../shared";
 import { Header } from "./components";
 import { AdminPage, CartPage } from "./pages";
 
 export function App() {
-  const [products, setProducts] = useState<ProductWithUI[]>(() => {
-    const saved = localStorage.getItem("products");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return INITIAL_PRODUCTS;
-      }
-    }
-    return INITIAL_PRODUCTS;
+  const [products, setProducts] = useLocalStorageState<ProductWithUI[]>({
+    key: "products",
+    initialState: INITIAL_PRODUCTS
   });
 
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem("cart");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return [];
-      }
-    }
-    return [];
+  const [cart, setCart] = useLocalStorageState<CartItem[]>({
+    key: "cart",
+    initialState: []
   });
 
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem("coupons");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return INITIAL_COUPONS;
-      }
-    }
-    return INITIAL_COUPONS;
+  const [coupons, setCoupons] = useLocalStorageState<Coupon[]>({
+    key: "coupons",
+    initialState: INITIAL_COUPONS
   });
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
@@ -135,22 +114,6 @@ export function App() {
   useEffect(() => {
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);
     setTotalItemCount(count);
-  }, [cart]);
-
-  useEffect(() => {
-    localStorage.setItem("products", JSON.stringify(products));
-  }, [products]);
-
-  useEffect(() => {
-    localStorage.setItem("coupons", JSON.stringify(coupons));
-  }, [coupons]);
-
-  useEffect(() => {
-    if (cart.length > 0) {
-      localStorage.setItem("cart", JSON.stringify(cart));
-    } else {
-      localStorage.removeItem("cart");
-    }
   }, [cart]);
 
   useEffect(() => {
