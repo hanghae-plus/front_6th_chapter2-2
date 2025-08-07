@@ -1,11 +1,23 @@
 import * as React from "react";
 
 import { CartIcon } from "@/basic/shared/components/icons/CartIcon";
+import CloseIcon from "@/basic/shared/components/icons/CloseIcon";
+import ImageIcon from "@/basic/shared/components/icons/ImageIcon";
 import { MinusIcon } from "@/basic/shared/components/icons/MinusIcon";
+import PlusIcon from "@/basic/shared/components/icons/PlusIcon";
 import { ShopIcon } from "@/basic/shared/components/icons/ShopIcon";
 import { ShopThin } from "@/basic/shared/components/icons/ShopThin";
+import TrashIcon from "@/basic/shared/components/icons/TrashIcon";
 
-type IconType = "cart" | "shop" | "shopThin" | "minus";
+type IconType =
+  | "cart"
+  | "shop"
+  | "shopThin"
+  | "minus"
+  | "image"
+  | "close"
+  | "plus"
+  | "trash";
 
 export interface IconProps {
   size?: number;
@@ -60,6 +72,10 @@ const ICONS: Record<IconType, React.FC<IconProps>> = {
   shop: ShopIcon,
   shopThin: ShopThin,
   minus: MinusIcon,
+  image: ImageIcon,
+  close: CloseIcon,
+  plus: PlusIcon,
+  trash: TrashIcon,
 } as const;
 
 export default Icon;

@@ -4,6 +4,8 @@ import { CartItem as CartItemType } from "@/basic/features/cart/types/cart.type"
 import { Coupon } from "@/basic/features/coupon/types/coupon.type";
 import { AddNotification } from "@/basic/features/notification/types/notification";
 import Icon from "@/basic/shared/components/icons/Icon";
+import { roundAmount } from "@/basic/shared/utils/calculation.util";
+import { formatPrice } from "@/basic/shared/utils/format.util";
 
 interface CartItemProps {
   item: CartItemType;
@@ -33,18 +35,18 @@ export default function CartItem({
   };
 
   const {
-    product: { name, price, id },
+    product: { name, id },
     quantity,
   } = item;
 
-  const itemTotal = cartModel.calculateItemTotal(item, cart);
+  const itemTotal = roundAmount(cartModel.calculateItemTotal(item, cart));
 
   const originalPrice = item.product.price * item.quantity;
 
   const hasDiscount = itemTotal < originalPrice;
 
   const discountRate = hasDiscount
-    ? Math.round((1 - itemTotal / originalPrice) * 100)
+    ? roundAmount((1 - itemTotal / originalPrice) * 100)
     : 0;
 
   return (
@@ -55,20 +57,7 @@ export default function CartItem({
           onClick={() => removeFromCart(id)}
           className="text-gray-400 hover:text-red-500 ml-2"
         >
-          <Icon type="minus" size={4} color="text-gray-400" />
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          <Icon type="close" size={4} color="text-gray-400" />
         </button>
       </div>
       <div className="flex items-center justify-between">
@@ -96,7 +85,7 @@ export default function CartItem({
             </span>
           )}
           <p className="text-sm font-medium text-gray-900">
-            {Math.round(itemTotal).toLocaleString()}원
+            {formatPrice.unit(itemTotal)}
           </p>
         </div>
       </div>

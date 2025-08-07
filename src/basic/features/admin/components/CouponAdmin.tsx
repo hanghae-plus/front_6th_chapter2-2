@@ -6,9 +6,11 @@ import { useCoupon } from "@/basic/features/coupon/hooks/useCoupon";
 import { Coupon } from "@/basic/features/coupon/types/coupon.type";
 import { DiscountType } from "@/basic/features/discount/types/discount.type";
 import { AddNotification } from "@/basic/features/notification/types/notification";
+import Icon from "@/basic/shared/components/icons/Icon";
 import { DEFAULTS } from "@/basic/shared/constants/defaults";
 import { NOTIFICATION } from "@/basic/shared/constants/notification";
 import { VALIDATION } from "@/basic/shared/constants/validation";
+import { regexUtils } from "@/basic/shared/utils/regex.util";
 
 interface CouponAdminProps {
   addNotification: AddNotification;
@@ -75,19 +77,7 @@ export default function CouponAdmin({
                     onClick={() => deleteCoupon(coupon.code)}
                     className="text-gray-400 hover:text-red-600 transition-colors"
                   >
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                      />
-                    </svg>
+                    <Icon type="trash" size={5} color="currentColor" />
                   </button>
                 </div>
               </div>
@@ -98,19 +88,7 @@ export default function CouponAdmin({
                 onClick={() => setShowCouponForm(!showCouponForm)}
                 className="text-gray-400 hover:text-gray-600 flex flex-col items-center"
               >
-                <svg
-                  className="w-8 h-8"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 4v16m8-8H4"
-                  />
-                </svg>
+                <Icon type="plus" size={8} color="currentColor" />
                 <p className="mt-2 text-sm font-medium">새 쿠폰 추가</p>
               </button>
             </div>
@@ -192,7 +170,7 @@ export default function CouponAdmin({
                       }
                       onChange={(e) => {
                         const value = e.target.value;
-                        if (value === "" || /^\d+$/.test(value)) {
+                        if (value === "" || regexUtils.isNumeric(value)) {
                           setCouponForm({
                             ...couponForm,
                             discountValue:

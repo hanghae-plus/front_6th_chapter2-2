@@ -1,3 +1,5 @@
+import { useCallback } from "react";
+
 import { useCart } from "@/basic/features/cart/hooks/useCart";
 import { cartModel } from "@/basic/features/cart/models/cart.model";
 import { Coupon } from "@/basic/features/coupon/types/coupon.type";
@@ -7,6 +9,7 @@ import { AddNotification } from "@/basic/features/notification/types/notificatio
 import { useProducts } from "@/basic/features/product/hooks/useProducts";
 import { productModel } from "@/basic/features/product/models/product.model";
 import { ProductWithUI } from "@/basic/features/product/types/product";
+import Icon from "@/basic/shared/components/icons/Icon";
 import { PRODUCT } from "@/basic/shared/constants/product";
 
 interface ProductCardProps {
@@ -31,7 +34,9 @@ export default function ProductCard({
     setSelectedCoupon,
   });
 
-  const handleClickAddToCart = () => addToCart(product);
+  const handleClickAddToCart = useCallback(() => {
+    addToCart(product);
+  }, []);
 
   const renderProductDiscount = (discounts: Discount[]) => {
     if (discounts.length === 0) return null;
@@ -66,19 +71,7 @@ export default function ProductCard({
       {/* 상품 이미지 영역 (placeholder) */}
       <div className="relative">
         <div className="aspect-square bg-gray-100 flex items-center justify-center">
-          <svg
-            className="w-24 h-24 text-gray-300"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1}
-              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-            />
-          </svg>
+          <Icon type="image" size={24} color="text-gray-300" />
         </div>
 
         {isRecommended && (
