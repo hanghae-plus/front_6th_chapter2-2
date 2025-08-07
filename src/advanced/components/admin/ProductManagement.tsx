@@ -4,7 +4,7 @@ import { useState } from 'react';
 import ProductForm from './ProductForm';
 import { ProductWithUI, ProductForm as ProductFormType } from '../../../types';
 import { defaultProductForm } from '../../constants';
-import { addProductAtom, updateProductAtom, deleteProductAtom } from '../../store/actions';
+import { deleteProductAtom, addProductAtom, updateProductAtom } from '../../store/actions';
 import { productsAtom, cartAtom } from '../../store/atoms';
 import { formatPrice } from '../../utils/formatters';
 import Badge from '../ui/Badge';
@@ -14,10 +14,11 @@ import Card from '../ui/Card';
 const ProductManagement = () => {
   const [products] = useAtom(productsAtom);
   const [cart] = useAtom(cartAtom);
+  const [, deleteProduct] = useAtom(deleteProductAtom);
   const [, addProduct] = useAtom(addProductAtom);
   const [, updateProduct] = useAtom(updateProductAtom);
-  const [, deleteProduct] = useAtom(deleteProductAtom);
 
+  const [showProductForm, setShowProductForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [productForm, setProductForm] = useState<ProductFormType>(defaultProductForm);
 
@@ -35,6 +36,7 @@ const ProductManagement = () => {
       });
     }
     setProductForm(defaultProductForm);
+    setShowProductForm(false);
   };
 
   const startEditProduct = (product: ProductWithUI) => {
@@ -46,6 +48,7 @@ const ProductManagement = () => {
       stock: product.stock,
       discounts: product.discounts,
     });
+    setShowProductForm(true);
   };
 
   const handleDeleteProduct = (productId: string) => {
@@ -66,6 +69,7 @@ const ProductManagement = () => {
             onClick={() => {
               setEditingProduct('new');
               setProductForm(defaultProductForm);
+              setShowProductForm(true);
             }}
             hasTextSm
             hasRounded
@@ -147,10 +151,10 @@ const ProductManagement = () => {
         editingProduct={editingProduct}
         productForm={productForm}
         setProductForm={setProductForm}
-        setShowProductForm={() => {}}
+        showProductForm={showProductForm}
+        setShowProductForm={setShowProductForm}
         setEditingProduct={setEditingProduct}
         handleProductSubmit={handleProductSubmit}
-        addNotification={() => {}}
       />
     </Card>
   );

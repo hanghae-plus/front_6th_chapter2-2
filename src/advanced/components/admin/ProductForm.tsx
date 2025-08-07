@@ -1,7 +1,10 @@
-import { useState } from 'react';
+import { useAtom } from 'jotai';
+import { useEffect } from 'react';
 
 import { ProductForm as ProductFormType } from '../../../types';
 import { defaultProductForm } from '../../constants';
+import { addNotificationAtom } from '../../store/actions';
+import { productsAtom } from '../../store/atoms';
 import { isValidPrice, isValidStock } from '../../utils/validators';
 import { CloseIcon } from '../icons';
 import Button from '../ui/Button';
@@ -11,34 +14,41 @@ interface ProductFormProps {
   editingProduct: string | null;
   productForm: ProductFormType;
   setProductForm: (form: ProductFormType) => void;
+  showProductForm: boolean;
   setShowProductForm: (show: boolean) => void;
   setEditingProduct: (id: string | null) => void;
   handleProductSubmit: (e: React.FormEvent) => void;
-  addNotification: (message: string, type?: 'success' | 'error' | 'warning') => void;
 }
 
 const ProductForm = ({
   editingProduct,
   productForm,
   setProductForm,
+  showProductForm,
   setShowProductForm,
   setEditingProduct,
   handleProductSubmit,
-  addNotification,
 }: ProductFormProps) => {
-  // showProductForm을 내부에서 관리
-  const [showProductForm, setShowProductFormInternal] = useState(false);
+  const [products] = useAtom(productsAtom);
+  const [, addNotification] = useAtom(addNotificationAtom);
 
-  // 부모의 setShowProductForm과 동기화
-  const handleSetShowProductForm = (show: boolean) => {
-    setShowProductFormInternal(show);
-    setShowProductForm(show);
-  };
-
-  // 부모의 버튼 클릭을 감지하여 폼을 표시
-  if (editingProduct && !showProductForm) {
-    setShowProductFormInternal(true);
-  }
+  // 편집 모드일 때 기존 상품 데이터 불러오기
+  useEffect(() => {
+    if (editingProduct && editingProduct !== 'new') {
+      const product = products.find((p) => p.id === editingProduct);
+      if (product) {
+        setProductForm({
+          name: product.name,
+          description: product.description || '',
+          price: product.price,
+          stock: product.stock,
+          discounts: product.discounts,
+        });
+      }
+    } else if (editingProduct === 'new') {
+      setProductForm(defaultProductForm);
+    }
+  }, [editingProduct, products, setProductForm]);
 
   if (!showProductForm) return null;
 
@@ -86,7 +96,7 @@ const ProductForm = ({
                 if (value === '') {
                   setProductForm({ ...productForm, price: 0 });
                 } else if (!isValidPrice(parseInt(value))) {
-                  addNotification('가격은 0보다 커야 합니다', 'error');
+                  addNotification({ message: '가격은 0보다 커야 합니다', type: 'error' });
                   setProductForm({ ...productForm, price: 0 });
                 }
               }}
@@ -114,10 +124,13 @@ const ProductForm = ({
                   setProductForm({ ...productForm, stock: 0 });
                 } else if (!isValidStock(parseInt(value))) {
                   if (parseInt(value) < 0) {
-                    addNotification('재고는 0보다 커야 합니다', 'error');
+                    addNotification({ message: '재고는 0보다 커야 합니다', type: 'error' });
                     setProductForm({ ...productForm, stock: 0 });
                   } else {
-                    addNotification('재고는 9999개를 초과할 수 없습니다', 'error');
+                    addNotification({
+                      message: '재고는 9999개를 초과할 수 없습니다',
+                      type: 'error',
+                    });
                     setProductForm({ ...productForm, stock: 9999 });
                   }
                 }
@@ -193,7 +206,7 @@ const ProductForm = ({
             onClick={() => {
               setEditingProduct(null);
               setProductForm(defaultProductForm);
-              handleSetShowProductForm(false);
+              setShowProductForm(false);
             }}
             hasTextSm
             hasFontMedium

@@ -2,12 +2,13 @@ import { useAtom } from 'jotai';
 
 import ProductCard from './ProductCard';
 import { ProductWithUI } from '../../../types';
-import { productsAtom, searchTermAtom } from '../../store/atoms';
+import { productsAtom, searchTermAtom, isAdminAtom } from '../../store/atoms';
 import { useDebounce } from '../../utils/hooks/useDebounce';
 
-const ProductList = ({ isAdmin }: { isAdmin: boolean }) => {
+const ProductList = () => {
   const [products] = useAtom(productsAtom);
   const [searchTerm] = useAtom(searchTermAtom);
+  const [isAdmin] = useAtom(isAdminAtom);
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   const filteredProducts = debouncedSearchTerm
