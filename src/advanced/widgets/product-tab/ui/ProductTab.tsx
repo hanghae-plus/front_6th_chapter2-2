@@ -1,6 +1,6 @@
 import { ProductAccordion } from './ProductAccordion';
 import { ProductForm } from './ProductForm';
-import { useProductForm, useProductService } from '../../features/product-management';
+import { useProductForm, useProductService } from '../../../features/product-management';
 
 export function ProductTab() {
   const { onAddProduct, onUpdateProduct, onDeleteProduct } = useProductService();

@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
 import { CouponTab } from '../../../components/ui/CouponTab';
-import { ProductTab } from '../../../components/ui/ProductTab';
 import { AdminHeader } from '../../../widgets/admin-header';
+import { ProductTab } from '../../../widgets/product-tab';
 import { TabNavigation } from '../../../widgets/tab-navigation';
 
 interface AdminPageProps {

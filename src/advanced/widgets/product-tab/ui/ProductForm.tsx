@@ -1,8 +1,8 @@
 import { useSetAtom } from 'jotai';
 
-import { addNotificationAtom } from '../../entities/notification';
-import type { ProductWithUI } from '../../entities/product';
-import { Icon } from '../../shared/icon';
+import { addNotificationAtom } from '../../../entities/notification';
+import type { ProductWithUI } from '../../../entities/product';
+import { Icon } from '../../../shared/icon';
 import {
   convertPercentageToRate,
   convertRateToPercentage,
@@ -11,7 +11,7 @@ import {
   isValidMaximumStock,
   isValidMinimumStock,
   isValidPrice,
-} from '../../shared/lib';
+} from '../../../shared/lib';
 
 interface ProductFormProps {
   isOpen: boolean;

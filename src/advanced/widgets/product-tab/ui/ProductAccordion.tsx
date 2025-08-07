@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai';
 
-import { productsAtom, type ProductWithUI } from '../../entities/product';
-import { formatKRWPrice } from '../../shared/lib';
+import { productsAtom, type ProductWithUI } from '../../../entities/product';
+import { formatKRWPrice } from '../../../shared/lib';
 
 interface ProductAccordionProps {
   onEdit: (product: ProductWithUI) => void;
