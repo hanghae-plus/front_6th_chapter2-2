@@ -10,7 +10,6 @@ import {
   calculateCartTotal,
   filterProducts,
   validateCouponApplication,
-  validateCouponCode,
 } from './utils';
 import { useCart, useDebounceValue, useNotifications, useTotalItemCount } from './hooks';
 import { INITIAL_PRODUCT_FORM, INITIAL_COUPON_FORM, EDITING_STATES } from './constants/forms';
@@ -20,24 +19,27 @@ const App = () => {
   const { notifications, addNotification, removeNotification } = useNotifications();
   const {
     products,
-    setProducts,
     productForm,
     editingProduct,
     showProductForm,
     setShowProductForm,
     setEditingProduct,
     setProductForm,
-  } = useProducts();
+    addProduct,
+    updateProduct,
+    deleteProduct,
+  } = useProducts({ addNotification });
   const {
     coupons,
-    setCoupons,
     selectedCoupon,
     setSelectedCoupon,
     showCouponForm,
     setShowCouponForm,
     couponForm,
     setCouponForm,
-  } = useCoupons();
+    addCoupon,
+    deleteCoupon,
+  } = useCoupons({ addNotification });
   const { cart, addToCart, removeFromCart, updateQuantity, completeOrder, getStock } = useCart({
     products,
     addNotification,
@@ -77,60 +79,6 @@ const App = () => {
       addNotification('쿠폰이 적용되었습니다.', 'success');
     },
     [addNotification, cart, selectedCoupon]
-  );
-
-  const addProduct = useCallback(
-    (newProduct: Omit<ProductWithUI, 'id'>) => {
-      const product: ProductWithUI = {
-        ...newProduct,
-        id: `p${Date.now()}`,
-      };
-      setProducts((prev) => [...prev, product]);
-      addNotification('상품이 추가되었습니다.', 'success');
-    },
-    [addNotification]
-  );
-
-  const updateProduct = useCallback(
-    (productId: string, updates: Partial<ProductWithUI>) => {
-      setProducts((prev) =>
-        prev.map((product) => (product.id === productId ? { ...product, ...updates } : product))
-      );
-      addNotification('상품이 수정되었습니다.', 'success');
-    },
-    [addNotification]
-  );
-
-  const deleteProduct = useCallback(
-    (productId: string) => {
-      setProducts((prev) => prev.filter((p) => p.id !== productId));
-      addNotification('상품이 삭제되었습니다.', 'success');
-    },
-    [addNotification]
-  );
-
-  const addCoupon = useCallback(
-    (newCoupon: Coupon) => {
-      const validation = validateCouponCode(newCoupon.code, coupons);
-      if (!validation.isValid) {
-        addNotification(validation.errorMessage!, 'error');
-        return;
-      }
-      setCoupons((prev) => [...prev, newCoupon]);
-      addNotification('쿠폰이 추가되었습니다.', 'success');
-    },
-    [coupons, addNotification]
-  );
-
-  const deleteCoupon = useCallback(
-    (couponCode: string) => {
-      setCoupons((prev) => prev.filter((c) => c.code !== couponCode));
-      if (selectedCoupon?.code === couponCode) {
-        setSelectedCoupon(null);
-      }
-      addNotification('쿠폰이 삭제되었습니다.', 'success');
-    },
-    [selectedCoupon, addNotification]
   );
 
   const handleProductSubmit = (e: React.FormEvent) => {
