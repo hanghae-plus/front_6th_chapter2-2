@@ -777,13 +777,16 @@ const App = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <ProductList
-              searchTerm={debouncedSearchTerm}
-              addNotification={addNotification}
-            />
+            <div className="lg:col-span-3">
+              <ProductList
+                searchTerm={debouncedSearchTerm}
+                addNotification={addNotification}
+              />
+            </div>
 
             <div className="lg:col-span-1">
               <div className="sticky top-24 space-y-4">
+                {/* 장바구니 */}
                 <section className="bg-white rounded-lg border border-gray-200 p-4">
                   <h2 className="text-lg font-semibold mb-4 flex items-center">
                     <svg
@@ -910,6 +913,7 @@ const App = () => {
 
                 {cart.length > 0 && (
                   <>
+                    {/* 쿠폰 */}
                     <section className="bg-white rounded-lg border border-gray-200 p-4">
                       <div className="flex items-center justify-between mb-3">
                         <h3 className="text-sm font-semibold text-gray-700">
@@ -945,6 +949,7 @@ const App = () => {
                       )}
                     </section>
 
+                    {/* 결제 정보 */}
                     <section className="bg-white rounded-lg border border-gray-200 p-4">
                       <h3 className="text-lg font-semibold mb-4">결제 정보</h3>
                       <div className="space-y-2 text-sm">
