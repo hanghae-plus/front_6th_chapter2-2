@@ -1,33 +1,43 @@
-import { useState } from 'react';
+import { useAtom, useSetAtom } from 'jotai';
+import { useCallback } from 'react';
 
+import {
+  couponFormAtom,
+  showCouponFormAtom,
+  handleCouponFormSubmitAtom,
+  updateCouponFormAtom,
+  updateShowCouponFormAtom,
+} from '../../atoms/formAtoms';
 import { Coupon } from '../../types';
 
 const useCouponForm = () => {
-  const [showCouponForm, setShowCouponForm] = useState(false);
-  const [couponForm, setCouponForm] = useState({
-    name: '',
-    code: '',
-    discountType: 'amount' as 'amount' | 'percentage',
-    discountValue: 0,
-  });
+  // atoms 구독
+  const [couponForm] = useAtom(couponFormAtom);
+  const [showCouponForm] = useAtom(showCouponFormAtom);
 
-  const handleCouponFormSubmit = () => {
-    setCouponForm({
-      name: '',
-      code: '',
-      discountType: 'amount',
-      discountValue: 0,
-    });
-    setShowCouponForm(false);
-  };
+  // action atoms
+  const handleCouponFormSubmitAction = useSetAtom(handleCouponFormSubmitAtom);
+  const updateCouponFormAction = useSetAtom(updateCouponFormAtom);
+  const updateShowCouponFormAction = useSetAtom(updateShowCouponFormAtom);
 
-  const updateCouponForm = (form: Partial<Coupon>) => {
-    setCouponForm((prev) => ({ ...prev, ...form }));
-  };
+  // wrapper 함수들
+  const handleCouponFormSubmit = useCallback(() => {
+    handleCouponFormSubmitAction();
+  }, [handleCouponFormSubmitAction]);
 
-  const updateShowCouponForm = (show: boolean) => {
-    setShowCouponForm(show);
-  };
+  const updateCouponForm = useCallback(
+    (form: Partial<Coupon>) => {
+      updateCouponFormAction(form);
+    },
+    [updateCouponFormAction],
+  );
+
+  const updateShowCouponForm = useCallback(
+    (show: boolean) => {
+      updateShowCouponFormAction(show);
+    },
+    [updateShowCouponFormAction],
+  );
 
   return {
     couponForm,

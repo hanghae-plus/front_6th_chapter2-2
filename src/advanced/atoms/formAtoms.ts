@@ -83,3 +83,27 @@ export const couponFormAtom = atom<CouponForm>({
 });
 
 export const showCouponFormAtom = atom<boolean>(false);
+
+// Coupon Form action atoms
+
+// 쿠폰 폼 초기화 및 닫기
+export const handleCouponFormSubmitAtom = atom(null, (get, set) => {
+  set(couponFormAtom, {
+    name: '',
+    code: '',
+    discountType: 'amount',
+    discountValue: 0,
+  });
+  set(showCouponFormAtom, false);
+});
+
+// 쿠폰 폼 업데이트
+export const updateCouponFormAtom = atom(null, (get, set, form: Partial<CouponForm>) => {
+  const currentForm = get(couponFormAtom);
+  set(couponFormAtom, { ...currentForm, ...form });
+});
+
+// 쿠폰 폼 표시 상태 업데이트
+export const updateShowCouponFormAtom = atom(null, (get, set, show: boolean) => {
+  set(showCouponFormAtom, show);
+});
