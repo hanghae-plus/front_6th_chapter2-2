@@ -16,8 +16,9 @@
 // - ProductList: 상품 목록 표시
 // - Cart: 장바구니 표시 및 결제
 
-import type { CartItem, Coupon, ProductWithUI } from '../../../types';
+import type { Coupon, ProductWithUI } from '../../../types';
 import { useCart } from '../../hooks/useCart';
+import { useApplyCoupon } from '../../hooks/useCoupons';
 import * as cartModel from '../../models/cart';
 import * as productModel from '../../models/product';
 import { CartItemInfo } from './cart/CartItem';
@@ -34,7 +35,6 @@ interface Props {
   products: ProductWithUI[];
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
-  applyCoupon: (params: { cart: CartItem[]; coupon: Coupon }) => void;
   clearSelectedCoupon: () => void;
   completeOrder: () => void;
 }
@@ -44,11 +44,11 @@ export function CartPage({
   products,
   coupons,
   selectedCoupon,
-  applyCoupon,
   clearSelectedCoupon,
   completeOrder,
 }: Props) {
   const cart = useCart();
+  const applyCoupon = useApplyCoupon();
   const filteredProducts = productModel.searchProducts({
     products,
     searchTerm,

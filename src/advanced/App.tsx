@@ -11,8 +11,7 @@ import { useDebounce } from './utils/hooks/useDebounce';
 
 const App = () => {
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
-  const { coupons, selectedCoupon, applyCoupon, clearSelectedCoupon } =
-    useCoupons();
+  const { coupons, selectedCoupon, clearSelectedCoupon } = useCoupons();
   const { completeOrder } = useOrder({
     clearSelectedCoupon,
   });
@@ -50,7 +49,6 @@ const App = () => {
             products={products}
             coupons={coupons}
             selectedCoupon={selectedCoupon}
-            applyCoupon={applyCoupon}
             clearSelectedCoupon={clearSelectedCoupon}
             completeOrder={completeOrder}
           />

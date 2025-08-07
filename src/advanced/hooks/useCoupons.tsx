@@ -10,23 +10,21 @@
 
 import { useAtom, useSetAtom } from 'jotai';
 import { useCallback } from 'react';
-import type { CartItem, Coupon } from '../../types';
+import type { Coupon } from '../../types';
 import {
   addCouponAtom,
+  applyCouponAtom,
   couponsAtom,
   deleteCouponAtom,
   selectedCouponAtom,
 } from '../atoms/coupon';
 import { initialCoupons } from '../constants';
-import * as cartModel from '../models/cart';
-import * as couponModel from '../models/coupon';
 import { useAtomWithLocalStorage } from '../utils/hooks/useLocalStorage';
 import { useNotify } from './useNotification';
 
 interface UseCouponsReturn {
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
-  applyCoupon: (params: { cart: CartItem[]; coupon: Coupon }) => void;
   clearSelectedCoupon: () => void;
 }
 
@@ -42,30 +40,6 @@ export function useCoupons(): UseCouponsReturn {
   return {
     coupons,
     selectedCoupon,
-
-    applyCoupon: useCallback(
-      ({ cart, coupon }) => {
-        const { totalAfterDiscount } = cartModel.calculateCartTotal({
-          cart,
-          applyCoupon: couponModel.getCouponApplier({ coupon }),
-        });
-
-        const result = couponModel.applyCoupon({
-          coupon,
-          prevCoupon: selectedCoupon,
-          cartTotal: totalAfterDiscount,
-        });
-
-        if (!result.success) {
-          notify({ message: result.message, type: 'error' });
-          return;
-        }
-
-        setSelectedCoupon(result.selectedCoupon);
-        notify({ message: result.message, type: 'success' });
-      },
-      [notify, selectedCoupon]
-    ),
 
     clearSelectedCoupon: useCallback(() => {
       setSelectedCoupon(null);
@@ -97,4 +71,17 @@ export function useDeleteCoupon() {
   };
 
   return deleteCoupon;
+}
+
+export function useApplyCoupon() {
+  const notify = useNotify();
+  const _applyCoupon = useSetAtom(applyCouponAtom);
+
+  const applyCoupon = ({ coupon }: { coupon: Coupon }) => {
+    const { message, success } = _applyCoupon({ coupon });
+
+    notify({ message, type: success ? 'success' : 'error' });
+  };
+
+  return applyCoupon;
 }
