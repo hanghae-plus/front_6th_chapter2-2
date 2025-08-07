@@ -1,8 +1,9 @@
-import { Coupon } from "../../../../types";
-import { CouponFormFields } from "../../../entities/coupon/ui/CouponFormFields";
-import { useCouponForm } from "../../../entities/coupon/hooks/useCouponForm";
-import { NotificationVariant } from "../../../entities/notification/types";
-import { useGlobalNotification } from "../../../entities/notification/hooks/useGlobalNotification";
+import { Coupon } from "@/types";
+import { CouponFormFields, useCouponForm } from "@entities/coupon";
+import {
+  NotificationVariant,
+  useGlobalNotification,
+} from "@entities/notification";
 
 interface AddCouponFormProps {
   onSubmit: (coupon: Coupon) => void;

@@ -1,5 +1,5 @@
-import { Product } from "../types";
-import ImageIcon from "../../../assets/icons/ImageIcon.svg?react";
+import { Product } from "@entities/product";
+import ImageIcon from "@assets/icons/ImageIcon.svg?react";
 
 interface ProductCardProps {
   product: Product & {

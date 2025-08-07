@@ -1,5 +1,5 @@
-import { ProductWithUI } from "../../../entities/product/types";
-import { useSearch } from "../../../shared/hooks/useSearch";
+import { ProductWithUI } from "@entities/product";
+import { useSearch } from "@shared";
 
 export function useProductSearch(products: ProductWithUI[]) {
   const search = useSearch();

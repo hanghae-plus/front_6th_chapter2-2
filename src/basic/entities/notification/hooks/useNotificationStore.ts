@@ -1,10 +1,10 @@
 import { useState, useCallback, useEffect } from "react";
-import { type Notification as NotificationType } from "../types";
+import { type Notification as NotificationType } from "@entities/notification";
 import {
   addGlobalNotification,
   removeGlobalNotification,
   subscribeToNotifications,
-} from "../../../shared/libs/notificationStore";
+} from "@shared/libs/notificationStore";
 
 export function useNotificationStore() {
   const [notifications, setNotifications] = useState<NotificationType[]>([]);

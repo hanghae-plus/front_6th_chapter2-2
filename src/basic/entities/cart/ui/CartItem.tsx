@@ -1,5 +1,5 @@
-import { CartItem as CartItemType } from "../../../../types";
-import CloseIcon from "../../../assets/icons/CloseIcon.svg?react";
+import { CartItem as CartItemType } from "@/types";
+import CloseIcon from "@assets/icons/CloseIcon.svg?react";
 
 interface CartItemProps {
   item: CartItemType;

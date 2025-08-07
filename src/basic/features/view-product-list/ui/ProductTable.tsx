@@ -1,4 +1,4 @@
-import { Product } from "../../../entities/product/types";
+import { Product } from "@entities/product";
 
 interface ProductWithDisplayInfo extends Product {
   displayedPrice: string;

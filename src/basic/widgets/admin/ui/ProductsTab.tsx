@@ -1,10 +1,11 @@
-import { Product } from "../../../entities/product/types";
-import { ProductTable } from "../../../features/view-product-list/ui/ProductTable";
-import { formatPrice } from "../../../shared/libs/price";
-import { getStockDisplay } from "../../../entities/product/libs/stock";
-import { AddProductForm } from "../../../features/manage-products/ui/AddProductForm";
-import { EditProductForm } from "../../../features/manage-products/ui/EditProductForm";
-import { useManageProducts } from "../../../features/manage-products/hooks/useManageProducts";
+import { Product, getStockDisplay } from "@entities/product";
+import { ProductTable } from "@features/view-product-list/ui/ProductTable";
+import { formatPrice } from "@shared/libs/price";
+import {
+  AddProductForm,
+  EditProductForm,
+  useManageProducts,
+} from "@features/manage-products";
 
 export function ProductsTab() {
   const {

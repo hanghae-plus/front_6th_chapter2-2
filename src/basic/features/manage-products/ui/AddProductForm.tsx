@@ -1,6 +1,8 @@
-import { useProductForm } from "../../../entities/product/hooks/useProductForm";
-import { ProductWithUI } from "../../../entities/product/types";
-import { ProductFormFields } from "../../../entities/product/ui/ProductFormFields";
+import {
+  useProductForm,
+  ProductWithUI,
+  ProductFormFields,
+} from "@entities/product";
 
 interface AddProductFormProps {
   onSubmit: (product: Omit<ProductWithUI, "id">) => void;

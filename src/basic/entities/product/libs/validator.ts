@@ -1,4 +1,4 @@
-import { ProductWithUI } from "../types";
+import { ProductWithUI } from "@entities/product";
 
 export function validateProduct(product: Partial<ProductWithUI>): {
   valid: boolean;

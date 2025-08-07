@@ -1,6 +1,6 @@
-import { useLocalStorageObject } from "../../../shared/hooks/useLocalStorage";
-import { calculateItemTotal } from "../libs/cartCalculations";
-import { type CartItem } from "../../../../types";
+import { useLocalStorageObject } from "@shared";
+import { calculateItemTotal } from "@entities/cart/libs/cartCalculations";
+import { type CartItem } from "@/types";
 
 export function useCart() {
   const [cart, setCart] = useLocalStorageObject<CartItem[]>("cart", []);

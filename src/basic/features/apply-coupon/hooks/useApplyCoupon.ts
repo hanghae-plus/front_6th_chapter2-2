@@ -1,12 +1,11 @@
 import { useState, useCallback } from "react";
-import { Coupon, type CartItem } from "../../../../types";
-import { getCartDiscountSummary } from "../../../entities/cart/libs/cartCalculations";
+import { Coupon, type CartItem } from "@/types";
+import { getCartDiscountSummary } from "@entities/cart";
+import { useCoupon, CouponErrorReason } from "@entities/coupon";
 import {
-  useCoupon,
-  CouponErrorReason,
-} from "../../../entities/coupon/hooks/useCoupon";
-import { useGlobalNotification } from "../../../entities/notification/hooks/useGlobalNotification";
-import { NotificationVariant } from "../../../entities/notification/types";
+  useGlobalNotification,
+  NotificationVariant,
+} from "@entities/notification";
 
 export function useApplyCoupon(cart: CartItem[]) {
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);

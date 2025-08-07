@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { ProductsTab } from "../widgets/admin/ui/ProductsTab";
-import { CouponsTab } from "../widgets/admin/ui/CouponsTab";
+import { ProductsTab } from "@widgets/admin/ui/ProductsTab";
+import { CouponsTab } from "@widgets/admin/ui/CouponsTab";
 
 export function AdminPage() {
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(

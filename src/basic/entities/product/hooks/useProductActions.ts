@@ -1,8 +1,10 @@
 import { useCallback } from "react";
-import { ProductWithUI } from "../types";
 import { useProductStorage } from "./useProductStorage";
-import { useGlobalNotification } from "../../notification/hooks/useGlobalNotification";
-import { NotificationVariant } from "../../notification/types";
+import {
+  useGlobalNotification,
+  NotificationVariant,
+} from "@entities/notification";
+import { ProductWithUI } from "@entities/product";
 
 interface UseProductActionsOptions {
   onAddProduct?: (product: Omit<ProductWithUI, "id">) => void;

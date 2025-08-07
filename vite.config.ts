@@ -16,6 +16,15 @@ export default mergeConfig(
     resolve: {
       alias: {
         "@": "/src",
+        // FSD Layer Aliases for Basic
+        "@shared": "/src/basic/shared",
+        "@entities": "/src/basic/entities",
+        "@features": "/src/basic/features",
+        "@widgets": "/src/basic/widgets",
+        "@pages": "/src/basic/pages",
+        "@app": "/src/basic/app",
+        // Assets
+        "@assets": "/src/basic/assets",
       },
     },
   }),

@@ -1,6 +1,9 @@
-import { useForm } from "../../../shared/hooks/useForm";
-import { Coupon, DiscountType } from "../../../../types";
-import { validateCoupon, validateDiscountValue } from "../libs/validator";
+import { useForm } from "@shared";
+import { Coupon, DiscountType } from "@/types";
+import {
+  validateCoupon,
+  validateDiscountValue,
+} from "@entities/coupon/libs/validator";
 
 interface UseCouponFormProps<T = Omit<Coupon, "id">> {
   onSubmit: (coupon: T) => void;

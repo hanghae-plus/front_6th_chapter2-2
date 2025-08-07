@@ -1,5 +1,4 @@
-import { Product } from "../types";
-import { ProductCard } from "./ProductCard";
+import { Product, ProductCard } from "@entities/product";
 
 interface ProductListProps {
   products: (Product & {

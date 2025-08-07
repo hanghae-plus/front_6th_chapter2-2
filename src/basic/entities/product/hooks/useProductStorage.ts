@@ -1,5 +1,5 @@
-import { ProductWithUI } from "../types";
-import { useLocalStorageObject } from "../../../shared/hooks/useLocalStorage";
+import { ProductWithUI } from "@entities/product";
+import { useLocalStorageObject } from "@shared";
 
 const initialProducts: ProductWithUI[] = [
   {

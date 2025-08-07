@@ -1,19 +1,21 @@
-import { Product, ProductWithUI } from "../entities/product/types";
-import { ProductList } from "../entities/product/ui/ProductList";
-import { formatPrice } from "../shared/libs/price";
-
 import { useCallback } from "react";
-import { CartItemList } from "../features/view-cart-items/ui/CartItemList";
-import { CouponSelector } from "../features/select-coupon/ui/CouponSelector";
-import { CheckoutSection } from "../features/checkout/ui/CheckoutSection";
-import CartBagIcon from "../assets/icons/CartBagIcon.svg?react";
-import { NotificationVariant } from "../entities/notification/types";
-import { getStockDisplay } from "../entities/product/libs/stock";
-import { useGlobalNotification } from "../entities/notification/hooks/useGlobalNotification";
-import { useCart } from "../entities/cart/hooks/useCart";
-import { useAddToCart } from "../features/add-to-cart/hooks/useAddToCart";
-import { useUpdateCartQuantity } from "../features/update-cart-quantity/hooks/useUpdateCartQuantity";
-import { useApplyCoupon } from "../features/apply-coupon/hooks/useApplyCoupon";
+import CartBagIcon from "@assets/icons/CartBagIcon.svg?react";
+import { formatPrice } from "@shared";
+import { Product } from "@/types";
+import { useCart } from "@entities/cart";
+import {
+  useGlobalNotification,
+  NotificationVariant,
+} from "@entities/notification";
+import { ProductWithUI, getStockDisplay, ProductList } from "@entities/product";
+import {
+  useAddToCart,
+  useUpdateCartQuantity,
+  useApplyCoupon,
+  CartItemList,
+  CouponSelector,
+  CheckoutSection,
+} from "@features";
 
 interface CartPageProps {
   products: ProductWithUI[];

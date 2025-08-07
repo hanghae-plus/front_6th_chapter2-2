@@ -1,5 +1,5 @@
 import { NotificationItem } from "./NotificationItem";
-import { type Notification } from "../types";
+import { type Notification } from "@entities/notification";
 
 interface NotificationProps {
   notifications: Notification[];

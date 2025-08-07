@@ -1,8 +1,9 @@
 import { useCallback } from "react";
-import { ProductWithUI } from "../../../entities/product/types";
-import { useGlobalNotification } from "../../../entities/notification/hooks/useGlobalNotification";
-import { NotificationVariant } from "../../../entities/notification/types";
-import { calculateRemainingStock } from "../../../entities/product/libs/stock";
+import { ProductWithUI, calculateRemainingStock } from "@entities/product";
+import {
+  useGlobalNotification,
+  NotificationVariant,
+} from "@entities/notification";
 
 interface UseAddToCartOptions {
   cart: Array<{ product: ProductWithUI; quantity: number }>;

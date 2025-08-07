@@ -1,6 +1,5 @@
 import { useState, useCallback } from "react";
-import { ProductWithUI } from "../../../entities/product/types";
-import { useProductActions } from "../../../entities/product/hooks/useProductActions";
+import { ProductWithUI, useProductActions } from "@entities/product";
 
 export function useManageProducts() {
   const [showProductForm, setShowProductForm] = useState(false);

@@ -1,6 +1,5 @@
-import { ProductWithUI } from "../types";
-import { validateProduct } from "../libs/validator";
-import { useForm } from "../../../shared/hooks/useForm";
+import { ProductWithUI, validateProduct } from "@entities/product";
+import { useForm } from "@shared";
 
 interface UseProductFormProps<T = Omit<ProductWithUI, "id">> {
   initialProduct?: Partial<ProductWithUI>;

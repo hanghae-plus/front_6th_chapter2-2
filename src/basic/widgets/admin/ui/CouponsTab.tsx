@@ -1,13 +1,11 @@
 import { useState } from "react";
-import PlusIcon from "../../../assets/icons/PlusIcon.svg?react";
-import { CouponCard } from "../../../entities/coupon/ui/CouponCard";
-import { AddCouponForm } from "../../../features/add-coupon/ui/AddCouponForm";
+import PlusIcon from "@assets/icons/PlusIcon.svg?react";
+import { CouponCard, useCoupon, CouponErrorReason } from "@entities/coupon";
+import { AddCouponForm } from "@features/add-coupon/ui/AddCouponForm";
 import {
-  useCoupon,
-  CouponErrorReason,
-} from "../../../entities/coupon/hooks/useCoupon";
-import { useGlobalNotification } from "../../../entities/notification/hooks/useGlobalNotification";
-import { NotificationVariant } from "../../../entities/notification/types";
+  useGlobalNotification,
+  NotificationVariant,
+} from "@entities/notification";
 
 export function CouponsTab() {
   const [showCouponForm, setShowCouponForm] = useState(false);

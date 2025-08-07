@@ -1,4 +1,4 @@
-import { useNotificationStore } from "../../../entities/notification/hooks/useNotificationStore";
+import { useNotificationStore } from "@entities/notification";
 
 export function useNotification() {
   return useNotificationStore();

@@ -1,6 +1,6 @@
-import { CartItem } from "../../../entities/cart/ui/CartItem";
-import { type CartItem as CartItemType } from "../../../../types";
-import CartBagIcon from "../../../assets/icons/CartBagIcon.svg?react";
+import { CartItem } from "@entities/cart";
+import { type CartItem as CartItemType } from "@/types";
+import CartBagIcon from "@assets/icons/CartBagIcon.svg?react";
 
 interface CartItemListProps {
   cartItems: CartItemType[];

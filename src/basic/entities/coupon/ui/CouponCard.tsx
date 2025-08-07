@@ -1,5 +1,5 @@
-import { Coupon, DiscountType } from "../../../../types";
-import TrashIcon from "../../../assets/icons/TrashIcon.svg?react";
+import { Coupon, DiscountType } from "@/types";
+import TrashIcon from "@assets/icons/TrashIcon.svg?react";
 
 interface CouponCardProps {
   coupon: Coupon;

@@ -1,8 +1,10 @@
-import { ProductWithUI } from "../types";
-import CloseIcon from "../../../assets/icons/CloseIcon.svg?react";
-import { NotificationVariant } from "../../notification/types";
-import { useGlobalNotification } from "../../notification/hooks/useGlobalNotification";
+import { ProductWithUI } from "@entities/product";
+import CloseIcon from "@assets/icons/CloseIcon.svg?react";
 import { useCallback } from "react";
+import {
+  NotificationVariant,
+  useGlobalNotification,
+} from "@entities/notification";
 
 interface ProductFormFieldsProps {
   product: Partial<ProductWithUI>;

@@ -1,19 +1,15 @@
-import {
-  Coupon,
-  DiscountType,
-  type CartItem as CartItemType,
-} from "../../../../types";
+import { Coupon, DiscountType, type CartItem as CartItemType } from "@/types";
 import {
   calculateDiscountedPrice,
   calculateDiscountedAmount,
-} from "../../../shared/libs/price";
-import { sumBy } from "../../../shared/libs/calculations";
+} from "@shared/libs/price";
+import { sumBy } from "@shared/libs/calculation";
 import {
   findMaxDiscountByQuantity,
   calculateBonusDiscount,
   hasItemWithMinQuantity,
   calculateTotalWithDiscount,
-} from "./discountCalculations";
+} from "@entities/cart/libs/discountCalculations";
 
 const BULK_PURCHASE_THRESHOLD = 10;
 const BULK_PURCHASE_BONUS = 0.05;

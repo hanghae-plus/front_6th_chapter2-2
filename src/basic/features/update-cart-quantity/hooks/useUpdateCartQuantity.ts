@@ -1,7 +1,9 @@
 import { useCallback } from "react";
-import { Product } from "../../../../types";
-import { useGlobalNotification } from "../../../entities/notification/hooks/useGlobalNotification";
-import { NotificationVariant } from "../../../entities/notification/types";
+import { Product } from "@/types";
+import {
+  useGlobalNotification,
+  NotificationVariant,
+} from "@entities/notification";
 
 interface UseUpdateCartQuantityOptions {
   products: Product[];

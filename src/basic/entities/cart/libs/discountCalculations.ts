@@ -1,4 +1,4 @@
-import { calculateDiscountedPrice } from "../../../shared/libs/price";
+import { calculateDiscountedPrice } from "@shared/libs/price";
 
 /**
  * 수량에 따른 최대 할인율을 찾는 함수

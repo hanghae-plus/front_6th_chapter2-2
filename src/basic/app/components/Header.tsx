@@ -1,6 +1,6 @@
-import CartIcon from "../../assets/icons/CartIcon.svg?react";
-import { useCart } from "../../entities/cart/hooks/useCart";
-import { SearchBar } from "../../shared/ui/SearchBar";
+import CartIcon from "@assets/icons/CartIcon.svg?react";
+import { useCart } from "@entities/cart";
+import { SearchBar } from "@shared";
 
 interface HeaderProps {
   isAdmin: boolean;
