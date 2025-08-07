@@ -1,5 +1,5 @@
 import React from 'react';
-import { CartItem as ICartItem } from '../../../types';
+import { CartItem as ICartItem } from '../../types';
 
 interface CartItemProps {
   item: ICartItem;
