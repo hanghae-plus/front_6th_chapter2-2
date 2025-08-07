@@ -8,25 +8,15 @@ import { useCoupon } from './hooks/useCoupon';
 import { useProducts } from './hooks/useProducts';
 import { useCouponForm } from './hooks/form/useCouponForm';
 import { useProductForm } from './hooks/form/useProductForm';
+import { useSearch } from './hooks/useSearch';
 import { formatPrice } from './utils/formatters';
 import { calculateItemTotal } from './models/cart';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
-  // const [showProductForm, setShowProductForm] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
-
-  // Admin
-  // const [editingProduct, setEditingProduct] = useState<string | null>(null);
-  // const [productForm, setProductForm] = useState({
-  //   name: '',
-  //   price: 0,
-  //   stock: 0,
-  //   description: '',
-  //   discounts: [] as Array<{ quantity: number; rate: number }>,
-  // });
+  // const [searchTerm, setSearchTerm] = useState('');
+  // const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
   const { addNotification, notifications, removeNotification } = useNotification();
   const { products, addProduct, updateProduct, deleteProduct } = useProducts(addNotification);
@@ -62,6 +52,9 @@ const App = () => {
     handleCancelProduct,
   } = useProductForm();
 
+  const { searchTerm, debouncedSearchTerm, handleSearchTermChange, setSearchTermValue } =
+    useSearch();
+
   // UI에 관련된 함수같다!
   const getDisplayPrice = (price: number, productId?: string): string => {
     if (productId) {
@@ -73,12 +66,12 @@ const App = () => {
     return formatPrice(price, isAdmin);
   };
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     setDebouncedSearchTerm(searchTerm);
+  //   }, 500);
+  //   return () => clearTimeout(timer);
+  // }, [searchTerm]);
 
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
@@ -106,18 +99,6 @@ const App = () => {
     addCoupon(couponForm);
     handleCouponFormSubmit();
   };
-
-  // const startEditProduct = (product: ProductWithUI) => {
-  //   setEditingProduct(product.id);
-  //   setProductForm({
-  //     name: product.name,
-  //     price: product.price,
-  //     stock: product.stock,
-  //     description: product.description || '',
-  //     discounts: product.discounts || [],
-  //   });
-  //   setShowProductForm(true);
-  // };
 
   const totals = calculateTotal();
 
@@ -181,7 +162,7 @@ const App = () => {
         searchTerm={searchTerm}
         cart={cart}
         totalItemCount={totalItemCount}
-        setSearchTerm={setSearchTerm}
+        setSearchTerm={setSearchTermValue}
         setIsAdmin={setIsAdmin}
       />
       <main className='max-w-7xl mx-auto px-4 py-8'>
