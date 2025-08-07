@@ -1,5 +1,4 @@
 import type { CartItem, Coupon } from '../../../../types';
-import { CartHeader } from '../../../components/ui/CartHeader';
 import { CartItemList } from '../../../components/ui/CartItemList';
 import { CouponSelector } from '../../../components/ui/CouponSelector';
 import { PaymentSummary } from '../../../components/ui/PaymentSummary';
@@ -9,6 +8,7 @@ import { useCartService } from '../../../hooks/useCartService';
 import { useDebouncedSearch } from '../../../hooks/useDebouncedSearch';
 import { calculateCartTotal } from '../../../models/cart';
 import { Icon } from '../../../shared/icon';
+import { CartHeader } from '../../../widgets/cart-header';
 
 interface CartPageProps {
   onChangeAdminPage: () => void;

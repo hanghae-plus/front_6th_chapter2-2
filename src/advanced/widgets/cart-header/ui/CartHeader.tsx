@@ -1,6 +1,6 @@
-import type { CartItem } from '../../../types';
-import { calculateItemTotalQuantity } from '../../models/cart';
-import { Icon } from '../../shared/icon';
+import type { CartItem } from '../../../../types';
+import { calculateItemTotalQuantity } from '../../../models/cart';
+import { Icon } from '../../../shared/icon';
 
 interface CartHeaderProps {
   searchTerm: string;
