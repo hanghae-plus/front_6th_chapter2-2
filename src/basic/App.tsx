@@ -95,15 +95,6 @@ const App = () => {
 
   const totals = calculateTotal();
 
-  const filteredProducts = debouncedSearchTerm
-    ? products.filter(
-        (product) =>
-          product.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-          (product.description &&
-            product.description.toLowerCase().includes(debouncedSearchTerm.toLowerCase())),
-      )
-    : products;
-
   const handleAddProduct = () => {
     startEditProduct('new');
     updateProductForm({
@@ -157,7 +148,6 @@ const App = () => {
           <div className='grid grid-cols-1 lg:grid-cols-4 gap-6'>
             <ProductCardList
               products={products}
-              filteredProducts={filteredProducts}
               debouncedSearchTerm={debouncedSearchTerm}
               getRemainingStock={getRemainingStock}
               getDisplayPrice={getDisplayPrice}
