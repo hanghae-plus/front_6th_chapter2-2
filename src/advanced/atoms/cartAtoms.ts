@@ -26,6 +26,13 @@ export const calculateTotalAtom = atom((get) => {
   return calculateCartTotal(cart, selectedCoupon);
 });
 
+// 총액 정보 (PaymentInfo용)
+export const totalsAtom = atom((get) => {
+  const cart = get(cartAtom);
+  const selectedCoupon = get(selectedCouponAtom);
+  return calculateCartTotal(cart, selectedCoupon);
+});
+
 // 장바구니에 상품 추가 (비즈니스 로직 포함)
 export const addToCartAtom = atom(null, (get, set, product: ProductWithUI) => {
   const currentCart = get(cartAtom);
@@ -111,6 +118,9 @@ export const updateQuantityAtom = atom(
   },
 );
 
+// 수량 업데이트 (CartList에서 사용할 alias)
+export const updateCartItemQuantityAtom = updateQuantityAtom;
+
 // 장바구니 비우기
 export const clearCartAtom = atom(null, (get, set) => {
   set(cartAtom, []);
@@ -141,6 +151,29 @@ export const applyCouponAtom = atom(null, (get, set, coupon: Coupon | null) => {
   set(addNotificationAtom, {
     id: Date.now().toString(),
     message: '쿠폰이 적용되었습니다.',
+    type: 'success',
+  });
+});
+
+// 주문 완료
+export const completeOrderAtom = atom(null, (get, set) => {
+  const cart = get(cartAtom);
+
+  if (cart.length === 0) {
+    set(addNotificationAtom, {
+      id: Date.now().toString(),
+      message: '장바구니가 비어있습니다.',
+      type: 'error',
+    });
+    return;
+  }
+
+  // 장바구니 비우기
+  set(clearCartAtom);
+
+  set(addNotificationAtom, {
+    id: Date.now().toString(),
+    message: '주문이 완료되었습니다!',
     type: 'success',
   });
 });
