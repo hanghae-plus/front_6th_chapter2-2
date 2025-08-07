@@ -127,17 +127,7 @@ const App = () => {
   const [productForm, setProductForm] = useState<ProductForm>(defaultProductForm);
 
   // ===== localStorage 동기화 =====
-  // products는 useLocalStorage에서 자동으로 처리되므로 제거
-
-  // coupons는 useLocalStorage에서 자동으로 처리되므로 제거
-
-  useEffect(() => {
-    if (cart.length > 0) {
-      localStorage.setItem('cart', JSON.stringify(cart));
-    } else {
-      localStorage.removeItem('cart');
-    }
-  }, [cart]);
+  // products, cart, coupons는 각각의 custom hook 내부의 useLocalStorage를 통해 자동으로 동기화됩니다.
 
   // ===== UTILS: 유틸리티 함수들 =====
   // formatPrice 함수는 utils/formatters.ts로 분리됨

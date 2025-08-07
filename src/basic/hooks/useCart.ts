@@ -2,23 +2,13 @@ import { useState, useCallback, useEffect } from 'react';
 
 import { CartItem, Coupon, ProductWithUI, NotificationCallback } from '../../types';
 import { calculateItemTotal, getRemainingStock } from '../models/cart';
+import { useLocalStorage } from '../utils/hooks/useLocalStorage';
 
 export function useCart(products: ProductWithUI[] = []) {
-  // localStorage에서 초기값 가져오기 (원본 패턴과 동일)
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem('cart');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return [];
-      }
-    }
-    return [];
-  });
+  const [cart, setCart] = useLocalStorage<CartItem[]>('cart', []);
 
   // selectedCoupon 상태 관리
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+  const [selectedCoupon, setSelectedCoupon] = useLocalStorage<Coupon | null>('selectedCoupon', null);
 
   // totalItemCount 상태 관리
   const [totalItemCount, setTotalItemCount] = useState(0);
@@ -84,12 +74,12 @@ export function useCart(products: ProductWithUI[] = []) {
     });
 
     onNotification?.('장바구니에 담았습니다', 'success');
-  }, []);
+  }, [setCart]);
 
   // removeFromCart 함수 (원본 로직과 동일)
   const removeFromCart = useCallback((productId: string) => {
     setCart((prevCart) => prevCart.filter((item) => item.product.id !== productId));
-  }, []);
+  }, [setCart]);
 
   // updateQuantity 함수 (원본 로직과 동일)
   const updateQuantity = useCallback(
@@ -114,7 +104,7 @@ export function useCart(products: ProductWithUI[] = []) {
         )
       );
     },
-    [products, removeFromCart]
+    [products, removeFromCart, setCart]
   );
 
   // applyCoupon 함수
@@ -131,7 +121,7 @@ export function useCart(products: ProductWithUI[] = []) {
       setSelectedCoupon(coupon);
       onNotification?.('쿠폰이 적용되었습니다.', 'success');
     },
-    [calculateCartTotal]
+    [calculateCartTotal, setSelectedCoupon]
   );
 
   // completeOrder 함수
@@ -140,13 +130,13 @@ export function useCart(products: ProductWithUI[] = []) {
     onNotification?.(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
     setCart([]);
     setSelectedCoupon(null);
-  }, []);
+  }, [setCart, setSelectedCoupon]);
 
   // clearCart 함수
   const clearCart = useCallback(() => {
     setCart([]);
     setSelectedCoupon(null);
-  }, []);
+  }, [setCart, setSelectedCoupon]);
 
   return {
     cart,
