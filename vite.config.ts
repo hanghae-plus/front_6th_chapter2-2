@@ -9,7 +9,7 @@ export default mergeConfig(
     build: {
       rollupOptions: {
         input: {
-          index: 'index.basic.html',
+          index: 'index.html',
         },
       },
       outDir: 'dist',
