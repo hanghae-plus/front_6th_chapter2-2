@@ -1,11 +1,7 @@
 import { Coupon, type CartItem as CartItemType } from "../../types";
 import { Product, ProductWithUI } from "../entities/product/types";
 import { ProductList } from "../entities/product/ui/ProductList";
-import {
-  calculateDiscountedPrice,
-  calculateDiscountedAmount,
-  formatPrice,
-} from "../shared/libs/price";
+import { formatPrice } from "../shared/libs/price";
 
 import { useCallback, useState } from "react";
 import { CartItem } from "../entities/cart/ui/CartItem";
@@ -18,6 +14,10 @@ import {
   useCoupon,
   CouponErrorReason,
 } from "../entities/coupon/hooks/useCoupon";
+import {
+  calculateItemTotal,
+  getCartDiscountSummary,
+} from "../entities/cart/libs/cartCalculations";
 
 interface CartPageProps {
   products: ProductWithUI[];
@@ -55,72 +55,15 @@ export function CartPage({
     return `₩${formattedPrice}`;
   };
 
+  const { totalAfterDiscount, totalBeforeDiscount } = getCartDiscountSummary(
+    cart,
+    selectedCoupon
+  );
+
   const getProductRemainingStock = (product: Product): number => {
     const cartItem = cart.find((item) => item.product.id === product.id);
     const cartQuantity = cartItem?.quantity || 0;
     return calculateStock(product.stock, cartQuantity);
-  };
-
-  const getMaxApplicableDiscount = (item: CartItemType): number => {
-    const { discounts } = item.product;
-    const { quantity } = item;
-
-    const baseDiscount = discounts.reduce((maxDiscount, discount) => {
-      return quantity >= discount.quantity && discount.rate > maxDiscount
-        ? discount.rate
-        : maxDiscount;
-    }, 0);
-
-    const hasBulkPurchase = cart.some((cartItem) => cartItem.quantity >= 10);
-    if (hasBulkPurchase) {
-      return Math.min(baseDiscount + 0.05, 0.5);
-    }
-
-    return baseDiscount;
-  };
-
-  const calculateItemTotal = (item: CartItemType): number => {
-    const { price } = item.product;
-    const { quantity } = item;
-    const discount = getMaxApplicableDiscount(item);
-
-    const discountedPrice = calculateDiscountedPrice(price, discount * 100);
-    return Math.round(discountedPrice * quantity);
-  };
-
-  const calculateCartTotal = (): {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
-  } => {
-    let totalBeforeDiscount = 0;
-    let totalAfterDiscount = 0;
-
-    cart.forEach((item) => {
-      const itemPrice = item.product.price * item.quantity;
-      totalBeforeDiscount += itemPrice;
-      totalAfterDiscount += calculateItemTotal(item);
-    });
-
-    if (selectedCoupon) {
-      if (selectedCoupon.discountType === "amount") {
-        totalAfterDiscount = calculateDiscountedAmount(
-          totalAfterDiscount,
-          selectedCoupon.discountValue
-        );
-      } else {
-        totalAfterDiscount = Math.round(
-          calculateDiscountedPrice(
-            totalAfterDiscount,
-            selectedCoupon.discountValue
-          )
-        );
-      }
-    }
-
-    return {
-      totalBeforeDiscount: Math.round(totalBeforeDiscount),
-      totalAfterDiscount: Math.round(totalAfterDiscount),
-    };
   };
 
   const addToCart = useCallback(
@@ -198,14 +141,19 @@ export function CartPage({
 
   const applyCoupon = useCallback(
     (coupon: Coupon) => {
-      const currentTotal = calculateCartTotal().totalAfterDiscount;
-
-      applyCouponLogic(coupon, currentTotal, (appliedCoupon) => {
+      applyCouponLogic(coupon, totalAfterDiscount, (appliedCoupon) => {
         setSelectedCoupon(appliedCoupon);
         addNotification("쿠폰이 적용되었습니다.", NotificationVariant.SUCCESS);
       });
     },
-    [applyCouponLogic, setSelectedCoupon, addNotification]
+    [
+      applyCouponLogic,
+      setSelectedCoupon,
+      addNotification,
+      cart,
+      selectedCoupon,
+      totalAfterDiscount,
+    ]
   );
 
   const completeOrder = useCallback(() => {
@@ -217,8 +165,6 @@ export function CartPage({
     setCart([]);
     setSelectedCoupon(null);
   }, [addNotification, setCart, setSelectedCoupon]);
-
-  const totals = calculateCartTotal();
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -252,7 +198,9 @@ export function CartPage({
                   <CartItem
                     key={item.product.id}
                     item={item}
-                    calculateItemTotal={calculateItemTotal}
+                    calculateItemTotal={(item) =>
+                      calculateItemTotal(item, cart)
+                    }
                     removeFromCart={removeFromCart}
                     updateQuantity={updateQuantity}
                   />
@@ -304,17 +252,16 @@ export function CartPage({
                   <div className="flex justify-between">
                     <span className="text-gray-600">상품 금액</span>
                     <span className="font-medium">
-                      {totals.totalBeforeDiscount.toLocaleString()}원
+                      {totalBeforeDiscount.toLocaleString()}원
                     </span>
                   </div>
-                  {totals.totalBeforeDiscount - totals.totalAfterDiscount >
-                    0 && (
+                  {totalBeforeDiscount - totalAfterDiscount > 0 && (
                     <div className="flex justify-between text-red-500">
                       <span>할인 금액</span>
                       <span>
                         -
                         {(
-                          totals.totalBeforeDiscount - totals.totalAfterDiscount
+                          totalBeforeDiscount - totalAfterDiscount
                         ).toLocaleString()}
                         원
                       </span>
@@ -323,7 +270,7 @@ export function CartPage({
                   <div className="flex justify-between py-2 border-t border-gray-200">
                     <span className="font-semibold">결제 예정 금액</span>
                     <span className="font-bold text-lg text-gray-900">
-                      {totals.totalAfterDiscount.toLocaleString()}원
+                      {totalAfterDiscount.toLocaleString()}원
                     </span>
                   </div>
                 </div>
@@ -332,7 +279,7 @@ export function CartPage({
                   onClick={completeOrder}
                   className="w-full mt-4 py-3 bg-yellow-400 text-gray-900 rounded-md font-medium hover:bg-yellow-500 transition-colors"
                 >
-                  {totals.totalAfterDiscount.toLocaleString()}원 결제하기
+                  {totalAfterDiscount.toLocaleString()}원 결제하기
                 </button>
 
                 <div className="mt-3 text-xs text-gray-500 text-center">
