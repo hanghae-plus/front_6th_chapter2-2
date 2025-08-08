@@ -1,11 +1,11 @@
 import { atom } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
 
 import { selectedCouponAtom } from './couponsAtoms';
 import { CartItem } from '../../types';
 import { calculateCartTotal } from '../models/cart';
-import { atomWithLocalStorage } from '../utils/atom';
 
-export const cartAtom = atomWithLocalStorage<CartItem[]>('cart', []);
+export const cartAtom = atomWithStorage<CartItem[]>('cart', []);
 
 export const totalItemCountAtom = atom((get) => {
   const cart = get(cartAtom);
