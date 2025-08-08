@@ -20,7 +20,7 @@ interface Props {
   setProducts: React.Dispatch<React.SetStateAction<ProductWithUI[]>>;
 }
 
-const ProductMange = ({ products, addNotification, setProducts }: Props) => {
+const ProductManage = ({ products, addNotification, setProducts }: Props) => {
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [showProductForm, setShowProductForm] = useState(false);
 
@@ -194,4 +194,4 @@ const ProductMange = ({ products, addNotification, setProducts }: Props) => {
   );
 };
 
-export default ProductMange;
+export default ProductManage;

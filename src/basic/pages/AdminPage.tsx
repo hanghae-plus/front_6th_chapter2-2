@@ -7,7 +7,7 @@ import {
   deleteCoupon as _deleteCoupon,
   checkAndClearSelectedCoupon,
 } from "../models/coupon";
-import ProductMange from "../components/ProductMange";
+import ProductManage from "../components/ProductManage";
 
 interface Props {
   products: ProductWithUI[];
@@ -112,7 +112,7 @@ const AdminPage = ({
       </div>
 
       {activeTab === "products" ? (
-        <ProductMange
+        <ProductManage
           products={products}
           setProducts={setProducts}
           addNotification={addNotification}
