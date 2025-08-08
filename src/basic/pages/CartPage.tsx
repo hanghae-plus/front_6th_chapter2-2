@@ -6,6 +6,7 @@ import {
   Product,
 } from "@entities/product";
 import { CartItemList, CouponSelector, CheckoutSection } from "@features";
+import { getCartDiscountSummary } from "@features/checkout";
 import { useManageCart } from "@features/manage-cart";
 import { useManageCoupon } from "@features/manage-coupon";
 import { useProcessOrder } from "@features/process-order";
@@ -23,7 +24,7 @@ export function CartPage({
   searchValue,
 }: CartPageProps) {
   const cartManager = useManageCart({ products });
-  const couponManager = useManageCoupon(cartManager.cart);
+  const couponManager = useManageCoupon();
   const orderProcessor = useProcessOrder({
     onClearCart: cartManager.clearCart,
     onClearCoupon: couponManager.removeCoupon,
@@ -40,8 +41,9 @@ export function CartPage({
   );
 
   const cartSummary = useMemo(
-    () => couponManager.getCartSummaryWithCoupon(),
-    [couponManager, cartManager.cart, couponManager.selectedCoupon]
+    () =>
+      getCartDiscountSummary(cartManager.cart, couponManager.selectedCoupon),
+    [cartManager.cart, couponManager.selectedCoupon]
   );
 
   return (
@@ -79,8 +81,15 @@ export function CartPage({
                 coupons={couponManager.coupons}
                 selectedCoupon={couponManager.selectedCoupon}
                 onCouponSelect={(coupon) => {
-                  if (coupon) couponManager.applyCoupon(coupon);
-                  else couponManager.removeCoupon();
+                  if (coupon) {
+                    const { totalAfterDiscount } = getCartDiscountSummary(
+                      cartManager.cart,
+                      null
+                    );
+                    couponManager.applyCoupon(coupon, totalAfterDiscount);
+                  } else {
+                    couponManager.removeCoupon();
+                  }
                 }}
               />
 

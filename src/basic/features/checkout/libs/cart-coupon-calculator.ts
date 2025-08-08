@@ -4,7 +4,10 @@ import {
   calculateDiscountedPrice,
   calculateDiscountedAmount,
 } from "@shared/libs/price";
-import { getCartTotalWithDiscounts, getCartSubtotal } from "./totals";
+import {
+  getCartTotalWithDiscounts,
+  getCartSubtotal,
+} from "@entities/cart/libs";
 
 /**
  * 쿠폰이 적용된 장바구니 총액 계산

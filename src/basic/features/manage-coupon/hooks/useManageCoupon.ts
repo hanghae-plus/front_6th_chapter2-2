@@ -1,11 +1,9 @@
 import { useState, useCallback } from "react";
 import { Coupon } from "@entities/coupon";
-import type { Cart } from "@entities/cart/types";
-import { getCartDiscountSummary } from "@entities/cart";
 import { useCoupon, CouponErrorReason } from "@entities/coupon";
 import { useGlobalNotification } from "@entities/notification";
 
-export function useManageCoupon(cart: Cart[]) {
+export function useManageCoupon() {
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const { showErrorNotification, showSuccessNotification } =
     useGlobalNotification();
@@ -20,20 +18,14 @@ export function useManageCoupon(cart: Cart[]) {
     },
   });
 
-  const getCartSummaryWithCoupon = useCallback(() => {
-    return getCartDiscountSummary(cart, selectedCoupon);
-  }, [cart, selectedCoupon]);
-
   const applyCoupon = useCallback(
-    (coupon: Coupon) => {
-      const { totalAfterDiscount } = getCartSummaryWithCoupon();
-
+    (coupon: Coupon, totalAfterDiscount: number) => {
       applyCouponLogic(coupon, totalAfterDiscount, (appliedCoupon) => {
         setSelectedCoupon(appliedCoupon);
         showSuccessNotification("쿠폰이 적용되었습니다.");
       });
     },
-    [applyCouponLogic, getCartSummaryWithCoupon, showSuccessNotification]
+    [applyCouponLogic, showSuccessNotification]
   );
 
   const removeCoupon = useCallback(() => {
@@ -43,10 +35,7 @@ export function useManageCoupon(cart: Cart[]) {
   return {
     selectedCoupon,
     coupons,
-
     applyCoupon,
     removeCoupon,
-
-    getCartSummaryWithCoupon,
   };
 }
