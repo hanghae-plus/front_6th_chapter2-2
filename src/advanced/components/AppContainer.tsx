@@ -1,15 +1,18 @@
+import { useAtomValue } from 'jotai';
 import { useState, useCallback, useEffect } from 'react';
 
-import { Product } from '../types';
-import Header from './components/Header';
-import AdminPage from './components/pages/AdminPage';
-import CartPage from './components/pages/CartPage';
-import UIToast from './components/ui/UIToast';
-import { useCart } from './hooks/useCart';
-import { useCoupons } from './hooks/useCouponts';
-import { useProducts } from './hooks/useProducts';
-import { getRemainingStock } from './utils/calculateItem';
-import { filterProductsBySearchTerm } from './utils/filterProducts';
+import { Product } from '../../types';
+import { isAdminAtom } from '../atoms/isAdminAtom';
+import Header from '../components/Header';
+import AdminPage from '../components/pages/AdminPage';
+import CartPage from '../components/pages/CartPage';
+import UIToast from '../components/ui/UIToast';
+import { useCart } from '../hooks/useCart';
+import { useCoupons } from '../hooks/useCouponts';
+import { useProducts } from '../hooks/useProducts';
+import { getRemainingStock } from '../utils/calculateItem';
+import { filterProductsBySearchTerm } from '../utils/filterProducts';
+
 export interface ProductWithUI extends Product {
   description?: string;
   isRecommended?: boolean;
@@ -22,8 +25,8 @@ export interface Notification {
 }
 
 const App = () => {
-  const { products, setProducts, deleteProduct } = useProducts();
-  const [isAdmin, setIsAdmin] = useState(false);
+  const { products, deleteProduct } = useProducts();
+  const isAdmin = useAtomValue(isAdminAtom);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
   const [searchTerm, setSearchTerm] = useState('');
@@ -64,10 +67,8 @@ const App = () => {
     [],
   );
 
-  const { cart, setCart, totalItemCount, addToCart, removeFromCart, updateQuantity } = useCart(
-    addNotification,
-    products,
-  );
+  const { cart, setCart, totalItemCount, addToCart, removeFromCart, updateQuantity } =
+    useCart(addNotification);
   const { coupons, setCoupons, selectedCoupon, setSelectedCoupon, applyCoupon } = useCoupons(
     cart,
     addNotification,
@@ -96,12 +97,10 @@ const App = () => {
         <UIToast notifications={notifications} setNotifications={setNotifications} />
       )}
       <Header
-        isAdmin={isAdmin}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
         cart={cart}
         totalItemCount={totalItemCount}
-        setIsAdmin={setIsAdmin}
       />
 
       <main className='max-w-7xl mx-auto px-4 py-8'>
@@ -113,7 +112,6 @@ const App = () => {
             formatPrice={formatPrice}
             addNotification={addNotification}
             coupons={coupons}
-            setProducts={setProducts}
             setCoupons={setCoupons}
             deleteProduct={deleteProduct}
             setSelectedCoupon={setSelectedCoupon}

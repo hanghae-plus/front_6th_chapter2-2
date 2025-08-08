@@ -7,7 +7,3 @@
 // - coupons: 쿠폰 배열
 // - addCoupon: 새 쿠폰 추가
 // - removeCoupon: 쿠폰 삭제
-
-export function useCoupons() {
-  // TODO: 구현
-}
