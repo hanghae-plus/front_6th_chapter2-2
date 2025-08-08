@@ -93,7 +93,6 @@ export function App() {
         setSearchTerm={setSearchTerm}
         totalItemCount={totalItemCount}
       />
-
       <main className="mx-auto max-w-7xl px-4 py-8">
         {isAdminMode ? (
           <AdminPage
@@ -124,7 +123,6 @@ export function App() {
           />
         )}
       </main>
-
       <NotificationList notifications={notifications} onRemove={removeNotification} />
     </div>
   );
