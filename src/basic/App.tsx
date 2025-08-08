@@ -2,18 +2,7 @@ import { useState, useEffect } from "react";
 import { CartItem, Coupon } from "../types";
 import { useLocalStorage, useDebounce, useNotifications } from "./hooks";
 import { NotificationContainer } from "./components/NotificationContainer";
-import {
-  addToCart as _addToCart,
-  removeFromCart as _removeFromCart,
-  updateQuantity as _updateQuantity,
-} from "../basic/models/cart";
-import {
-  formatPrice as _formatPrice,
-  addProduct as _addProduct,
-  updateProduct as _updateProduct,
-  deleteProduct as _deleteProduct,
-  ProductWithUI,
-} from "../basic/models/product";
+import { ProductWithUI } from "../basic/models/product";
 import Header from "./components/Header";
 import AdminPage from "./pages/AdminPage";
 import ShopPage from "./pages/ShopPage";
