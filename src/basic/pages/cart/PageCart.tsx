@@ -1,18 +1,18 @@
-import { CartItem, Coupon } from "../../../types.ts";
-import type { HandleNotificationAdd } from "../../entities/Notification.ts";
-import { ProductWithUI } from "../../entities/ProductWithUI.ts";
-import { SectionCart } from "./ui/SectionCart.tsx";
-import { SectionProductList } from "./ui/SectionProductList.tsx";
+import { CartItem, Coupon } from "../../../types.ts"
+import type { HandleNotificationAdd } from "../../entities/Notification.ts"
+import { ProductViewModel } from "../../entities/ProductViewModel.ts"
+import { SectionCart } from "./ui/SectionCart.tsx"
+import { SectionProductList } from "./ui/SectionProductList.tsx"
 
 interface PageCartProps {
-  products: ProductWithUI[];
-  searchTerm: string;
-  cart: CartItem[];
-  setCart: (cart: CartItem[]) => void;
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
-  handleNotificationAdd: HandleNotificationAdd;
+  products: ProductViewModel[]
+  searchTerm: string
+  cart: CartItem[]
+  setCart: (cart: CartItem[]) => void
+  coupons: Coupon[]
+  selectedCoupon: Coupon | null
+  setSelectedCoupon: (coupon: Coupon | null) => void
+  handleNotificationAdd: HandleNotificationAdd
 }
 
 function PageCart({
@@ -47,7 +47,7 @@ function PageCart({
         handleNotificationAdd={handleNotificationAdd}
       />
     </div>
-  );
+  )
 }
 
-export default PageCart;
+export default PageCart

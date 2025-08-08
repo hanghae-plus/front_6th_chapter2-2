@@ -1,8 +1,8 @@
-import type { CartItem } from "../../../../types.ts";
-import type { ProductWithUI } from "../../../entities/ProductWithUI.ts";
-import { ProductView } from "./ProductView.tsx";
-import { useDebounce } from "../../../utils/hooks/useDebounce.ts";
-import type { HandleNotificationAdd } from "../../../entities/Notification.ts";
+import type { CartItem } from "../../../../types.ts"
+import type { ProductViewModel } from "../../../entities/ProductViewModel.ts"
+import { ProductView } from "./ProductView.tsx"
+import { useDebounce } from "../../../utils/hooks/useDebounce.ts"
+import type { HandleNotificationAdd } from "../../../entities/Notification.ts"
 
 export function SectionProductList({
   products,
@@ -11,21 +11,21 @@ export function SectionProductList({
   setCart,
   handleNotificationAdd,
 }: {
-  products: ProductWithUI[];
-  searchTerm: string;
-  cart: CartItem[];
-  setCart: (cart: CartItem[]) => void;
-  handleNotificationAdd: HandleNotificationAdd;
+  products: ProductViewModel[]
+  searchTerm: string
+  cart: CartItem[]
+  setCart: (cart: CartItem[]) => void
+  handleNotificationAdd: HandleNotificationAdd
 }) {
-  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const debouncedSearchTerm = useDebounce(searchTerm, 500)
 
   const filteredProducts = debouncedSearchTerm
     ? products.filter(
         (product) =>
           product.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-          (product.description && product.description.toLowerCase().includes(debouncedSearchTerm.toLowerCase()))
+          (product.description && product.description.toLowerCase().includes(debouncedSearchTerm.toLowerCase())),
       )
-    : products;
+    : products
 
   return (
     <section>
@@ -40,16 +40,10 @@ export function SectionProductList({
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredProducts.map((product) => (
-            <ProductView
-              key={product.id}
-              product={product}
-              cart={cart}
-              setCart={setCart}
-              handleNotificationAdd={handleNotificationAdd}
-            />
+            <ProductView key={product.id} product={product} cart={cart} setCart={setCart} handleNotificationAdd={handleNotificationAdd} />
           ))}
         </div>
       )}
     </section>
-  );
+  )
 }

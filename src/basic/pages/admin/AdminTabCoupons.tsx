@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useState } from "react"
 import type { Coupon } from "../../../types"
 import { IconAdd } from "../../components/icons/IconAdd"
 import { AdminCouponForm } from "./AdminCouponForm"
@@ -25,18 +25,16 @@ export function AdminTabCoupons({
     discountValue: 0,
   })
 
-  const handleCouponAdd = useCallback(
-    (newCoupon: Coupon) => {
-      const existingCoupon = coupons.find((c) => c.code === newCoupon.code)
-      if (existingCoupon) {
-        handleNotificationAdd("이미 존재하는 쿠폰 코드입니다.", "error")
-        return
-      }
-      setCoupons((prev) => [...prev, newCoupon])
-      handleNotificationAdd("쿠폰이 추가되었습니다.", "success")
-    },
-    [coupons, handleNotificationAdd],
-  )
+  function handleCouponAdd(newCoupon: Coupon) {
+    const existingCoupon = coupons.find((c) => c.code === newCoupon.code)
+    if (existingCoupon) {
+      handleNotificationAdd("이미 존재하는 쿠폰 코드입니다.", "error")
+      return
+    }
+
+    setCoupons((prev) => [...prev, newCoupon])
+    handleNotificationAdd("쿠폰이 추가되었습니다.", "success")
+  }
 
   const handleCouponSubmit = (e: React.FormEvent) => {
     e.preventDefault()

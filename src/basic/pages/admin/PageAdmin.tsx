@@ -1,12 +1,12 @@
 import { useState } from "react"
 import { Coupon } from "../../../types.ts"
-import { ProductWithUI } from "../../entities/ProductWithUI.ts"
+import { ProductViewModel } from "../../entities/ProductViewModel.ts"
 import { AdminTabCoupons } from "./AdminTabCoupons.tsx"
 import { AdminTabProducts } from "./AdminTabProducts.tsx"
 
 interface PageAdminProps {
-  products: ProductWithUI[]
-  setProducts: React.Dispatch<React.SetStateAction<ProductWithUI[]>>
+  products: ProductViewModel[]
+  setProducts: React.Dispatch<React.SetStateAction<ProductViewModel[]>>
   handleNotificationAdd: (message: string, type: "error" | "success" | "warning") => void
   coupons: Coupon[]
   setCoupons: React.Dispatch<React.SetStateAction<Coupon[]>>

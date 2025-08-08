@@ -1,5 +1,5 @@
 import type { Coupon } from "../../../types"
-import { IconTrash } from "./IconTrash"
+import { IconTrash } from "../../components/icons/IconTrash"
 
 export function AdminCouponView({
   coupon,
@@ -34,6 +34,7 @@ export function AdminCouponView({
             </span>
           </div>
         </div>
+
         <button className="text-gray-400 hover:text-red-600 transition-colors" onClick={() => handleCouponDelete(coupon.code)}>
           <IconTrash />
         </button>

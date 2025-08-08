@@ -1,13 +1,13 @@
 import { addItemToCart, canAddToCart } from "../../../entities/CartItem.ts"
 import { getRemainingStock } from "../../../entities/Product.ts"
-import { ProductWithUI } from "../../../entities/ProductWithUI.ts"
+import { ProductViewModel } from "../../../entities/ProductViewModel.ts"
 
 import { CartItem } from "../../../../types.ts"
 import { IconProductPlaceholder } from "../../../components/icons/IconProductPlaceholder.tsx"
 import type { HandleNotificationAdd } from "../../../entities/Notification.ts"
 
 interface ProductViewProps {
-  product: ProductWithUI
+  product: ProductViewModel
   cart: CartItem[]
   setCart: (cart: CartItem[]) => void
   handleNotificationAdd: HandleNotificationAdd
@@ -23,7 +23,7 @@ export function ProductView({ product, cart, setCart, handleNotificationAdd }: P
   const discountString =
     product.discounts.length > 0 ? `${product.discounts[0].quantity}개 이상 구매시 할인 ${product.discounts[0].rate * 100}%` : ""
 
-  function handleProductAddToCart(product: ProductWithUI) {
+  function handleProductAddToCart(product: ProductViewModel) {
     if (!canAddToCart(cart, product)) {
       const remainingStock = getRemainingStock(product, cart)
 

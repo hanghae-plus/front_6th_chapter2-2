@@ -1,5 +1,5 @@
 import type { Discount } from "../../../types"
-import type { ProductWithUI } from "../../entities/ProductWithUI"
+import type { ProductViewModel } from "../../entities/ProductViewModel"
 import { formatPrice } from "../../utils/formatPrice"
 
 export function AdminProductTableRow({
@@ -11,17 +11,17 @@ export function AdminProductTableRow({
   setProducts,
   handleNotificationAdd,
 }: {
-  product: ProductWithUI
-  products: ProductWithUI[]
+  product: ProductViewModel
+  products: ProductViewModel[]
   setEditingProduct: (productId: string) => void
   setProductForm: (product: { name: string; price: number; stock: number; description: string; discounts: Discount[] }) => void
   setShowProductForm: (show: boolean) => void
-  setProducts: React.Dispatch<React.SetStateAction<ProductWithUI[]>>
+  setProducts: React.Dispatch<React.SetStateAction<ProductViewModel[]>>
   handleNotificationAdd: (message: string, type: "error" | "success" | "warning") => void
 }) {
   const formattedPrice = formatPrice(product.price, product.id, products, [], true)
 
-  function handleProductStartEdit(product: ProductWithUI) {
+  function handleProductStartEdit(product: ProductViewModel) {
     setEditingProduct(product.id)
     setProductForm({
       name: product.name,
@@ -33,7 +33,7 @@ export function AdminProductTableRow({
     setShowProductForm(true)
   }
 
-  function handleProductDelete(product: ProductWithUI) {
+  function handleProductDelete(product: ProductViewModel) {
     setProducts((prev) => prev.filter((p) => p.id !== product.id))
     handleNotificationAdd("상품이 삭제되었습니다.", "success")
   }

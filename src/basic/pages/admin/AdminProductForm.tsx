@@ -1,16 +1,16 @@
-import { useCallback } from "react"
-import { ProductsDiscount } from "./ProductsDiscount"
 import type { ProductWithUI } from "../../data/products"
+import { AdminProductsDiscount } from "./AdminProductsDiscount"
 
 export function AdminProductForm({
+  setProducts,
   editingProduct,
   productForm,
   setProductForm,
   handleNotificationAdd,
   setEditingProduct,
   setShowProductForm,
-  setProducts,
 }: {
+  setProducts: React.Dispatch<React.SetStateAction<ProductWithUI[]>>
   editingProduct: string | null
   productForm: { name: string; price: number; stock: number; description: string; discounts: Array<{ quantity: number; rate: number }> }
   setProductForm: (form: {
@@ -23,67 +23,98 @@ export function AdminProductForm({
   handleNotificationAdd: (message: string, type: "error" | "success" | "warning") => void
   setEditingProduct: (productId: string | null) => void
   setShowProductForm: (show: boolean) => void
-  setProducts: React.Dispatch<React.SetStateAction<ProductWithUI[]>>
 }) {
-  const handleProductAdd = useCallback(
-    (newProduct: Omit<ProductWithUI, "id">) => {
-      const product: ProductWithUI = {
-        ...newProduct,
-        id: `p${Date.now()}`,
-      }
-      setProducts((prev) => [...prev, product])
-      handleNotificationAdd("상품이 추가되었습니다.", "success")
-    },
-    [handleNotificationAdd],
-  )
+  // 새 상품을 추가
+  function handleProductAdd(newProduct: Omit<ProductWithUI, "id">) {
+    const product: ProductWithUI = {
+      ...newProduct,
+      id: `p${Date.now()}`,
+    }
+    setProducts((prev) => [...prev, product])
+    handleNotificationAdd("상품이 추가되었습니다.", "success")
+  }
 
-  const handleProductUpdate = useCallback(
-    (productId: string, updates: Partial<ProductWithUI>) => {
-      setProducts((prev) => prev.map((product) => (product.id === productId ? { ...product, ...updates } : product)))
-      handleNotificationAdd("상품이 수정되었습니다.", "success")
-    },
-    [handleNotificationAdd],
-  )
+  // 상품명 변경
+  function handleProductNameChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setProductForm({ ...productForm, name: e.target.value })
+  }
 
-  function handleProductSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (editingProduct && editingProduct !== "new") {
-      handleProductUpdate(editingProduct, productForm)
-      setEditingProduct(null)
-    } else {
-      handleProductAdd({
+  // 상품 설명 변경
+  function handleProductDescriptionChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setProductForm({ ...productForm, description: e.target.value })
+  }
+
+  // 가격 입력
+  function handleProductPriceChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value
+    if (value === "" || /^\d+$/.test(value)) {
+      setProductForm({ ...productForm, price: value === "" ? 0 : parseInt(value) })
+    }
+  }
+
+  // 가격 입력 (유효성 검사)
+  function handleProductPriceBlur(e: React.FocusEvent<HTMLInputElement>) {
+    const value = e.target.value
+    if (value === "") {
+      setProductForm({ ...productForm, price: 0 })
+    } else if (parseInt(value) < 0) {
+      handleNotificationAdd("가격은 0보다 커야 합니다", "error")
+      setProductForm({ ...productForm, price: 0 })
+    }
+  }
+
+  // 할인 정책 추가
+  function handleAddDiscount() {
+    setProductForm({ ...productForm, discounts: [...productForm.discounts, { quantity: 10, rate: 0.1 }] })
+  }
+
+  // 재고 입력
+  function handleStockChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value
+    if (value === "" || /^\d+$/.test(value)) {
+      setProductForm({
         ...productForm,
-        discounts: productForm.discounts,
+        stock: value === "" ? 0 : parseInt(value),
       })
     }
-    setProductForm({
-      name: "",
-      price: 0,
-      stock: 0,
-      description: "",
-      discounts: [],
-    })
-    setEditingProduct(null)
-    setShowProductForm(false)
   }
 
+  // 재고 입력 (유효성 검사)
+  function handleStockBlur(e: React.FocusEvent<HTMLInputElement>) {
+    const value = e.target.value
+    if (value === "") {
+      setProductForm({ ...productForm, stock: 0 })
+    } else if (parseInt(value) < 0) {
+      handleNotificationAdd("재고는 0보다 커야 합니다", "error")
+      setProductForm({ ...productForm, stock: 0 })
+    }
+  }
+
+  // 취소 버튼 클릭
   function handleClickCancel() {
     setEditingProduct(null)
-    setProductForm({
-      name: "",
-      price: 0,
-      stock: 0,
-      description: "",
-      discounts: [],
-    })
+    setProductForm({ name: "", price: 0, stock: 0, description: "", discounts: [] })
     setShowProductForm(false)
   }
 
-  function handleAddDiscount() {
-    setProductForm({
-      ...productForm,
-      discounts: [...productForm.discounts, { quantity: 10, rate: 0.1 }],
-    })
+  // 폼 제출 (상품 추가/수정)
+  function handleProductSubmit(e: React.FormEvent) {
+    e.preventDefault()
+
+    if (editingProduct && editingProduct !== "new") {
+      // 기존 상품 수정
+      setProducts((prev) => prev.map((product) => (product.id === editingProduct ? { ...product, ...productForm } : product)))
+      handleNotificationAdd("상품이 수정되었습니다.", "success")
+      setEditingProduct(null)
+    } else {
+      // 새 상품 추가
+      handleProductAdd({ ...productForm, discounts: productForm.discounts })
+    }
+
+    // 폼 초기화
+    setProductForm({ name: "", price: 0, stock: 0, description: "", discounts: [] })
+    setEditingProduct(null)
+    setShowProductForm(false)
   }
 
   return (
@@ -96,12 +127,7 @@ export function AdminProductForm({
             <input
               type="text"
               value={productForm.name}
-              onChange={(e) =>
-                setProductForm({
-                  ...productForm,
-                  name: e.target.value,
-                })
-              }
+              onChange={handleProductNameChange}
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
               required
             />
@@ -111,12 +137,7 @@ export function AdminProductForm({
             <input
               type="text"
               value={productForm.description}
-              onChange={(e) =>
-                setProductForm({
-                  ...productForm,
-                  description: e.target.value,
-                })
-              }
+              onChange={handleProductDescriptionChange}
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
             />
           </div>
@@ -125,24 +146,8 @@ export function AdminProductForm({
             <input
               type="text"
               value={productForm.price === 0 ? "" : productForm.price}
-              onChange={(e) => {
-                const value = e.target.value
-                if (value === "" || /^\d+$/.test(value)) {
-                  setProductForm({
-                    ...productForm,
-                    price: value === "" ? 0 : parseInt(value),
-                  })
-                }
-              }}
-              onBlur={(e) => {
-                const value = e.target.value
-                if (value === "") {
-                  setProductForm({ ...productForm, price: 0 })
-                } else if (parseInt(value) < 0) {
-                  handleNotificationAdd("가격은 0보다 커야 합니다", "error")
-                  setProductForm({ ...productForm, price: 0 })
-                }
-              }}
+              onChange={handleProductPriceChange}
+              onBlur={handleProductPriceBlur}
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
               placeholder="숫자만 입력"
               required
@@ -153,27 +158,8 @@ export function AdminProductForm({
             <input
               type="text"
               value={productForm.stock === 0 ? "" : productForm.stock}
-              onChange={(e) => {
-                const value = e.target.value
-                if (value === "" || /^\d+$/.test(value)) {
-                  setProductForm({
-                    ...productForm,
-                    stock: value === "" ? 0 : parseInt(value),
-                  })
-                }
-              }}
-              onBlur={(e) => {
-                const value = e.target.value
-                if (value === "") {
-                  setProductForm({ ...productForm, stock: 0 })
-                } else if (parseInt(value) < 0) {
-                  handleNotificationAdd("재고는 0보다 커야 합니다", "error")
-                  setProductForm({ ...productForm, stock: 0 })
-                } else if (parseInt(value) > 9999) {
-                  handleNotificationAdd("재고는 9999개를 초과할 수 없습니다", "error")
-                  setProductForm({ ...productForm, stock: 9999 })
-                }
-              }}
+              onChange={handleStockChange}
+              onBlur={handleStockBlur}
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
               placeholder="숫자만 입력"
               required
@@ -184,9 +170,15 @@ export function AdminProductForm({
           <label className="block text-sm font-medium text-gray-700 mb-2">할인 정책</label>
           <div className="space-y-2">
             {productForm.discounts.map((discount, index) => (
-              <ProductsDiscount key={index} index={index} discount={discount} productForm={productForm} setProductForm={setProductForm} />
+              <AdminProductsDiscount
+                key={index}
+                index={index}
+                discount={discount}
+                productForm={productForm}
+                setProductForm={setProductForm}
+              />
             ))}
-            <button type="button" onClick={handleAddDiscount} className="text-sm text-indigo-600 hover:text-indigo-800">
+            <button type="button" className="text-sm text-indigo-600 hover:text-indigo-800" onClick={handleAddDiscount}>
               + 할인 추가
             </button>
           </div>
@@ -200,6 +192,7 @@ export function AdminProductForm({
           >
             취소
           </button>
+
           <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700">
             {editingProduct === "new" ? "추가" : "수정"}
           </button>

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import type { ProductWithUI } from "../../entities/ProductWithUI"
+import type { ProductViewModel } from "../../entities/ProductViewModel"
 import { AdminProductForm } from "./AdminProductForm"
 import { AdminProductTableRow } from "./AdminProductTableRow"
 
@@ -8,8 +8,8 @@ export function AdminTabProducts({
   setProducts,
   handleNotificationAdd,
 }: {
-  products: ProductWithUI[]
-  setProducts: React.Dispatch<React.SetStateAction<ProductWithUI[]>>
+  products: ProductViewModel[]
+  setProducts: React.Dispatch<React.SetStateAction<ProductViewModel[]>>
   handleNotificationAdd: (message: string, type: "error" | "success" | "warning") => void
 }) {
   const [showProductForm, setShowProductForm] = useState(false)
