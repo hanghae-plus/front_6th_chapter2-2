@@ -6,16 +6,14 @@ import {
   updateCartItemQuantity,
 } from "../../entities/CartItem.ts";
 import { useCallback } from "react";
+import type { HandleNotificationAdd } from "../../entities/Notification";
 
 interface CartItemViewProps {
   item: CartItem;
   cart: CartItem[];
   products: ProductWithUI[];
   setCart: (cart: CartItem[]) => void;
-  handleNotificationAdd: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
+  handleNotificationAdd: HandleNotificationAdd;
 }
 
 export function CartItemView({

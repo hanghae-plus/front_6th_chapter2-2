@@ -5,16 +5,14 @@ import { addItemToCart, canAddToCart } from "../../entities/CartItem.ts";
 import { formatPrice } from "../../utils/formatPrice.ts";
 
 import { CartItem } from "../../../types.ts";
+import type { HandleNotificationAdd } from "../../entities/Notification";
 
 interface ProductViewProps {
   product: ProductWithUI;
   products: ProductWithUI[];
   cart: CartItem[];
   setCart: (cart: CartItem[]) => void;
-  handleNotificationAdd: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
+  handleNotificationAdd: HandleNotificationAdd;
 }
 
 export function ProductView({

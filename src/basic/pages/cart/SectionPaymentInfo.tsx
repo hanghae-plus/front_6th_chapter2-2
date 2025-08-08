@@ -1,10 +1,32 @@
+import type { CartItem, Coupon } from "../../../types";
+import type { HandleNotificationAdd } from "../../entities/Notification";
+import { calculateCartTotal } from "../../entities/CartItem";
+
 export function SectionPaymentInfo({
-  totals,
-  handleOrderComplete,
+  cart,
+  selectedCoupon,
+  setCart,
+  setSelectedCoupon,
+  handleNotificationAdd,
 }: {
-  totals: { totalBeforeDiscount: number; totalAfterDiscount: number };
-  handleOrderComplete: () => void;
+  cart: CartItem[];
+  selectedCoupon: Coupon | null;
+  setCart: (cart: CartItem[]) => void;
+  setSelectedCoupon: (coupon: Coupon | null) => void;
+  handleNotificationAdd: HandleNotificationAdd;
 }) {
+  const totals = calculateCartTotal(cart, selectedCoupon);
+
+  function handleOrderComplete() {
+    const orderNumber = `ORD-${Date.now()}`;
+    handleNotificationAdd(
+      `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
+      "success"
+    );
+    setCart([]);
+    setSelectedCoupon(null);
+  }
+
   return (
     <section className="bg-white rounded-lg border border-gray-200 p-4">
       <h3 className="text-lg font-semibold mb-4">결제 정보</h3>
@@ -36,8 +58,8 @@ export function SectionPaymentInfo({
       </div>
 
       <button
-        onClick={handleOrderComplete}
         className="w-full mt-4 py-3 bg-yellow-400 text-gray-900 rounded-md font-medium hover:bg-yellow-500 transition-colors"
+        onClick={handleOrderComplete}
       >
         {totals.totalAfterDiscount.toLocaleString()}원 결제하기
       </button>

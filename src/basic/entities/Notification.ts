@@ -3,3 +3,9 @@ export interface Notification {
   message: string;
   type: "error" | "success" | "warning";
 }
+
+export type NotificationType = Notification["type"];
+export type HandleNotificationAdd = (
+  message: string,
+  type?: NotificationType
+) => void;

@@ -1,4 +1,5 @@
 import type { CartItem, Coupon } from "../../../types";
+import type { HandleNotificationAdd } from "../../entities/Notification";
 import { calculateCartTotal } from "../../entities/CartItem";
 import type { ProductWithUI } from "../../entities/ProductWithUI";
 import { CartItemView } from "./CartItemView";
@@ -19,25 +20,12 @@ export function SectionCart({
   cart: CartItem[];
   products: ProductWithUI[];
   setCart: (cart: CartItem[]) => void;
-  handleNotificationAdd: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
+  handleNotificationAdd: HandleNotificationAdd;
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
   setSelectedCoupon: (coupon: Coupon | null) => void;
 }) {
-  const totals = calculateCartTotal(cart, selectedCoupon);
-
-  function handleOrderComplete() {
-    const orderNumber = `ORD-${Date.now()}`;
-    handleNotificationAdd(
-      `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
-      "success"
-    );
-    setCart([]);
-    setSelectedCoupon(null);
-  }
+  // totals 계산은 SectionPaymentInfo에서 수행하도록 이동
 
   function handleCouponApply(coupon: Coupon) {
     const currentTotal = calculateCartTotal(
@@ -118,8 +106,11 @@ export function SectionCart({
             </section>
 
             <SectionPaymentInfo
-              totals={totals}
-              handleOrderComplete={handleOrderComplete}
+              cart={cart}
+              selectedCoupon={selectedCoupon}
+              setCart={setCart}
+              setSelectedCoupon={setSelectedCoupon}
+              handleNotificationAdd={handleNotificationAdd}
             />
           </>
         )}
