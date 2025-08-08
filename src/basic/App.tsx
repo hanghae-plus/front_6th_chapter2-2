@@ -12,7 +12,7 @@ interface Notification {
   type: 'error' | 'success' | 'warning';
 }
 
-// 초기 데이터
+// 초기 데이터 //
 const initialProducts: ProductWithUI[] = [
   {
     id: 'p1',
