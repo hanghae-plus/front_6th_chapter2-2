@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import {
   calculateCartTotal,
   calculateItemTotal,
+  cartApplicationService,
   type CartItem,
-  getRemainingStock,
-  useCartActions
+  getRemainingStock
 } from "../domains/cart";
 import { type Coupon, INITIAL_COUPONS, useCouponActions } from "../domains/coupon";
 import {
@@ -51,13 +51,31 @@ export function App() {
 
   const [totalItemCount, setTotalItemCount] = useState(0);
 
-  const { addToCart, removeFromCart, updateQuantity, completeOrder } = useCartActions({
-    cart,
-    products,
-    setCart,
-    setSelectedCoupon,
-    addNotification
-  });
+  const addToCart = (product: Product) => {
+    cartApplicationService.addToCart(product, cart, setCart, addNotification);
+  };
+
+  const removeFromCart = (productId: string) => {
+    cartApplicationService.removeFromCart(productId, setCart);
+  };
+
+  const updateQuantity = (productId: string, newQuantity: number) => {
+    cartApplicationService.updateQuantity(
+      productId,
+      newQuantity,
+      products,
+      setCart,
+      addNotification
+    );
+  };
+
+  const completeOrder = () => {
+    cartApplicationService.completeOrder(
+      () => setCart([]),
+      () => setSelectedCoupon(null),
+      addNotification
+    );
+  };
 
   const { applyCoupon: applyCouponBase } = useCouponActions({
     coupons,

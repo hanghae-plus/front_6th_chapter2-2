@@ -3,3 +3,8 @@ export interface NotificationItem {
   message: string;
   type: "error" | "success" | "warning";
 }
+
+export type NotificationFunction = (
+  message: string,
+  type?: "error" | "success" | "warning"
+) => void;
