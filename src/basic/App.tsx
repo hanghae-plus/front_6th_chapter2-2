@@ -94,11 +94,18 @@ const App = () => {
       const product = products.find((p) => p.id === productId);
       if (product) {
         const isSoldOut = getRemainingStock(cart, product) <= 0;
-        return _formatPrice(price, isAdmin, isSoldOut);
+        return _formatPrice({
+          price,
+          hasUnit: isAdmin,
+          isSoldOut,
+        });
       }
     }
 
-    return _formatPrice(price, isAdmin);
+    return _formatPrice({
+      price,
+      hasUnit: isAdmin,
+    });
   };
 
   const [totalItemCount, setTotalItemCount] = useState(0);
