@@ -14,7 +14,6 @@ interface Props {
   coupons: Coupon[];
 
   // NOTE: 임시props
-  formatPrice: (price: number, productId?: string) => string;
   addNotification: (
     message: string,
     type: "error" | "success" | "warning"
@@ -27,7 +26,6 @@ interface Props {
 const AdminPage = ({
   addNotification,
   products,
-  formatPrice,
   coupons,
   setProducts,
   setCoupons,
@@ -118,7 +116,6 @@ const AdminPage = ({
           products={products}
           setProducts={setProducts}
           addNotification={addNotification}
-          formatPrice={formatPrice}
         />
       ) : (
         <section className="bg-white rounded-lg border border-gray-200">

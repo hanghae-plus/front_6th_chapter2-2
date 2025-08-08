@@ -3,7 +3,6 @@ import { CartItem, Coupon } from "../types";
 import { useLocalStorage, useDebounce, useNotifications } from "./hooks";
 import { NotificationContainer } from "./components/NotificationContainer";
 import {
-  getRemainingStock,
   addToCart as _addToCart,
   removeFromCart as _removeFromCart,
   updateQuantity as _updateQuantity,
@@ -89,25 +88,6 @@ const App = () => {
   const { notifications, addNotification, removeNotificationById } =
     useNotifications();
 
-  const formatPrice = (price: number, productId?: string): string => {
-    if (productId) {
-      const product = products.find((p) => p.id === productId);
-      if (product) {
-        const isSoldOut = getRemainingStock(cart, product) <= 0;
-        return _formatPrice({
-          price,
-          hasUnit: isAdmin,
-          isSoldOut,
-        });
-      }
-    }
-
-    return _formatPrice({
-      price,
-      hasUnit: isAdmin,
-    });
-  };
-
   const [totalItemCount, setTotalItemCount] = useState(0);
 
   useEffect(() => {
@@ -136,7 +116,6 @@ const App = () => {
             products={products}
             coupons={coupons}
             addNotification={addNotification}
-            formatPrice={formatPrice}
             setCoupons={setCoupons}
             setProducts={setProducts}
             setSelectedCoupon={setSelectedCoupon}

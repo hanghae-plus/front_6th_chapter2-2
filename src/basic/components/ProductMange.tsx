@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import {
-  formatPrice as _formatPrice,
+  formatPrice,
   addProduct as _addProduct,
   updateProduct as _updateProduct,
   deleteProduct as _deleteProduct,
@@ -11,7 +11,6 @@ interface Props {
   products: ProductWithUI[];
 
   // TODO: 전역에서 관리
-  formatPrice: (price: number, productId?: string) => string;
   addNotification: (
     message: string,
     type: "error" | "success" | "warning"
@@ -19,12 +18,7 @@ interface Props {
   setProducts: React.Dispatch<React.SetStateAction<ProductWithUI[]>>;
 }
 
-const ProductMange = ({
-  products,
-  addNotification,
-  formatPrice,
-  setProducts,
-}: Props) => {
+const ProductMange = ({ products, addNotification, setProducts }: Props) => {
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [showProductForm, setShowProductForm] = useState(false);
 
@@ -146,7 +140,7 @@ const ProductMange = ({
                   {product.name}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {formatPrice(product.price, product.id)}
+                  {formatPrice({ price: product.price, hasUnit: true })}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   <span
