@@ -34,7 +34,7 @@ export function EditProductForm({
           onValidationError={(message) => showErrorNotification(message)}
         />
 
-        <div className="flex space-x-2 pt-4 border-t border-gray-200">
+        <div className="flex justify-end gap-3">
           <Button type="button" variant="secondary" onClick={onCancel}>
             취소
           </Button>

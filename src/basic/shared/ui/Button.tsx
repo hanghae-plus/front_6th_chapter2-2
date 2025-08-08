@@ -27,8 +27,8 @@ const variantStyles: Record<ButtonVariant, string> = {
   warning:
     "bg-yellow-400 text-gray-900 hover:bg-yellow-500 focus:ring-yellow-500",
   danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
-  link: "text-blue-600 hover:underline bg-transparent border-none p-0 focus:ring-blue-500",
-  icon: "text-gray-400 hover:text-gray-600 bg-transparent border-none p-0 focus:ring-gray-500",
+  link: "bg-transparent border-none p-0",
+  icon: "bg-transparent border-none p-0",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -38,8 +38,11 @@ const sizeStyles: Record<ButtonSize, string> = {
   lg: "px-6 py-3 text-base",
 };
 
-const baseStyles =
+const solidBaseStyles =
   "font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
+
+const minimalBaseStyles =
+  "font-medium transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed";
 
 export function Button({
   variant = "primary",
@@ -52,12 +55,13 @@ export function Button({
   ...props
 }: ButtonProps) {
   const isDisabled = disabled || loading;
+  const isTextual = variant === "link" || variant === "icon";
 
   const classes = [
-    baseStyles,
+    isTextual ? minimalBaseStyles : solidBaseStyles,
     variantStyles[variant],
-    sizeStyles[size],
-    fullWidth ? "w-full" : "",
+    !isTextual ? sizeStyles[size] : "",
+    fullWidth && !isTextual ? "w-full" : "",
     className,
   ]
     .filter(Boolean)

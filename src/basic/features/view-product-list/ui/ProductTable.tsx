@@ -61,16 +61,14 @@ export const ProductTable = memo(
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <Button
-                    variant="primary"
-                    size="sm"
+                    variant="link"
                     onClick={() => onEdit(product)}
                     className="text-indigo-600 hover:text-indigo-900 mr-3"
                   >
                     수정
                   </Button>
                   <Button
-                    variant="danger"
-                    size="sm"
+                    variant="link"
                     onClick={() => onDelete(product.id)}
                     className="text-red-600 hover:text-red-900"
                   >
