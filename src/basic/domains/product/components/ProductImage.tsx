@@ -1,8 +1,8 @@
-import type { Product } from "../../../../types";
 import { ImagePlaceholderIcon } from "../../../shared";
+import type { ProductWithUI } from "../types";
 
 type ProductImageProps = {
-  product: Product & { isRecommended?: boolean };
+  product: ProductWithUI;
 };
 
 export function ProductImage({ product }: ProductImageProps) {

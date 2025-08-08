@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   calculateCartTotal,
@@ -45,12 +45,9 @@ export function App() {
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
-  const formatPriceWithContext = useCallback(
-    (price: number, productId?: string) => {
-      return formatPrice(price, productId, products, cart, isAdminMode);
-    },
-    [products, cart, isAdminMode]
-  );
+  const formatPriceWithContext = (price: number, productId?: string) => {
+    return formatPrice(price, productId, products, cart, isAdminMode);
+  };
 
   const [totalItemCount, setTotalItemCount] = useState(0);
 
@@ -70,13 +67,18 @@ export function App() {
     addNotification
   });
 
-  const applyCoupon = useCallback(
-    (coupon: Coupon) => {
-      const currentTotal = calculateCartTotal(cart, selectedCoupon).totalAfterDiscount;
-      applyCouponBase(coupon, currentTotal);
-    },
-    [applyCouponBase, cart, selectedCoupon]
-  );
+  const applyCoupon = (coupon: Coupon) => {
+    const currentTotal = calculateCartTotal(cart, selectedCoupon).totalAfterDiscount;
+    applyCouponBase(coupon, currentTotal);
+  };
+
+  const calculateItemTotalWithCart = (item: CartItem) => {
+    return calculateItemTotal(item, cart);
+  };
+
+  const getRemainingStockWithCart = (product: Product) => {
+    return getRemainingStock(product, cart);
+  };
 
   useEffect(() => {
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -108,13 +110,13 @@ export function App() {
           <CartPage
             addToCart={addToCart}
             applyCoupon={applyCoupon}
-            calculateItemTotal={(item: CartItem) => calculateItemTotal(item, cart)}
+            calculateItemTotal={calculateItemTotalWithCart}
             cart={cart}
             completeOrder={completeOrder}
             coupons={coupons}
             debouncedSearchTerm={debouncedSearchTerm}
             formatPrice={formatPriceWithContext}
-            getRemainingStock={(product: Product) => getRemainingStock(product, cart)}
+            getRemainingStock={getRemainingStockWithCart}
             products={products}
             removeFromCart={removeFromCart}
             selectedCoupon={selectedCoupon}

@@ -1,6 +1,5 @@
-import { CartItem } from "../types";
+import type { CartItem } from "../types";
 import { CartItemHeader } from "./CartItemHeader";
-import { ItemPricing } from "./ItemPricing";
 import { QuantitySelector } from "./QuantitySelector";
 
 type CartItemInfoProps = {
@@ -35,7 +34,14 @@ export function CartItemInfo({
           onUpdateQuantity={updateQuantity}
         />
 
-        <ItemPricing itemTotal={itemTotal} hasDiscount={hasDiscount} discountRate={discountRate} />
+        <div className="text-right">
+          {hasDiscount && (
+            <span className="block text-xs font-medium text-red-500">-{discountRate}%</span>
+          )}
+          <p className="text-sm font-medium text-gray-900">
+            {Math.round(itemTotal).toLocaleString()}원
+          </p>
+        </div>
       </div>
     </div>
   );

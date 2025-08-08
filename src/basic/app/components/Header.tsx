@@ -1,3 +1,5 @@
+import { type ChangeEvent } from "react";
+
 import type { CartItem } from "../../domains/cart";
 import { BadgeContainer, CartIcon, SearchInput } from "../../shared";
 import { AdminToggleButton } from "./AdminToggleButton";
@@ -19,6 +21,10 @@ export function Header({
   setSearchTerm,
   totalItemCount
 }: HeaderProps) {
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
   return (
     <header className="sticky top-0 z-40 border-b bg-white shadow-sm">
       <div className="mx-auto max-w-7xl px-4">
@@ -31,7 +37,7 @@ export function Header({
                 <SearchInput
                   type="text"
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={handleSearchChange}
                   placeholder="상품 검색..."
                   color="blue"
                   size="lg"

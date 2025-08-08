@@ -1,4 +1,4 @@
-import { type Dispatch, type SetStateAction, useCallback, useEffect, useState } from "react";
+import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 
 type UseLocalStorageStateProps<S> = {
   key: string;
@@ -9,14 +9,14 @@ export function useLocalStorageState<S>({
   key,
   initialState
 }: UseLocalStorageStateProps<S>): [S, Dispatch<SetStateAction<S>>] {
-  const readLocalStorage = useCallback(() => {
+  const readLocalStorage = () => {
     try {
       const item = localStorage.getItem(key);
       return item ? (JSON.parse(item) as S) : initialState;
     } catch {
       return initialState;
     }
-  }, [key, initialState]);
+  };
 
   const [state, setState] = useState<S>(readLocalStorage);
 

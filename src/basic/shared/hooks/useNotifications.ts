@@ -1,25 +1,22 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 
-import type { Notification } from "../types";
+import type { NotificationItem } from "../types";
 
 export function useNotifications() {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
 
-  const addNotification = useCallback(
-    (message: string, type: "error" | "success" | "warning" = "success") => {
-      const id = Date.now().toString();
-      setNotifications((prev) => [...prev, { id, message, type }]);
+  const addNotification = (message: string, type: "error" | "success" | "warning" = "success") => {
+    const id = Date.now().toString();
+    setNotifications((prev) => [...prev, { id, message, type }]);
 
-      setTimeout(() => {
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
-      }, 3000);
-    },
-    []
-  );
+    setTimeout(() => {
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
+    }, 3000);
+  };
 
-  const removeNotification = useCallback((id: string) => {
+  const removeNotification = (id: string) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
-  }, []);
+  };
 
   return {
     notifications,

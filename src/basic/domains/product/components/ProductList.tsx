@@ -1,11 +1,5 @@
-import type { Product } from "../../../../types";
-import { EmptySearchResult } from "./EmptySearchResult";
+import type { Product, ProductWithUI } from "../types";
 import { ProductCard } from "./ProductCard";
-
-type ProductWithUI = Product & {
-  description?: string;
-  isRecommended?: boolean;
-};
 
 type ProductListProps = {
   products: ProductWithUI[];
@@ -35,7 +29,9 @@ export function ProductList({
         <div className="text-sm text-gray-600">총 {products.length}개 상품</div>
       </div>
       {filteredProducts.length === 0 ? (
-        <EmptySearchResult searchTerm={debouncedSearchTerm} />
+        <div className="py-12 text-center">
+          <p className="text-gray-500">"{debouncedSearchTerm}"에 대한 검색 결과가 없습니다.</p>
+        </div>
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredProducts.map((product) => (

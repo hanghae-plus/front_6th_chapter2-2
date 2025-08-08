@@ -1,14 +1,7 @@
-import type { Product } from "../../../../types";
 import { Button } from "../../../shared";
+import type { ProductWithUI } from "../types";
 import { ProductImage } from "./ProductImage";
-import { ProductInfo } from "./ProductInfo";
-import { ProductPricing } from "./ProductPricing";
 import { StockStatus } from "./StockStatus";
-
-type ProductWithUI = Product & {
-  description?: string;
-  isRecommended?: boolean;
-};
 
 type ProductCardProps = {
   product: ProductWithUI;
@@ -32,8 +25,22 @@ export function ProductCard({
       <ProductImage product={product} />
 
       <div className="p-4">
-        <ProductInfo name={product.name} description={product.description} />
-        <ProductPricing product={product} formatPrice={formatPrice} />
+        <h3 className="mb-1 font-medium text-gray-900">{product.name}</h3>
+        {product.description && (
+          <p className="mb-2 line-clamp-2 text-sm text-gray-500">{product.description}</p>
+        )}
+
+        <div className="mb-3">
+          <p className="text-lg font-bold text-gray-900">
+            {formatPrice(product.price, product.id)}
+          </p>
+          {product.discounts.length > 0 && (
+            <p className="text-xs text-gray-500">
+              {product.discounts[0].quantity}개 이상 구매시 할인 {product.discounts[0].rate * 100}%
+            </p>
+          )}
+        </div>
+
         <div className="mb-3">
           <StockStatus remainingStock={remainingStock} />
         </div>

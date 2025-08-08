@@ -1,7 +1,6 @@
 import { ShoppingBagIcon } from "../../../shared";
 import type { CartItem } from "../types";
 import { CartItemInfo } from "./CartItemInfo";
-import { EmptyCartMessage } from "./EmptyCartMessage";
 
 type CartItemListProps = {
   cart: CartItem[];
@@ -23,7 +22,10 @@ export function CartItemList({
         장바구니
       </h2>
       {cart.length === 0 ? (
-        <EmptyCartMessage />
+        <div className="py-8 text-center">
+          <ShoppingBagIcon className="mx-auto mb-4 h-16 w-16 text-gray-300" strokeWidth={1} />
+          <p className="text-sm text-gray-500">장바구니가 비어있습니다</p>
+        </div>
       ) : (
         <div className="space-y-3">
           {cart.map((item) => (
