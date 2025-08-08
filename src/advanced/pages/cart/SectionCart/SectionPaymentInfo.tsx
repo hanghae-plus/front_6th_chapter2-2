@@ -1,20 +1,20 @@
 import type { CartItem, Coupon } from "../../../../types.ts"
-import type { HandleNotificationAdd } from "../../../entities/Notification.ts"
 import { calculateCartTotal } from "../../../entities/CartItem.ts"
+import { useNotification } from "../../../hooks/useNotification.ts"
 
 export function SectionPaymentInfo({
   cart,
   selectedCoupon,
   setCart,
   setSelectedCoupon,
-  handleNotificationAdd,
 }: {
   cart: CartItem[]
   selectedCoupon: Coupon | null
   setCart: React.Dispatch<React.SetStateAction<CartItem[]>>
   setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>
-  handleNotificationAdd: HandleNotificationAdd
 }) {
+  const { handleNotificationAdd } = useNotification()
+
   const totals = calculateCartTotal(cart, selectedCoupon)
   const discountAmount = totals.totalBeforeDiscount - totals.totalAfterDiscount
 

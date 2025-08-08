@@ -1,30 +1,17 @@
-import { useState } from "react"
 import { Coupon } from "../../../types.ts"
-import { ProductViewModel } from "../../entities/ProductViewModel.ts"
+import { useApp } from "../../hooks/useApp.ts"
 import { AdminTabCoupons } from "./AdminCoupons/AdminTabCoupons.tsx"
 import { AdminTabProducts } from "./AdminProducts/AdminTabProducts.tsx"
 
 interface PageAdminProps {
-  products: ProductViewModel[]
-  setProducts: React.Dispatch<React.SetStateAction<ProductViewModel[]>>
-  handleNotificationAdd: (message: string, type: "error" | "success" | "warning") => void
   coupons: Coupon[]
   setCoupons: React.Dispatch<React.SetStateAction<Coupon[]>>
   selectedCoupon: Coupon | null
   setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>
 }
 
-function PageAdmin({
-  products,
-  setProducts,
-  handleNotificationAdd,
-  coupons,
-  setCoupons,
-  selectedCoupon,
-  setSelectedCoupon,
-}: PageAdminProps) {
-  // Admin
-  const [activeTab, setActiveTab] = useState<"products" | "coupons">("products")
+function PageAdmin({ coupons, setCoupons, selectedCoupon, setSelectedCoupon }: PageAdminProps) {
+  const { activeTab, setActiveTab } = useApp()
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -60,15 +47,9 @@ function PageAdmin({
       </div>
 
       {activeTab === "products" ? (
-        <AdminTabProducts products={products} setProducts={setProducts} handleNotificationAdd={handleNotificationAdd} />
+        <AdminTabProducts />
       ) : (
-        <AdminTabCoupons
-          coupons={coupons}
-          selectedCoupon={selectedCoupon}
-          setCoupons={setCoupons}
-          setSelectedCoupon={setSelectedCoupon}
-          handleNotificationAdd={handleNotificationAdd}
-        />
+        <AdminTabCoupons coupons={coupons} selectedCoupon={selectedCoupon} setCoupons={setCoupons} setSelectedCoupon={setSelectedCoupon} />
       )}
     </div>
   )

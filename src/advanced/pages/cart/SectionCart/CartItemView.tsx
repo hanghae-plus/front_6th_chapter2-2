@@ -1,18 +1,19 @@
 import { CartItem } from "../../../../types.ts"
 import { IconRemoveFromCart } from "../../../components/icons/IconRemoveFromCart.tsx"
 import { calculateItemTotalWithBulkPurchase, removeItemFromCart, updateCartItemQuantity } from "../../../entities/CartItem.ts"
-import type { HandleNotificationAdd } from "../../../entities/Notification.ts"
-import type { ProductViewModel } from "../../../entities/ProductViewModel.ts"
+import { useNotification } from "../../../hooks/useNotification.ts"
+import { useProducts } from "../../../hooks/useProducts.ts"
 
 interface CartItemViewProps {
   item: CartItem
   cart: CartItem[]
-  products: ProductViewModel[]
   setCart: React.Dispatch<React.SetStateAction<CartItem[]>>
-  handleNotificationAdd: HandleNotificationAdd
 }
 
-export function CartItemView({ item, cart, products, setCart, handleNotificationAdd }: CartItemViewProps) {
+export function CartItemView({ item, cart, setCart }: CartItemViewProps) {
+  const { handleNotificationAdd } = useNotification()
+  const { products } = useProducts()
+
   const itemTotal = calculateItemTotalWithBulkPurchase(item, cart)
   const originalPrice = item.product.price * item.quantity
 

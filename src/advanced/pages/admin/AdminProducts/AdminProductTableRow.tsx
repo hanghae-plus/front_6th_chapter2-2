@@ -1,21 +1,22 @@
 import type { Discount } from "../../../../types"
 import type { ProductViewModel } from "../../../entities/ProductViewModel"
+import { useNotification } from "../../../hooks/useNotification"
+import { useProducts } from "../../../hooks/useProducts"
 
 export function AdminProductTableRow({
   product,
   setEditingProduct,
   setProductForm,
   setShowProductForm,
-  setProducts,
-  handleNotificationAdd,
 }: {
   product: ProductViewModel
   setEditingProduct: (productId: string) => void
   setProductForm: (product: { name: string; price: number; stock: number; description: string; discounts: Discount[] }) => void
   setShowProductForm: (show: boolean) => void
-  setProducts: React.Dispatch<React.SetStateAction<ProductViewModel[]>>
-  handleNotificationAdd: (message: string, type: "error" | "success" | "warning") => void
 }) {
+  const { setProducts } = useProducts()
+  const { handleNotificationAdd } = useNotification()
+
   const formattedPrice = `${product.price.toLocaleString()}원`
 
   function handleProductStartEdit(product: ProductViewModel) {

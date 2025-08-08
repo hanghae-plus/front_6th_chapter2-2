@@ -4,16 +4,17 @@ import type { ProductViewModel } from "../../../entities/ProductViewModel.ts"
 
 import type { CartItem } from "../../../../types.ts"
 import { IconProductPlaceholder } from "../../../components/icons/IconProductPlaceholder.tsx"
-import type { HandleNotificationAdd } from "../../../entities/Notification.ts"
+import { useNotification } from "../../../hooks/useNotification.ts"
 
 interface ProductViewProps {
   product: ProductViewModel
   cart: CartItem[]
   setCart: (cart: CartItem[]) => void
-  handleNotificationAdd: HandleNotificationAdd
 }
 
-export function ProductView({ product, cart, setCart, handleNotificationAdd }: ProductViewProps) {
+export function ProductView({ product, cart, setCart }: ProductViewProps) {
+  const { handleNotificationAdd } = useNotification()
+
   const remainingStock = getRemainingStock(product, cart)
 
   const formattedPrice = remainingStock <= 0 ? "SOLD OUT" : `₩${product.price.toLocaleString()}`

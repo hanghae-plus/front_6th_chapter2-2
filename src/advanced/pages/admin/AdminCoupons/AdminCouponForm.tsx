@@ -1,20 +1,21 @@
 import type { Coupon } from "../../../../types"
+import { useNotification } from "../../../hooks/useNotification"
 
 export function AdminCouponForm({
   couponForm,
   setCouponForm,
   coupons,
   setCoupons,
-  handleNotificationAdd,
   setShowCouponForm,
 }: {
   couponForm: { name: string; code: string; discountType: "amount" | "percentage"; discountValue: number }
   setCouponForm: (form: { name: string; code: string; discountType: "amount" | "percentage"; discountValue: number }) => void
   coupons: Coupon[]
   setCoupons: React.Dispatch<React.SetStateAction<Coupon[]>>
-  handleNotificationAdd: (message: string, type: "error" | "success" | "warning") => void
   setShowCouponForm: (show: boolean) => void
 }) {
+  const { handleNotificationAdd } = useNotification()
+
   function handleCouponNameChange(e: React.ChangeEvent<HTMLInputElement>) {
     setCouponForm({ ...couponForm, name: e.target.value })
   }

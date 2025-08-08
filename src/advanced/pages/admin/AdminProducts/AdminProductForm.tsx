@@ -1,16 +1,15 @@
 import type { ProductViewModel } from "../../../entities/ProductViewModel"
 import { AdminProductsDiscount } from "./AdminProductsDiscount.tsx"
+import { useProducts } from "../../../hooks/useProducts"
+import { useNotification } from "../../../hooks/useNotification.ts"
 
 export function AdminProductForm({
-  setProducts,
   editingProduct,
   productForm,
   setProductForm,
-  handleNotificationAdd,
   setEditingProduct,
   setShowProductForm,
 }: {
-  setProducts: React.Dispatch<React.SetStateAction<ProductViewModel[]>>
   editingProduct: string | null
   productForm: { name: string; price: number; stock: number; description: string; discounts: Array<{ quantity: number; rate: number }> }
   setProductForm: (form: {
@@ -20,10 +19,12 @@ export function AdminProductForm({
     description: string
     discounts: Array<{ quantity: number; rate: number }>
   }) => void
-  handleNotificationAdd: (message: string, type: "error" | "success" | "warning") => void
   setEditingProduct: (productId: string | null) => void
   setShowProductForm: (show: boolean) => void
 }) {
+  const { setProducts } = useProducts()
+  const { handleNotificationAdd } = useNotification()
+
   // 새 상품을 추가
   function handleProductAdd(newProduct: Omit<ProductViewModel, "id">) {
     const product: ProductViewModel = {

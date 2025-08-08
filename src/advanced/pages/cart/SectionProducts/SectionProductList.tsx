@@ -1,22 +1,18 @@
 import type { CartItem } from "../../../../types.ts"
-import type { ProductViewModel } from "../../../entities/ProductViewModel.ts"
-import { ProductView } from "./ProductView.tsx"
+import { useProducts } from "../../../hooks/useProducts.ts"
 import { useDebounce } from "../../../utils/hooks/useDebounce.ts"
-import type { HandleNotificationAdd } from "../../../entities/Notification.ts"
+import { ProductView } from "./ProductView.tsx"
 
 export function SectionProductList({
-  products,
   searchTerm,
   cart,
   setCart,
-  handleNotificationAdd,
 }: {
-  products: ProductViewModel[]
   searchTerm: string
   cart: CartItem[]
   setCart: React.Dispatch<React.SetStateAction<CartItem[]>>
-  handleNotificationAdd: HandleNotificationAdd
 }) {
+  const { products } = useProducts()
   const debouncedSearchTerm = useDebounce(searchTerm, 500)
 
   const filteredProducts = debouncedSearchTerm
@@ -33,6 +29,7 @@ export function SectionProductList({
         <h2 className="text-2xl font-semibold text-gray-800">전체 상품</h2>
         <div className="text-sm text-gray-600">총 {products.length}개 상품</div>
       </div>
+
       {filteredProducts.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-gray-500">"{debouncedSearchTerm}"에 대한 검색 결과가 없습니다.</p>
@@ -40,7 +37,7 @@ export function SectionProductList({
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredProducts.map((product) => (
-            <ProductView key={product.id} product={product} cart={cart} setCart={setCart} handleNotificationAdd={handleNotificationAdd} />
+            <ProductView key={product.id} product={product} cart={cart} setCart={setCart} />
           ))}
         </div>
       )}

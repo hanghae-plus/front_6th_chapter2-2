@@ -1,17 +1,11 @@
 import { useState } from "react"
-import type { ProductViewModel } from "../../../entities/ProductViewModel"
+import { useProducts } from "../../../hooks/useProducts"
 import { AdminProductForm } from "./AdminProductForm"
 import { AdminProductTableRow } from "./AdminProductTableRow"
 
-export function AdminTabProducts({
-  products,
-  setProducts,
-  handleNotificationAdd,
-}: {
-  products: ProductViewModel[]
-  setProducts: React.Dispatch<React.SetStateAction<ProductViewModel[]>>
-  handleNotificationAdd: (message: string, type: "error" | "success" | "warning") => void
-}) {
+export function AdminTabProducts() {
+  const { products } = useProducts()
+
   const [showProductForm, setShowProductForm] = useState(false)
   const [editingProduct, setEditingProduct] = useState<string | null>(null)
   const [productForm, setProductForm] = useState({
@@ -64,8 +58,6 @@ export function AdminTabProducts({
                 setEditingProduct={setEditingProduct}
                 setProductForm={setProductForm}
                 setShowProductForm={setShowProductForm}
-                setProducts={setProducts}
-                handleNotificationAdd={handleNotificationAdd}
               />
             ))}
           </tbody>
@@ -76,10 +68,8 @@ export function AdminTabProducts({
           editingProduct={editingProduct}
           productForm={productForm}
           setProductForm={setProductForm}
-          handleNotificationAdd={handleNotificationAdd}
           setEditingProduct={setEditingProduct}
           setShowProductForm={setShowProductForm}
-          setProducts={setProducts}
         />
       )}
     </section>

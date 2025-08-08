@@ -9,13 +9,11 @@ export function AdminTabCoupons({
   setCoupons,
   selectedCoupon,
   setSelectedCoupon,
-  handleNotificationAdd,
 }: {
   coupons: Coupon[]
   selectedCoupon: Coupon | null
   setCoupons: (coupons: Coupon[] | ((prev: Coupon[]) => Coupon[])) => void
   setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>
-  handleNotificationAdd: (message: string, type: "error" | "success" | "warning") => void
 }) {
   const [showCouponForm, setShowCouponForm] = useState(false)
   const [couponForm, setCouponForm] = useState({
@@ -39,7 +37,6 @@ export function AdminTabCoupons({
               setCoupons={setCoupons}
               selectedCoupon={selectedCoupon}
               setSelectedCoupon={setSelectedCoupon}
-              handleNotificationAdd={handleNotificationAdd}
             />
           ))}
 
@@ -60,7 +57,6 @@ export function AdminTabCoupons({
             setCouponForm={setCouponForm}
             coupons={coupons}
             setCoupons={setCoupons}
-            handleNotificationAdd={handleNotificationAdd}
             setShowCouponForm={setShowCouponForm}
           />
         )}
