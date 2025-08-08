@@ -2,29 +2,24 @@ import { useState } from "react";
 import PlusIcon from "@assets/icons/PlusIcon.svg?react";
 import { CouponCard, useCoupon, CouponErrorReason } from "@entities/coupon";
 import { AddCouponForm } from "@features/add-coupon/ui/AddCouponForm";
-import {
-  useGlobalNotification,
-  NotificationVariant,
-} from "@entities/notification";
+import { useGlobalNotification } from "@entities/notification";
 
 export function CouponsTab() {
   const [showCouponForm, setShowCouponForm] = useState(false);
-  const { addNotification } = useGlobalNotification();
+  const { showSuccessNotification, showErrorNotification } =
+    useGlobalNotification();
 
   const { coupons, addCoupon, deleteCoupon } = useCoupon({
     onAddCoupon: () => {
       setShowCouponForm(false);
-      addNotification("쿠폰이 추가되었습니다.", NotificationVariant.SUCCESS);
+      showSuccessNotification("쿠폰이 추가되었습니다.");
     },
     onDeleteCoupon: () => {
-      addNotification("쿠폰이 삭제되었습니다.", NotificationVariant.SUCCESS);
+      showSuccessNotification("쿠폰이 삭제되었습니다.");
     },
     onAddCouponError: (_, reason) => {
       if (reason === CouponErrorReason.DUPLICATE_CODE) {
-        addNotification(
-          "이미 존재하는 쿠폰 코드입니다.",
-          NotificationVariant.ERROR
-        );
+        showErrorNotification("이미 존재하는 쿠폰 코드입니다.");
       }
     },
   });

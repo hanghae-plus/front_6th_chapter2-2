@@ -1,9 +1,6 @@
 import { Coupon } from "@/types";
 import { CouponFormFields, useCouponForm } from "@entities/coupon";
-import {
-  NotificationVariant,
-  useGlobalNotification,
-} from "@entities/notification";
+import { useGlobalNotification } from "@entities/notification";
 
 interface AddCouponFormProps {
   onSubmit: (coupon: Coupon) => void;
@@ -11,7 +8,7 @@ interface AddCouponFormProps {
 }
 
 export function AddCouponForm({ onSubmit, onCancel }: AddCouponFormProps) {
-  const { addNotification } = useGlobalNotification();
+  const { showErrorNotification } = useGlobalNotification();
   const form = useCouponForm({
     onSubmit: (couponData) => {
       const couponWithId = { ...couponData, id: Date.now().toString() };
@@ -22,7 +19,7 @@ export function AddCouponForm({ onSubmit, onCancel }: AddCouponFormProps) {
   const handleDiscountValueBlur = (value: string) => {
     const error = form.handleDiscountValueBlur(value);
     if (error) {
-      addNotification(error, NotificationVariant.ERROR);
+      showErrorNotification(error);
     }
   };
 

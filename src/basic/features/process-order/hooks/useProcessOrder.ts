@@ -1,8 +1,5 @@
 import { useCallback } from "react";
-import {
-  useGlobalNotification,
-  NotificationVariant,
-} from "@entities/notification";
+import { useGlobalNotification } from "@entities/notification";
 
 interface UseProcessOrderOptions {
   onClearCart: () => void;
@@ -13,19 +10,16 @@ export function useProcessOrder({
   onClearCart,
   onClearCoupon,
 }: UseProcessOrderOptions) {
-  const { addNotification } = useGlobalNotification();
+  const { showSuccessNotification } = useGlobalNotification();
 
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
 
-    addNotification(
-      `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
-      NotificationVariant.SUCCESS
-    );
+    showSuccessNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`);
 
     onClearCart();
     onClearCoupon();
-  }, [addNotification, onClearCart, onClearCoupon]);
+  }, [showSuccessNotification, onClearCart, onClearCoupon]);
 
   return {
     completeOrder,

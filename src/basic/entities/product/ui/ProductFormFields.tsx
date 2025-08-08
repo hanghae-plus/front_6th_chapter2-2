@@ -1,10 +1,7 @@
 import { ProductWithUI } from "@entities/product";
 import CloseIcon from "@assets/icons/CloseIcon.svg?react";
 import { useCallback } from "react";
-import {
-  NotificationVariant,
-  useGlobalNotification,
-} from "@entities/notification";
+import { useGlobalNotification } from "@entities/notification";
 
 interface ProductFormFieldsProps {
   product: Partial<ProductWithUI>;
@@ -17,7 +14,7 @@ export function ProductFormFields({
   onChange,
   errors = {},
 }: ProductFormFieldsProps) {
-  const { addNotification } = useGlobalNotification();
+  const { showErrorNotification } = useGlobalNotification();
 
   const handleNameChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,11 +46,11 @@ export function ProductFormFields({
       if (value === "") {
         onChange("price", 0);
       } else if (parseInt(value) < 0) {
-        addNotification("가격은 0보다 커야 합니다", NotificationVariant.ERROR);
+        showErrorNotification("가격은 0보다 커야 합니다");
         onChange("price", 0);
       }
     },
-    [onChange, addNotification]
+    [onChange, showErrorNotification]
   );
 
   const handleStockChange = useCallback(
@@ -72,17 +69,14 @@ export function ProductFormFields({
       if (value === "") {
         onChange("stock", 0);
       } else if (parseInt(value) < 0) {
-        addNotification("재고는 0보다 커야 합니다", NotificationVariant.ERROR);
+        showErrorNotification("재고는 0보다 커야 합니다");
         onChange("stock", 0);
       } else if (parseInt(value) > 9999) {
-        addNotification(
-          "재고는 9999개를 초과할 수 없습니다",
-          NotificationVariant.ERROR
-        );
+        showErrorNotification("재고는 9999개를 초과할 수 없습니다");
         onChange("stock", 9999);
       }
     },
-    [onChange, addNotification]
+    [onChange, showErrorNotification]
   );
 
   const handleDiscountQuantityChange = useCallback(
@@ -109,22 +103,16 @@ export function ProductFormFields({
       const newDiscounts = [...(product.discounts || [])];
 
       if (value > 100) {
-        addNotification(
-          "할인율은 100%를 초과할 수 없습니다",
-          NotificationVariant.ERROR
-        );
+        showErrorNotification("할인율은 100%를 초과할 수 없습니다");
         newDiscounts[index].rate = 1.0;
         onChange("discounts", newDiscounts);
       } else if (value < 0) {
-        addNotification(
-          "할인율은 0% 미만일 수 없습니다",
-          NotificationVariant.ERROR
-        );
+        showErrorNotification("할인율은 0% 미만일 수 없습니다");
         newDiscounts[index].rate = 0.0;
         onChange("discounts", newDiscounts);
       }
     },
-    [product.discounts, onChange, addNotification]
+    [product.discounts, onChange, showErrorNotification]
   );
 
   const handleRemoveDiscount = useCallback(

@@ -1,10 +1,7 @@
 import { useCallback } from "react";
 import { ProductWithUI, calculateRemainingStock } from "@entities/product";
 import { useCart } from "@entities/cart";
-import {
-  useGlobalNotification,
-  NotificationVariant,
-} from "@entities/notification";
+import { useGlobalNotification } from "@entities/notification";
 
 interface UseManageCartOptions {
   products: ProductWithUI[];
@@ -12,7 +9,8 @@ interface UseManageCartOptions {
 
 export function useManageCart({ products }: UseManageCartOptions) {
   const cart = useCart();
-  const { addNotification } = useGlobalNotification();
+  const { showErrorNotification, showSuccessNotification } =
+    useGlobalNotification();
 
   const getProductRemainingStock = useCallback(
     (product: ProductWithUI): number => {
@@ -28,7 +26,7 @@ export function useManageCart({ products }: UseManageCartOptions) {
       const remainingStock = getProductRemainingStock(product);
 
       if (remainingStock <= 0) {
-        addNotification("재고가 부족합니다!", NotificationVariant.ERROR);
+        showErrorNotification("재고가 부족합니다!");
         return;
       }
 
@@ -38,17 +36,14 @@ export function useManageCart({ products }: UseManageCartOptions) {
       const currentQuantity = existingItem?.quantity || 0;
 
       if (currentQuantity + 1 > product.stock) {
-        addNotification(
-          `재고는 ${product.stock}개까지만 있습니다.`,
-          NotificationVariant.ERROR
-        );
+        showErrorNotification(`재고는 ${product.stock}개까지만 있습니다.`);
         return;
       }
 
       cart.addItem({ product, quantity: 1 });
-      addNotification("장바구니에 담았습니다", NotificationVariant.SUCCESS);
+      showSuccessNotification("장바구니에 담았습니다");
     },
-    [cart, addNotification, getProductRemainingStock]
+    [cart, showSuccessNotification, getProductRemainingStock]
   );
 
   const updateQuantity = useCallback(
@@ -62,16 +57,13 @@ export function useManageCart({ products }: UseManageCartOptions) {
       if (!product) return;
 
       if (newQuantity > product.stock) {
-        addNotification(
-          `재고는 ${product.stock}개까지만 있습니다.`,
-          NotificationVariant.ERROR
-        );
+        showErrorNotification(`재고는 ${product.stock}개까지만 있습니다.`);
         return;
       }
 
       cart.updateItemQuantity(productId, newQuantity);
     },
-    [cart, products, addNotification]
+    [cart, products, showErrorNotification]
   );
 
   return {
