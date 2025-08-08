@@ -1,4 +1,4 @@
-import { useAtom } from 'jotai';
+import { Provider, useAtom } from 'jotai';
 
 import { isAdminAtom } from './atoms';
 import { AdminPage } from './components/AdminPage';
@@ -6,7 +6,7 @@ import { CartPage } from './components/CartPage';
 import { Header } from './components/Header';
 import { NotificationPanel } from './components/NotificationPanel';
 
-const App = () => {
+const AppContent = () => {
   const [isAdmin] = useAtom(isAdminAtom);
 
   return (
@@ -15,6 +15,13 @@ const App = () => {
       <Header />
       <main className='max-w-7xl mx-auto px-4 py-8'>{isAdmin ? <AdminPage /> : <CartPage />}</main>
     </div>
+  );
+};
+const App = () => {
+  return (
+    <Provider>
+      <AppContent />
+    </Provider>
   );
 };
 
