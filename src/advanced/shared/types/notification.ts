@@ -1,10 +1,9 @@
+export type NotificationType = "error" | "success" | "warning";
+
 export interface NotificationItem {
   id: string;
   message: string;
-  type: "error" | "success" | "warning";
+  type: NotificationType;
 }
 
-export type NotificationFunction = (
-  message: string,
-  type?: "error" | "success" | "warning"
-) => void;
+export type NotificationFunction = (message: string, type?: NotificationType) => void;

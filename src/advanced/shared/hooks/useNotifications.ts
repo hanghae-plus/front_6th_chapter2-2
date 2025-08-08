@@ -1,12 +1,12 @@
 import { useAtom } from "jotai";
 
 import { notificationsAtom } from "../store";
-import type { NotificationItem } from "../types";
+import type { NotificationItem, NotificationType } from "../types";
 
 export function useNotifications() {
   const [notifications, setNotifications] = useAtom(notificationsAtom);
 
-  const addNotification = (message: string, type: "error" | "success" | "warning" = "success") => {
+  const addNotification = (message: string, type: NotificationType = "success") => {
     const id = Date.now().toString();
     const newNotification: NotificationItem = { id, message, type };
 
