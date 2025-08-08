@@ -1,14 +1,9 @@
-import { Notification, getNotificationClassName } from "../utils/notification";
+import { getNotificationClassName } from "../utils/notification";
+import { useNotification } from "../contexts/notification/NotificationContext";
 
-interface NotificationContainerProps {
-  notifications: Notification[];
-  onRemove: (id: string) => void;
-}
+export const NotificationContainer = () => {
+  const { notifications, removeNotificationById } = useNotification();
 
-export const NotificationContainer = ({
-  notifications,
-  onRemove,
-}: NotificationContainerProps) => {
   if (notifications.length === 0) {
     return null;
   }
@@ -20,16 +15,19 @@ export const NotificationContainer = ({
           key={notif.id}
           className={`p-4 rounded-md shadow-md text-white flex justify-between items-center ${getNotificationClassName(
             notif.type
-          )}`}>
+          )}`}
+        >
           <span className="mr-2">{notif.message}</span>
           <button
-            onClick={() => onRemove(notif.id)}
-            className="text-white hover:text-gray-200">
+            onClick={() => removeNotificationById(notif.id)}
+            className="text-white hover:text-gray-200"
+          >
             <svg
               className="w-4 h-4"
               fill="none"
               stroke="currentColor"
-              viewBox="0 0 24 24">
+              viewBox="0 0 24 24"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"

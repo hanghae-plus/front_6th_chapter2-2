@@ -9,17 +9,12 @@ interface Props {
   coupons: Coupon[];
 
   // NOTE: 임시props
-  addNotification: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
   setProducts: React.Dispatch<React.SetStateAction<ProductWithUI[]>>;
   setCoupons: React.Dispatch<React.SetStateAction<Coupon[]>>;
   setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>;
 }
 
 const AdminPage = ({
-  addNotification,
   products,
   coupons,
   setProducts,
@@ -62,17 +57,12 @@ const AdminPage = ({
       </div>
 
       {activeTab === "products" ? (
-        <ProductManage
-          products={products}
-          setProducts={setProducts}
-          addNotification={addNotification}
-        />
+        <ProductManage products={products} setProducts={setProducts} />
       ) : (
         <CouponManage
           coupons={coupons}
           setCoupons={setCoupons}
           setSelectedCoupon={setSelectedCoupon}
-          addNotification={addNotification}
         />
       )}
     </div>

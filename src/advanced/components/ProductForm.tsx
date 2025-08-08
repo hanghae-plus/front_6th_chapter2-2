@@ -1,13 +1,8 @@
 import { ProductForm as _ProductForm } from "../../types";
+import { useNotification } from "../contexts/notification/NotificationContext";
 
 interface Props {
   productForm: _ProductForm;
-
-  // TODO: 전역에서 관리
-  addNotification: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
 
   // NOTE: 임시
   setProductForm: React.Dispatch<React.SetStateAction<_ProductForm>>;
@@ -19,13 +14,14 @@ interface Props {
 
 const ProductForm = ({
   productForm,
-  addNotification,
   setProductForm,
   handleProductSubmit,
   editingProduct,
   setEditingProduct,
   setShowProductForm,
 }: Props) => {
+  const { addNotification } = useNotification();
+
   return (
     <div className="p-6 border-t border-gray-200 bg-gray-50">
       <form onSubmit={handleProductSubmit} className="space-y-4">

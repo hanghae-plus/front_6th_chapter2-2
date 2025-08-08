@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { CartItem, Coupon } from "../types";
-import { useLocalStorage, useDebounce, useNotifications } from "./hooks";
-import { NotificationContainer } from "./components/NotificationContainer";
+import { useLocalStorage, useDebounce } from "./hooks";
 import { ProductWithUI } from "../basic/models/product";
 import Header from "./components/Header";
 import AdminPage from "./pages/AdminPage";
 import ShopPage from "./pages/ShopPage";
+import { NotificationProvider } from "./contexts/notification/NotificationContext";
+import { NotificationContainer } from "./components/NotificationContainer";
 
 // 초기 데이터
 const initialProducts: ProductWithUI[] = [
@@ -74,9 +75,6 @@ const App = () => {
     initialCoupons
   );
 
-  const { notifications, addNotification, removeNotificationById } =
-    useNotifications();
-
   const [totalItemCount, setTotalItemCount] = useState(0);
 
   useEffect(() => {
@@ -85,44 +83,41 @@ const App = () => {
   }, [cart]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <NotificationContainer
-        notifications={notifications}
-        onRemove={removeNotificationById}
-      />
+    <NotificationProvider>
+      <div className="min-h-screen bg-gray-50">
+        <Header
+          isAdmin={isAdmin}
+          onToggleAdmin={() => setIsAdmin(!isAdmin)}
+          searchTerm={searchTerm}
+          onSearchTerms={(terms) => setSearchTerm(terms)}
+          cartCount={totalItemCount}
+        />
 
-      <Header
-        isAdmin={isAdmin}
-        onToggleAdmin={() => setIsAdmin(!isAdmin)}
-        searchTerm={searchTerm}
-        onSearchTerms={(terms) => setSearchTerm(terms)}
-        cartCount={totalItemCount}
-      />
+        <main className="max-w-7xl mx-auto px-4 py-8">
+          {isAdmin ? (
+            <AdminPage
+              products={products}
+              coupons={coupons}
+              setCoupons={setCoupons}
+              setProducts={setProducts}
+              setSelectedCoupon={setSelectedCoupon}
+            />
+          ) : (
+            <ShopPage
+              products={products}
+              coupons={coupons}
+              cart={cart}
+              searchTerm={debouncedSearchTerm}
+              setCart={setCart}
+              setSelectedCoupon={setSelectedCoupon}
+              selectedCoupon={selectedCoupon}
+            />
+          )}
+        </main>
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        {isAdmin ? (
-          <AdminPage
-            products={products}
-            coupons={coupons}
-            addNotification={addNotification}
-            setCoupons={setCoupons}
-            setProducts={setProducts}
-            setSelectedCoupon={setSelectedCoupon}
-          />
-        ) : (
-          <ShopPage
-            products={products}
-            coupons={coupons}
-            cart={cart}
-            searchTerm={debouncedSearchTerm}
-            addNotification={addNotification}
-            setCart={setCart}
-            setSelectedCoupon={setSelectedCoupon}
-            selectedCoupon={selectedCoupon}
-          />
-        )}
-      </main>
-    </div>
+        <NotificationContainer />
+      </div>
+    </NotificationProvider>
   );
 };
 

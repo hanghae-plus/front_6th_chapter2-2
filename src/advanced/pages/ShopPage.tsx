@@ -10,7 +10,7 @@ import {
   updateQuantity,
   calculateCartTotal,
 } from "../models/cart";
-
+import { useNotification } from "../contexts/notification/NotificationContext";
 import ShopProduct from "../components/ShopProduct";
 import PaymentInfo from "../components/PaymentInfo";
 import CouponDiscount from "../components/CouponDiscount";
@@ -24,10 +24,6 @@ interface Props {
   selectedCoupon: Coupon | null;
 
   // TODO: 전역에서 관리
-  addNotification: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
   setCart: React.Dispatch<React.SetStateAction<CartItem[]>>;
   setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>;
 }
@@ -38,10 +34,10 @@ const ShopPage = ({
   products,
   coupons,
   selectedCoupon,
-  addNotification,
   setCart,
   setSelectedCoupon,
 }: Props) => {
+  const { addNotification } = useNotification();
   const filteredProducts = filterProducts(products, searchTerm);
 
   const handleAddToCart = useCallback(

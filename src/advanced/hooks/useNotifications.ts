@@ -6,6 +6,9 @@ import {
   removeNotification,
 } from "../utils/notification";
 
+/**
+ * @deprecated context로 대체
+ */
 export const useNotifications = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 

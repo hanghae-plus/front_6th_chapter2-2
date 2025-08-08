@@ -8,19 +8,18 @@ import {
 } from "../models/product";
 import ProductForm from "./ProductForm";
 import { type ProductForm as _ProductForm } from "../../types";
+import { useNotification } from "../contexts/notification/NotificationContext";
 
 interface Props {
   products: ProductWithUI[];
 
   // TODO: 전역에서 관리
-  addNotification: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
   setProducts: React.Dispatch<React.SetStateAction<ProductWithUI[]>>;
 }
 
-const ProductManage = ({ products, addNotification, setProducts }: Props) => {
+const ProductManage = ({ products, setProducts }: Props) => {
+  const { addNotification } = useNotification();
+
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [showProductForm, setShowProductForm] = useState(false);
 
@@ -185,7 +184,6 @@ const ProductManage = ({ products, addNotification, setProducts }: Props) => {
           setProductForm={setProductForm}
           editingProduct={editingProduct}
           setEditingProduct={setEditingProduct}
-          addNotification={addNotification}
           handleProductSubmit={handleProductSubmit}
           setShowProductForm={setShowProductForm}
         />

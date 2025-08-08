@@ -6,25 +6,18 @@ import {
   deleteCoupon as _deleteCoupon,
   checkAndClearSelectedCoupon,
 } from "../models/coupon";
+import { useNotification } from "../contexts/notification/NotificationContext";
 
 interface Props {
   coupons: Coupon[];
 
   // NOTE: 임시props
-  addNotification: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
   setCoupons: React.Dispatch<React.SetStateAction<Coupon[]>>;
   setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>;
 }
 
-const CouponManage = ({
-  coupons,
-  setCoupons,
-  setSelectedCoupon,
-  addNotification,
-}: Props) => {
+const CouponManage = ({ coupons, setCoupons, setSelectedCoupon }: Props) => {
+  const { addNotification } = useNotification();
   const [showCouponForm, setShowCouponForm] = useState(false);
 
   const [couponForm, setCouponForm] = useState({
