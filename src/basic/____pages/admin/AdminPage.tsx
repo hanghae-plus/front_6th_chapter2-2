@@ -1,11 +1,11 @@
-import { Dispatch, SetStateAction, use } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { Coupon } from "../../../types";
 import { useCoupons } from "../../___features/coupon/use-coupons";
 import ProductsContent from "./ProductsContent";
 import CouponsContent from "./CouponsContent";
 import { useTab } from "../../_shared/utility-hooks/use-tab";
 import { cn } from "../../_shared/tw-utility/cn";
-import { AdminContext } from "../admin-context";
+import { Page, usePage } from "../page-context";
 
 interface AdminPageProps {
   selectedCoupon: Coupon | null;
@@ -14,7 +14,7 @@ interface AdminPageProps {
 
 function AdminPage({ selectedCoupon, setSelectedCoupon }: AdminPageProps) {
   const { addCoupon, removeCoupon, coupons } = useCoupons();
-  const { setIsAdmin } = use(AdminContext);
+  const { moveTo } = usePage();
 
   const adminTabs = useTab({
     tabs: [
@@ -51,7 +51,7 @@ function AdminPage({ selectedCoupon, setSelectedCoupon }: AdminPageProps) {
             </div>
             <nav className="flex items-center space-x-4">
               <button
-                onClick={() => setIsAdmin(false)}
+                onClick={() => moveTo(Page.Shop)}
                 className="px-3 py-1.5 text-sm rounded transition-colors bg-gray-800 text-white"
               >
                 쇼핑몰로 돌아가기
