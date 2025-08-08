@@ -13,9 +13,12 @@
     "test:advanced": "vitest src/advanced",
     "test:ui": "vitest --ui",
     "build": "tsc -b && vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint:fsd": "eslint src/basic --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "deploy:basic": "cp index.basic.html index.html && vite build --base=\"/front_6th_chapter2-2/\" && cp dist/index.html dist/404.html && gh-pages -d dist && rm -f index.html"
   },
   "dependencies": {
+    "jotai": "^2.13.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
@@ -32,9 +35,11 @@
     "eslint": "^9.32.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
+    "gh-pages": "^6.3.0",
     "jsdom": "^26.1.0",
     "typescript": "^5.9.2",
     "vite": "^7.0.6",
+    "vite-plugin-svgr": "^4.3.0",
     "vitest": "^3.2.4"
   }
 }

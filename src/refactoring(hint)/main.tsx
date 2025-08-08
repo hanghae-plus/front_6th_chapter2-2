@@ -1,4 +1,9 @@
-// TODO: React 앱 엔트리 포인트
-// App 컴포넌트를 root DOM 요소에 렌더링
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App.tsx";
 
-// TODO: 구현
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);

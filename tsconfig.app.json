@@ -21,7 +21,27 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    /* Path Mapping */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@shared": ["src/basic/shared"],
+      "@shared/*": ["src/basic/shared/*"],
+      "@entities": ["src/basic/entities"],
+      "@entities/*": ["src/basic/entities/*"],
+      "@features": ["src/basic/features"],
+      "@features/*": ["src/basic/features/*"],
+      "@widgets": ["src/basic/widgets"],
+      "@widgets/*": ["src/basic/widgets/*"],
+      "@pages": ["src/basic/pages"],
+      "@pages/*": ["src/basic/pages/*"],
+      "@app": ["src/basic/app"],
+      "@app/*": ["src/basic/app/*"],
+      "@assets": ["src/basic/assets"],
+      "@assets/*": ["src/basic/assets/*"]
+    }
   },
   "include": ["src"]
 }
