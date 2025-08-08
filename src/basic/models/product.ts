@@ -10,14 +10,14 @@ export interface ProductWithUI extends Product {
  */
 export const formatPrice = (
   price: number,
-  isAdmin: boolean,
+  hasUnit: boolean,
   isSoldOut?: boolean
 ): string => {
   if (isSoldOut) {
     return "SOLD OUT";
   }
 
-  if (isAdmin) {
+  if (hasUnit) {
     return `${price.toLocaleString()}원`;
   }
 
