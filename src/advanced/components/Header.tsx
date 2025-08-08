@@ -1,12 +1,11 @@
 import { useAtom } from 'jotai';
 
-import { isAdminAtom, searchTermAtom, cartAtom, totalItemCountAtom } from '../atoms';
+import { isAdminAtom, cartAtom, totalItemCountAtom } from '../atoms';
 import { SearchBar } from './header/SearchBar';
 import { CartIcon } from './icons';
 
 export const Header = () => {
   const [isAdmin, setIsAdmin] = useAtom(isAdminAtom);
-  const [searchTerm, setSearchTerm] = useAtom(searchTermAtom);
   const [cart] = useAtom(cartAtom);
 
   const [totalItemCount] = useAtom(totalItemCountAtom);
@@ -16,7 +15,7 @@ export const Header = () => {
         <div className='flex justify-between items-center h-16'>
           <div className='flex items-center flex-1'>
             <h1 className='text-xl font-semibold text-gray-800'>SHOP</h1>
-            {!isAdmin && <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />}
+            {!isAdmin && <SearchBar />}
           </div>
           <nav className='flex items-center space-x-4'>
             <button

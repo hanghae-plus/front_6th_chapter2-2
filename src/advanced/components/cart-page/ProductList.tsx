@@ -32,7 +32,7 @@ export const ProductList = () => {
         ) : (
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
             {filteredProducts.map((product) => {
-              return <ProductItem product={product} />;
+              return <ProductItem key={product.id} product={product} />;
             })}
           </div>
         )}

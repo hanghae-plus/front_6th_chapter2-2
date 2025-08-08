@@ -10,6 +10,7 @@ interface ProductItemProps {
 export const ProductItem = ({ product }: ProductItemProps) => {
   const { getRemainingStock, addToCart } = useCart();
   const remainingStock = getRemainingStock(product);
+
   return (
     <div
       key={product.id}

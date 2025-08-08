@@ -1,6 +1,5 @@
-import { atom } from 'jotai';
-
 import { Product } from '../../types';
 import { initialProducts } from '../constants';
+import { atomWithLocalStorage } from '../utils/atom';
 
-export const productsAtom = atom<Product[]>(initialProducts);
+export const productsAtom = atomWithLocalStorage<Product[]>('products', initialProducts);
