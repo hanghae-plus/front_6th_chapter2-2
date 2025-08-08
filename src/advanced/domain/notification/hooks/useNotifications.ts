@@ -1,0 +1,34 @@
+import { useCallback } from "react";
+import { useAtom } from "jotai";
+import { notificationsAtom } from "../atoms";
+
+export const useNotifications = () => {
+  const [notifications, setNotifications] = useAtom(notificationsAtom);
+
+  const addNotification = useCallback(
+    (message: string, type: "error" | "success" | "warning" = "success") => {
+      const id = Date.now().toString();
+      setNotifications((prev) => [...prev, { id, message, type }]);
+
+      setTimeout(() => {
+        setNotifications((prev) => prev.filter((n) => n.id !== id));
+      }, 3000);
+    },
+    []
+  );
+
+  const removeNotification = useCallback((id: string) => {
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
+  }, []);
+
+  const clearAllNotifications = useCallback(() => {
+    setNotifications([]);
+  }, []);
+
+  return {
+    notifications,
+    addNotification,
+    removeNotification,
+    clearAllNotifications,
+  };
+};
