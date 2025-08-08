@@ -1,4 +1,24 @@
-export type * from "./basic/domains/cart";
-export type * from "./basic/domains/coupon";
-export type * from "./basic/domains/product";
-export type * from "./basic/shared";
+export interface Product {
+  id: string;
+  name: string;
+  price: number;
+  stock: number;
+  discounts: Discount[];
+}
+
+export interface Discount {
+  quantity: number;
+  rate: number;
+}
+
+export interface CartItem {
+  product: Product;
+  quantity: number;
+}
+
+export interface Coupon {
+  name: string;
+  code: string;
+  discountType: "amount" | "percentage";
+  discountValue: number;
+}
