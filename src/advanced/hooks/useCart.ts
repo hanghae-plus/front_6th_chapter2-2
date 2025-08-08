@@ -1,4 +1,4 @@
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { Product } from "../../types";
 import { addNotificationAtom } from "../stores/notificationStore";
 import {

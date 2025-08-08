@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { CartContainer } from "../../components/cart/CartContainer";
 import { ProductList } from "../../components/product/ProductList";
 import { getRemainingStock } from "../../utils/formatters";
@@ -6,7 +7,7 @@ import { useCoupons } from "../../hooks/useCoupons";
 import { useCart } from "../../hooks/useCart";
 import { useOrder } from "../../hooks/useOrder";
 import { useSearch } from "../../utils/hooks/useSearch";
-import React from "react";
+import type { Coupon } from "../../../types";
 
 interface ShopPageProps {
   addNotification: (message: string, type?: "error" | "success" | "warning") => void;
@@ -24,12 +25,12 @@ export default function ShopPage({ addNotification, onTotalItemCountChange }: Sh
   const { completeOrder } = useOrder({ clearCart, addNotification });
 
   // totalItemCount가 변경될 때마다 부모에게 알림
-  React.useEffect(() => {
+  useEffect(() => {
     onTotalItemCountChange?.(totalItemCount);
   }, [totalItemCount, onTotalItemCountChange]);
 
   // 쿠폰 적용 핸들러
-  const handleApplyCoupon = (coupon: any, currentTotal: number) => {
+  const handleApplyCoupon = (coupon: Coupon, currentTotal: number) => {
     applyCoupon(coupon, currentTotal);
   };
 
