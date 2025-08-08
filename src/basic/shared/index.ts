@@ -1,5 +1,3 @@
-export * from "./types/tabs";
-
 export * from "./hooks";
 export * from "./hooks/useTabs";
 
