@@ -1,7 +1,7 @@
 import { useState } from "react"
-import type { ProductViewModel } from "../../entities/ProductViewModel"
-import { AdminProductForm } from "./AdminProducts/AdminProductForm"
-import { AdminProductTableRow } from "./AdminProducts/AdminProductTableRow"
+import type { ProductViewModel } from "../../../entities/ProductViewModel"
+import { AdminProductForm } from "./AdminProductForm"
+import { AdminProductTableRow } from "./AdminProductTableRow"
 
 export function AdminTabProducts({
   products,

@@ -1,4 +1,4 @@
-import type { ProductWithUI } from "../../data/products"
+import type { ProductWithUI } from "../../../data/products"
 import { AdminProductsDiscount } from "./AdminProductsDiscount"
 
 export function AdminProductForm({

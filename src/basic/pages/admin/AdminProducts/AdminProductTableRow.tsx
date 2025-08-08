@@ -1,5 +1,5 @@
-import type { Discount } from "../../../types"
-import type { ProductViewModel } from "../../entities/ProductViewModel"
+import type { Discount } from "../../../../types"
+import type { ProductViewModel } from "../../../entities/ProductViewModel"
 
 export function AdminProductTableRow({
   product,

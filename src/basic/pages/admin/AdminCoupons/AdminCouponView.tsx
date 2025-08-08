@@ -1,5 +1,5 @@
-import type { Coupon } from "../../../types"
-import { IconTrash } from "../../components/icons/IconTrash"
+import type { Coupon } from "../../../../types"
+import { IconTrash } from "../../../components/icons/IconTrash"
 
 export function AdminCouponView({
   coupon,

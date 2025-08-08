@@ -1,8 +1,8 @@
 import { useState } from "react"
 import { Coupon } from "../../../types.ts"
 import { ProductViewModel } from "../../entities/ProductViewModel.ts"
-import { AdminTabCoupons } from "./AdminTabCoupons.tsx"
-import { AdminTabProducts } from "./AdminTabProducts.tsx"
+import { AdminTabCoupons } from "./AdminCoupons/AdminTabCoupons.tsx"
+import { AdminTabProducts } from "./AdminProducts/AdminTabProducts.tsx"
 
 interface PageAdminProps {
   products: ProductViewModel[]

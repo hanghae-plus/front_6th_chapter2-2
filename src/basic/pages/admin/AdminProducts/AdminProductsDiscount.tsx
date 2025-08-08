@@ -1,4 +1,4 @@
-import { IconDelete } from "../../components/icons/IconDelete"
+import { IconDelete } from "../../../components/icons/IconDelete"
 
 export function AdminProductsDiscount({
   index,

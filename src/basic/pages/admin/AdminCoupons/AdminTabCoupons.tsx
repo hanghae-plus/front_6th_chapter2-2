@@ -1,6 +1,6 @@
 import { useState } from "react"
-import type { Coupon } from "../../../types"
-import { IconAdd } from "../../components/icons/IconAdd"
+import type { Coupon } from "../../../../types"
+import { IconAdd } from "../../../components/icons/IconAdd"
 import { AdminCouponForm } from "./AdminCouponForm"
 import { AdminCouponView } from "./AdminCouponView"
 

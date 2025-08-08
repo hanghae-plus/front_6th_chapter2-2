@@ -1,4 +1,4 @@
-import type { Coupon } from "../../../types"
+import type { Coupon } from "../../../../types"
 
 export function AdminCouponForm({
   couponForm,
