@@ -1,4 +1,5 @@
-import { Coupon, DiscountType, type CartItem as CartItemType } from "@/types";
+import type { Cart } from "@entities/cart/types";
+import { Coupon, DiscountType } from "@entities/coupon";
 import {
   calculateDiscountedPrice,
   calculateDiscountedAmount,
@@ -9,7 +10,7 @@ import { getCartTotalWithDiscounts, getCartSubtotal } from "./totals";
  * 쿠폰이 적용된 장바구니 총액 계산
  */
 export const getCartTotalWithCoupon = (
-  cart: CartItemType[],
+  cart: Cart[],
   coupon: Coupon
 ): number => {
   const totalWithDiscounts = getCartTotalWithDiscounts(cart);
@@ -27,7 +28,7 @@ export const getCartTotalWithCoupon = (
  * 장바구니 할인 요약 정보 계산
  */
 export const getCartDiscountSummary = (
-  cart: CartItemType[],
+  cart: Cart[],
   selectedCoupon: Coupon | null
 ): {
   totalBeforeDiscount: number;

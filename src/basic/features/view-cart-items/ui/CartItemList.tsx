@@ -1,12 +1,12 @@
 import { CartItem } from "@entities/cart";
-import { type CartItem as CartItemType } from "@/types";
+import type { Cart } from "@entities/cart/types";
 import CartBagIcon from "@assets/icons/CartBagIcon.svg?react";
 
 interface CartItemListProps {
-  cartItems: CartItemType[];
+  cartItems: Cart[];
   onRemoveItem: (productId: string) => void;
   onUpdateQuantity: (productId: string, quantity: number) => void;
-  calculateItemTotal: (item: CartItemType) => number;
+  calculateItemTotal: (item: Cart) => number;
 }
 
 export function CartItemList({

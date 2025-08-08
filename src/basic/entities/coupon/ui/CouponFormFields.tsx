@@ -1,4 +1,4 @@
-import { DiscountType } from "@/types";
+import { DiscountType } from "@entities/coupon";
 
 interface CouponFormFieldsProps {
   values: {

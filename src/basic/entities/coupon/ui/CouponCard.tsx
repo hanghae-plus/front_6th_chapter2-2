@@ -1,4 +1,4 @@
-import { Coupon, DiscountType } from "@/types";
+import { Coupon, DiscountType } from "@entities/coupon";
 import TrashIcon from "@assets/icons/TrashIcon.svg?react";
 import { IconButton } from "@shared";
 import { memo } from "react";

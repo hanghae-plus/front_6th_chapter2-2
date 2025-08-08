@@ -1,4 +1,4 @@
-import { type CartItem as CartItemType } from "@/types";
+import { type Cart } from "@entities/cart/types";
 import {
   findMaxDiscountByQuantity,
   calculateBonusDiscount,
@@ -13,10 +13,7 @@ const MAX_DISCOUNT_RATE = 0.5;
 /**
  * 상품별 최대 적용 가능한 할인율 계산
  */
-export const getMaxApplicableDiscount = (
-  item: CartItemType,
-  cart: CartItemType[]
-): number => {
+export const getMaxApplicableDiscount = (item: Cart, cart: Cart[]): number => {
   const { discounts } = item.product;
   const { quantity } = item;
 
@@ -34,10 +31,7 @@ export const getMaxApplicableDiscount = (
 /**
  * 상품별 총액 계산 (할인 적용)
  */
-export const calculateItemTotal = (
-  item: CartItemType,
-  cart: CartItemType[]
-): number => {
+export const calculateItemTotal = (item: Cart, cart: Cart[]): number => {
   const { price } = item.product;
   const { quantity } = item;
   const discount = getMaxApplicableDiscount(item, cart);

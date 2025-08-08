@@ -1,11 +1,11 @@
-import { CartItem as CartItemType } from "@/types";
 import CloseIcon from "@assets/icons/CloseIcon.svg?react";
 import { Button, IconButton } from "@shared";
 import { memo } from "react";
+import type { Cart } from "@entities/cart/types";
 
 interface CartItemProps {
-  item: CartItemType;
-  calculateItemTotal: (item: CartItemType) => number;
+  item: Cart;
+  calculateItemTotal: (item: Cart) => number;
   removeFromCart: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
 }

@@ -1,5 +1,6 @@
 import { useForm } from "@shared";
-import { Coupon, DiscountType } from "@/types";
+import type { Coupon } from "@entities/coupon";
+import { DiscountType } from "@entities/coupon";
 import {
   validateCoupon,
   validateDiscountValue,

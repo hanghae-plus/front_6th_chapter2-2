@@ -1,5 +1,6 @@
 import { useCallback } from "react";
-import { Coupon, DiscountType } from "@/types";
+import type { Coupon } from "@entities/coupon/types";
+import { DiscountType } from "@entities/coupon/types";
 import { useLocalStorageObject } from "@shared";
 
 const initialCoupons: Coupon[] = [

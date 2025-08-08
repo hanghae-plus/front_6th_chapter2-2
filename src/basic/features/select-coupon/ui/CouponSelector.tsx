@@ -1,4 +1,4 @@
-import { Coupon } from "@/types";
+import { Coupon } from "@entities/coupon";
 import { Button } from "@shared";
 
 interface CouponSelectorProps {

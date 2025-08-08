@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { Coupon, DiscountType } from "@/types";
+import { Coupon, DiscountType } from "@entities/coupon";
 import { useCouponStore } from "./useCouponStore";
 
 export enum CouponErrorReason {

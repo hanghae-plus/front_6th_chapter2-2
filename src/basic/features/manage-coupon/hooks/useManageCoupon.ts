@@ -1,10 +1,11 @@
 import { useState, useCallback } from "react";
-import { Coupon, type CartItem } from "@/types";
+import { Coupon } from "@entities/coupon";
+import type { Cart } from "@entities/cart/types";
 import { getCartDiscountSummary } from "@entities/cart";
 import { useCoupon, CouponErrorReason } from "@entities/coupon";
 import { useGlobalNotification } from "@entities/notification";
 
-export function useManageCoupon(cart: CartItem[]) {
+export function useManageCoupon(cart: Cart[]) {
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const { showErrorNotification, showSuccessNotification } =
     useGlobalNotification();

@@ -1,4 +1,4 @@
-import { Coupon } from "@/types";
+import { Coupon } from "@entities/coupon";
 import { CouponFormFields, useCouponForm } from "@entities/coupon";
 import { useGlobalNotification } from "@entities/notification";
 import { Button } from "@shared";

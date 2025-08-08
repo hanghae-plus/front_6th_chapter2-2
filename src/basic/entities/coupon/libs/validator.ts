@@ -1,4 +1,4 @@
-import { Coupon, DiscountType } from "@/types";
+import { Coupon, DiscountType } from "@entities/coupon";
 
 const ERROR_MESSAGES = {
   COUPON_NAME_REQUIRED: "쿠폰명을 입력해주세요.",

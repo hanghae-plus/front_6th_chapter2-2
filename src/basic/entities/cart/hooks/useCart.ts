@@ -1,16 +1,16 @@
 import { useLocalStorageObject } from "@shared";
 import { calculateItemTotal } from "@entities/cart/libs";
-import { type CartItem } from "@/types";
+import { Cart } from "@entities/cart/types";
 
 export function useCart() {
-  const [cart, setCart] = useLocalStorageObject<CartItem[]>("cart", []);
+  const [cart, setCart] = useLocalStorageObject<Cart[]>("cart", []);
 
-  const getItemTotal = (item: CartItem) => calculateItemTotal(item, cart);
+  const getItemTotal = (item: Cart) => calculateItemTotal(item, cart);
 
   const getTotalItemCount = () =>
     cart.reduce((sum, item) => sum + item.quantity, 0);
 
-  const addItem = (item: CartItem) => {
+  const addItem = (item: Cart) => {
     const existingIndex = cart.findIndex(
       (cartItem) => cartItem.product.id === item.product.id
     );
