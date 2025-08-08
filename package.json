@@ -13,7 +13,8 @@
     "test:advanced": "vitest src/advanced",
     "test:ui": "vitest --ui",
     "build": "tsc -b && vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "deploy": "pnpm run build && gh-pages -d dist"
   },
   "dependencies": {
     "react": "^19.1.1",
@@ -23,6 +24,7 @@
     "@testing-library/jest-dom": "^6.6.4",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^24.2.0",
     "@types/react": "^19.1.9",
     "@types/react-dom": "^19.1.7",
     "@typescript-eslint/eslint-plugin": "^8.38.0",
@@ -32,6 +34,7 @@
     "eslint": "^9.32.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
+    "gh-pages": "^6.3.0",
     "jsdom": "^26.1.0",
     "typescript": "^5.9.2",
     "vite": "^7.0.6",
