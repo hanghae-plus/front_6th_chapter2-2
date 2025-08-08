@@ -1,40 +1,27 @@
+import { useState } from "react"
 import type { ProductWithUI } from "../../entities/ProductWithUI"
 import { AdminProductForm } from "./AdminProductForm"
 import { AdminProductTableRow } from "./AdminProductTableRow"
 
 export function AdminTabProducts({
-  setEditingProduct,
-  setProductForm,
-  setShowProductForm,
-  activeTab,
   products,
-  handleProductStartEdit,
-  handleProductDelete,
-  showProductForm,
-  handleProductSubmit,
-  editingProduct,
-  productForm,
+  setProducts,
   handleNotificationAdd,
 }: {
-  setEditingProduct: (productId: string | null) => void
-  setProductForm: (form: {
-    name: string
-    price: number
-    stock: number
-    description: string
-    discounts: Array<{ quantity: number; rate: number }>
-  }) => void
-  setShowProductForm: (show: boolean) => void
-  activeTab: string
   products: ProductWithUI[]
-  handleProductStartEdit: (product: ProductWithUI) => void
-  handleProductDelete: (productId: string) => void
-  showProductForm: boolean
-  handleProductSubmit: (e: React.FormEvent) => void
-  editingProduct: string | null
-  productForm: { name: string; price: number; stock: number; description: string; discounts: Array<{ quantity: number; rate: number }> }
+  setProducts: React.Dispatch<React.SetStateAction<ProductWithUI[]>>
   handleNotificationAdd: (message: string, type: "error" | "success" | "warning") => void
 }) {
+  const [showProductForm, setShowProductForm] = useState(false)
+  const [editingProduct, setEditingProduct] = useState<string | null>(null)
+  const [productForm, setProductForm] = useState({
+    name: "",
+    price: 0,
+    stock: 0,
+    description: "",
+    discounts: [] as Array<{ quantity: number; rate: number }>,
+  })
+
   function handleProductAdd() {
     setEditingProduct("new")
     setProductForm({
@@ -70,13 +57,16 @@ export function AdminTabProducts({
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {(activeTab === "products" ? products : products).map((product) => (
+            {products.map((product) => (
               <AdminProductTableRow
                 key={product.id}
                 product={product}
                 products={products}
-                handleProductStartEdit={handleProductStartEdit}
-                handleProductDelete={handleProductDelete}
+                setEditingProduct={setEditingProduct}
+                setProductForm={setProductForm}
+                setShowProductForm={setShowProductForm}
+                setProducts={setProducts}
+                handleNotificationAdd={handleNotificationAdd}
               />
             ))}
           </tbody>
@@ -84,13 +74,13 @@ export function AdminTabProducts({
       </div>
       {showProductForm && (
         <AdminProductForm
-          handleProductSubmit={handleProductSubmit}
           editingProduct={editingProduct}
           productForm={productForm}
           setProductForm={setProductForm}
           handleNotificationAdd={handleNotificationAdd}
           setEditingProduct={setEditingProduct}
           setShowProductForm={setShowProductForm}
+          setProducts={setProducts}
         />
       )}
     </section>

@@ -1,3 +1,4 @@
+import { useCallback, useState } from "react"
 import type { Coupon } from "../../../types"
 import { IconAdd } from "../../components/icons/IconAdd"
 import { AdminCouponForm } from "./AdminCouponForm"
@@ -5,23 +6,50 @@ import { AdminCouponView } from "./AdminCouponView"
 
 export function AdminTabCoupons({
   coupons,
-  handleCouponDelete,
-  setShowCouponForm,
-  showCouponForm,
-  handleCouponSubmit,
-  couponForm,
-  setCouponForm,
+  setCoupons,
+  selectedCoupon,
+  setSelectedCoupon,
   handleNotificationAdd,
 }: {
   coupons: Coupon[]
-  handleCouponDelete: (couponCode: string) => void
-  setShowCouponForm: (show: boolean) => void
-  showCouponForm: boolean
-  handleCouponSubmit: (e: React.FormEvent) => void
-  couponForm: { name: string; code: string; discountType: "amount" | "percentage"; discountValue: number }
-  setCouponForm: (form: { name: string; code: string; discountType: "amount" | "percentage"; discountValue: number }) => void
+  selectedCoupon: Coupon | null
+  setCoupons: (coupons: Coupon[] | ((prev: Coupon[]) => Coupon[])) => void
+  setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>
   handleNotificationAdd: (message: string, type: "error" | "success" | "warning") => void
 }) {
+  const [showCouponForm, setShowCouponForm] = useState(false)
+  const [couponForm, setCouponForm] = useState({
+    name: "",
+    code: "",
+    discountType: "amount" as "amount" | "percentage",
+    discountValue: 0,
+  })
+
+  const handleCouponAdd = useCallback(
+    (newCoupon: Coupon) => {
+      const existingCoupon = coupons.find((c) => c.code === newCoupon.code)
+      if (existingCoupon) {
+        handleNotificationAdd("이미 존재하는 쿠폰 코드입니다.", "error")
+        return
+      }
+      setCoupons((prev) => [...prev, newCoupon])
+      handleNotificationAdd("쿠폰이 추가되었습니다.", "success")
+    },
+    [coupons, handleNotificationAdd],
+  )
+
+  const handleCouponSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    handleCouponAdd(couponForm)
+    setCouponForm({
+      name: "",
+      code: "",
+      discountType: "amount",
+      discountValue: 0,
+    })
+    setShowCouponForm(false)
+  }
+
   return (
     <section className="bg-white rounded-lg border border-gray-200">
       <div className="p-6 border-b border-gray-200">
@@ -30,7 +58,14 @@ export function AdminTabCoupons({
       <div className="p-6">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {coupons.map((coupon) => (
-            <AdminCouponView key={coupon.code} coupon={coupon} handleCouponDelete={handleCouponDelete} />
+            <AdminCouponView
+              key={coupon.code}
+              coupon={coupon}
+              setCoupons={setCoupons}
+              selectedCoupon={selectedCoupon}
+              setSelectedCoupon={setSelectedCoupon}
+              handleNotificationAdd={handleNotificationAdd}
+            />
           ))}
 
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 flex items-center justify-center hover:border-gray-400 transition-colors">

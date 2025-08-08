@@ -11,6 +11,48 @@ export function AdminCouponForm({
   handleNotificationAdd: (message: string, type: "error" | "success" | "warning") => void
   setShowCouponForm: (show: boolean) => void
 }) {
+  function handleCouponNameChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setCouponForm({ ...couponForm, name: e.target.value })
+  }
+
+  function handleCouponCodeChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setCouponForm({ ...couponForm, code: e.target.value.toUpperCase() })
+  }
+
+  function handleCouponDiscountTypeChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    setCouponForm({ ...couponForm, discountType: e.target.value as "amount" | "percentage" })
+  }
+
+  function handleCouponDiscountValueChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value
+    if (value === "" || /^\d+$/.test(value)) {
+      setCouponForm({ ...couponForm, discountValue: value === "" ? 0 : parseInt(value) })
+    }
+  }
+
+  function handleCouponDiscountValueBlur(e: React.FocusEvent<HTMLInputElement>) {
+    const value = parseInt(e.target.value) || 0
+    if (couponForm.discountType === "percentage") {
+      if (value > 100) {
+        handleNotificationAdd("할인율은 100%를 초과할 수 없습니다", "error")
+        setCouponForm({ ...couponForm, discountValue: 100 })
+      } else if (value < 0) {
+        setCouponForm({ ...couponForm, discountValue: 0 })
+      }
+    } else {
+      if (value > 100000) {
+        handleNotificationAdd("할인 금액은 100,000원을 초과할 수 없습니다", "error")
+        setCouponForm({ ...couponForm, discountValue: 100000 })
+      } else if (value < 0) {
+        setCouponForm({ ...couponForm, discountValue: 0 })
+      }
+    }
+  }
+
+  function handleCancelClick() {
+    setShowCouponForm(false)
+  }
+
   return (
     <div className="mt-6 p-4 bg-gray-50 rounded-lg">
       <form onSubmit={handleCouponSubmit} className="space-y-4">
@@ -19,15 +61,10 @@ export function AdminCouponForm({
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">쿠폰명</label>
             <input
+              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
               type="text"
               value={couponForm.name}
-              onChange={(e) =>
-                setCouponForm({
-                  ...couponForm,
-                  name: e.target.value,
-                })
-              }
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
+              onChange={handleCouponNameChange}
               placeholder="신규 가입 쿠폰"
               required
             />
@@ -35,15 +72,10 @@ export function AdminCouponForm({
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">쿠폰 코드</label>
             <input
+              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm font-mono"
               type="text"
               value={couponForm.code}
-              onChange={(e) =>
-                setCouponForm({
-                  ...couponForm,
-                  code: e.target.value.toUpperCase(),
-                })
-              }
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm font-mono"
+              onChange={handleCouponCodeChange}
               placeholder="WELCOME2024"
               required
             />
@@ -51,14 +83,9 @@ export function AdminCouponForm({
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">할인 타입</label>
             <select
-              value={couponForm.discountType}
-              onChange={(e) =>
-                setCouponForm({
-                  ...couponForm,
-                  discountType: e.target.value as "amount" | "percentage",
-                })
-              }
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
+              value={couponForm.discountType}
+              onChange={handleCouponDiscountTypeChange}
             >
               <option value="amount">정액 할인</option>
               <option value="percentage">정률 할인</option>
@@ -70,47 +97,10 @@ export function AdminCouponForm({
             </label>
             <input
               type="text"
-              value={couponForm.discountValue === 0 ? "" : couponForm.discountValue}
-              onChange={(e) => {
-                const value = e.target.value
-                if (value === "" || /^\d+$/.test(value)) {
-                  setCouponForm({
-                    ...couponForm,
-                    discountValue: value === "" ? 0 : parseInt(value),
-                  })
-                }
-              }}
-              onBlur={(e) => {
-                const value = parseInt(e.target.value) || 0
-                if (couponForm.discountType === "percentage") {
-                  if (value > 100) {
-                    handleNotificationAdd("할인율은 100%를 초과할 수 없습니다", "error")
-                    setCouponForm({
-                      ...couponForm,
-                      discountValue: 100,
-                    })
-                  } else if (value < 0) {
-                    setCouponForm({
-                      ...couponForm,
-                      discountValue: 0,
-                    })
-                  }
-                } else {
-                  if (value > 100000) {
-                    handleNotificationAdd("할인 금액은 100,000원을 초과할 수 없습니다", "error")
-                    setCouponForm({
-                      ...couponForm,
-                      discountValue: 100000,
-                    })
-                  } else if (value < 0) {
-                    setCouponForm({
-                      ...couponForm,
-                      discountValue: 0,
-                    })
-                  }
-                }
-              }}
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
+              value={couponForm.discountValue === 0 ? "" : couponForm.discountValue}
+              onChange={handleCouponDiscountValueChange}
+              onBlur={handleCouponDiscountValueBlur}
               placeholder={couponForm.discountType === "amount" ? "5000" : "10"}
               required
             />
@@ -119,8 +109,8 @@ export function AdminCouponForm({
         <div className="flex justify-end gap-3">
           <button
             type="button"
-            onClick={() => setShowCouponForm(false)}
             className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+            onClick={handleCancelClick}
           >
             취소
           </button>

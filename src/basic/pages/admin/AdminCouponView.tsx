@@ -1,6 +1,27 @@
 import type { Coupon } from "../../../types"
+import { IconTrash } from "./IconTrash"
 
-export function AdminCouponView({ coupon, handleCouponDelete }: { coupon: Coupon; handleCouponDelete: (couponCode: string) => void }) {
+export function AdminCouponView({
+  coupon,
+  setCoupons,
+  selectedCoupon,
+  setSelectedCoupon,
+  handleNotificationAdd,
+}: {
+  coupon: Coupon
+  setCoupons: React.Dispatch<React.SetStateAction<Coupon[]>>
+  selectedCoupon: Coupon | null
+  setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>
+  handleNotificationAdd: (message: string, type: "error" | "success" | "warning") => void
+}) {
+  function handleCouponDelete(couponCode: string) {
+    setCoupons((prev) => prev.filter((c) => c.code !== couponCode))
+    if (selectedCoupon?.code === couponCode) {
+      setSelectedCoupon(null)
+    }
+    handleNotificationAdd("쿠폰이 삭제되었습니다.", "success")
+  }
+
   return (
     <div key={coupon.code} className="relative bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200">
       <div className="flex justify-between items-start">
@@ -13,15 +34,8 @@ export function AdminCouponView({ coupon, handleCouponDelete }: { coupon: Coupon
             </span>
           </div>
         </div>
-        <button onClick={() => handleCouponDelete(coupon.code)} className="text-gray-400 hover:text-red-600 transition-colors">
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-            />
-          </svg>
+        <button className="text-gray-400 hover:text-red-600 transition-colors" onClick={() => handleCouponDelete(coupon.code)}>
+          <IconTrash />
         </button>
       </div>
     </div>

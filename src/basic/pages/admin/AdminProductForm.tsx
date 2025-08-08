@@ -1,15 +1,16 @@
+import { useCallback } from "react"
 import { ProductsDiscount } from "./ProductsDiscount"
+import type { ProductWithUI } from "../../data/products"
 
 export function AdminProductForm({
-  handleProductSubmit,
   editingProduct,
   productForm,
   setProductForm,
   handleNotificationAdd,
   setEditingProduct,
   setShowProductForm,
+  setProducts,
 }: {
-  handleProductSubmit: (e: React.FormEvent) => void
   editingProduct: string | null
   productForm: { name: string; price: number; stock: number; description: string; discounts: Array<{ quantity: number; rate: number }> }
   setProductForm: (form: {
@@ -22,7 +23,69 @@ export function AdminProductForm({
   handleNotificationAdd: (message: string, type: "error" | "success" | "warning") => void
   setEditingProduct: (productId: string | null) => void
   setShowProductForm: (show: boolean) => void
+  setProducts: React.Dispatch<React.SetStateAction<ProductWithUI[]>>
 }) {
+  const handleProductAdd = useCallback(
+    (newProduct: Omit<ProductWithUI, "id">) => {
+      const product: ProductWithUI = {
+        ...newProduct,
+        id: `p${Date.now()}`,
+      }
+      setProducts((prev) => [...prev, product])
+      handleNotificationAdd("상품이 추가되었습니다.", "success")
+    },
+    [handleNotificationAdd],
+  )
+
+  const handleProductUpdate = useCallback(
+    (productId: string, updates: Partial<ProductWithUI>) => {
+      setProducts((prev) => prev.map((product) => (product.id === productId ? { ...product, ...updates } : product)))
+      handleNotificationAdd("상품이 수정되었습니다.", "success")
+    },
+    [handleNotificationAdd],
+  )
+
+  function handleProductSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (editingProduct && editingProduct !== "new") {
+      handleProductUpdate(editingProduct, productForm)
+      setEditingProduct(null)
+    } else {
+      handleProductAdd({
+        ...productForm,
+        discounts: productForm.discounts,
+      })
+    }
+    setProductForm({
+      name: "",
+      price: 0,
+      stock: 0,
+      description: "",
+      discounts: [],
+    })
+    setEditingProduct(null)
+    setShowProductForm(false)
+  }
+
+  function handleClickCancel() {
+    setEditingProduct(null)
+    setProductForm({
+      name: "",
+      price: 0,
+      stock: 0,
+      description: "",
+      discounts: [],
+    })
+    setShowProductForm(false)
+  }
+
+  function handleAddDiscount() {
+    setProductForm({
+      ...productForm,
+      discounts: [...productForm.discounts, { quantity: 10, rate: 0.1 }],
+    })
+  }
+
   return (
     <div className="p-6 border-t border-gray-200 bg-gray-50">
       <form onSubmit={handleProductSubmit} className="space-y-4">
@@ -123,16 +186,7 @@ export function AdminProductForm({
             {productForm.discounts.map((discount, index) => (
               <ProductsDiscount key={index} index={index} discount={discount} productForm={productForm} setProductForm={setProductForm} />
             ))}
-            <button
-              type="button"
-              onClick={() => {
-                setProductForm({
-                  ...productForm,
-                  discounts: [...productForm.discounts, { quantity: 10, rate: 0.1 }],
-                })
-              }}
-              className="text-sm text-indigo-600 hover:text-indigo-800"
-            >
+            <button type="button" onClick={handleAddDiscount} className="text-sm text-indigo-600 hover:text-indigo-800">
               + 할인 추가
             </button>
           </div>
@@ -141,17 +195,7 @@ export function AdminProductForm({
         <div className="flex justify-end gap-3">
           <button
             type="button"
-            onClick={() => {
-              setEditingProduct(null)
-              setProductForm({
-                name: "",
-                price: 0,
-                stock: 0,
-                description: "",
-                discounts: [],
-              })
-              setShowProductForm(false)
-            }}
+            onClick={handleClickCancel}
             className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
             취소
