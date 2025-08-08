@@ -29,16 +29,30 @@ export const AdminHeader = ({ onToggleAdmin }: AdminHeaderProps) => {
 export const ShopHeader = ({
   onToggleAdmin,
   totalItemCount,
+  searchTerm,
+  onSearchChange,
 }: {
   onToggleAdmin: () => void;
   totalItemCount: number;
+  searchTerm: string;
+  onSearchChange: (value: string) => void;
 }) => {
   return (
     <header className="bg-white shadow-sm sticky top-0 z-40 border-b">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center flex-1">
-            <h1 className="text-xl font-semibold text-gray-800">SHOP</h1>
+            <h1 className="text-xl font-semibold text-gray-800 mr-8">SHOP</h1>
+            {/* 검색 입력 필드 */}
+            <div className="flex-1 max-w-md">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => onSearchChange(e.target.value)}
+                placeholder="상품 검색..."
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              />
+            </div>
           </div>
           <nav className="flex items-center space-x-4">
             <button
@@ -74,12 +88,27 @@ interface HeaderProps {
   isAdmin: boolean;
   onToggleAdmin: () => void;
   totalItemCount?: number;
+  searchTerm?: string;
+  onSearchChange?: (value: string) => void;
 }
 
-export const Header = ({ isAdmin, onToggleAdmin, totalItemCount = 0 }: HeaderProps) => {
+export const Header = ({
+  isAdmin,
+  onToggleAdmin,
+  totalItemCount = 0,
+  searchTerm = "",
+  onSearchChange = () => {},
+}: HeaderProps) => {
   if (isAdmin) {
     return <AdminHeader onToggleAdmin={onToggleAdmin} />;
   }
 
-  return <ShopHeader onToggleAdmin={onToggleAdmin} totalItemCount={totalItemCount} />;
+  return (
+    <ShopHeader
+      onToggleAdmin={onToggleAdmin}
+      totalItemCount={totalItemCount}
+      searchTerm={searchTerm}
+      onSearchChange={onSearchChange}
+    />
+  );
 };

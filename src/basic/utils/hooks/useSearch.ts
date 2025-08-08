@@ -5,17 +5,21 @@ import { filterSearchTermByProduct } from "../../models/product";
 
 interface UseSearchOptions {
   debounceMs?: number;
+  externalSearchTerm?: string;
 }
 
 /**
  * 상품 검색을 위한 커스텀 훅
  * @param products - 검색할 상품 배열
- * @param options - 검색 옵션 (debounce 시간)
+ * @param options - 검색 옵션 (debounce 시간, 외부 검색어)
  */
 export const useSearch = (products: Product[], options: UseSearchOptions = {}) => {
-  const { debounceMs = 500 } = options;
+  const { debounceMs = 500, externalSearchTerm } = options;
 
-  const [searchTerm, setSearchTerm] = useState("");
+  const [internalSearchTerm, setInternalSearchTerm] = useState("");
+
+  // 외부 검색어가 있으면 그것을 사용, 없으면 내부 상태 사용
+  const searchTerm = externalSearchTerm !== undefined ? externalSearchTerm : internalSearchTerm;
   const debouncedSearchTerm = useDebounce(searchTerm, debounceMs);
 
   // 새로운 models의 searchProducts 함수 사용
@@ -33,12 +37,12 @@ export const useSearch = (products: Product[], options: UseSearchOptions = {}) =
   };
 
   const clearSearch = useCallback(() => {
-    setSearchTerm("");
+    setInternalSearchTerm("");
   }, []);
 
   return {
     searchTerm,
-    setSearchTerm,
+    setSearchTerm: externalSearchTerm !== undefined ? () => {} : setInternalSearchTerm,
     filteredProducts,
     searchInfo,
     clearSearch,

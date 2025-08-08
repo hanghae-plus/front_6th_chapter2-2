@@ -42,31 +42,6 @@ export const calculateCartTotal = (
   };
 };
 
-// 4. updateCartItemQuantity(cart, productId, quantity): 수량 변경
-export const updateCartItemQuantity = (cart: CartItem[], productId: string, quantity: number): CartItem[] => {
-  if (quantity <= 0) {
-    return cart.filter((item) => item.product.id !== productId);
-  }
-
-  return cart.map((item) => (item.product.id === productId ? { ...item, quantity } : item));
-};
-
-// 5. addItemToCart(cart, product): 상품 추가
-export const addItemToCart = (cart: CartItem[], product: Product): CartItem[] => {
-  const existingItem = cart.find((item) => item.product.id === product.id);
-
-  if (existingItem) {
-    return updateCartItemQuantity(cart, product.id, existingItem.quantity + 1);
-  }
-
-  return [...cart, { product, quantity: 1 }];
-};
-
-// 6. removeItemFromCart(cart, productId): 상품 제거
-export const removeItemFromCart = (cart: CartItem[], productId: string): CartItem[] => {
-  return cart.filter((item) => item.product.id !== productId);
-};
-
 // 7. getRemainingStock(product, cart): 남은 재고 계산
 export const getRemainingStock = (product: Product, cart: CartItem[]): number => {
   const cartItem = cart.find((item) => item.product.id === product.id);

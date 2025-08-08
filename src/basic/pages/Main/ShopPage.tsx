@@ -1,22 +1,31 @@
 import { useEffect } from "react";
+
+// components
 import { CartContainer } from "../../components/cart/CartContainer";
 import { ProductList } from "../../components/product/ProductList";
-import { getRemainingStock } from "../../utils/formatters";
+
+// hooks
 import { useProducts } from "../../hooks/useProducts";
 import { useCoupons } from "../../hooks/useCoupons";
 import { useCart } from "../../hooks/useCart";
 import { useOrder } from "../../hooks/useOrder";
+
+// utils
+import { getRemainingStock } from "../../utils/formatters";
 import { useSearch } from "../../utils/hooks/useSearch";
+
+// types
 import type { Coupon } from "../../../types";
 
 interface ShopPageProps {
   addNotification: (message: string, type?: "error" | "success" | "warning") => void;
   onTotalItemCountChange?: (count: number) => void;
+  searchTerm: string;
 }
 
-export default function ShopPage({ addNotification, onTotalItemCountChange }: ShopPageProps) {
+export default function ShopPage({ addNotification, onTotalItemCountChange, searchTerm }: ShopPageProps) {
   const { products } = useProducts();
-  const { searchTerm, setSearchTerm, filteredProducts, searchInfo } = useSearch(products);
+  const { filteredProducts, searchInfo } = useSearch(products, { externalSearchTerm: searchTerm });
 
   const { coupons, selectedCoupon, applyCoupon, setSelectedCoupon } = useCoupons(addNotification);
 
@@ -49,17 +58,6 @@ export default function ShopPage({ addNotification, onTotalItemCountChange }: Sh
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
       <div className="lg:col-span-3">
         <section>
-          {/* 검색 입력 필드 */}
-          <div className="mb-6">
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="상품 검색..."
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-            />
-          </div>
-
           <ProductList
             products={filteredProducts}
             searchInfo={searchInfo}

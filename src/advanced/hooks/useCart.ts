@@ -10,6 +10,7 @@ import {
   clearCartAtom,
   getRemainingStockAtom,
 } from "../stores/cartStore";
+import { productsAtom } from "../stores/productStore";
 import { withTryNotifySuccess } from "../utils/withNotify";
 
 // 라이브러리 훅을 래핑하는 엔티티 Hook
@@ -18,6 +19,7 @@ export const useCart = (addNotification?: (message: string, type?: "error" | "su
   const cart = useAtomValue(cartAtom);
   const totalItemCount = useAtomValue(totalItemCountAtom);
   const getRemainingStock = useAtomValue(getRemainingStockAtom);
+  const products = useAtomValue(productsAtom);
 
   const addToCartSet = useSetAtom(addToCartAtom);
   const removeFromCartSet = useSetAtom(removeFromCartAtom);
@@ -39,8 +41,7 @@ export const useCart = (addNotification?: (message: string, type?: "error" | "su
   );
 
   const updateQuantity = withTryNotifySuccess(
-    (productId: string, newQuantity: number, products: Product[]) =>
-      updateQuantitySet({ productId, newQuantity, products }),
+    (productId: string, newQuantity: number) => updateQuantitySet({ productId, newQuantity, products }),
     "수량이 업데이트되었습니다.",
     (message, type) => (addNotification ? addNotification(message, type) : addNotificationSet({ message, type }))
   );

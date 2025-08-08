@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 // hooks
 import { useNotification } from "./hooks/useNotification";
 import { useAppState } from "./hooks/useAppState";
@@ -17,19 +19,30 @@ const App = () => {
   // 앱 전체 상태 관리
   const { isAdmin, toggleAdmin, totalItemCount, setTotalItemCount } = useAppState();
 
-  // 장바구니 아이템 개수 상태
+  // 검색 상태 관리
+  const [searchTerm, setSearchTerm] = useState("");
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Notification notifications={notifications} onRemove={removeNotification} />
 
-      <Header isAdmin={isAdmin} onToggleAdmin={toggleAdmin} totalItemCount={totalItemCount} />
+      <Header
+        isAdmin={isAdmin}
+        onToggleAdmin={toggleAdmin}
+        totalItemCount={totalItemCount}
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+      />
 
       <main className="max-w-7xl mx-auto px-4 py-8">
         {isAdmin ? (
           <AdminPage addNotification={addNotification} />
         ) : (
-          <ShopPage addNotification={addNotification} onTotalItemCountChange={setTotalItemCount} />
+          <ShopPage
+            addNotification={addNotification}
+            onTotalItemCountChange={setTotalItemCount}
+            searchTerm={searchTerm}
+          />
         )}
       </main>
     </div>
