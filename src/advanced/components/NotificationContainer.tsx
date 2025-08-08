@@ -1,5 +1,5 @@
 import { getNotificationClassName } from "../utils/notification";
-import { useNotification } from "../contexts/notification/NotificationContext";
+import { useNotification } from "../contexts/NotificationContext";
 
 export const NotificationContainer = () => {
   const { notifications, removeNotificationById } = useNotification();

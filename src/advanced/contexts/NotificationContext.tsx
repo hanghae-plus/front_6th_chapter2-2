@@ -11,7 +11,7 @@ import {
   createNotification,
   addNotification as _addNotification,
   removeNotification,
-} from "../../utils/notification";
+} from "../utils/notification";
 
 interface NotificationContextType {
   notifications: Notification[];

@@ -8,7 +8,7 @@ import {
 } from "../models/product";
 import ProductForm from "./ProductForm";
 import { type ProductForm as _ProductForm } from "../../types";
-import { useNotification } from "../contexts/notification/NotificationContext";
+import { useNotification } from "../contexts/NotificationContext";
 
 interface Props {
   products: ProductWithUI[];

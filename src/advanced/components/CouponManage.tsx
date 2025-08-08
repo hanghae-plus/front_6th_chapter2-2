@@ -6,7 +6,7 @@ import {
   deleteCoupon as _deleteCoupon,
   checkAndClearSelectedCoupon,
 } from "../models/coupon";
-import { useNotification } from "../contexts/notification/NotificationContext";
+import { useNotification } from "../contexts/NotificationContext";
 
 interface Props {
   coupons: Coupon[];

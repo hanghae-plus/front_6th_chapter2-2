@@ -10,7 +10,7 @@ import {
   updateQuantity,
   calculateCartTotal,
 } from "../models/cart";
-import { useNotification } from "../contexts/notification/NotificationContext";
+import { useNotification } from "../contexts/NotificationContext";
 import ShopProduct from "../components/ShopProduct";
 import PaymentInfo from "../components/PaymentInfo";
 import CouponDiscount from "../components/CouponDiscount";

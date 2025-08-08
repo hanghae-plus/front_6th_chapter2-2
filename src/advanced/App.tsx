@@ -5,7 +5,7 @@ import { ProductWithUI } from "../basic/models/product";
 import Header from "./components/Header";
 import AdminPage from "./pages/AdminPage";
 import ShopPage from "./pages/ShopPage";
-import { NotificationProvider } from "./contexts/notification/NotificationContext";
+import { NotificationProvider } from "./contexts/NotificationContext";
 import { NotificationContainer } from "./components/NotificationContainer";
 
 // 초기 데이터

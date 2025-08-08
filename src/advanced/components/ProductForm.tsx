@@ -1,5 +1,5 @@
 import { ProductForm as _ProductForm } from "../../types";
-import { useNotification } from "../contexts/notification/NotificationContext";
+import { useNotification } from "../contexts/NotificationContext";
 
 interface Props {
   productForm: _ProductForm;
