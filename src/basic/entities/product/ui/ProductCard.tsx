@@ -1,5 +1,6 @@
 import { Product, ProductWithUI } from "@entities/product";
 import ImageIcon from "@assets/icons/ImageIcon.svg?react";
+import { Button } from "@shared";
 
 interface ProductCardProps {
   product: ProductWithUI;
@@ -68,17 +69,14 @@ export const ProductCard = ({
         </div>
 
         {/* 장바구니 버튼 */}
-        <button
+        <Button
+          variant={remainingStock <= 0 ? "secondary" : "dark"}
+          fullWidth
           onClick={() => onAddToCart(product)}
           disabled={remainingStock <= 0}
-          className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
-            remainingStock <= 0
-              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-              : "bg-gray-900 text-white hover:bg-gray-800"
-          }`}
         >
           {remainingStock <= 0 ? "품절" : "장바구니 담기"}
-        </button>
+        </Button>
       </div>
     </div>
   );

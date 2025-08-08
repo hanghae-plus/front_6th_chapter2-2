@@ -1,4 +1,5 @@
 import { Coupon } from "@/types";
+import { Button } from "@shared";
 
 interface CouponSelectorProps {
   coupons: Coupon[];
@@ -15,9 +16,9 @@ export function CouponSelector({
     <section className="bg-white rounded-lg border border-gray-200 p-4">
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-semibold text-gray-700">쿠폰 할인</h3>
-        <button className="text-xs text-blue-600 hover:underline">
+        <Button variant="link" size="xs">
           쿠폰 등록
-        </button>
+        </Button>
       </div>
       {coupons.length > 0 && (
         <select

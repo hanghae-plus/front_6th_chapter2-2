@@ -1,6 +1,6 @@
 import CartIcon from "@assets/icons/CartIcon.svg?react";
 import { useCart } from "@entities/cart";
-import { SearchBar } from "@shared";
+import { SearchBar, Button } from "@shared";
 
 interface HeaderProps {
   isAdmin: boolean;
@@ -34,17 +34,15 @@ export default function Header({
               </div>
             )}
           </div>
+
           <nav className="flex items-center space-x-4">
-            <button
+            <Button
+              variant={isAdmin ? "dark" : "secondary"}
+              size="sm"
               onClick={onAdminToggle}
-              className={`px-3 py-1.5 text-sm rounded transition-colors ${
-                isAdmin
-                  ? "bg-gray-800 text-white"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
             >
               {isAdmin ? "쇼핑몰로 돌아가기" : "관리자 페이지로"}
-            </button>
+            </Button>
             {!isAdmin && (
               <div className="relative">
                 <CartIcon className="w-6 h-6 text-gray-700" />

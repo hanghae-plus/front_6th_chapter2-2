@@ -1,5 +1,6 @@
 import { Coupon, DiscountType } from "@/types";
 import TrashIcon from "@assets/icons/TrashIcon.svg?react";
+import { IconButton } from "@shared";
 
 interface CouponCardProps {
   coupon: Coupon;
@@ -21,12 +22,13 @@ export function CouponCard({ coupon, onDelete }: CouponCardProps) {
             </span>
           </div>
         </div>
-        <button
+        <IconButton
+          variant="icon"
           onClick={() => onDelete(coupon.code)}
           className="text-gray-400 hover:text-red-600 transition-colors"
         >
           <TrashIcon className="w-5 h-5" />
-        </button>
+        </IconButton>
       </div>
     </div>
   );

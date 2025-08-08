@@ -5,3 +5,4 @@ export * from "./libs";
 
 export * from "./ui";
 export * from "./ui/Tabs";
+export { Button, IconButton } from "./ui/Button";

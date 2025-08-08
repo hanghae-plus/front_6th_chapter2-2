@@ -1,3 +1,5 @@
+import { Button } from "@shared";
+
 interface CheckoutSectionProps {
   totalBeforeDiscount: number;
   totalAfterDiscount: number;
@@ -35,12 +37,15 @@ export function CheckoutSection({
         </div>
       </div>
 
-      <button
+      <Button
+        variant="warning"
+        fullWidth
+        size="lg"
         onClick={onCompleteOrder}
-        className="w-full mt-4 py-3 bg-yellow-400 text-gray-900 rounded-md font-medium hover:bg-yellow-500 transition-colors"
+        className="mt-4"
       >
         {totalAfterDiscount.toLocaleString()}원 결제하기
-      </button>
+      </Button>
 
       <div className="mt-3 text-xs text-gray-500 text-center">
         <p>* 실제 결제는 이루어지지 않습니다</p>

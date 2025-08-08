@@ -3,6 +3,7 @@ import PlusIcon from "@assets/icons/PlusIcon.svg?react";
 import { CouponCard, useCoupon, CouponErrorReason } from "@entities/coupon";
 import { AddCouponForm } from "@features/add-coupon/ui/AddCouponForm";
 import { useGlobalNotification } from "@entities/notification";
+import { Button } from "@shared";
 
 export function CouponsTab() {
   const [showCouponForm, setShowCouponForm] = useState(false);
@@ -40,13 +41,14 @@ export function CouponsTab() {
           ))}
 
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 flex items-center justify-center hover:border-gray-400 transition-colors">
-            <button
+            <Button
+              variant="icon"
               onClick={() => setShowCouponForm(!showCouponForm)}
               className="text-gray-400 hover:text-gray-600 flex flex-col items-center"
             >
               <PlusIcon className="w-8 h-8" />
               <p className="mt-2 text-sm font-medium">새 쿠폰 추가</p>
-            </button>
+            </Button>
           </div>
         </div>
 

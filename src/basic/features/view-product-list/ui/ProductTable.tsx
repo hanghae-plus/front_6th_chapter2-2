@@ -1,4 +1,5 @@
 import { ProductWithUI } from "@entities/product";
+import { Button } from "@shared";
 
 interface ProductWithDisplayInfo extends ProductWithUI {
   displayedPrice: string;
@@ -63,18 +64,22 @@ export function ProductTable({
                 {product.description || "-"}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <button
+                <Button
+                  variant="primary"
+                  size="sm"
                   onClick={() => onEdit(product)}
                   className="text-indigo-600 hover:text-indigo-900 mr-3"
                 >
                   수정
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="danger"
+                  size="sm"
                   onClick={() => onDelete(product.id)}
                   className="text-red-600 hover:text-red-900"
                 >
                   삭제
-                </button>
+                </Button>
               </td>
             </tr>
           ))}

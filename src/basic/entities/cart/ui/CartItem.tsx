@@ -1,5 +1,6 @@
 import { CartItem as CartItemType } from "@/types";
 import CloseIcon from "@assets/icons/CloseIcon.svg?react";
+import { Button, IconButton } from "@shared";
 
 interface CartItemProps {
   item: CartItemType;
@@ -27,30 +28,35 @@ export const CartItem = ({
         <h4 className="text-sm font-medium text-gray-900 flex-1">
           {item.product.name}
         </h4>
-        <button
+        <IconButton
+          variant="icon"
           onClick={() => removeFromCart(item.product.id)}
           className="text-gray-400 hover:text-red-500 ml-2"
         >
           <CloseIcon className="w-4 h-4" />
-        </button>
+        </IconButton>
       </div>
       <div className="flex items-center justify-between">
         <div className="flex items-center">
-          <button
+          <Button
+            variant="secondary"
+            size="xs"
             onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
             className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
           >
             <span className="text-xs">−</span>
-          </button>
+          </Button>
           <span className="mx-3 text-sm font-medium w-8 text-center">
             {item.quantity}
           </span>
-          <button
+          <Button
+            variant="secondary"
+            size="xs"
             onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
             className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
           >
             <span className="text-xs">+</span>
-          </button>
+          </Button>
         </div>
         <div className="text-right">
           {hasDiscount && (

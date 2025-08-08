@@ -4,6 +4,7 @@ import {
   ProductFormFields,
 } from "@entities/product";
 import { useGlobalNotification } from "@entities/notification";
+import { Button } from "@shared";
 
 interface AddProductFormProps {
   onSubmit: (product: Omit<ProductWithUI, "id">) => void;
@@ -18,30 +19,22 @@ export function AddProductForm({ onSubmit, onCancel }: AddProductFormProps) {
 
   return (
     <div className="p-6 border-t border-gray-200 bg-gray-50">
+      <h3 className="text-lg font-semibold mb-4">새 상품 추가</h3>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <h3 className="text-lg font-medium text-gray-900">새 상품 추가</h3>
-
         <ProductFormFields
           product={product}
           onChange={handleFieldChange}
           errors={errors}
-          onValidationError={showErrorNotification}
+          onValidationError={(message) => showErrorNotification(message)}
         />
 
-        <div className="flex justify-end gap-3">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
-          >
+        <div className="flex space-x-2 pt-4 border-t border-gray-200">
+          <Button type="button" variant="secondary" onClick={onCancel}>
             취소
-          </button>
-          <button
-            type="submit"
-            className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700"
-          >
+          </Button>
+          <Button type="submit" variant="primary">
             추가
-          </button>
+          </Button>
         </div>
       </form>
     </div>

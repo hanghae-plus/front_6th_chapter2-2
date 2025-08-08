@@ -1,6 +1,7 @@
 import { ProductWithUI } from "@entities/product";
 import CloseIcon from "@assets/icons/CloseIcon.svg?react";
 import { useCallback } from "react";
+import { Button } from "@shared";
 import {
   validatePrice,
   validateStock,
@@ -244,22 +245,24 @@ export function ProductFormFields({
                 placeholder="%"
               />
               <span className="text-sm">% 할인</span>
-              <button
+              <Button
                 type="button"
+                variant="icon"
                 onClick={() => handleRemoveDiscount(index)}
                 className="text-red-600 hover:text-red-800"
               >
                 <CloseIcon className="w-4 h-4" />
-              </button>
+              </Button>
             </div>
           ))}
-          <button
+          <Button
             type="button"
+            variant="link"
             onClick={handleAddDiscount}
             className="text-sm text-indigo-600 hover:text-indigo-800"
           >
             + 할인 추가
-          </button>
+          </Button>
         </div>
       </div>
     </>

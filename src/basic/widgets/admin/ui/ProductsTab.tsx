@@ -1,11 +1,9 @@
-import { ProductTable } from "@features/view-product-list/ui/ProductTable";
+import { useManageProducts } from "@features/manage-products";
+import { AddProductForm, EditProductForm } from "@features/manage-products";
+import { ProductTable } from "@features/view-product-list";
+import { Button } from "@shared";
 import { formatPrice } from "@shared/libs/price";
 import { getStockDisplay } from "@entities/product";
-import {
-  AddProductForm,
-  EditProductForm,
-  useManageProducts,
-} from "@features/manage-products";
 
 export function ProductsTab() {
   const {
@@ -36,12 +34,9 @@ export function ProductsTab() {
       <div className="p-6 border-b border-gray-200">
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-semibold">상품 목록</h2>
-          <button
-            onClick={startAddingProduct}
-            className="px-4 py-2 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800"
-          >
+          <Button variant="dark" onClick={startAddingProduct}>
             새 상품 추가
-          </button>
+          </Button>
         </div>
       </div>
 

@@ -1,4 +1,10 @@
-import { type TabItem } from "../types/tabs";
+import { Button } from "./Button";
+
+export interface TabItem<T extends string = string> {
+  id: T;
+  label: string;
+  content: React.ReactNode;
+}
 
 interface TabsProps<T extends string> {
   tabs: TabItem<T>[];
@@ -17,8 +23,9 @@ export function Tabs<T extends string>({
     <div className={`border-b border-gray-200 ${className}`}>
       <nav className="-mb-px flex space-x-8">
         {tabs.map((tab) => (
-          <button
+          <Button
             key={tab.id}
+            variant="link"
             onClick={() => onTabChange(tab.id)}
             className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
               activeTab === tab.id
@@ -27,7 +34,7 @@ export function Tabs<T extends string>({
             }`}
           >
             {tab.label}
-          </button>
+          </Button>
         ))}
       </nav>
     </div>
