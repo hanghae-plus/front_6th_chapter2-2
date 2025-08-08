@@ -1,5 +1,5 @@
-import type { ProductWithUI } from "../../../data/products"
-import { AdminProductsDiscount } from "./AdminProductsDiscount"
+import type { ProductViewModel } from "../../../entities/ProductViewModel"
+import { AdminProductsDiscount } from "./AdminProductsDiscount.tsx"
 
 export function AdminProductForm({
   setProducts,
@@ -10,7 +10,7 @@ export function AdminProductForm({
   setEditingProduct,
   setShowProductForm,
 }: {
-  setProducts: React.Dispatch<React.SetStateAction<ProductWithUI[]>>
+  setProducts: React.Dispatch<React.SetStateAction<ProductViewModel[]>>
   editingProduct: string | null
   productForm: { name: string; price: number; stock: number; description: string; discounts: Array<{ quantity: number; rate: number }> }
   setProductForm: (form: {
@@ -25,8 +25,8 @@ export function AdminProductForm({
   setShowProductForm: (show: boolean) => void
 }) {
   // 새 상품을 추가
-  function handleProductAdd(newProduct: Omit<ProductWithUI, "id">) {
-    const product: ProductWithUI = {
+  function handleProductAdd(newProduct: Omit<ProductViewModel, "id">) {
+    const product: ProductViewModel = {
       ...newProduct,
       id: `p${Date.now()}`,
     }

@@ -8,6 +8,7 @@ import { useProducts } from "./hooks/useProducts.ts";
 import PageAdmin from "./pages/admin/PageAdmin.tsx";
 import PageCart from "./pages/cart/PageCart.tsx";
 
+// 더 이상적인 세분화화와 폴더구조를 해볼 수 있겠지만 basic은 여기까지만 할게요.
 const App = () => {
   const { products, setProducts } = useProducts();
   const { coupons, setCoupons, selectedCoupon, setSelectedCoupon } = useCoupons();

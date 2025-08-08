@@ -1,8 +1,8 @@
 import { addItemToCart, canAddToCart } from "../../../entities/CartItem.ts"
 import { getRemainingStock } from "../../../entities/Product.ts"
-import { ProductViewModel } from "../../../entities/ProductViewModel.ts"
+import type { ProductViewModel } from "../../../entities/ProductViewModel.ts"
 
-import { CartItem } from "../../../../types.ts"
+import type { CartItem } from "../../../../types.ts"
 import { IconProductPlaceholder } from "../../../components/icons/IconProductPlaceholder.tsx"
 import type { HandleNotificationAdd } from "../../../entities/Notification.ts"
 

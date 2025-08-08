@@ -1,6 +1,6 @@
-import type { CartItem, Coupon } from "../../../../types.ts";
-import type { HandleNotificationAdd } from "../../../entities/Notification.ts";
-import { calculateCartTotal } from "../../../entities/CartItem.ts";
+import type { CartItem, Coupon } from "../../../../types.ts"
+import type { HandleNotificationAdd } from "../../../entities/Notification.ts"
+import { calculateCartTotal } from "../../../entities/CartItem.ts"
 
 export function SectionPaymentInfo({
   cart,
@@ -9,22 +9,22 @@ export function SectionPaymentInfo({
   setSelectedCoupon,
   handleNotificationAdd,
 }: {
-  cart: CartItem[];
-  selectedCoupon: Coupon | null;
-  setCart: (cart: CartItem[]) => void;
-  setSelectedCoupon: (coupon: Coupon | null) => void;
-  handleNotificationAdd: HandleNotificationAdd;
+  cart: CartItem[]
+  selectedCoupon: Coupon | null
+  setCart: React.Dispatch<React.SetStateAction<CartItem[]>>
+  setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>
+  handleNotificationAdd: HandleNotificationAdd
 }) {
-  const totals = calculateCartTotal(cart, selectedCoupon);
-  const discountAmount = totals.totalBeforeDiscount - totals.totalAfterDiscount;
+  const totals = calculateCartTotal(cart, selectedCoupon)
+  const discountAmount = totals.totalBeforeDiscount - totals.totalAfterDiscount
 
   function handleOrderComplete() {
-    const orderNumber = `ORD-${Date.now()}`;
+    const orderNumber = `ORD-${Date.now()}`
 
-    handleNotificationAdd(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, "success");
+    handleNotificationAdd(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, "success")
 
-    setCart([]);
-    setSelectedCoupon(null);
+    setCart([])
+    setSelectedCoupon(null)
   }
 
   return (
@@ -58,5 +58,5 @@ export function SectionPaymentInfo({
         <p>* 실제 결제는 이루어지지 않습니다</p>
       </div>
     </section>
-  );
+  )
 }

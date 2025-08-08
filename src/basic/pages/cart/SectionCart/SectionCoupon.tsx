@@ -1,8 +1,8 @@
-import type { CartItem, Coupon } from "../../../../types.ts";
-import { CouponOptionView } from "./CouponOptionView.tsx";
-import { calculateCartTotal } from "../../../entities/CartItem.ts";
-import { getCouponApplicationError } from "../../../entities/Coupon.ts";
-import type { HandleNotificationAdd } from "../../../entities/Notification.ts";
+import type { CartItem, Coupon } from "../../../../types.ts"
+import { CouponOptionView } from "./CouponOptionView.tsx"
+import { calculateCartTotal } from "../../../entities/CartItem.ts"
+import { getCouponApplicationError } from "../../../entities/Coupon.ts"
+import type { HandleNotificationAdd } from "../../../entities/Notification.ts"
 
 export function SectionCoupon({
   coupons,
@@ -11,29 +11,29 @@ export function SectionCoupon({
   setSelectedCoupon,
   handleNotificationAdd,
 }: {
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  cart: CartItem[];
-  setSelectedCoupon: (coupon: Coupon | null) => void;
-  handleNotificationAdd: HandleNotificationAdd;
+  coupons: Coupon[]
+  selectedCoupon: Coupon | null
+  cart: CartItem[]
+  setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>
+  handleNotificationAdd: HandleNotificationAdd
 }) {
   function handleCouponApply(coupon: Coupon) {
-    const currentTotal = calculateCartTotal(cart, selectedCoupon).totalAfterDiscount;
+    const currentTotal = calculateCartTotal(cart, selectedCoupon).totalAfterDiscount
 
-    const error = getCouponApplicationError(coupon, currentTotal);
+    const error = getCouponApplicationError(coupon, currentTotal)
     if (error) {
-      handleNotificationAdd(error, "error");
-      return;
+      handleNotificationAdd(error, "error")
+      return
     }
 
-    setSelectedCoupon(coupon);
-    handleNotificationAdd("쿠폰이 적용되었습니다.", "success");
+    setSelectedCoupon(coupon)
+    handleNotificationAdd("쿠폰이 적용되었습니다.", "success")
   }
 
   function handleChangeCouponSelect(e: React.ChangeEvent<HTMLSelectElement>) {
-    const coupon = coupons.find((c) => c.code === e.target.value);
-    if (coupon) handleCouponApply(coupon);
-    else setSelectedCoupon(null);
+    const coupon = coupons.find((c) => c.code === e.target.value)
+    if (coupon) handleCouponApply(coupon)
+    else setSelectedCoupon(null)
   }
 
   return (
@@ -57,5 +57,5 @@ export function SectionCoupon({
         </select>
       )}
     </section>
-  );
+  )
 }

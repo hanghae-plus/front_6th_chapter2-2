@@ -18,11 +18,11 @@ export function SectionCart({
 }: {
   cart: CartItem[]
   products: ProductViewModel[]
-  setCart: (cart: CartItem[]) => void
+  setCart: React.Dispatch<React.SetStateAction<CartItem[]>>
   handleNotificationAdd: HandleNotificationAdd
   coupons: Coupon[]
   selectedCoupon: Coupon | null
-  setSelectedCoupon: (coupon: Coupon | null) => void
+  setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>
 }) {
   return (
     <div className="lg:col-span-1">

@@ -14,7 +14,7 @@ export function SectionProductList({
   products: ProductViewModel[]
   searchTerm: string
   cart: CartItem[]
-  setCart: (cart: CartItem[]) => void
+  setCart: React.Dispatch<React.SetStateAction<CartItem[]>>
   handleNotificationAdd: HandleNotificationAdd
 }) {
   const debouncedSearchTerm = useDebounce(searchTerm, 500)

@@ -1,44 +1,44 @@
-import { CartItem } from "../../../../types.ts";
-import { IconRemoveFromCart } from "../../../components/icons/IconRemoveFromCart.tsx";
-import type { ProductWithUI } from "../../../data/products.ts";
-import { calculateItemTotalWithBulkPurchase, removeItemFromCart, updateCartItemQuantity } from "../../../entities/CartItem.ts";
-import type { HandleNotificationAdd } from "../../../entities/Notification.ts";
+import { CartItem } from "../../../../types.ts"
+import { IconRemoveFromCart } from "../../../components/icons/IconRemoveFromCart.tsx"
+import { calculateItemTotalWithBulkPurchase, removeItemFromCart, updateCartItemQuantity } from "../../../entities/CartItem.ts"
+import type { HandleNotificationAdd } from "../../../entities/Notification.ts"
+import type { ProductViewModel } from "../../../entities/ProductViewModel.ts"
 
 interface CartItemViewProps {
-  item: CartItem;
-  cart: CartItem[];
-  products: ProductWithUI[];
-  setCart: (cart: CartItem[]) => void;
-  handleNotificationAdd: HandleNotificationAdd;
+  item: CartItem
+  cart: CartItem[]
+  products: ProductViewModel[]
+  setCart: React.Dispatch<React.SetStateAction<CartItem[]>>
+  handleNotificationAdd: HandleNotificationAdd
 }
 
 export function CartItemView({ item, cart, products, setCart, handleNotificationAdd }: CartItemViewProps) {
-  const itemTotal = calculateItemTotalWithBulkPurchase(item, cart);
-  const originalPrice = item.product.price * item.quantity;
+  const itemTotal = calculateItemTotalWithBulkPurchase(item, cart)
+  const originalPrice = item.product.price * item.quantity
 
-  const hasDiscount = itemTotal < originalPrice;
-  const discountRate = hasDiscount ? Math.round((1 - itemTotal / originalPrice) * 100) : 0;
+  const hasDiscount = itemTotal < originalPrice
+  const discountRate = hasDiscount ? Math.round((1 - itemTotal / originalPrice) * 100) : 0
 
   function handleProductRemoveFromCart(cartItem: CartItem) {
-    setCart(removeItemFromCart(cart, cartItem));
+    setCart(removeItemFromCart(cart, cartItem))
   }
 
   function handleProductQuantityUpdate(cartItem: CartItem, newQuantity: number) {
     if (newQuantity <= 0) {
-      handleProductRemoveFromCart(cartItem);
-      return;
+      handleProductRemoveFromCart(cartItem)
+      return
     }
 
-    const product = products.find((p) => p.id === cartItem.product.id);
-    if (!product) return;
+    const product = products.find((p) => p.id === cartItem.product.id)
+    if (!product) return
 
-    const maxStock = product.stock;
+    const maxStock = product.stock
     if (newQuantity > maxStock) {
-      handleNotificationAdd(`재고는 ${maxStock}개까지만 있습니다.`, "error");
-      return;
+      handleNotificationAdd(`재고는 ${maxStock}개까지만 있습니다.`, "error")
+      return
     }
 
-    setCart(updateCartItemQuantity(cart, cartItem, newQuantity));
+    setCart(updateCartItemQuantity(cart, cartItem, newQuantity))
   }
 
   return (
@@ -75,5 +75,5 @@ export function CartItemView({ item, cart, products, setCart, handleNotification
         </div>
       </div>
     </div>
-  );
+  )
 }
