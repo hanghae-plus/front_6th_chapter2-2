@@ -78,7 +78,7 @@ const ShopPage = ({
     [addNotification, cart]
   );
 
-  const updateQuantity = useCallback(
+  const IncreaseCartItem = useCallback(
     (product: Product, newQuantity: number) => {
       const result = _updateQuantity(cart, product, newQuantity);
 
@@ -165,6 +165,7 @@ const ShopPage = ({
             cart={cart}
             onRemove={removeFromCart}
             onDecrease={decreaseCartItem}
+            onIncrease={IncreaseCartItem}
           />
 
           {cart.length > 0 && (
