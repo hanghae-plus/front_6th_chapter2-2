@@ -61,13 +61,17 @@ const ShopPage = ({
     [cart, addNotification]
   );
 
-  const removeFromCart = useCallback((productId: string) => {
-    setCart((prevCart) => _removeFromCart(prevCart, productId));
+  const removeFromCart = useCallback((cartItem: CartItem) => {
+    setCart((prevCart) => _removeFromCart(prevCart, cartItem.product.id));
   }, []);
 
   const decreaseCartItem = useCallback(
-    (product: Product, newQuantity: number) => {
-      const result = _updateQuantity(cart, product, newQuantity);
+    (cartItem: CartItem) => {
+      const result = _updateQuantity(
+        cart,
+        cartItem.product,
+        cartItem.quantity - 1
+      );
 
       if (!result.success) {
         return addNotification(result.reason, "error");
@@ -79,8 +83,12 @@ const ShopPage = ({
   );
 
   const IncreaseCartItem = useCallback(
-    (product: Product, newQuantity: number) => {
-      const result = _updateQuantity(cart, product, newQuantity);
+    (cartItem: CartItem) => {
+      const result = _updateQuantity(
+        cart,
+        cartItem.product,
+        cartItem.quantity + 1
+      );
 
       if (!result.success) {
         return addNotification(result.reason, "error");

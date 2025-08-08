@@ -1,11 +1,11 @@
-import { CartItem, Product } from "../../types";
+import { CartItem } from "../../types";
 import { calculateItemTotal } from "../models/cart";
 
 interface Props {
   cart: CartItem[];
-  onRemove: (productId: string) => void;
-  onIncrease: (product: Product, newQuantity: number) => void;
-  onDecrease: (product: Product, newQuantity: number) => void;
+  onRemove: (product: CartItem) => void;
+  onIncrease: (product: CartItem) => void;
+  onDecrease: (product: CartItem) => void;
 }
 
 const Cart = ({ cart, onRemove, onDecrease, onIncrease }: Props) => {
@@ -64,7 +64,7 @@ const Cart = ({ cart, onRemove, onDecrease, onIncrease }: Props) => {
                     {item.product.name}
                   </h4>
                   <button
-                    onClick={() => onRemove(item.product.id)}
+                    onClick={() => onRemove(item)}
                     className="text-gray-400 hover:text-red-500 ml-2"
                   >
                     <svg
@@ -85,9 +85,7 @@ const Cart = ({ cart, onRemove, onDecrease, onIncrease }: Props) => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <button
-                      onClick={() =>
-                        onDecrease(item.product, item.quantity - 1)
-                      }
+                      onClick={() => onDecrease(item)}
                       className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                     >
                       <span className="text-xs">−</span>
@@ -96,9 +94,7 @@ const Cart = ({ cart, onRemove, onDecrease, onIncrease }: Props) => {
                       {item.quantity}
                     </span>
                     <button
-                      onClick={() =>
-                        onIncrease(item.product, item.quantity + 1)
-                      }
+                      onClick={() => onIncrease(item)}
                       className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                     >
                       <span className="text-xs">+</span>
