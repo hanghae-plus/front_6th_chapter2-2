@@ -1,8 +1,8 @@
-import type { CartItem, Coupon } from "../../../types";
-import { CouponOptionView } from "./CouponOptionView";
-import { calculateCartTotal } from "../../entities/CartItem";
-import { getCouponApplicationError } from "../../entities/Coupon";
-import type { HandleNotificationAdd } from "../../entities/Notification";
+import type { CartItem, Coupon } from "../../../../types.ts";
+import { CouponOptionView } from "./CouponOptionView.tsx";
+import { calculateCartTotal } from "../../../entities/CartItem.ts";
+import { getCouponApplicationError } from "../../../entities/Coupon.ts";
+import type { HandleNotificationAdd } from "../../../entities/Notification.ts";
 
 export function SectionCoupon({
   coupons,
@@ -18,10 +18,7 @@ export function SectionCoupon({
   handleNotificationAdd: HandleNotificationAdd;
 }) {
   function handleCouponApply(coupon: Coupon) {
-    const currentTotal = calculateCartTotal(
-      cart,
-      selectedCoupon
-    ).totalAfterDiscount;
+    const currentTotal = calculateCartTotal(cart, selectedCoupon).totalAfterDiscount;
 
     const error = getCouponApplicationError(coupon, currentTotal);
     if (error) {
@@ -44,9 +41,7 @@ export function SectionCoupon({
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-semibold text-gray-700">쿠폰 할인</h3>
 
-        <button className="text-xs text-blue-600 hover:underline">
-          쿠폰 등록
-        </button>
+        <button className="text-xs text-blue-600 hover:underline">쿠폰 등록</button>
       </div>
 
       {coupons.length > 0 && (

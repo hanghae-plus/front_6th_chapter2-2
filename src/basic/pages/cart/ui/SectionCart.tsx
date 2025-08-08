@@ -1,12 +1,11 @@
-import type { CartItem, Coupon } from "../../../types";
-import type { HandleNotificationAdd } from "../../entities/Notification";
-// import removed: totals and coupon logic moved to child components
-import type { ProductWithUI } from "../../entities/ProductWithUI";
-import { CartItemView } from "./CartItemView";
-import { SectionPaymentInfo } from "./SectionPaymentInfo";
-import { IconEmptyCart } from "./IconEmptyCart";
-import { IconCart } from "./IconCart";
-import { SectionCoupon } from "./SectionCoupon";
+import type { CartItem, Coupon } from "../../../../types.ts";
+import type { HandleNotificationAdd } from "../../../entities/Notification.ts";
+import { IconCart } from "../../../components/icons/IconCart.tsx";
+import { IconEmptyCart } from "../../../components/icons/IconEmptyCart.tsx";
+import type { ProductWithUI } from "../../../entities/ProductWithUI.ts";
+import { CartItemView } from "./CartItemView.tsx";
+import { SectionCoupon } from "./SectionCoupon.tsx";
+import { SectionPaymentInfo } from "./SectionPaymentInfo.tsx";
 
 export function SectionCart({
   cart,
@@ -25,8 +24,6 @@ export function SectionCart({
   selectedCoupon: Coupon | null;
   setSelectedCoupon: (coupon: Coupon | null) => void;
 }) {
-  // 쿠폰 로직은 SectionCoupon으로 이동
-
   return (
     <div className="lg:col-span-1">
       <div className="sticky top-24 space-y-4">

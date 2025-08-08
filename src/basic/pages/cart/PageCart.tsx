@@ -1,8 +1,8 @@
 import { CartItem, Coupon } from "../../../types.ts";
 import type { HandleNotificationAdd } from "../../entities/Notification.ts";
 import { ProductWithUI } from "../../entities/ProductWithUI.ts";
-import { SectionCart } from "./SectionCart.tsx";
-import { SectionProductList } from "./SectionProductList.tsx";
+import { SectionCart } from "./ui/SectionCart.tsx";
+import { SectionProductList } from "./ui/SectionProductList.tsx";
 
 interface PageCartProps {
   products: ProductWithUI[];

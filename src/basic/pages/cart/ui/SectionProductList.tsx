@@ -1,8 +1,8 @@
-import type { CartItem } from "../../../types";
-import type { ProductWithUI } from "../../entities/ProductWithUI";
-import { ProductView } from "./ProductView";
-import { useDebounce } from "../../utils/hooks/useDebounce.ts";
-import type { HandleNotificationAdd } from "../../entities/Notification";
+import type { CartItem } from "../../../../types.ts";
+import type { ProductWithUI } from "../../../entities/ProductWithUI.ts";
+import { ProductView } from "./ProductView.tsx";
+import { useDebounce } from "../../../utils/hooks/useDebounce.ts";
+import type { HandleNotificationAdd } from "../../../entities/Notification.ts";
 
 export function SectionProductList({
   products,
@@ -22,13 +22,8 @@ export function SectionProductList({
   const filteredProducts = debouncedSearchTerm
     ? products.filter(
         (product) =>
-          product.name
-            .toLowerCase()
-            .includes(debouncedSearchTerm.toLowerCase()) ||
-          (product.description &&
-            product.description
-              .toLowerCase()
-              .includes(debouncedSearchTerm.toLowerCase()))
+          product.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+          (product.description && product.description.toLowerCase().includes(debouncedSearchTerm.toLowerCase()))
       )
     : products;
 
@@ -40,9 +35,7 @@ export function SectionProductList({
       </div>
       {filteredProducts.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-500">
-            "{debouncedSearchTerm}"에 대한 검색 결과가 없습니다.
-          </p>
+          <p className="text-gray-500">"{debouncedSearchTerm}"에 대한 검색 결과가 없습니다.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

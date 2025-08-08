@@ -1,6 +1,6 @@
-import type { CartItem, Coupon } from "../../../types";
-import type { HandleNotificationAdd } from "../../entities/Notification";
-import { calculateCartTotal } from "../../entities/CartItem";
+import type { CartItem, Coupon } from "../../../../types.ts";
+import type { HandleNotificationAdd } from "../../../entities/Notification.ts";
+import { calculateCartTotal } from "../../../entities/CartItem.ts";
 
 export function SectionPaymentInfo({
   cart,
@@ -19,10 +19,8 @@ export function SectionPaymentInfo({
 
   function handleOrderComplete() {
     const orderNumber = `ORD-${Date.now()}`;
-    handleNotificationAdd(
-      `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
-      "success"
-    );
+
+    handleNotificationAdd(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, "success");
 
     setCart([]);
     setSelectedCoupon(null);
@@ -34,27 +32,17 @@ export function SectionPaymentInfo({
       <div className="space-y-2 text-sm">
         <div className="flex justify-between">
           <span className="text-gray-600">상품 금액</span>
-          <span className="font-medium">
-            {totals.totalBeforeDiscount.toLocaleString()}원
-          </span>
+          <span className="font-medium">{totals.totalBeforeDiscount.toLocaleString()}원</span>
         </div>
         {totals.totalBeforeDiscount - totals.totalAfterDiscount > 0 && (
           <div className="flex justify-between text-red-500">
             <span>할인 금액</span>
-            <span>
-              -
-              {(
-                totals.totalBeforeDiscount - totals.totalAfterDiscount
-              ).toLocaleString()}
-              원
-            </span>
+            <span>-{(totals.totalBeforeDiscount - totals.totalAfterDiscount).toLocaleString()}원</span>
           </div>
         )}
         <div className="flex justify-between py-2 border-t border-gray-200">
           <span className="font-semibold">결제 예정 금액</span>
-          <span className="font-bold text-lg text-gray-900">
-            {totals.totalAfterDiscount.toLocaleString()}원
-          </span>
+          <span className="font-bold text-lg text-gray-900">{totals.totalAfterDiscount.toLocaleString()}원</span>
         </div>
       </div>
 
