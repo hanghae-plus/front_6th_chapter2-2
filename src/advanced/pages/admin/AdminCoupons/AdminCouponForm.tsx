@@ -37,6 +37,7 @@ export function AdminCouponForm() {
 
   function handleCouponDiscountValueBlur(e: React.FocusEvent<HTMLInputElement>) {
     const value = parseInt(e.target.value) || 0
+
     if (couponForm.discountType === "percentage") {
       if (value > 100) {
         handleNotificationAdd("할인율은 100%를 초과할 수 없습니다", "error")

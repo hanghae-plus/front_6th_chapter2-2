@@ -5,6 +5,7 @@ import { useCart } from "../hooks/useCart.ts"
 function Header() {
   const { isAdmin, searchTerm, setSearchTerm, setIsAdmin } = useApp()
   const { cart } = useCart()
+
   const totalItemCount = getTotalItemCount(cart)
 
   return (
