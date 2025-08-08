@@ -43,7 +43,6 @@ export function SectionProductList({
             <ProductView
               key={product.id}
               product={product}
-              products={products}
               cart={cart}
               setCart={setCart}
               handleNotificationAdd={handleNotificationAdd}

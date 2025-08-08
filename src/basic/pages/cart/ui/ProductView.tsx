@@ -1,36 +1,37 @@
-import { addItemToCart, canAddToCart } from "../../../entities/CartItem.ts";
-import { getRemainingStock } from "../../../entities/Product.ts";
-import { ProductWithUI } from "../../../entities/ProductWithUI.ts";
-import { formatPrice } from "../../../utils/formatPrice.ts";
+import { addItemToCart, canAddToCart } from "../../../entities/CartItem.ts"
+import { getRemainingStock } from "../../../entities/Product.ts"
+import { ProductWithUI } from "../../../entities/ProductWithUI.ts"
 
-import { CartItem } from "../../../../types.ts";
-import type { HandleNotificationAdd } from "../../../entities/Notification.ts";
+import { CartItem } from "../../../../types.ts"
+import { IconProductPlaceholder } from "../../../components/icons/IconProductPlaceholder.tsx"
+import type { HandleNotificationAdd } from "../../../entities/Notification.ts"
 
 interface ProductViewProps {
-  product: ProductWithUI;
-  products: ProductWithUI[];
-  cart: CartItem[];
-  setCart: (cart: CartItem[]) => void;
-  handleNotificationAdd: HandleNotificationAdd;
+  product: ProductWithUI
+  cart: CartItem[]
+  setCart: (cart: CartItem[]) => void
+  handleNotificationAdd: HandleNotificationAdd
 }
 
-export function ProductView({ product, products, cart, setCart, handleNotificationAdd }: ProductViewProps) {
-  const remainingStock = getRemainingStock(product, cart);
+export function ProductView({ product, cart, setCart, handleNotificationAdd }: ProductViewProps) {
+  const remainingStock = getRemainingStock(product, cart)
+
+  const formattedPrice = remainingStock <= 0 ? "SOLD OUT" : `₩${product.price.toLocaleString()}`
 
   function handleProductAddToCart(product: ProductWithUI) {
     if (!canAddToCart(cart, product)) {
-      const remainingStock = getRemainingStock(product, cart);
+      const remainingStock = getRemainingStock(product, cart)
 
       if (remainingStock <= 0) {
-        handleNotificationAdd("재고가 부족합니다!", "error");
+        handleNotificationAdd("재고가 부족합니다!", "error")
       } else {
-        handleNotificationAdd(`재고는 ${product.stock}개까지만 있습니다.`, "error");
+        handleNotificationAdd(`재고는 ${product.stock}개까지만 있습니다.`, "error")
       }
-      return;
+      return
     }
 
-    setCart(addItemToCart(cart, product));
-    handleNotificationAdd("장바구니에 담았습니다", "success");
+    setCart(addItemToCart(cart, product))
+    handleNotificationAdd("장바구니에 담았습니다", "success")
   }
 
   return (
@@ -38,16 +39,11 @@ export function ProductView({ product, products, cart, setCart, handleNotificati
       {/* 상품 이미지 영역 (placeholder) */}
       <div className="relative">
         <div className="aspect-square bg-gray-100 flex items-center justify-center">
-          <svg className="w-24 h-24 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1}
-              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-            />
-          </svg>
+          <IconProductPlaceholder />
         </div>
+
         {product.isRecommended && <span className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">BEST</span>}
+
         {product.discounts.length > 0 && (
           <span className="absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded">
             ~{Math.max(...product.discounts.map((d) => d.rate)) * 100}%
@@ -62,7 +58,7 @@ export function ProductView({ product, products, cart, setCart, handleNotificati
 
         {/* 가격 정보 */}
         <div className="mb-3">
-          <p className="text-lg font-bold text-gray-900">{formatPrice(product.price, product.id, products, cart, false)}</p>
+          <p className="text-lg font-bold text-gray-900">{formattedPrice}</p>
           {product.discounts.length > 0 && (
             <p className="text-xs text-gray-500">
               {product.discounts[0].quantity}개 이상 구매시 할인 {product.discounts[0].rate * 100}%
@@ -90,5 +86,5 @@ export function ProductView({ product, products, cart, setCart, handleNotificati
         </button>
       </div>
     </div>
-  );
+  )
 }
