@@ -7,7 +7,7 @@ import {
   type CartItem,
   getRemainingStock
 } from "../domains/cart";
-import { type Coupon, INITIAL_COUPONS, useCouponActions } from "../domains/coupon";
+import { type Coupon, couponApplicationService, INITIAL_COUPONS } from "../domains/coupon";
 import {
   formatPrice,
   INITIAL_PRODUCTS,
@@ -77,17 +77,9 @@ export function App() {
     );
   };
 
-  const { applyCoupon: applyCouponBase } = useCouponActions({
-    coupons,
-    selectedCoupon,
-    setCoupons,
-    setSelectedCoupon,
-    addNotification
-  });
-
   const applyCoupon = (coupon: Coupon) => {
     const currentTotal = calculateCartTotal(cart, selectedCoupon).totalAfterDiscount;
-    applyCouponBase(coupon, currentTotal);
+    couponApplicationService.applyCoupon(coupon, currentTotal, setSelectedCoupon, addNotification);
   };
 
   const calculateItemTotalWithCart = (item: CartItem) => {

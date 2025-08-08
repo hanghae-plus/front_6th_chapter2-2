@@ -1,7 +1,7 @@
 import { type Dispatch, FormEvent, type SetStateAction, useState } from "react";
 
 import type { CartItem, Coupon } from "../../../types";
-import { useCouponActions } from "../../domains/coupon";
+import { couponApplicationService } from "../../domains/coupon";
 import {
   formatPrice,
   type ProductForm,
@@ -53,13 +53,24 @@ export function AdminPage({
     addNotification
   });
 
-  const { deleteCoupon, handleCouponSubmit } = useCouponActions({
-    coupons,
-    selectedCoupon: null,
-    setCoupons,
-    setSelectedCoupon: () => {},
-    addNotification
-  });
+  const deleteCoupon = (couponCode: string) => {
+    couponApplicationService.deleteCoupon(couponCode, null, setCoupons, () => {}, addNotification);
+  };
+
+  const handleCouponSubmit = (
+    couponForm: Coupon,
+    resetForm: () => void,
+    setShowForm: (show: boolean) => void
+  ) => {
+    couponApplicationService.handleCouponSubmit(
+      couponForm,
+      coupons,
+      setCoupons,
+      resetForm,
+      setShowForm,
+      addNotification
+    );
+  };
 
   const formatPriceWithContext = (price: number, productId?: string) => {
     return formatPrice(price, productId, products, cart, isAdminMode);
