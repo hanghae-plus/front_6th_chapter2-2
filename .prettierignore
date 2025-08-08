@@ -1,0 +1,35 @@
+# Prettier 무시 파일들
+node_modules/
+dist/
+build/
+.vite/
+coverage/
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# 바이너리 파일들
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.ico
+*.woff
+*.woff2
+*.ttf
+*.eot
+
+# 테스트 파일들
+src/advanced/__tests__/
+src/basic/__tests__/
+src/origin/__tests__/
+
+# 원본 파일들
+src/origin/
+src/refactoring(hint)/
+index.origin.html
+
+# 기타
+.env*
+.DS_Store
