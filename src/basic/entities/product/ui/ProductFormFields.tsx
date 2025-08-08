@@ -1,26 +1,37 @@
 import { ProductWithUI } from "@entities/product";
 import CloseIcon from "@assets/icons/CloseIcon.svg?react";
 import { useCallback } from "react";
-import { useGlobalNotification } from "@entities/notification";
+import {
+  validatePrice,
+  validateStock,
+  validateProductName,
+} from "../libs/validator";
 
 interface ProductFormFieldsProps {
   product: Partial<ProductWithUI>;
   onChange: (field: keyof ProductWithUI, value: any) => void;
   errors?: Record<string, string>;
+  onValidationError?: (message: string) => void;
 }
 
 export function ProductFormFields({
   product,
   onChange,
   errors = {},
+  onValidationError,
 }: ProductFormFieldsProps) {
-  const { showErrorNotification } = useGlobalNotification();
-
   const handleNameChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      onChange("name", e.target.value);
+      const value = e.target.value;
+      const validation = validateProductName(value);
+
+      if (!validation.isValid && validation.errorMessage) {
+        onValidationError?.(validation.errorMessage);
+      }
+
+      onChange("name", value);
     },
-    [onChange]
+    [onChange, onValidationError]
   );
 
   const handleDescriptionChange = useCallback(
@@ -43,14 +54,17 @@ export function ProductFormFields({
   const handlePriceBlur = useCallback(
     (e: React.FocusEvent<HTMLInputElement>) => {
       const value = e.target.value;
-      if (value === "") {
-        onChange("price", 0);
-      } else if (parseInt(value) < 0) {
-        showErrorNotification("가격은 0보다 커야 합니다");
-        onChange("price", 0);
+      const numValue = value === "" ? 0 : parseInt(value);
+
+      const validation = validatePrice(numValue);
+      if (!validation.isValid && validation.errorMessage) {
+        onValidationError?.(validation.errorMessage);
+        onChange("price", validation.correctedValue ?? 0);
+      } else {
+        onChange("price", numValue);
       }
     },
-    [onChange, showErrorNotification]
+    [onChange, onValidationError]
   );
 
   const handleStockChange = useCallback(
@@ -66,17 +80,17 @@ export function ProductFormFields({
   const handleStockBlur = useCallback(
     (e: React.FocusEvent<HTMLInputElement>) => {
       const value = e.target.value;
-      if (value === "") {
-        onChange("stock", 0);
-      } else if (parseInt(value) < 0) {
-        showErrorNotification("재고는 0보다 커야 합니다");
-        onChange("stock", 0);
-      } else if (parseInt(value) > 9999) {
-        showErrorNotification("재고는 9999개를 초과할 수 없습니다");
-        onChange("stock", 9999);
+      const numValue = value === "" ? 0 : parseInt(value);
+
+      const validation = validateStock(numValue);
+      if (!validation.isValid && validation.errorMessage) {
+        onValidationError?.(validation.errorMessage);
+        onChange("stock", validation.correctedValue ?? 0);
+      } else {
+        onChange("stock", numValue);
       }
     },
-    [onChange, showErrorNotification]
+    [onChange, onValidationError]
   );
 
   const handleDiscountQuantityChange = useCallback(
@@ -103,16 +117,16 @@ export function ProductFormFields({
       const newDiscounts = [...(product.discounts || [])];
 
       if (value > 100) {
-        showErrorNotification("할인율은 100%를 초과할 수 없습니다");
+        onValidationError?.("할인율은 100%를 초과할 수 없습니다");
         newDiscounts[index].rate = 1.0;
         onChange("discounts", newDiscounts);
       } else if (value < 0) {
-        showErrorNotification("할인율은 0% 미만일 수 없습니다");
+        onValidationError?.("할인율은 0% 미만일 수 없습니다");
         newDiscounts[index].rate = 0.0;
         onChange("discounts", newDiscounts);
       }
     },
-    [product.discounts, onChange, showErrorNotification]
+    [product.discounts, onChange, onValidationError]
   );
 
   const handleRemoveDiscount = useCallback(

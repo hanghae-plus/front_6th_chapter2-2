@@ -3,6 +3,7 @@ import {
   ProductWithUI,
   ProductFormFields,
 } from "@entities/product";
+import { useGlobalNotification } from "@entities/notification";
 
 interface AddProductFormProps {
   onSubmit: (product: Omit<ProductWithUI, "id">) => void;
@@ -10,6 +11,7 @@ interface AddProductFormProps {
 }
 
 export function AddProductForm({ onSubmit, onCancel }: AddProductFormProps) {
+  const { showErrorNotification } = useGlobalNotification();
   const { product, errors, handleFieldChange, handleSubmit } = useProductForm({
     onSubmit,
   });
@@ -23,6 +25,7 @@ export function AddProductForm({ onSubmit, onCancel }: AddProductFormProps) {
           product={product}
           onChange={handleFieldChange}
           errors={errors}
+          onValidationError={showErrorNotification}
         />
 
         <div className="flex justify-end gap-3">
