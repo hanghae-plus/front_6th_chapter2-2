@@ -1,13 +1,13 @@
-import { useCallback } from "react";
+import { ChangeEvent, useCallback } from "react";
 import { CartItem, Coupon, Product } from "../../types";
 import { generateOrderNumber } from "../models/coupon";
 import { canApplyCoupon } from "../models/discount";
 import { filterProducts, ProductWithUI } from "../models/product";
 import {
   getRemainingStock,
-  addToCart as _addToCart,
-  removeFromCart as _removeFromCart,
-  updateQuantity as _updateQuantity,
+  addToCart,
+  removeFromCart,
+  updateQuantity,
   calculateCartTotal,
 } from "../models/cart";
 
@@ -23,6 +23,7 @@ interface Props {
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
 
+  // TODO: 전역에서 관리
   addNotification: (
     message: string,
     type: "error" | "success" | "warning"
@@ -41,9 +42,11 @@ const ShopPage = ({
   setCart,
   setSelectedCoupon,
 }: Props) => {
-  const addToCart = useCallback(
+  const filteredProducts = filterProducts(products, searchTerm);
+
+  const handleAddToCart = useCallback(
     (product: ProductWithUI) => {
-      const result = _addToCart(cart, product);
+      const result = addToCart(cart, product);
 
       if (!result.success) {
         addNotification(result.reason, "error");
@@ -58,13 +61,13 @@ const ShopPage = ({
     [cart, addNotification]
   );
 
-  const removeFromCart = useCallback((cartItem: CartItem) => {
-    setCart((prevCart) => _removeFromCart(prevCart, cartItem.product.id));
+  const handleRemoveFromCart = useCallback((cartItem: CartItem) => {
+    setCart((prevCart) => removeFromCart(prevCart, cartItem.product.id));
   }, []);
 
-  const decreaseCartItem = useCallback(
+  const handleDecreaseCartItem = useCallback(
     (cartItem: CartItem) => {
-      const result = _updateQuantity(
+      const result = updateQuantity(
         cart,
         cartItem.product,
         cartItem.quantity - 1
@@ -79,9 +82,9 @@ const ShopPage = ({
     [addNotification, cart]
   );
 
-  const IncreaseCartItem = useCallback(
+  const handleIncreaseCartItem = useCallback(
     (cartItem: CartItem) => {
-      const result = _updateQuantity(
+      const result = updateQuantity(
         cart,
         cartItem.product,
         cartItem.quantity + 1
@@ -96,36 +99,45 @@ const ShopPage = ({
     [addNotification, cart]
   );
 
-  const applyCoupon = useCallback(
-    (coupon: Coupon) => {
-      const currentTotal = calculateCartTotal(
-        cart,
-        selectedCoupon
-      ).totalAfterDiscount;
+  const handleApplyCoupon = useCallback(
+    (e: ChangeEvent<HTMLSelectElement>) => {
+      const coupon = coupons.find((c) => c.code === e.target.value);
 
-      const validation = canApplyCoupon(coupon, currentTotal);
-      if (!validation.canApply) {
-        addNotification(validation.reason!, "error");
+      if (coupon) {
+        const currentTotal = calculateCartTotal(
+          cart,
+          selectedCoupon
+        ).totalAfterDiscount;
+
+        const validation = canApplyCoupon(coupon, currentTotal);
+
+        if (!validation.canApply) {
+          addNotification(validation.reason!, "error");
+          return;
+        }
+
+        setSelectedCoupon(coupon);
+        addNotification("쿠폰이 적용되었습니다.", "success");
+
         return;
       }
 
-      setSelectedCoupon(coupon);
-      addNotification("쿠폰이 적용되었습니다.", "success");
+      setSelectedCoupon(null);
     },
-    [addNotification, cart, selectedCoupon]
+    [addNotification, cart, selectedCoupon, coupons]
   );
 
-  const completeOrder = useCallback(() => {
+  const handlePay = useCallback(() => {
     const orderNumber = generateOrderNumber();
+
     addNotification(
       `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
       "success"
     );
+
     setCart([]);
     setSelectedCoupon(null);
   }, [addNotification]);
-
-  const filteredProducts = filterProducts(products, searchTerm);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -151,7 +163,7 @@ const ShopPage = ({
                   key={product.id}
                   product={product}
                   remainingStock={getRemainingStock(cart, product)}
-                  onAddToCart={() => addToCart(product)}
+                  onAddToCart={() => handleAddToCart(product)}
                 />
               ))}
             </div>
@@ -163,9 +175,9 @@ const ShopPage = ({
         <div className="sticky top-24 space-y-4">
           <Cart
             cart={cart}
-            onRemove={removeFromCart}
-            onDecrease={decreaseCartItem}
-            onIncrease={IncreaseCartItem}
+            onRemove={handleRemoveFromCart}
+            onDecrease={handleDecreaseCartItem}
+            onIncrease={handleIncreaseCartItem}
           />
 
           {cart.length > 0 && (
@@ -173,17 +185,13 @@ const ShopPage = ({
               <CouponDiscount
                 coupons={coupons}
                 selectedCoupon={selectedCoupon}
-                onChange={(e) => {
-                  const coupon = coupons.find((c) => c.code === e.target.value);
-                  if (coupon) applyCoupon(coupon);
-                  else setSelectedCoupon(null);
-                }}
+                onChange={handleApplyCoupon}
               />
 
               <PaymentInfo
                 cart={cart}
                 selectedCoupon={selectedCoupon}
-                onPay={completeOrder}
+                onPay={handlePay}
               />
             </>
           )}
