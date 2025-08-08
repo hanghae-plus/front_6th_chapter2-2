@@ -2,7 +2,7 @@ import { useAtom, useSetAtom } from 'jotai';
 import { useState, useCallback } from 'react';
 
 import { Coupon } from '../../types';
-import { addNotificationAtom, couponsAtom } from '../atoms';
+import { addNotificationAtom, couponsAtom, selectedCouponAtom } from '../atoms';
 import { initialCouponForm } from '../constants';
 import * as couponModel from '../models/coupon';
 
@@ -13,7 +13,7 @@ export function useCoupons() {
 
   const [couponForm, setCouponForm] = useState(initialCouponForm);
 
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+  const [selectedCoupon, setSelectedCoupon] = useAtom(selectedCouponAtom);
   const [showCouponForm, setShowCouponForm] = useState(false);
 
   const applyCoupon = useCallback(
