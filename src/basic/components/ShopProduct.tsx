@@ -1,20 +1,13 @@
 import { ProductWithUI, getMaxDiscountRate } from "../models/product";
+import { formatPrice } from "../models/product";
 
 interface Props {
   product: ProductWithUI;
   remainingStock: number;
   onAddToCart: () => void;
-
-  // 임시
-  formatPrice: (price: number, productId?: string) => string;
 }
 
-const ShopProduct = ({
-  product,
-  remainingStock,
-  formatPrice,
-  onAddToCart,
-}: Props) => {
+const ShopProduct = ({ product, remainingStock, onAddToCart }: Props) => {
   return (
     <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
       {/* 상품 이미지 영역 (placeholder) */}
@@ -58,7 +51,10 @@ const ShopProduct = ({
         {/* 가격 정보 */}
         <div className="mb-3">
           <p className="text-lg font-bold text-gray-900">
-            {formatPrice(product.price, product.id)}
+            {formatPrice({
+              price: product.price,
+              isSoldOut: remainingStock < 0,
+            })}
           </p>
           {product.discounts.length > 0 && (
             <p className="text-xs text-gray-500">

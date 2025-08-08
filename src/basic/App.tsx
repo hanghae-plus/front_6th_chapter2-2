@@ -148,7 +148,6 @@ const App = () => {
             cart={cart}
             searchTerm={debouncedSearchTerm}
             addNotification={addNotification}
-            formatPrice={formatPrice}
             setCart={setCart}
             setSelectedCoupon={setSelectedCoupon}
             selectedCoupon={selectedCoupon}

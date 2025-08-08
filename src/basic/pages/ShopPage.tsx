@@ -23,8 +23,6 @@ interface Props {
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
 
-  // NOTE: 임시props
-  formatPrice: (price: number, productId?: string) => string;
   addNotification: (
     message: string,
     type: "error" | "success" | "warning"
@@ -40,7 +38,6 @@ const ShopPage = ({
   coupons,
   selectedCoupon,
   addNotification,
-  formatPrice,
   setCart,
   setSelectedCoupon,
 }: Props) => {
@@ -155,7 +152,6 @@ const ShopPage = ({
                   product={product}
                   remainingStock={getRemainingStock(cart, product)}
                   onAddToCart={() => addToCart(product)}
-                  formatPrice={formatPrice}
                 />
               ))}
             </div>
