@@ -1,24 +1,14 @@
-import { useCallback } from "react";
 import CartBagIcon from "@assets/icons/CartBagIcon.svg?react";
-import { useCart } from "@entities/cart";
-import {
-  useGlobalNotification,
-  NotificationVariant,
-} from "@entities/notification";
 import {
   ProductWithUI,
   getDisplayPrice,
   ProductList,
   Product,
 } from "@entities/product";
-import {
-  useAddToCart,
-  useUpdateCartQuantity,
-  useApplyCoupon,
-  CartItemList,
-  CouponSelector,
-  CheckoutSection,
-} from "@features";
+import { CartItemList, CouponSelector, CheckoutSection } from "@features";
+import { useManageCart } from "@features/manage-cart";
+import { useManageCoupon } from "@features/manage-coupon";
+import { useProcessOrder } from "@features/process-order";
 
 interface CartPageProps {
   products: ProductWithUI[];
@@ -31,46 +21,22 @@ export function CartPage({
   filteredProducts,
   searchValue,
 }: CartPageProps) {
-  const cart = useCart();
-  const { addNotification } = useGlobalNotification();
-
-  const { addToCart, getProductRemainingStock } = useAddToCart({
-    cart: cart.cart,
-    onAddItem: cart.addItem,
+  const cartManager = useManageCart({ products });
+  const couponManager = useManageCoupon(cartManager.cart);
+  const orderProcessor = useProcessOrder({
+    onClearCart: cartManager.clearCart,
+    onClearCoupon: couponManager.removeCoupon,
   });
-
-  const { updateQuantity } = useUpdateCartQuantity({
-    products,
-    onUpdateQuantity: cart.updateItemQuantity,
-  });
-
-  const couponActions = useApplyCoupon(cart.cart);
 
   const displayPrice = (product: Product) => {
     const cartQuantity =
-      cart.cart.find((item) => item.product.id === product.id)?.quantity || 0;
+      cartManager.cart.find((item) => item.product.id === product.id)
+        ?.quantity || 0;
     return getDisplayPrice(product, cartQuantity);
   };
 
   const { totalAfterDiscount, totalBeforeDiscount } =
-    couponActions.getCartSummaryWithCoupon();
-
-  const removeFromCart = useCallback(
-    (productId: string) => {
-      cart.removeItem(productId);
-    },
-    [cart]
-  );
-
-  const completeOrder = useCallback(() => {
-    const orderNumber = `ORD-${Date.now()}`;
-    addNotification(
-      `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
-      NotificationVariant.SUCCESS
-    );
-    cart.clearCart();
-    couponActions.clearCoupon();
-  }, [addNotification, cart, couponActions]);
+    couponManager.getCartSummaryWithCoupon();
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -80,9 +46,9 @@ export function CartPage({
           products={products}
           filteredProducts={filteredProducts}
           searchValue={searchValue}
-          getProductRemainingStock={getProductRemainingStock}
+          getProductRemainingStock={cartManager.getProductRemainingStock}
           displayPrice={displayPrice}
-          onAddToCart={addToCart}
+          onAddToCart={cartManager.addToCart}
         />
       </div>
 
@@ -94,28 +60,28 @@ export function CartPage({
               장바구니
             </h2>
             <CartItemList
-              cartItems={cart.cart}
-              onRemoveItem={removeFromCart}
-              onUpdateQuantity={updateQuantity}
-              calculateItemTotal={cart.getItemTotal}
+              cartItems={cartManager.cart}
+              onRemoveItem={cartManager.removeItem}
+              onUpdateQuantity={cartManager.updateQuantity}
+              calculateItemTotal={cartManager.getItemTotal}
             />
           </section>
 
-          {cart.cart.length > 0 && (
+          {cartManager.cart.length > 0 && (
             <>
               <CouponSelector
-                coupons={couponActions.coupons}
-                selectedCoupon={couponActions.selectedCoupon}
+                coupons={couponManager.coupons}
+                selectedCoupon={couponManager.selectedCoupon}
                 onCouponSelect={(coupon) => {
-                  if (coupon) couponActions.applyCoupon(coupon);
-                  else couponActions.removeCoupon();
+                  if (coupon) couponManager.applyCoupon(coupon);
+                  else couponManager.removeCoupon();
                 }}
               />
 
               <CheckoutSection
                 totalBeforeDiscount={totalBeforeDiscount}
                 totalAfterDiscount={totalAfterDiscount}
-                onCompleteOrder={completeOrder}
+                onCompleteOrder={orderProcessor.completeOrder}
               />
             </>
           )}

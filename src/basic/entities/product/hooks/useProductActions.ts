@@ -1,46 +1,42 @@
 import { useCallback } from "react";
-import {
-  useGlobalNotification,
-  NotificationVariant,
-} from "@entities/notification";
 import { ProductWithUI, useProductStorage } from "@entities/product";
 
 interface UseProductActionsOptions {
   onAddProduct?: (product: Omit<ProductWithUI, "id">) => void;
   onUpdateProduct?: (product: ProductWithUI) => void;
   onDeleteProduct?: (productId: string) => void;
+  onNotify?: (message: string, type: "success" | "error") => void;
 }
 
 export function useProductActions(options: UseProductActionsOptions = {}) {
-  const { onAddProduct, onUpdateProduct, onDeleteProduct } = options;
+  const { onAddProduct, onUpdateProduct, onDeleteProduct, onNotify } = options;
   const productStorage = useProductStorage();
-  const { addNotification } = useGlobalNotification();
 
   const addProduct = useCallback(
     (newProduct: Omit<ProductWithUI, "id">) => {
       productStorage.addProduct(newProduct);
-      addNotification("상품이 추가되었습니다.", NotificationVariant.SUCCESS);
+      onNotify?.("상품이 추가되었습니다.", "success");
       onAddProduct?.(newProduct);
     },
-    [productStorage.addProduct, addNotification, onAddProduct]
+    [productStorage.addProduct, onNotify, onAddProduct]
   );
 
   const updateProduct = useCallback(
     (updatedProduct: ProductWithUI) => {
       productStorage.updateProduct(updatedProduct);
-      addNotification("상품이 수정되었습니다.", NotificationVariant.SUCCESS);
+      onNotify?.("상품이 수정되었습니다.", "success");
       onUpdateProduct?.(updatedProduct);
     },
-    [productStorage.updateProduct, addNotification, onUpdateProduct]
+    [productStorage.updateProduct, onNotify, onUpdateProduct]
   );
 
   const deleteProduct = useCallback(
     (productId: string) => {
       productStorage.deleteProduct(productId);
-      addNotification("상품이 삭제되었습니다.", NotificationVariant.SUCCESS);
+      onNotify?.("상품이 삭제되었습니다.", "success");
       onDeleteProduct?.(productId);
     },
-    [productStorage.deleteProduct, addNotification, onDeleteProduct]
+    [productStorage.deleteProduct, onNotify, onDeleteProduct]
   );
 
   return {

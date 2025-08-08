@@ -1,19 +1,16 @@
-export * from "./add-to-cart";
-
-export * from "./apply-coupon";
-
-export * from "./checkout";
+export * from "./manage-cart";
+export * from "./manage-coupon";
+export * from "./process-order";
 
 export * from "./manage-products";
 
 export * from "./search-product";
 
-export * from "./select-coupon";
-
 export * from "./show-notification";
-
-export * from "./update-cart-quantity";
 
 export * from "./view-cart-items";
 
 export * from "./view-product-list";
+
+export * from "./checkout";
+export * from "./select-coupon";

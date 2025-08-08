@@ -1,6 +1,6 @@
-import { Product, getStockDisplay } from "@entities/product";
 import { ProductTable } from "@features/view-product-list/ui/ProductTable";
 import { formatPrice } from "@shared/libs/price";
+import { getStockDisplay } from "@entities/product";
 import {
   AddProductForm,
   EditProductForm,
@@ -20,16 +20,15 @@ export function ProductsTab() {
     cancelProductForm,
   } = useManageProducts();
 
-  const displayPrice = (product: Product) => {
+  const displayPriceForAdmin = (product: { price: number; stock: number }) => {
     const stockStatus = getStockDisplay(product.stock, 0);
     if (stockStatus) return stockStatus;
-    const formattedPrice = formatPrice(product.price);
-    return `${formattedPrice}원`;
+    return `${formatPrice(product.price)}원`;
   };
 
   const productsWithDisplayInfo = products.map((product) => ({
     ...product,
-    displayedPrice: displayPrice(product),
+    displayedPrice: displayPriceForAdmin(product),
   }));
 
   return (

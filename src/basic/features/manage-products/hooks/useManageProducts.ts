@@ -1,11 +1,16 @@
 import { useState, useCallback } from "react";
 import { ProductWithUI, useProductActions } from "@entities/product";
+import {
+  useGlobalNotification,
+  NotificationVariant,
+} from "@entities/notification";
 
 export function useManageProducts() {
   const [showProductForm, setShowProductForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<ProductWithUI | null>(
     null
   );
+  const { addNotification } = useGlobalNotification();
 
   const productActions = useProductActions({
     onAddProduct: () => {
@@ -14,6 +19,13 @@ export function useManageProducts() {
     onUpdateProduct: () => {
       setEditingProduct(null);
       setShowProductForm(false);
+    },
+    onNotify: (message, type) => {
+      const variant =
+        type === "success"
+          ? NotificationVariant.SUCCESS
+          : NotificationVariant.ERROR;
+      addNotification(message, variant);
     },
   });
 
@@ -33,14 +45,11 @@ export function useManageProducts() {
   }, []);
 
   return {
-    // 상태
     showProductForm,
     editingProduct,
 
-    // 상품 데이터 및 액션
     ...productActions,
 
-    // UI 액션
     startAddingProduct,
     startEditingProduct,
     cancelProductForm,

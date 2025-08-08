@@ -1,2 +1,1 @@
-// Admin
 export * from "./admin";

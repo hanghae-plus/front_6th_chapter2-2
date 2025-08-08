@@ -7,7 +7,7 @@ import {
   NotificationVariant,
 } from "@entities/notification";
 
-export function useApplyCoupon(cart: CartItem[]) {
+export function useManageCoupon(cart: CartItem[]) {
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const { addNotification } = useGlobalNotification();
 
@@ -42,16 +42,13 @@ export function useApplyCoupon(cart: CartItem[]) {
     setSelectedCoupon(null);
   }, []);
 
-  const clearCoupon = useCallback(() => {
-    setSelectedCoupon(null);
-  }, []);
-
   return {
     selectedCoupon,
     coupons,
-    getCartSummaryWithCoupon,
+
     applyCoupon,
     removeCoupon,
-    clearCoupon,
+
+    getCartSummaryWithCoupon,
   };
 }

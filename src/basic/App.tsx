@@ -3,8 +3,8 @@ import Header from "./app/components/Header";
 import { useState } from "react";
 import { NotificationList } from "@entities/notification";
 import { useProductStorage } from "@entities/product";
-import { useProductSearch } from "./features/search-product/hooks/useProductSearch";
-import { useNotification } from "./features/show-notification";
+import { useProductSearch } from "@features/search-product";
+import { useNotification } from "@features/show-notification";
 import { AdminPage } from "./pages/AdminPage";
 import { CartPage } from "./pages/CartPage";
 
