@@ -1,13 +1,23 @@
-import { useState } from "react";
+import { useAtom } from "jotai";
 
+import { notificationsAtom } from "../store";
 import type { NotificationItem } from "../types";
 
 export function useNotifications() {
-  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [notifications, setNotifications] = useAtom(notificationsAtom);
 
   const addNotification = (message: string, type: "error" | "success" | "warning" = "success") => {
     const id = Date.now().toString();
-    setNotifications((prev) => [...prev, { id, message, type }]);
+    const newNotification: NotificationItem = { id, message, type };
+
+    setNotifications((prev) => {
+      const hasExistingMessage = prev.some((n) => n.message === message);
+      if (hasExistingMessage) {
+        return prev;
+      }
+
+      return [...prev, newNotification];
+    });
 
     setTimeout(() => {
       setNotifications((prev) => prev.filter((n) => n.id !== id));

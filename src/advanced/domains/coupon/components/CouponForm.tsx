@@ -1,6 +1,6 @@
 import type { ChangeEvent, FocusEvent, FormEvent } from "react";
 
-import { Button, SearchInput } from "../../../shared";
+import { Button, SearchInput, useNotifications } from "../../../shared";
 
 type CouponFormType = {
   name: string;
@@ -14,16 +14,10 @@ type CouponFormProps = {
   onSubmit: (e: FormEvent) => void;
   onCancel: () => void;
   onFormChange: (form: CouponFormType) => void;
-  addNotification: (message: string, type?: "error" | "success" | "warning") => void;
 };
 
-export function CouponForm({
-  couponForm,
-  onSubmit,
-  onCancel,
-  onFormChange,
-  addNotification
-}: CouponFormProps) {
+export function CouponForm({ couponForm, onSubmit, onCancel, onFormChange }: CouponFormProps) {
+  const { addNotification } = useNotifications();
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     onFormChange({
       ...couponForm,

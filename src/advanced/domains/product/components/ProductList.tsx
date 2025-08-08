@@ -1,24 +1,30 @@
-import type { Product, ProductWithUI } from "../types";
+import { useAtomValue } from "jotai";
+import { useEffect, useState } from "react";
+
+import { searchTermAtom } from "../../../shared";
+import { useCartAtom } from "../../cart";
+import { useProductAtom } from "../hooks";
+import type { Product } from "../types";
+import { filterProducts } from "../utils";
 import { ProductCard } from "./ProductCard";
 
-type ProductListProps = {
-  products: ProductWithUI[];
-  filteredProducts: ProductWithUI[];
-  debouncedSearchTerm: string;
-  getRemainingStock: (product: Product) => number;
-  formatPrice: (price: number, productId?: string) => string;
-  addToCart: (product: ProductWithUI) => void;
-};
+export function ProductList() {
+  const { products, formatPrice, getRemainingStock } = useProductAtom();
+  const { addToCart } = useCartAtom();
+  const searchTerm = useAtomValue(searchTermAtom);
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
 
-export function ProductList({
-  products,
-  filteredProducts,
-  debouncedSearchTerm,
-  getRemainingStock,
-  formatPrice,
-  addToCart
-}: ProductListProps) {
-  const handleAddToCart = (product: ProductWithUI) => {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  const filteredProducts = filterProducts(products, debouncedSearchTerm);
+
+  const handleAddToCart = (product: Product) => {
     addToCart(product);
   };
 

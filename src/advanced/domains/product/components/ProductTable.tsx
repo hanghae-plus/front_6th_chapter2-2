@@ -1,4 +1,4 @@
-import type { ProductWithUI } from "../../product";
+import type { ProductWithUI } from "..";
 import { ProductTableRow } from "./ProductTableRow";
 
 type ProductTableProps = {

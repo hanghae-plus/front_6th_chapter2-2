@@ -1,6 +1,8 @@
+import { atomWithStorage } from "jotai/utils";
+
 import type { ProductWithUI } from "../types";
 
-export const INITIAL_PRODUCTS: ProductWithUI[] = [
+const INITIAL_PRODUCTS: ProductWithUI[] = [
   {
     id: "p1",
     name: "상품1",
@@ -33,3 +35,5 @@ export const INITIAL_PRODUCTS: ProductWithUI[] = [
     description: "대용량과 고성능을 자랑하는 상품입니다."
   }
 ];
+
+export const productsAtom = atomWithStorage<ProductWithUI[]>("products", INITIAL_PRODUCTS);

@@ -1,6 +1,9 @@
+import { atom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
+
 import type { Coupon } from "../types";
 
-export const INITIAL_COUPONS: Coupon[] = [
+const INITIAL_COUPONS: Coupon[] = [
   {
     name: "5000원 할인",
     code: "AMOUNT5000",
@@ -14,3 +17,6 @@ export const INITIAL_COUPONS: Coupon[] = [
     discountValue: 10
   }
 ];
+
+export const couponsAtom = atomWithStorage<Coupon[]>("coupons", INITIAL_COUPONS);
+export const selectedCouponAtom = atom<Coupon | null>(null);

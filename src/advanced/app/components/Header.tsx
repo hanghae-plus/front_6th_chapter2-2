@@ -1,26 +1,15 @@
+import { useAtom, useAtomValue } from "jotai";
 import { type ChangeEvent } from "react";
 
-import type { CartItem } from "../../domains/cart";
-import { BadgeContainer, CartIcon, SearchInput } from "../../shared";
+import { totalItemCountAtom } from "../../domains/cart";
+import { adminModeAtom, BadgeContainer, CartIcon, SearchInput, searchTermAtom } from "../../shared";
 import { AdminToggleButton } from "./AdminToggleButton";
 
-type HeaderProps = {
-  isAdminMode: boolean;
-  onToggleAdminMode: () => void;
-  cart: CartItem[];
-  searchTerm: string;
-  setSearchTerm: (term: string) => void;
-  totalItemCount: number;
-};
+export function Header() {
+  const [isAdminMode, setIsAdminMode] = useAtom(adminModeAtom);
+  const [searchTerm, setSearchTerm] = useAtom(searchTermAtom);
+  const totalItemCount = useAtomValue(totalItemCountAtom);
 
-export function Header({
-  isAdminMode,
-  onToggleAdminMode,
-  cart,
-  searchTerm,
-  setSearchTerm,
-  totalItemCount
-}: HeaderProps) {
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
@@ -31,7 +20,6 @@ export function Header({
         <div className="flex h-16 items-center justify-between">
           <div className="flex flex-1 items-center">
             <h1 className="text-xl font-semibold text-gray-800">SHOP</h1>
-            {/* 검색창 - 안티패턴: 검색 로직이 컴포넌트에 직접 포함 */}
             {!isAdminMode && (
               <div className="ml-8 flex max-w-md flex-1 gap-3">
                 <SearchInput
@@ -47,9 +35,12 @@ export function Header({
           </div>
 
           <nav className="flex items-center space-x-4">
-            <AdminToggleButton isAdmin={isAdminMode} onToggleAdminMode={onToggleAdminMode} />
+            <AdminToggleButton
+              isAdmin={isAdminMode}
+              onToggleAdminMode={() => setIsAdminMode(!isAdminMode)}
+            />
             {!isAdminMode && (
-              <BadgeContainer label={String(totalItemCount)} visible={cart.length > 0}>
+              <BadgeContainer label={String(totalItemCount)} visible={totalItemCount > 0}>
                 <CartIcon className="h-6 w-6 text-gray-700" />
               </BadgeContainer>
             )}

@@ -1,7 +1,7 @@
-import { type ChangeEvent, type FocusEvent, type FormEvent } from "react";
+import type { ChangeEvent, FocusEvent, FormEvent } from "react";
 
-import { Button, SearchInput } from "../../../shared";
-import { Discount, type ProductForm } from "../types";
+import { Button, SearchInput, useNotifications } from "../../../shared";
+import type { Discount, ProductForm } from "../types";
 import { DiscountSection } from "./DiscountSection";
 
 type ProductFormEditorProps = {
@@ -10,7 +10,6 @@ type ProductFormEditorProps = {
   onSubmit: (e: FormEvent) => void;
   onCancel: () => void;
   onFormChange: (form: ProductForm) => void;
-  addNotification: (message: string, type?: "error" | "success" | "warning") => void;
 };
 
 export function ProductFormEditor({
@@ -18,9 +17,9 @@ export function ProductFormEditor({
   editingProduct,
   onSubmit,
   onCancel,
-  onFormChange,
-  addNotification
+  onFormChange
 }: ProductFormEditorProps) {
+  const { addNotification } = useNotifications();
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     onFormChange({ ...productForm, name: e.target.value });
   };
