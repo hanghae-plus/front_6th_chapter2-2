@@ -24,27 +24,24 @@ export function ProductView({
 }: ProductViewProps) {
   const remainingStock = getRemainingStock(product, cart);
 
-  const handleProductAddToCart = useCallback(
-    (product: ProductWithUI) => {
-      if (!canAddToCart(cart, product)) {
-        const remainingStock = getRemainingStock(product, cart);
-        if (remainingStock <= 0) {
-          handleNotificationAdd("재고가 부족합니다!", "error");
-        } else {
-          handleNotificationAdd(
-            `재고는 ${product.stock}개까지만 있습니다.`,
-            "error"
-          );
-        }
-        return;
+  function handleProductAddToCart(product: ProductWithUI) {
+    if (!canAddToCart(cart, product)) {
+      const remainingStock = getRemainingStock(product, cart);
+      if (remainingStock <= 0) {
+        handleNotificationAdd("재고가 부족합니다!", "error");
+      } else {
+        handleNotificationAdd(
+          `재고는 ${product.stock}개까지만 있습니다.`,
+          "error"
+        );
       }
+      return;
+    }
 
-      const newCart = addItemToCart(cart, product);
-      setCart(newCart);
-      handleNotificationAdd("장바구니에 담았습니다", "success");
-    },
-    [cart, handleNotificationAdd]
-  );
+    const newCart = addItemToCart(cart, product);
+    setCart(newCart);
+    handleNotificationAdd("장바구니에 담았습니다", "success");
+  }
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">

@@ -1,12 +1,12 @@
 import type { CartItem, Coupon } from "../../../types";
 import type { HandleNotificationAdd } from "../../entities/Notification";
-import { calculateCartTotal } from "../../entities/CartItem";
+// import removed: totals and coupon logic moved to child components
 import type { ProductWithUI } from "../../entities/ProductWithUI";
 import { CartItemView } from "./CartItemView";
-import { CouponOptionView } from "./CouponOptionView";
 import { SectionPaymentInfo } from "./SectionPaymentInfo";
 import { IconEmptyCart } from "./IconEmptyCart";
 import { IconCart } from "./IconCart";
+import { SectionCoupon } from "./SectionCoupon";
 
 export function SectionCart({
   cart,
@@ -25,31 +25,7 @@ export function SectionCart({
   selectedCoupon: Coupon | null;
   setSelectedCoupon: (coupon: Coupon | null) => void;
 }) {
-  // totals 계산은 SectionPaymentInfo에서 수행하도록 이동
-
-  function handleCouponApply(coupon: Coupon) {
-    const currentTotal = calculateCartTotal(
-      cart,
-      selectedCoupon
-    ).totalAfterDiscount;
-
-    if (currentTotal < 10000 && coupon.discountType === "percentage") {
-      handleNotificationAdd(
-        "percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.",
-        "error"
-      );
-      return;
-    }
-
-    setSelectedCoupon(coupon);
-    handleNotificationAdd("쿠폰이 적용되었습니다.", "success");
-  }
-
-  function handleCouponSelect(e: React.ChangeEvent<HTMLSelectElement>) {
-    const coupon = coupons.find((c) => c.code === e.target.value);
-    if (coupon) handleCouponApply(coupon);
-    else setSelectedCoupon(null);
-  }
+  // 쿠폰 로직은 SectionCoupon으로 이동
 
   return (
     <div className="lg:col-span-1">
@@ -59,6 +35,7 @@ export function SectionCart({
             <IconCart />
             장바구니
           </h2>
+
           {cart.length === 0 ? (
             <div className="text-center py-8">
               <IconEmptyCart />
@@ -82,28 +59,13 @@ export function SectionCart({
 
         {cart.length > 0 && (
           <>
-            <section className="bg-white rounded-lg border border-gray-200 p-4">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-gray-700">
-                  쿠폰 할인
-                </h3>
-                <button className="text-xs text-blue-600 hover:underline">
-                  쿠폰 등록
-                </button>
-              </div>
-              {coupons.length > 0 && (
-                <select
-                  className="w-full text-sm border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
-                  value={selectedCoupon?.code || ""}
-                  onChange={handleCouponSelect}
-                >
-                  <option value="">쿠폰 선택</option>
-                  {coupons.map((coupon) => (
-                    <CouponOptionView key={coupon.code} coupon={coupon} />
-                  ))}
-                </select>
-              )}
-            </section>
+            <SectionCoupon
+              coupons={coupons}
+              selectedCoupon={selectedCoupon}
+              cart={cart}
+              setSelectedCoupon={setSelectedCoupon}
+              handleNotificationAdd={handleNotificationAdd}
+            />
 
             <SectionPaymentInfo
               cart={cart}

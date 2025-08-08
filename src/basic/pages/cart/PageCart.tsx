@@ -1,4 +1,5 @@
 import { CartItem, Coupon } from "../../../types.ts";
+import type { HandleNotificationAdd } from "../../entities/Notification.ts";
 import { ProductWithUI } from "../../entities/ProductWithUI.ts";
 import { SectionCart } from "./SectionCart.tsx";
 import { SectionProductList } from "./SectionProductList.tsx";
@@ -11,10 +12,7 @@ interface PageCartProps {
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
   setSelectedCoupon: (coupon: Coupon | null) => void;
-  handleNotificationAdd: (
-    message: string,
-    type: "error" | "success" | "warning"
-  ) => void;
+  handleNotificationAdd: HandleNotificationAdd;
 }
 
 function PageCart({
@@ -40,13 +38,13 @@ function PageCart({
       </div>
 
       <SectionCart
+        products={products}
+        coupons={coupons}
         selectedCoupon={selectedCoupon}
         setSelectedCoupon={setSelectedCoupon}
         cart={cart}
-        products={products}
         setCart={setCart}
         handleNotificationAdd={handleNotificationAdd}
-        coupons={coupons}
       />
     </div>
   );
