@@ -7,6 +7,8 @@ import { useProductSearch } from "@features/search-product";
 import { useNotification } from "@features/show-notification";
 import { AdminPage } from "./pages/AdminPage";
 import { CartPage } from "./pages/CartPage";
+import { CartProvider } from "./entities/cart/model/CartProvider";
+import { CouponProvider } from "./entities/coupon/model/CouponProvider";
 
 const App = () => {
   const { products } = useProductStorage();
@@ -23,23 +25,27 @@ const App = () => {
         notifications={notifications}
         onRemoveNotification={removeNotification}
       />
-      <Header
-        isAdmin={isAdmin}
-        onAdminToggle={() => setIsAdmin((prev) => !prev)}
-        searchValue={searchValue}
-        onSearchChange={onSearchChange}
-      />
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        {isAdmin ? (
-          <AdminPage />
-        ) : (
-          <CartPage
-            products={products}
-            filteredProducts={filteredProducts}
-            searchValue={searchTerm}
-          />
-        )}
-      </main>
+      <CartProvider>
+        <Header
+          isAdmin={isAdmin}
+          onAdminToggle={() => setIsAdmin((prev) => !prev)}
+          searchValue={searchValue}
+          onSearchChange={onSearchChange}
+        />
+        <CouponProvider>
+          <main className="max-w-7xl mx-auto px-4 py-8">
+            {isAdmin ? (
+              <AdminPage />
+            ) : (
+              <CartPage
+                products={products}
+                filteredProducts={filteredProducts}
+                searchValue={searchTerm}
+              />
+            )}
+          </main>
+        </CouponProvider>
+      </CartProvider>
     </div>
   );
 };
