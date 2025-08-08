@@ -169,7 +169,8 @@ const AdminPage = ({
               activeTab === "products"
                 ? "border-gray-900 text-gray-900"
                 : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-            }`}>
+            }`}
+          >
             상품 관리
           </button>
           <button
@@ -178,7 +179,8 @@ const AdminPage = ({
               activeTab === "coupons"
                 ? "border-gray-900 text-gray-900"
                 : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-            }`}>
+            }`}
+          >
             쿠폰 관리
           </button>
         </nav>
@@ -201,7 +203,8 @@ const AdminPage = ({
                   });
                   setShowProductForm(true);
                 }}
-                className="px-4 py-2 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800">
+                className="px-4 py-2 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800"
+              >
                 새 상품 추가
               </button>
             </div>
@@ -229,45 +232,46 @@ const AdminPage = ({
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {(activeTab === "products" ? products : products).map(
-                  (product) => (
-                    <tr key={product.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {product.name}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {formatPrice(product.price, product.id)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            product.stock > 10
-                              ? "bg-green-100 text-green-800"
-                              : product.stock > 0
-                              ? "bg-yellow-100 text-yellow-800"
-                              : "bg-red-100 text-red-800"
-                          }`}>
-                          {product.stock}개
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
-                        {product.description || "-"}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button
-                          onClick={() => startEditProduct(product)}
-                          className="text-indigo-600 hover:text-indigo-900 mr-3">
-                          수정
-                        </button>
-                        <button
-                          onClick={() => deleteProduct(product.id)}
-                          className="text-red-600 hover:text-red-900">
-                          삭제
-                        </button>
-                      </td>
-                    </tr>
-                  )
-                )}
+                {products.map((product) => (
+                  <tr key={product.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {product.name}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {formatPrice(product.price, product.id)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          product.stock > 10
+                            ? "bg-green-100 text-green-800"
+                            : product.stock > 0
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {product.stock}개
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
+                      {product.description || "-"}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <button
+                        onClick={() => startEditProduct(product)}
+                        className="text-indigo-600 hover:text-indigo-900 mr-3"
+                      >
+                        수정
+                      </button>
+                      <button
+                        onClick={() => deleteProduct(product.id)}
+                        className="text-red-600 hover:text-red-900"
+                      >
+                        삭제
+                      </button>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -386,7 +390,8 @@ const AdminPage = ({
                     {productForm.discounts.map((discount, index) => (
                       <div
                         key={index}
-                        className="flex items-center gap-2 bg-gray-50 p-2 rounded">
+                        className="flex items-center gap-2 bg-gray-50 p-2 rounded"
+                      >
                         <input
                           type="number"
                           value={discount.quantity}
@@ -433,12 +438,14 @@ const AdminPage = ({
                               discounts: newDiscounts,
                             });
                           }}
-                          className="text-red-600 hover:text-red-800">
+                          className="text-red-600 hover:text-red-800"
+                        >
                           <svg
                             className="w-4 h-4"
                             fill="none"
                             stroke="currentColor"
-                            viewBox="0 0 24 24">
+                            viewBox="0 0 24 24"
+                          >
                             <path
                               strokeLinecap="round"
                               strokeLinejoin="round"
@@ -460,7 +467,8 @@ const AdminPage = ({
                           ],
                         });
                       }}
-                      className="text-sm text-indigo-600 hover:text-indigo-800">
+                      className="text-sm text-indigo-600 hover:text-indigo-800"
+                    >
                       + 할인 추가
                     </button>
                   </div>
@@ -480,12 +488,14 @@ const AdminPage = ({
                       });
                       setShowProductForm(false);
                     }}
-                    className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
+                    className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  >
                     취소
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700">
+                    className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700"
+                  >
                     {editingProduct === "new" ? "추가" : "수정"}
                   </button>
                 </div>
@@ -503,7 +513,8 @@ const AdminPage = ({
               {coupons.map((coupon) => (
                 <div
                   key={coupon.code}
-                  className="relative bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200">
+                  className="relative bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200"
+                >
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <h3 className="font-semibold text-gray-900">
@@ -522,12 +533,14 @@ const AdminPage = ({
                     </div>
                     <button
                       onClick={() => deleteCoupon(coupon.code)}
-                      className="text-gray-400 hover:text-red-600 transition-colors">
+                      className="text-gray-400 hover:text-red-600 transition-colors"
+                    >
                       <svg
                         className="w-5 h-5"
                         fill="none"
                         stroke="currentColor"
-                        viewBox="0 0 24 24">
+                        viewBox="0 0 24 24"
+                      >
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -543,12 +556,14 @@ const AdminPage = ({
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 flex items-center justify-center hover:border-gray-400 transition-colors">
                 <button
                   onClick={() => setShowCouponForm(!showCouponForm)}
-                  className="text-gray-400 hover:text-gray-600 flex flex-col items-center">
+                  className="text-gray-400 hover:text-gray-600 flex flex-col items-center"
+                >
                   <svg
                     className="w-8 h-8"
                     fill="none"
                     stroke="currentColor"
-                    viewBox="0 0 24 24">
+                    viewBox="0 0 24 24"
+                  >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -618,7 +633,8 @@ const AdminPage = ({
                               | "percentage",
                           })
                         }
-                        className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm">
+                        className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
+                      >
                         <option value="amount">정액 할인</option>
                         <option value="percentage">정률 할인</option>
                       </select>
@@ -693,12 +709,14 @@ const AdminPage = ({
                     <button
                       type="button"
                       onClick={() => setShowCouponForm(false)}
-                      className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
+                      className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    >
                       취소
                     </button>
                     <button
                       type="submit"
-                      className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700">
+                      className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700"
+                    >
                       쿠폰 생성
                     </button>
                   </div>
