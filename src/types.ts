@@ -3,12 +3,19 @@ export interface Product {
   name: string;
   price: number;
   stock: number;
-  discounts: Discount[];
+  discounts: Array<{ quantity: number; rate: number }>;
 }
 
-export interface Discount {
-  quantity: number;
-  rate: number;
+export interface ProductWithUI extends Product {
+  description?: string;
+  isRecommended?: boolean;
+}
+
+export interface Coupon {
+  name: string;
+  code: string;
+  discountType: "amount" | "percentage";
+  discountValue: number;
 }
 
 export interface CartItem {
@@ -16,9 +23,14 @@ export interface CartItem {
   quantity: number;
 }
 
-export interface Coupon {
-  name: string;
-  code: string;
-  discountType: 'amount' | 'percentage';
-  discountValue: number;
+export interface Notification {
+  id: string;
+  message: string;
+  type: "error" | "success" | "warning";
+}
+
+export interface Toast {
+  id: string;
+  message: string;
+  type: "error" | "success" | "warning";
 }
