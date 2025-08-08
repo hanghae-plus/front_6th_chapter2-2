@@ -28,7 +28,7 @@ export function CartItemList({
     <div className="space-y-3">
       {cartItems.map((item) => (
         <CartItem
-          key={item.product.id}
+          key={item.id}
           item={item}
           calculateItemTotal={calculateItemTotal}
           removeFromCart={onRemoveItem}

@@ -36,7 +36,7 @@ export function AdminPage() {
       <Tabs
         tabs={adminTabConfig.tabs}
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={(tabId) => setActiveTab(tabId as AdminTab)}
         className="mb-6"
       />
 

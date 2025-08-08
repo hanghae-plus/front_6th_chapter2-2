@@ -18,7 +18,7 @@ export const CartItem = memo(
     updateQuantity,
   }: CartItemProps) => {
     const itemTotal = calculateItemTotal(item);
-    const originalPrice = item.product.price * item.quantity;
+    const originalPrice = item.price * item.quantity;
     const hasDiscount = itemTotal < originalPrice;
     const discountRate = hasDiscount
       ? Math.round((1 - itemTotal / originalPrice) * 100)
@@ -28,11 +28,11 @@ export const CartItem = memo(
       <div className="border-b pb-3 last:border-b-0">
         <div className="flex justify-between items-start mb-2">
           <h4 className="text-sm font-medium text-gray-900 flex-1">
-            {item.product.name}
+            {item.name}
           </h4>
           <IconButton
             variant="icon"
-            onClick={() => removeFromCart(item.product.id)}
+            onClick={() => removeFromCart(item.id)}
             className="text-gray-400 hover:text-red-500 ml-2"
           >
             <CloseIcon className="w-4 h-4" />
@@ -43,7 +43,7 @@ export const CartItem = memo(
             <Button
               variant="secondary"
               size="xs"
-              onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+              onClick={() => updateQuantity(item.id, item.quantity - 1)}
               className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
             >
               <span className="text-xs">−</span>
@@ -54,7 +54,7 @@ export const CartItem = memo(
             <Button
               variant="secondary"
               size="xs"
-              onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+              onClick={() => updateQuantity(item.id, item.quantity + 1)}
               className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
             >
               <span className="text-xs">+</span>

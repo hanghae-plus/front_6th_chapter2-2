@@ -33,8 +33,7 @@ export function CartPage({
   const displayPrice = useCallback(
     (product: Product) => {
       const cartQuantity =
-        cartManager.cart.find((item) => item.product.id === product.id)
-          ?.quantity || 0;
+        cartManager.cart.find((item) => item.id === product.id)?.quantity || 0;
       return getDisplayPrice(product, cartQuantity);
     },
     [cartManager.cart]

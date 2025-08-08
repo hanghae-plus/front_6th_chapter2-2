@@ -14,7 +14,7 @@ const MAX_DISCOUNT_RATE = 0.5;
  * 상품별 최대 적용 가능한 할인율 계산
  */
 export const getMaxApplicableDiscount = (item: Cart, cart: Cart[]): number => {
-  const { discounts } = item.product;
+  const { discounts } = item;
   const { quantity } = item;
 
   const baseDiscount = findMaxDiscountByQuantity(quantity, discounts);
@@ -32,7 +32,7 @@ export const getMaxApplicableDiscount = (item: Cart, cart: Cart[]): number => {
  * 상품별 총액 계산 (할인 적용)
  */
 export const calculateItemTotal = (item: Cart, cart: Cart[]): number => {
-  const { price } = item.product;
+  const { price } = item;
   const { quantity } = item;
   const discount = getMaxApplicableDiscount(item, cart);
 

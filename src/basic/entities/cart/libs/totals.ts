@@ -6,7 +6,7 @@ import { calculateItemTotal } from "./item";
  * 장바구니 소계 계산 (할인 미적용)
  */
 export const getCartSubtotal = (cart: Cart[]): number => {
-  return Math.round(sumBy(cart, (item) => item.product.price * item.quantity));
+  return Math.round(sumBy(cart, (item) => item.price * item.quantity));
 };
 
 /**

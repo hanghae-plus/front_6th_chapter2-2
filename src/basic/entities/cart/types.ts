@@ -1,6 +1,12 @@
-import type { Product } from "@entities/product";
-
 export interface Cart {
-  product: Product;
+  id: string;
+  name: string;
+  price: number;
+  discounts: Discount[];
   quantity: number;
+}
+
+export interface Discount {
+  quantity: number;
+  rate: number;
 }

@@ -11,9 +11,7 @@ export function useCart() {
     cart.reduce((sum, item) => sum + item.quantity, 0);
 
   const addItem = (item: Cart) => {
-    const existingIndex = cart.findIndex(
-      (cartItem) => cartItem.product.id === item.product.id
-    );
+    const existingIndex = cart.findIndex((cartItem) => cartItem.id === item.id);
 
     if (existingIndex >= 0) {
       const newCart = [...cart];
@@ -28,7 +26,7 @@ export function useCart() {
   };
 
   const removeItem = (productId: string) => {
-    setCart(cart.filter((item) => item.product.id !== productId));
+    setCart(cart.filter((item) => item.id !== productId));
   };
 
   const updateItemQuantity = (productId: string, quantity: number) => {
@@ -38,9 +36,7 @@ export function useCart() {
     }
 
     setCart(
-      cart.map((item) =>
-        item.product.id === productId ? { ...item, quantity } : item
-      )
+      cart.map((item) => (item.id === productId ? { ...item, quantity } : item))
     );
   };
 

@@ -5,8 +5,12 @@ import { calculateDiscountedPrice } from "@shared/libs/price";
  */
 export const findMaxDiscountByQuantity = (
   quantity: number,
-  discounts: Array<{ quantity: number; rate: number }>
+  discounts: Array<{ quantity: number; rate: number }> | undefined
 ): number => {
+  if (!discounts || discounts.length === 0) {
+    return 0;
+  }
+
   return discounts.reduce((maxDiscount, discount) => {
     return quantity >= discount.quantity && discount.rate > maxDiscount
       ? discount.rate

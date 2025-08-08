@@ -14,7 +14,7 @@ export function useManageCart({ products }: UseManageCartOptions) {
 
   const getProductRemainingStock = useCallback(
     (product: ProductWithUI): number => {
-      const cartItem = cart.cart.find((item) => item.product.id === product.id);
+      const cartItem = cart.cart.find((item) => item.id === product.id);
       const cartQuantity = cartItem?.quantity || 0;
       return calculateRemainingStock(product.stock, cartQuantity);
     },
@@ -30,9 +30,7 @@ export function useManageCart({ products }: UseManageCartOptions) {
         return;
       }
 
-      const existingItem = cart.cart.find(
-        (item) => item.product.id === product.id
-      );
+      const existingItem = cart.cart.find((item) => item.id === product.id);
       const currentQuantity = existingItem?.quantity || 0;
 
       if (currentQuantity + 1 > product.stock) {
@@ -40,7 +38,13 @@ export function useManageCart({ products }: UseManageCartOptions) {
         return;
       }
 
-      cart.addItem({ product, quantity: 1 });
+      cart.addItem({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        discounts: product.discounts || [],
+        quantity: 1,
+      });
       showSuccessNotification("장바구니에 담았습니다");
     },
     [cart, showSuccessNotification, getProductRemainingStock]
