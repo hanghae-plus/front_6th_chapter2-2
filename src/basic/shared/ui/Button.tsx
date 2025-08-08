@@ -7,7 +7,8 @@ export type ButtonVariant =
   | "warning"
   | "danger"
   | "link"
-  | "icon";
+  | "icon"
+  | "tab";
 
 export type ButtonSize = "xs" | "sm" | "md" | "lg";
 
@@ -29,6 +30,7 @@ const variantStyles: Record<ButtonVariant, string> = {
   danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
   link: "bg-transparent border-none p-0",
   icon: "bg-transparent border-none p-0",
+  tab: "bg-transparent px-1 py-2 border-b-2 font-medium text-sm transition-colors", // Tabs 전용
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -55,7 +57,8 @@ export function Button({
   ...props
 }: ButtonProps) {
   const isDisabled = disabled || loading;
-  const isTextual = variant === "link" || variant === "icon";
+  const isTextual =
+    variant === "link" || variant === "icon" || variant === "tab";
 
   const classes = [
     isTextual ? minimalBaseStyles : solidBaseStyles,
