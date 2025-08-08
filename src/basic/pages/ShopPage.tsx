@@ -149,19 +149,15 @@ const ShopPage = ({
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredProducts.map((product) => {
-                const remainingStock = getRemainingStock(cart, product);
-
-                return (
-                  <ShopProduct
-                    key={product.id}
-                    product={product}
-                    remainingStock={remainingStock}
-                    onAddToCart={() => addToCart(product)}
-                    formatPrice={formatPrice}
-                  />
-                );
-              })}
+              {filteredProducts.map((product) => (
+                <ShopProduct
+                  key={product.id}
+                  product={product}
+                  remainingStock={getRemainingStock(cart, product)}
+                  onAddToCart={() => addToCart(product)}
+                  formatPrice={formatPrice}
+                />
+              ))}
             </div>
           )}
         </section>
