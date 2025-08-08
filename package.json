@@ -12,7 +12,7 @@
     "test:basic": "vitest src/basic",
     "test:advanced": "vitest src/advanced",
     "test:ui": "vitest --ui",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && cp ./dist/index.advanced.html ./dist/404.html",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "predeploy": "pnpm run build",
     "deploy": "gh-pages -d dist"
