@@ -25,29 +25,6 @@ export function AdminTabCoupons({
     discountValue: 0,
   })
 
-  function handleCouponAdd(newCoupon: Coupon) {
-    const existingCoupon = coupons.find((c) => c.code === newCoupon.code)
-    if (existingCoupon) {
-      handleNotificationAdd("이미 존재하는 쿠폰 코드입니다.", "error")
-      return
-    }
-
-    setCoupons((prev) => [...prev, newCoupon])
-    handleNotificationAdd("쿠폰이 추가되었습니다.", "success")
-  }
-
-  const handleCouponSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    handleCouponAdd(couponForm)
-    setCouponForm({
-      name: "",
-      code: "",
-      discountType: "amount",
-      discountValue: 0,
-    })
-    setShowCouponForm(false)
-  }
-
   return (
     <section className="bg-white rounded-lg border border-gray-200">
       <div className="p-6 border-b border-gray-200">
@@ -79,9 +56,10 @@ export function AdminTabCoupons({
 
         {showCouponForm && (
           <AdminCouponForm
-            handleCouponSubmit={handleCouponSubmit}
             couponForm={couponForm}
             setCouponForm={setCouponForm}
+            coupons={coupons}
+            setCoupons={setCoupons}
             handleNotificationAdd={handleNotificationAdd}
             setShowCouponForm={setShowCouponForm}
           />

@@ -61,7 +61,6 @@ export function AdminTabProducts({
               <AdminProductTableRow
                 key={product.id}
                 product={product}
-                products={products}
                 setEditingProduct={setEditingProduct}
                 setProductForm={setProductForm}
                 setShowProductForm={setShowProductForm}

@@ -1,13 +1,17 @@
+import type { Coupon } from "../../../types"
+
 export function AdminCouponForm({
-  handleCouponSubmit,
   couponForm,
   setCouponForm,
+  coupons,
+  setCoupons,
   handleNotificationAdd,
   setShowCouponForm,
 }: {
-  handleCouponSubmit: (e: React.FormEvent) => void
   couponForm: { name: string; code: string; discountType: "amount" | "percentage"; discountValue: number }
   setCouponForm: (form: { name: string; code: string; discountType: "amount" | "percentage"; discountValue: number }) => void
+  coupons: Coupon[]
+  setCoupons: React.Dispatch<React.SetStateAction<Coupon[]>>
   handleNotificationAdd: (message: string, type: "error" | "success" | "warning") => void
   setShowCouponForm: (show: boolean) => void
 }) {
@@ -50,6 +54,29 @@ export function AdminCouponForm({
   }
 
   function handleCancelClick() {
+    setShowCouponForm(false)
+  }
+
+  function handleCouponAdd(newCoupon: Coupon) {
+    const existingCoupon = coupons.find((c) => c.code === newCoupon.code)
+    if (existingCoupon) {
+      handleNotificationAdd("이미 존재하는 쿠폰 코드입니다.", "error")
+      return
+    }
+
+    setCoupons((prev) => [...prev, newCoupon])
+    handleNotificationAdd("쿠폰이 추가되었습니다.", "success")
+  }
+
+  const handleCouponSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    handleCouponAdd(couponForm)
+    setCouponForm({
+      name: "",
+      code: "",
+      discountType: "amount",
+      discountValue: 0,
+    })
     setShowCouponForm(false)
   }
 
