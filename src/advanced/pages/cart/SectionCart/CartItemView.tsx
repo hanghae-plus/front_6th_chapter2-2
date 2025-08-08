@@ -1,16 +1,12 @@
 import { CartItem } from "../../../../types.ts"
 import { IconRemoveFromCart } from "../../../components/icons/IconRemoveFromCart.tsx"
 import { calculateItemTotalWithBulkPurchase, removeItemFromCart, updateCartItemQuantity } from "../../../entities/CartItem.ts"
+import { useCart } from "../../../hooks/useCart.ts"
 import { useNotification } from "../../../hooks/useNotification.ts"
 import { useProducts } from "../../../hooks/useProducts.ts"
 
-interface CartItemViewProps {
-  item: CartItem
-  cart: CartItem[]
-  setCart: React.Dispatch<React.SetStateAction<CartItem[]>>
-}
-
-export function CartItemView({ item, cart, setCart }: CartItemViewProps) {
+export function CartItemView({ item }: { item: CartItem }) {
+  const { cart, setCart } = useCart()
   const { handleNotificationAdd } = useNotification()
   const { products } = useProducts()
 

@@ -1,11 +1,10 @@
-import { useAtom } from "jotai"
-import { atom } from "jotai"
-import { Notification } from "../entities/Notification"
+import { atom, useAtom } from "jotai"
+import { Notification } from "../entities/Notification.ts"
 
-const notificationsAtom = atom<Notification[]>([])
+const atomNotifications = atom<Notification[]>([])
 
 export function useNotification() {
-  const [notifications, setNotifications] = useAtom(notificationsAtom)
+  const [notifications, setNotifications] = useAtom(atomNotifications)
 
   function handleNotificationAdd(message: string, type: "error" | "success" | "warning" = "success") {
     const id = Date.now().toString()

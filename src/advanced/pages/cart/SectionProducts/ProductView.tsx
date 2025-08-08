@@ -2,17 +2,12 @@ import { addItemToCart, canAddToCart } from "../../../entities/CartItem.ts"
 import { getRemainingStock } from "../../../entities/Product.ts"
 import type { ProductViewModel } from "../../../entities/ProductViewModel.ts"
 
-import type { CartItem } from "../../../../types.ts"
 import { IconProductPlaceholder } from "../../../components/icons/IconProductPlaceholder.tsx"
+import { useCart } from "../../../hooks/useCart.ts"
 import { useNotification } from "../../../hooks/useNotification.ts"
 
-interface ProductViewProps {
-  product: ProductViewModel
-  cart: CartItem[]
-  setCart: (cart: CartItem[]) => void
-}
-
-export function ProductView({ product, cart, setCart }: ProductViewProps) {
+export function ProductView({ product }: { product: ProductViewModel }) {
+  const { cart, setCart } = useCart()
   const { handleNotificationAdd } = useNotification()
 
   const remainingStock = getRemainingStock(product, cart)

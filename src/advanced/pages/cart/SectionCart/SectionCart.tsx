@@ -1,24 +1,13 @@
-import type { CartItem, Coupon } from "../../../../types.ts"
 import { IconCart } from "../../../components/icons/IconCart.tsx"
 import { IconEmptyCart } from "../../../components/icons/IconEmptyCart.tsx"
-import { useProducts } from "../../../hooks/useProducts.ts"
+import { useCart } from "../../../hooks/useCart.ts"
 import { CartItemView } from "./CartItemView.tsx"
 import { SectionCoupon } from "./SectionCoupon.tsx"
 import { SectionPaymentInfo } from "./SectionPaymentInfo.tsx"
 
-export function SectionCart({
-  cart,
-  setCart,
-  coupons,
-  selectedCoupon,
-  setSelectedCoupon,
-}: {
-  cart: CartItem[]
-  setCart: React.Dispatch<React.SetStateAction<CartItem[]>>
-  coupons: Coupon[]
-  selectedCoupon: Coupon | null
-  setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>
-}) {
+export function SectionCart() {
+  const { cart } = useCart()
+
   return (
     <div className="lg:col-span-1">
       <div className="sticky top-24 space-y-4">
@@ -36,7 +25,7 @@ export function SectionCart({
           ) : (
             <div className="space-y-3">
               {cart.map((cartItem) => (
-                <CartItemView key={cartItem.product.id} item={cartItem} cart={cart} setCart={setCart} />
+                <CartItemView key={cartItem.product.id} item={cartItem} />
               ))}
             </div>
           )}
@@ -44,9 +33,9 @@ export function SectionCart({
 
         {cart.length > 0 && (
           <>
-            <SectionCoupon coupons={coupons} selectedCoupon={selectedCoupon} cart={cart} setSelectedCoupon={setSelectedCoupon} />
+            <SectionCoupon />
 
-            <SectionPaymentInfo cart={cart} selectedCoupon={selectedCoupon} setCart={setCart} setSelectedCoupon={setSelectedCoupon} />
+            <SectionPaymentInfo />
           </>
         )}
       </div>

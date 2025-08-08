@@ -1,30 +1,26 @@
-import { useState } from "react"
 import { useProducts } from "../../../hooks/useProducts"
 import { AdminProductForm } from "./AdminProductForm"
 import { AdminProductTableRow } from "./AdminProductTableRow"
+import { useApp } from "../../../hooks/useApp"
+import { useProductForm } from "../../../hooks/useProductForm"
 
 export function AdminTabProducts() {
   const { products } = useProducts()
-
-  const [showProductForm, setShowProductForm] = useState(false)
-  const [editingProduct, setEditingProduct] = useState<string | null>(null)
-  const [productForm, setProductForm] = useState({
-    name: "",
-    price: 0,
-    stock: 0,
-    description: "",
-    discounts: [] as Array<{ quantity: number; rate: number }>,
-  })
+  const { showProductForm, setShowProductForm } = useApp()
+  const { setProductForm, setEditingProduct } = useProductForm()
 
   function handleProductAdd() {
-    setEditingProduct("new")
+    setEditingProduct(null)
     setProductForm({
+      id: "",
       name: "",
       price: 0,
       stock: 0,
       description: "",
       discounts: [],
+      isRecommended: false,
     })
+
     setShowProductForm(true)
   }
 
@@ -52,26 +48,13 @@ export function AdminTabProducts() {
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {products.map((product) => (
-              <AdminProductTableRow
-                key={product.id}
-                product={product}
-                setEditingProduct={setEditingProduct}
-                setProductForm={setProductForm}
-                setShowProductForm={setShowProductForm}
-              />
+              <AdminProductTableRow key={product.id} product={product} />
             ))}
           </tbody>
         </table>
       </div>
-      {showProductForm && (
-        <AdminProductForm
-          editingProduct={editingProduct}
-          productForm={productForm}
-          setProductForm={setProductForm}
-          setEditingProduct={setEditingProduct}
-          setShowProductForm={setShowProductForm}
-        />
-      )}
+
+      {showProductForm && <AdminProductForm />}
     </section>
   )
 }

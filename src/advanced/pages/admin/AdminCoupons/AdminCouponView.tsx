@@ -1,19 +1,11 @@
 import type { Coupon } from "../../../../types"
 import { IconTrash } from "../../../components/icons/IconTrash"
 import { useNotification } from "../../../hooks/useNotification"
+import { useCoupons } from "../../../hooks/useCoupons"
 
-export function AdminCouponView({
-  coupon,
-  setCoupons,
-  selectedCoupon,
-  setSelectedCoupon,
-}: {
-  coupon: Coupon
-  setCoupons: React.Dispatch<React.SetStateAction<Coupon[]>>
-  selectedCoupon: Coupon | null
-  setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>
-}) {
+export function AdminCouponView({ coupon }: { coupon: Coupon }) {
   const { handleNotificationAdd } = useNotification()
+  const { setCoupons, selectedCoupon, setSelectedCoupon } = useCoupons()
 
   function handleCouponDelete(couponCode: string) {
     setCoupons((prev) => prev.filter((c) => c.code !== couponCode))

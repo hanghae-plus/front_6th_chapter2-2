@@ -1,18 +1,11 @@
-import type { CartItem } from "../../../../types.ts"
+import { useApp } from "../../../hooks/useApp.ts"
 import { useProducts } from "../../../hooks/useProducts.ts"
 import { useDebounce } from "../../../utils/hooks/useDebounce.ts"
 import { ProductView } from "./ProductView.tsx"
 
-export function SectionProductList({
-  searchTerm,
-  cart,
-  setCart,
-}: {
-  searchTerm: string
-  cart: CartItem[]
-  setCart: React.Dispatch<React.SetStateAction<CartItem[]>>
-}) {
+export function SectionProductList() {
   const { products } = useProducts()
+  const { searchTerm } = useApp()
   const debouncedSearchTerm = useDebounce(searchTerm, 500)
 
   const filteredProducts = debouncedSearchTerm
@@ -37,7 +30,7 @@ export function SectionProductList({
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredProducts.map((product) => (
-            <ProductView key={product.id} product={product} cart={cart} setCart={setCart} />
+            <ProductView key={product.id} product={product} />
           ))}
         </div>
       )}

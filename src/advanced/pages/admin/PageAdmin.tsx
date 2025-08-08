@@ -1,16 +1,8 @@
-import { Coupon } from "../../../types.ts"
 import { useApp } from "../../hooks/useApp.ts"
 import { AdminTabCoupons } from "./AdminCoupons/AdminTabCoupons.tsx"
 import { AdminTabProducts } from "./AdminProducts/AdminTabProducts.tsx"
 
-interface PageAdminProps {
-  coupons: Coupon[]
-  setCoupons: React.Dispatch<React.SetStateAction<Coupon[]>>
-  selectedCoupon: Coupon | null
-  setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>
-}
-
-function PageAdmin({ coupons, setCoupons, selectedCoupon, setSelectedCoupon }: PageAdminProps) {
+function PageAdmin() {
   const { activeTab, setActiveTab } = useApp()
 
   return (
@@ -46,11 +38,7 @@ function PageAdmin({ coupons, setCoupons, selectedCoupon, setSelectedCoupon }: P
         </nav>
       </div>
 
-      {activeTab === "products" ? (
-        <AdminTabProducts />
-      ) : (
-        <AdminTabCoupons coupons={coupons} selectedCoupon={selectedCoupon} setCoupons={setCoupons} setSelectedCoupon={setSelectedCoupon} />
-      )}
+      {activeTab === "products" ? <AdminTabProducts /> : <AdminTabCoupons />}
     </div>
   )
 }

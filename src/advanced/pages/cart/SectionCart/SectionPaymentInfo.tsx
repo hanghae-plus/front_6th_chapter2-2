@@ -1,18 +1,12 @@
-import type { CartItem, Coupon } from "../../../../types.ts"
 import { calculateCartTotal } from "../../../entities/CartItem.ts"
+import { useCart } from "../../../hooks/useCart.ts"
+import { useCoupons } from "../../../hooks/useCoupons.ts"
 import { useNotification } from "../../../hooks/useNotification.ts"
 
-export function SectionPaymentInfo({
-  cart,
-  selectedCoupon,
-  setCart,
-  setSelectedCoupon,
-}: {
-  cart: CartItem[]
-  selectedCoupon: Coupon | null
-  setCart: React.Dispatch<React.SetStateAction<CartItem[]>>
-  setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>
-}) {
+export function SectionPaymentInfo() {
+  const { cart, setCart } = useCart()
+  const { selectedCoupon, setSelectedCoupon } = useCoupons()
+
   const { handleNotificationAdd } = useNotification()
 
   const totals = calculateCartTotal(cart, selectedCoupon)

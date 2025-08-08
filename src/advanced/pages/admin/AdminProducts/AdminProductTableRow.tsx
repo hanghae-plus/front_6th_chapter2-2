@@ -1,32 +1,27 @@
-import type { Discount } from "../../../../types"
 import type { ProductViewModel } from "../../../entities/ProductViewModel"
+import { useApp } from "../../../hooks/useApp"
 import { useNotification } from "../../../hooks/useNotification"
+import { useProductForm } from "../../../hooks/useProductForm"
 import { useProducts } from "../../../hooks/useProducts"
 
-export function AdminProductTableRow({
-  product,
-  setEditingProduct,
-  setProductForm,
-  setShowProductForm,
-}: {
-  product: ProductViewModel
-  setEditingProduct: (productId: string) => void
-  setProductForm: (product: { name: string; price: number; stock: number; description: string; discounts: Discount[] }) => void
-  setShowProductForm: (show: boolean) => void
-}) {
+export function AdminProductTableRow({ product }: { product: ProductViewModel }) {
   const { setProducts } = useProducts()
   const { handleNotificationAdd } = useNotification()
+  const { setShowProductForm } = useApp()
+  const { setEditingProduct, setProductForm } = useProductForm()
 
   const formattedPrice = `${product.price.toLocaleString()}원`
 
   function handleProductStartEdit(product: ProductViewModel) {
-    setEditingProduct(product.id)
+    setEditingProduct("edit")
     setProductForm({
+      id: product.id,
       name: product.name,
       price: product.price,
       stock: product.stock,
       description: product.description || "",
       discounts: product.discounts || [],
+      isRecommended: product.isRecommended,
     })
     setShowProductForm(true)
   }
@@ -58,6 +53,7 @@ export function AdminProductTableRow({
         <button onClick={() => handleProductStartEdit(product)} className="text-indigo-600 hover:text-indigo-900 mr-3">
           수정
         </button>
+
         <button onClick={() => handleProductDelete(product)} className="text-red-600 hover:text-red-900">
           삭제
         </button>

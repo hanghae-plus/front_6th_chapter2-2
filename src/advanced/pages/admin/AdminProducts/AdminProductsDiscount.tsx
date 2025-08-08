@@ -1,22 +1,10 @@
+import type { Discount } from "../../../../types"
 import { IconDelete } from "../../../components/icons/IconDelete"
+import { useProductForm } from "../../../hooks/useProductForm"
 
-export function AdminProductsDiscount({
-  index,
-  discount,
-  productForm,
-  setProductForm,
-}: {
-  index: number
-  discount: { quantity: number; rate: number }
-  productForm: { name: string; price: number; stock: number; description: string; discounts: Array<{ quantity: number; rate: number }> }
-  setProductForm: (form: {
-    name: string
-    price: number
-    stock: number
-    description: string
-    discounts: Array<{ quantity: number; rate: number }>
-  }) => void
-}) {
+export function AdminProductsDiscount({ index, discount }: { index: number; discount: Discount }) {
+  const { productForm, setProductForm } = useProductForm()
+
   function handleDiscountChange(e: React.ChangeEvent<HTMLInputElement>) {
     const newDiscounts = [...productForm.discounts]
     newDiscounts[index].quantity = parseInt(e.target.value) || 0
@@ -35,7 +23,7 @@ export function AdminProductsDiscount({
   }
 
   return (
-    <div key={index} className="flex items-center gap-2 bg-gray-50 p-2 rounded">
+    <div className="flex items-center gap-2 bg-gray-50 p-2 rounded">
       <input
         type="number"
         className="w-20 px-2 py-1 border rounded"
@@ -45,6 +33,7 @@ export function AdminProductsDiscount({
         placeholder="수량"
       />
       <span className="text-sm">개 이상 구매 시</span>
+
       <input
         type="number"
         className="w-16 px-2 py-1 border rounded"
@@ -55,6 +44,7 @@ export function AdminProductsDiscount({
         placeholder="%"
       />
       <span className="text-sm">% 할인</span>
+
       <button type="button" className="text-red-600 hover:text-red-800" onClick={handleDiscountDelete}>
         <IconDelete />
       </button>

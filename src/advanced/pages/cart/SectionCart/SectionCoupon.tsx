@@ -1,20 +1,14 @@
-import type { CartItem, Coupon } from "../../../../types.ts"
+import type { Coupon } from "../../../../types.ts"
 import { calculateCartTotal } from "../../../entities/CartItem.ts"
 import { getCouponApplicationError } from "../../../entities/Coupon.ts"
+import { useCart } from "../../../hooks/useCart.ts"
+import { useCoupons } from "../../../hooks/useCoupons.ts"
 import { useNotification } from "../../../hooks/useNotification.ts"
 import { CouponOptionView } from "./CouponOptionView.tsx"
 
-export function SectionCoupon({
-  coupons,
-  selectedCoupon,
-  cart,
-  setSelectedCoupon,
-}: {
-  coupons: Coupon[]
-  selectedCoupon: Coupon | null
-  cart: CartItem[]
-  setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>
-}) {
+export function SectionCoupon() {
+  const { cart } = useCart()
+  const { coupons, selectedCoupon, setSelectedCoupon } = useCoupons()
   const { handleNotificationAdd } = useNotification()
 
   function handleCouponApply(coupon: Coupon) {

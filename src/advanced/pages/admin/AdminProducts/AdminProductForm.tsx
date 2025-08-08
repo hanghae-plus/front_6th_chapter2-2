@@ -2,28 +2,14 @@ import type { ProductViewModel } from "../../../entities/ProductViewModel"
 import { AdminProductsDiscount } from "./AdminProductsDiscount.tsx"
 import { useProducts } from "../../../hooks/useProducts"
 import { useNotification } from "../../../hooks/useNotification.ts"
+import { useApp } from "../../../hooks/useApp.ts"
+import { useProductForm } from "../../../hooks/useProductForm.ts"
 
-export function AdminProductForm({
-  editingProduct,
-  productForm,
-  setProductForm,
-  setEditingProduct,
-  setShowProductForm,
-}: {
-  editingProduct: string | null
-  productForm: { name: string; price: number; stock: number; description: string; discounts: Array<{ quantity: number; rate: number }> }
-  setProductForm: (form: {
-    name: string
-    price: number
-    stock: number
-    description: string
-    discounts: Array<{ quantity: number; rate: number }>
-  }) => void
-  setEditingProduct: (productId: string | null) => void
-  setShowProductForm: (show: boolean) => void
-}) {
+export function AdminProductForm() {
   const { setProducts } = useProducts()
   const { handleNotificationAdd } = useNotification()
+  const { setShowProductForm } = useApp()
+  const { productForm, setProductForm, editingProduct, setEditingProduct } = useProductForm()
 
   // 새 상품을 추가
   function handleProductAdd(newProduct: Omit<ProductViewModel, "id">) {
@@ -94,7 +80,7 @@ export function AdminProductForm({
   // 취소 버튼 클릭
   function handleClickCancel() {
     setEditingProduct(null)
-    setProductForm({ name: "", price: 0, stock: 0, description: "", discounts: [] })
+    setProductForm({ id: "", name: "", price: 0, stock: 0, description: "", discounts: [], isRecommended: false })
     setShowProductForm(false)
   }
 
@@ -113,7 +99,7 @@ export function AdminProductForm({
     }
 
     // 폼 초기화
-    setProductForm({ name: "", price: 0, stock: 0, description: "", discounts: [] })
+    setProductForm({ id: "", name: "", price: 0, stock: 0, description: "", discounts: [], isRecommended: false })
     setEditingProduct(null)
     setShowProductForm(false)
   }
@@ -171,13 +157,7 @@ export function AdminProductForm({
           <label className="block text-sm font-medium text-gray-700 mb-2">할인 정책</label>
           <div className="space-y-2">
             {productForm.discounts.map((discount, index) => (
-              <AdminProductsDiscount
-                key={index}
-                index={index}
-                discount={discount}
-                productForm={productForm}
-                setProductForm={setProductForm}
-              />
+              <AdminProductsDiscount key={index} index={index} discount={discount} />
             ))}
             <button type="button" className="text-sm text-indigo-600 hover:text-indigo-800" onClick={handleAddDiscount}>
               + 할인 추가
@@ -195,7 +175,7 @@ export function AdminProductForm({
           </button>
 
           <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700">
-            {editingProduct === "new" ? "추가" : "수정"}
+            {editingProduct ? "수정" : "추가"}
           </button>
         </div>
       </form>

@@ -1,22 +1,11 @@
-import { CartItem } from "../../types.ts";
-import { getTotalItemCount } from "../entities/CartItem.ts";
+import { useApp } from "../hooks/useApp.ts"
+import { getTotalItemCount } from "../entities/CartItem.ts"
+import { useCart } from "../hooks/useCart.ts"
 
-interface HeaderProps {
-  isAdmin: boolean;
-  searchTerm: string;
-  setSearchTerm: (term: string) => void;
-  setIsAdmin: (isAdmin: boolean) => void;
-  cart: CartItem[];
-}
-
-function Header({
-  isAdmin,
-  searchTerm,
-  setSearchTerm,
-  setIsAdmin,
-  cart,
-}: HeaderProps) {
-  const totalItemCount = getTotalItemCount(cart);
+function Header() {
+  const { isAdmin, searchTerm, setSearchTerm, setIsAdmin } = useApp()
+  const { cart } = useCart()
+  const totalItemCount = getTotalItemCount(cart)
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-40 border-b">
@@ -41,21 +30,14 @@ function Header({
             <button
               onClick={() => setIsAdmin(!isAdmin)}
               className={`px-3 py-1.5 text-sm rounded transition-colors ${
-                isAdmin
-                  ? "bg-gray-800 text-white"
-                  : "text-gray-600 hover:text-gray-900"
+                isAdmin ? "bg-gray-800 text-white" : "text-gray-600 hover:text-gray-900"
               }`}
             >
               {isAdmin ? "쇼핑몰로 돌아가기" : "관리자 페이지로"}
             </button>
             {!isAdmin && (
               <div className="relative">
-                <svg
-                  className="w-6 h-6 text-gray-700"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -74,7 +56,7 @@ function Header({
         </div>
       </div>
     </header>
-  );
+  )
 }
 
-export default Header;
+export default Header
