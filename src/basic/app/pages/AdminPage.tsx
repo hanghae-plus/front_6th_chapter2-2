@@ -4,9 +4,9 @@ import type { CartItem, Coupon } from "../../../types";
 import { couponApplicationService } from "../../domains/coupon";
 import {
   formatPrice,
+  productApplicationService,
   type ProductForm,
-  type ProductWithUI,
-  useProductActions
+  type ProductWithUI
 } from "../../domains/product";
 import { CouponManagementSection, ProductManagementSection } from "../components";
 import { AdminTabs } from "../components";
@@ -48,10 +48,40 @@ export function AdminPage({
     discountValue: 0
   });
 
-  const { deleteProduct, handleProductSubmit, startEditProduct } = useProductActions({
-    setProducts,
-    addNotification
-  });
+  const deleteProduct = (productId: string) => {
+    productApplicationService.deleteProduct(productId, setProducts, addNotification);
+  };
+
+  const handleProductSubmit = (
+    productForm: ProductForm,
+    resetForm: () => void,
+    setEditingProduct: (id: string | null) => void,
+    setShowForm: (show: boolean) => void
+  ) => {
+    productApplicationService.handleProductSubmit(
+      productForm,
+      editingProduct,
+      setProducts,
+      resetForm,
+      setEditingProduct,
+      setShowForm,
+      addNotification
+    );
+  };
+
+  const startEditProduct = (
+    product: ProductWithUI,
+    setEditingProduct: (id: string) => void,
+    setProductForm: (form: ProductForm) => void,
+    setShowForm: (show: boolean) => void
+  ) => {
+    productApplicationService.startEditProduct(
+      product,
+      setEditingProduct,
+      setProductForm,
+      setShowForm
+    );
+  };
 
   const deleteCoupon = (couponCode: string) => {
     couponApplicationService.deleteCoupon(couponCode, null, setCoupons, () => {}, addNotification);
@@ -80,7 +110,6 @@ export function AdminPage({
     e.preventDefault();
     handleProductSubmit(
       productForm,
-      editingProduct,
       () => setProductForm({ name: "", price: 0, stock: 0, description: "", discounts: [] }),
       setEditingProduct,
       setShowProductForm
