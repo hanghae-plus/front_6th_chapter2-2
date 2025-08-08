@@ -18,6 +18,11 @@ export function ProductView({ product, cart, setCart, handleNotificationAdd }: P
 
   const formattedPrice = remainingStock <= 0 ? "SOLD OUT" : `₩${product.price.toLocaleString()}`
 
+  const maxDiscountRatePercent = product.discounts.length > 0 ? Math.max(...product.discounts.map((d) => d.rate)) * 100 : 0
+
+  const discountString =
+    product.discounts.length > 0 ? `${product.discounts[0].quantity}개 이상 구매시 할인 ${product.discounts[0].rate * 100}%` : ""
+
   function handleProductAddToCart(product: ProductWithUI) {
     if (!canAddToCart(cart, product)) {
       const remainingStock = getRemainingStock(product, cart)
@@ -45,9 +50,7 @@ export function ProductView({ product, cart, setCart, handleNotificationAdd }: P
         {product.isRecommended && <span className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">BEST</span>}
 
         {product.discounts.length > 0 && (
-          <span className="absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded">
-            ~{Math.max(...product.discounts.map((d) => d.rate)) * 100}%
-          </span>
+          <span className="absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded">~{maxDiscountRatePercent}%</span>
         )}
       </div>
 
@@ -59,11 +62,7 @@ export function ProductView({ product, cart, setCart, handleNotificationAdd }: P
         {/* 가격 정보 */}
         <div className="mb-3">
           <p className="text-lg font-bold text-gray-900">{formattedPrice}</p>
-          {product.discounts.length > 0 && (
-            <p className="text-xs text-gray-500">
-              {product.discounts[0].quantity}개 이상 구매시 할인 {product.discounts[0].rate * 100}%
-            </p>
-          )}
+          {product.discounts.length > 0 && <p className="text-xs text-gray-500">{discountString}</p>}
         </div>
 
         {/* 재고 상태 */}
@@ -76,11 +75,11 @@ export function ProductView({ product, cart, setCart, handleNotificationAdd }: P
 
         {/* 장바구니 버튼 */}
         <button
-          onClick={() => handleProductAddToCart(product)}
-          disabled={remainingStock <= 0}
           className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
             remainingStock <= 0 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-gray-900 text-white hover:bg-gray-800"
           }`}
+          disabled={remainingStock <= 0}
+          onClick={() => handleProductAddToCart(product)}
         >
           {remainingStock <= 0 ? "품절" : "장바구니 담기"}
         </button>

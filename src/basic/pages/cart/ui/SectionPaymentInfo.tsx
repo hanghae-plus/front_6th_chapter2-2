@@ -16,6 +16,7 @@ export function SectionPaymentInfo({
   handleNotificationAdd: HandleNotificationAdd;
 }) {
   const totals = calculateCartTotal(cart, selectedCoupon);
+  const discountAmount = totals.totalBeforeDiscount - totals.totalAfterDiscount;
 
   function handleOrderComplete() {
     const orderNumber = `ORD-${Date.now()}`;
@@ -34,10 +35,10 @@ export function SectionPaymentInfo({
           <span className="text-gray-600">상품 금액</span>
           <span className="font-medium">{totals.totalBeforeDiscount.toLocaleString()}원</span>
         </div>
-        {totals.totalBeforeDiscount - totals.totalAfterDiscount > 0 && (
+        {discountAmount > 0 && (
           <div className="flex justify-between text-red-500">
             <span>할인 금액</span>
-            <span>-{(totals.totalBeforeDiscount - totals.totalAfterDiscount).toLocaleString()}원</span>
+            <span>-{discountAmount.toLocaleString()}원</span>
           </div>
         )}
         <div className="flex justify-between py-2 border-t border-gray-200">
