@@ -1,13 +1,11 @@
+import { useAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 
+import { searchTermAtom } from '../../atoms';
 import { useDebounce } from '../../utils/hooks/useDebounce';
 
-interface SearchBarProps {
-  searchTerm: string;
-  setSearchTerm: (value: string) => void;
-}
-
-export const SearchBar = ({ searchTerm, setSearchTerm }: SearchBarProps) => {
+export const SearchBar = () => {
+  const [searchTerm, setSearchTerm] = useAtom(searchTermAtom);
   const [inputValue, setInputValue] = useState('');
 
   const debouncedValue = useDebounce(inputValue, 500);

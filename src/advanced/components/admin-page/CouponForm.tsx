@@ -1,20 +1,23 @@
+import { useSetAtom } from 'jotai';
+
 import { CouponFormData } from '../../../types';
+import { addNotificationAtom } from '../../atoms';
 
 interface CouponFormProps {
   onSubmit: (e: React.FormEvent) => void;
   couponForm: CouponFormData;
   setCouponForm: React.Dispatch<React.SetStateAction<CouponFormData>>;
-  closeCouponForm: () => void;
-  addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
+  setShowCouponForm: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const CouponForm = ({
   onSubmit,
   couponForm,
   setCouponForm,
-  closeCouponForm,
-  addNotification,
+  setShowCouponForm,
 }: CouponFormProps) => {
+  const addNotification = useSetAtom(addNotificationAtom);
+
   return (
     <div className='mt-6 p-4 bg-gray-50 rounded-lg'>
       <form onSubmit={onSubmit} className='space-y-4'>
@@ -78,14 +81,20 @@ export const CouponForm = ({
                 const value = parseInt(e.target.value) || 0;
                 if (couponForm.discountType === 'percentage') {
                   if (value > 100) {
-                    addNotification('할인율은 100%를 초과할 수 없습니다', 'error');
+                    addNotification({
+                      message: '할인율은 100%를 초과할 수 없습니다',
+                      type: 'error',
+                    });
                     setCouponForm({ ...couponForm, discountValue: 100 });
                   } else if (value < 0) {
                     setCouponForm({ ...couponForm, discountValue: 0 });
                   }
                 } else {
                   if (value > 100000) {
-                    addNotification('할인 금액은 100,000원을 초과할 수 없습니다', 'error');
+                    addNotification({
+                      message: '할인 금액은 100,000원을 초과할 수 없습니다',
+                      type: 'error',
+                    });
                     setCouponForm({ ...couponForm, discountValue: 100000 });
                   } else if (value < 0) {
                     setCouponForm({ ...couponForm, discountValue: 0 });
@@ -101,7 +110,7 @@ export const CouponForm = ({
         <div className='flex justify-end gap-3'>
           <button
             type='button'
-            onClick={closeCouponForm}
+            onClick={() => setShowCouponForm(false)}
             className='px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50'
           >
             취소

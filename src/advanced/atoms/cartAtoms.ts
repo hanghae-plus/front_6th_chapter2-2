@@ -1,22 +1,22 @@
 import { atom } from 'jotai';
 
-import { CartItem, CartItemWithDetail } from '../types';
 import { selectedCouponAtom } from './couponsAtoms';
 import { productsAtom } from './productsAtoms';
+import { CartItem } from '../../types';
 import { calculateCartTotal } from '../models/cart';
 
-export const cartAtom = atom<Omit<CartItem, 'product'>[]>([]);
+export const cartAtom = atom<CartItem[]>([]);
 
-export const cartWithDetailsAtom = atom((get): CartItemWithDetail[] => {
+export const cartWithDetailsAtom = atom((get): CartItem[] => {
   const cart = get(cartAtom);
   const products = get(productsAtom);
 
   return cart
     .map((item) => {
-      const product = products.find((p) => p.id === item.productId);
+      const product = products.find((p) => p.id === item.product.id);
       return product ? { ...item, product } : null;
     })
-    .filter((item): item is CartItemWithDetail => item !== null);
+    .filter((item): item is CartItem => item !== null);
 });
 
 export const totalItemCountAtom = atom((get) => {

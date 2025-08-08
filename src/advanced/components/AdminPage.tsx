@@ -1,91 +1,37 @@
 import { useState } from 'react';
 
-import { Product, Coupon, ProductFormData } from '../../types';
+import { initialProductForm } from '../constants';
 import { CouponForm } from './admin-page/CouponForm';
 import { CouponList } from './admin-page/CouponList';
 import { ProductForm } from './admin-page/ProductForm';
 import { ProductTable } from './admin-page/ProductTable';
+import { useCoupons } from '../hooks/useCoupons';
+import { useProducts } from '../hooks/useProducts';
 
-interface AdminPageProps {
-  products: Product[];
-  coupons: Coupon[];
-  addProduct: (newProduct: Omit<Product, 'id'>) => void;
-  updateProduct: (productId: string, updates: Partial<Product>) => void;
-  deleteProduct: (productId: string) => void;
-  addCoupon: (newCoupon: Coupon) => void;
-  deleteCoupon: (couponCode: string) => void;
-  addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
-}
-
-export function AdminPage({
-  products,
-  coupons,
-  addProduct,
-  updateProduct,
-  deleteProduct,
-  addCoupon,
-  deleteCoupon,
-  addNotification,
-}: AdminPageProps) {
+export function AdminPage() {
   const [activeTab, setActiveTab] = useState<'products' | 'coupons'>('products');
-  const [showProductForm, setShowProductForm] = useState(false);
-  const [showCouponForm, setShowCouponForm] = useState(false);
 
-  const [editingProduct, setEditingProduct] = useState<string | null>(null);
-  const [productForm, setProductForm] = useState<ProductFormData>({
-    name: '',
-    price: 0,
-    stock: 0,
-    description: '',
-    discounts: [] as Array<{ quantity: number; rate: number }>,
-  });
+  const {
+    showProductForm,
+    startAddProduct,
+    startEditProduct,
+    productForm,
+    editingProduct,
+    setShowProductForm,
+    setEditingProduct,
+    handleProductSubmit,
+    setProductForm,
+  } = useProducts();
 
-  const [couponForm, setCouponForm] = useState({
-    name: '',
-    code: '',
-    discountType: 'amount' as 'amount' | 'percentage',
-    discountValue: 0,
-  });
+  const { couponForm, setCouponForm, handleCouponSubmit, showCouponForm, setShowCouponForm } =
+    useCoupons();
 
-  const handleProductSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editingProduct && editingProduct !== 'new') {
-      updateProduct(editingProduct, productForm);
-      setEditingProduct(null);
-    } else {
-      addProduct({
-        ...productForm,
-        discounts: productForm.discounts,
-      });
-    }
-    setProductForm({ name: '', price: 0, stock: 0, description: '', discounts: [] });
+  const handleClickCancel = () => {
     setEditingProduct(null);
     setShowProductForm(false);
+    setProductForm(initialProductForm);
   };
 
-  const handleCouponSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    addCoupon(couponForm);
-    setCouponForm({
-      name: '',
-      code: '',
-      discountType: 'amount',
-      discountValue: 0,
-    });
-    setShowCouponForm(false);
-  };
-
-  const editProduct = (product: Product) => {
-    setEditingProduct(product.id);
-    setProductForm({
-      name: product.name,
-      price: product.price,
-      stock: product.stock,
-      description: product.description || '',
-      discounts: product.discounts || [],
-    });
-    setShowProductForm(true);
-  };
   return (
     <div className='max-w-6xl mx-auto'>
       <div className='mb-8'>
@@ -123,17 +69,7 @@ export function AdminPage({
             <div className='flex justify-between items-center'>
               <h2 className='text-lg font-semibold'>상품 목록</h2>
               <button
-                onClick={() => {
-                  setEditingProduct('new');
-                  setProductForm({
-                    name: '',
-                    price: 0,
-                    stock: 0,
-                    description: '',
-                    discounts: [],
-                  });
-                  setShowProductForm(true);
-                }}
+                onClick={() => startAddProduct()}
                 className='px-4 py-2 bg-gray-900 text-white text-sm rounded-md hover:bg-gray-800'
               >
                 새 상품 추가
@@ -141,24 +77,15 @@ export function AdminPage({
             </div>
           </div>
 
-          <ProductTable
-            activeTab={activeTab}
-            products={products}
-            onEdit={editProduct}
-            onDelete={deleteProduct}
-          />
+          <ProductTable onEdit={startEditProduct} />
 
           {showProductForm && (
             <ProductForm
               productForm={productForm}
               setProductForm={setProductForm}
-              onSubmit={handleProductSubmit}
-              onCancel={() => {
-                setEditingProduct(null);
-                setShowProductForm(false);
-              }}
               editingProduct={editingProduct}
-              addNotification={addNotification}
+              onSubmit={handleProductSubmit}
+              onCancel={handleClickCancel}
             />
           )}
         </section>
@@ -168,19 +95,14 @@ export function AdminPage({
             <h2 className='text-lg font-semibold'>쿠폰 관리</h2>
           </div>
           <div className='p-6'>
-            <CouponList
-              coupons={coupons}
-              deleteCoupon={deleteCoupon}
-              toggleCouponForm={() => setShowCouponForm(!showCouponForm)}
-            />
+            <CouponList setShowCouponForm={setShowCouponForm} />
 
             {showCouponForm && (
               <CouponForm
-                onSubmit={handleCouponSubmit}
                 couponForm={couponForm}
                 setCouponForm={setCouponForm}
-                closeCouponForm={() => setShowCouponForm(false)}
-                addNotification={addNotification}
+                onSubmit={handleCouponSubmit}
+                setShowCouponForm={setShowCouponForm}
               />
             )}
           </div>

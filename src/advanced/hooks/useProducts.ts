@@ -1,22 +1,26 @@
-import { useCallback } from 'react';
+import { useAtom, useSetAtom } from 'jotai';
+import { useCallback, useState } from 'react';
 
-import { Product, Discount } from '../../types';
-import { initialProducts } from '../constants';
+import { Product, Discount, ProductFormData } from '../..//types';
+import { addNotificationAtom, productsAtom } from '../atoms';
+import { initialProductForm } from '../constants';
 import * as discountModel from '../models/discount';
 import * as productModel from '../models/product';
-import { useLocalStorage } from '../utils/hooks/useLocalStorage';
 
-interface UseProductsProps {
-  addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
-}
+export const useProducts = () => {
+  const addNotification = useSetAtom(addNotificationAtom);
 
-export const useProducts = ({ addNotification }: UseProductsProps) => {
-  const [products, setProducts] = useLocalStorage<Product[]>('products', initialProducts);
+  const [products, setProducts] = useAtom(productsAtom);
+
+  const [productForm, setProductForm] = useState<ProductFormData>(initialProductForm);
+
+  const [editingProduct, setEditingProduct] = useState<string | null>(null);
+  const [showProductForm, setShowProductForm] = useState(false);
 
   const addProduct = useCallback(
     (newProduct: Omit<Product, 'id'>) => {
       setProducts((prevProducts) => productModel.addProduct(prevProducts, newProduct));
-      addNotification('상품이 추가되었습니다.', 'success');
+      addNotification({ message: '상품이 추가되었습니다.', type: 'success' });
     },
     [setProducts, addNotification],
   );
@@ -24,7 +28,7 @@ export const useProducts = ({ addNotification }: UseProductsProps) => {
   const updateProduct = useCallback(
     (productId: string, updates: Partial<Product>) => {
       setProducts((prevProducts) => productModel.updateProduct(prevProducts, productId, updates));
-      addNotification('상품이 수정되었습니다.', 'success');
+      addNotification({ message: '상품이 수정되었습니다.', type: 'success' });
     },
     [setProducts, addNotification],
   );
@@ -32,7 +36,7 @@ export const useProducts = ({ addNotification }: UseProductsProps) => {
   const deleteProduct = useCallback(
     (productId: string) => {
       setProducts((prevProducts) => productModel.deleteProduct(prevProducts, productId));
-      addNotification('상품이 삭제되었습니다.', 'success');
+      addNotification({ message: '상품이 삭제되었습니다.', type: 'success' });
     },
     [setProducts, addNotification],
   );
@@ -64,6 +68,46 @@ export const useProducts = ({ addNotification }: UseProductsProps) => {
     [setProducts],
   );
 
+  const handleProductSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editingProduct && editingProduct !== 'new') {
+      updateProduct(editingProduct, productForm);
+      setEditingProduct(null);
+    } else {
+      addProduct({
+        ...productForm,
+        discounts: productForm.discounts,
+      });
+    }
+    setProductForm({ name: '', price: 0, stock: 0, description: '', discounts: [] });
+    setEditingProduct(null);
+    setShowProductForm(false);
+  };
+
+  const startAddProduct = () => {
+    setEditingProduct('new');
+    setProductForm({
+      name: '',
+      price: 0,
+      stock: 0,
+      description: '',
+      discounts: [],
+    });
+    setShowProductForm(true);
+  };
+
+  const startEditProduct = (product: Product) => {
+    setEditingProduct(product.id);
+    setProductForm({
+      name: product.name,
+      price: product.price,
+      stock: product.stock,
+      description: product.description || '',
+      discounts: product.discounts || [],
+    });
+    setShowProductForm(true);
+  };
+
   return {
     products,
     addProduct,
@@ -72,5 +116,14 @@ export const useProducts = ({ addNotification }: UseProductsProps) => {
     updateProductStock,
     addProductDiscount,
     removeProductDiscount,
+    editingProduct,
+    setEditingProduct,
+    productForm,
+    setProductForm,
+    showProductForm,
+    setShowProductForm,
+    startEditProduct,
+    startAddProduct,
+    handleProductSubmit,
   };
 };

@@ -1,4 +1,20 @@
 import { Product, Coupon } from '../../types';
+import { CouponFormData, ProductFormData } from '../types';
+
+export const initialProductForm: ProductFormData = {
+  name: '',
+  price: 0,
+  stock: 0,
+  description: '',
+  discounts: [] as Array<{ quantity: number; rate: number }>,
+};
+
+export const initialCouponForm: CouponFormData = {
+  name: '',
+  code: '',
+  discountType: 'amount' as 'amount' | 'percentage',
+  discountValue: 0,
+};
 
 export const initialProducts: Product[] = [
   {

@@ -1,7 +1,7 @@
 import { atom } from 'jotai';
 
+import { Coupon } from '../../types';
 import { initialCoupons } from '../constants';
-import { Coupon } from '../types';
 
 export const couponsAtom = atom<Coupon[]>(initialCoupons);
 

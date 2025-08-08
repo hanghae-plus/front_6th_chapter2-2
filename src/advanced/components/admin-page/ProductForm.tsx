@@ -1,23 +1,26 @@
+import { useSetAtom } from 'jotai';
+
 import { ProductFormData } from '../../../types';
+import { addNotificationAtom } from '../../atoms';
 import { ChevronDownIcon } from '../icons';
 
 interface ProductFormProps {
   productForm: ProductFormData;
   setProductForm: React.Dispatch<React.SetStateAction<ProductFormData>>;
-  onSubmit: (e: React.FormEvent) => void;
-  onCancel: () => void;
   editingProduct: string | null;
-  addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
+  onCancel: () => void;
+  onSubmit: (e: React.FormEvent) => void;
 }
 
 export const ProductForm = ({
   productForm,
   setProductForm,
-  onSubmit,
-  onCancel,
   editingProduct,
-  addNotification,
+  onCancel,
+  onSubmit,
 }: ProductFormProps) => {
+  const addNotification = useSetAtom(addNotificationAtom);
+
   return (
     <div className='p-6 border-t border-gray-200 bg-gray-50'>
       <form onSubmit={onSubmit} className='space-y-4'>
@@ -63,7 +66,7 @@ export const ProductForm = ({
                 if (value === '') {
                   setProductForm({ ...productForm, price: 0 });
                 } else if (parseInt(value) < 0) {
-                  addNotification('가격은 0보다 커야 합니다', 'error');
+                  addNotification({ message: '가격은 0보다 커야 합니다', type: 'error' });
                   setProductForm({ ...productForm, price: 0 });
                 }
               }}
@@ -91,10 +94,10 @@ export const ProductForm = ({
                 if (value === '') {
                   setProductForm({ ...productForm, stock: 0 });
                 } else if (parseInt(value) < 0) {
-                  addNotification('재고는 0보다 커야 합니다', 'error');
+                  addNotification({ message: '재고는 0보다 커야 합니다', type: 'error' });
                   setProductForm({ ...productForm, stock: 0 });
                 } else if (parseInt(value) > 9999) {
-                  addNotification('재고는 9999개를 초과할 수 없습니다', 'error');
+                  addNotification({ message: '재고는 9999개를 초과할 수 없습니다', type: 'error' });
                   setProductForm({ ...productForm, stock: 9999 });
                 }
               }}
@@ -166,16 +169,7 @@ export const ProductForm = ({
         <div className='flex justify-end gap-3'>
           <button
             type='button'
-            onClick={() => {
-              onCancel();
-              setProductForm({
-                name: '',
-                price: 0,
-                stock: 0,
-                description: '',
-                discounts: [],
-              });
-            }}
+            onClick={onCancel}
             className='px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50'
           >
             취소

@@ -1,25 +1,26 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useAtom, useSetAtom } from 'jotai';
+import { useState, useCallback } from 'react';
 
 import { Coupon } from '../../types';
+import { addNotificationAtom, couponsAtom } from '../atoms';
+import { initialCouponForm } from '../constants';
 import * as couponModel from '../models/coupon';
 
-interface UseCouponsProps {
-  addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
-}
+export function useCoupons() {
+  const addNotification = useSetAtom(addNotificationAtom);
 
-export function useCoupons({ addNotification }: UseCouponsProps) {
-  const [coupons, setCoupons] = useState<Coupon[]>(couponModel.loadCouponsFromStorage);
+  const [coupons, setCoupons] = useAtom(couponsAtom);
+
+  const [couponForm, setCouponForm] = useState(initialCouponForm);
+
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
-
-  useEffect(() => {
-    couponModel.saveCouponsToStorage(coupons);
-  }, [coupons]);
+  const [showCouponForm, setShowCouponForm] = useState(false);
 
   const applyCoupon = useCallback(
     (coupon: Coupon | null) => {
       setSelectedCoupon(coupon);
       if (coupon) {
-        addNotification(`${coupon.name} 쿠폰이 적용되었습니다.`);
+        addNotification({ message: `${coupon.name} 쿠폰이 적용되었습니다.` });
       }
     },
     [addNotification],
@@ -29,7 +30,7 @@ export function useCoupons({ addNotification }: UseCouponsProps) {
     (newCoupon: Coupon) => {
       const newCoupons = couponModel.addNewCoupon(coupons, newCoupon);
       setCoupons(newCoupons);
-      addNotification('쿠폰이 추가되었습니다.', 'success');
+      addNotification({ message: '쿠폰이 추가되었습니다.', type: 'success' });
     },
     [coupons, addNotification],
   );
@@ -42,10 +43,22 @@ export function useCoupons({ addNotification }: UseCouponsProps) {
       if (selectedCoupon?.code === couponCode) {
         setSelectedCoupon(null);
       }
-      addNotification('쿠폰이 삭제되었습니다.', 'success');
+      addNotification({ message: '쿠폰이 삭제되었습니다.', type: 'success' });
     },
     [coupons, selectedCoupon, addNotification],
   );
+
+  const handleCouponSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    addCoupon(couponForm);
+    setCouponForm({
+      name: '',
+      code: '',
+      discountType: 'amount',
+      discountValue: 0,
+    });
+    setShowCouponForm(false);
+  };
 
   return {
     coupons,
@@ -53,5 +66,10 @@ export function useCoupons({ addNotification }: UseCouponsProps) {
     applyCoupon,
     addCoupon,
     deleteCoupon,
+    showCouponForm,
+    setShowCouponForm,
+    couponForm,
+    setCouponForm,
+    handleCouponSubmit,
   };
 }

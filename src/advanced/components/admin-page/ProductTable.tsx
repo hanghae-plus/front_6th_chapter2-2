@@ -1,14 +1,14 @@
 import { Product } from '../../../types';
+import { useProducts } from '../../hooks/useProducts';
 import { formatPrice } from '../../utils/formatters';
 
 interface ProductTableProps {
-  activeTab: 'products' | 'coupons';
-  products: Product[];
   onEdit: (product: Product) => void;
-  onDelete: (productId: string) => void;
 }
 
-export const ProductTable = ({ activeTab, products, onEdit, onDelete }: ProductTableProps) => {
+export const ProductTable = ({ onEdit }: ProductTableProps) => {
+  const { products, deleteProduct } = useProducts();
+
   return (
     <div className='overflow-x-auto'>
       <table className='w-full'>
@@ -32,7 +32,7 @@ export const ProductTable = ({ activeTab, products, onEdit, onDelete }: ProductT
           </tr>
         </thead>
         <tbody className='bg-white divide-y divide-gray-200'>
-          {(activeTab === 'products' ? products : products).map((product) => (
+          {products.map((product) => (
             <tr key={product.id} className='hover:bg-gray-50'>
               <td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900'>
                 {product.name}
@@ -64,7 +64,7 @@ export const ProductTable = ({ activeTab, products, onEdit, onDelete }: ProductT
                   수정
                 </button>
                 <button
-                  onClick={() => onDelete(product.id)}
+                  onClick={() => deleteProduct(product.id)}
                   className='text-red-600 hover:text-red-900'
                 >
                   삭제

@@ -1,13 +1,13 @@
-import { Coupon } from '../../../types';
+import { useCoupons } from '../../hooks/useCoupons';
 import { PlusIcon, TrashIcon } from '../icons';
 
 interface CouponListProps {
-  coupons: Coupon[];
-  deleteCoupon: (couponCode: string) => void;
-  toggleCouponForm: () => void;
+  setShowCouponForm: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const CouponList = ({ coupons, deleteCoupon, toggleCouponForm }: CouponListProps) => {
+export const CouponList = ({ setShowCouponForm }: CouponListProps) => {
+  const { coupons, deleteCoupon } = useCoupons();
+
   return (
     <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
       {coupons.map((coupon) => (
@@ -39,7 +39,7 @@ export const CouponList = ({ coupons, deleteCoupon, toggleCouponForm }: CouponLi
 
       <div className='border-2 border-dashed border-gray-300 rounded-lg p-4 flex items-center justify-center hover:border-gray-400 transition-colors'>
         <button
-          onClick={toggleCouponForm}
+          onClick={() => setShowCouponForm((prev) => !prev)}
           className='text-gray-400 hover:text-gray-600 flex flex-col items-center'
         >
           <PlusIcon />

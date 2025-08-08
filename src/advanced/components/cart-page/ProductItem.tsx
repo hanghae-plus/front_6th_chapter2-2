@@ -1,14 +1,15 @@
 import { Product } from '../../../types';
-import { formatPrice } from '../../utils/formatters';
+import { useCart } from '../../hooks/useCart';
+import { formatPercentage, formatPrice } from '../../utils/formatters';
 import { ProductIcon } from '../icons';
 
 interface ProductItemProps {
   product: Product;
-  remainingStock: number;
-  addToCart: (product: Product) => void;
 }
 
-export const ProductItem = ({ product, remainingStock, addToCart }: ProductItemProps) => {
+export const ProductItem = ({ product }: ProductItemProps) => {
+  const { getRemainingStock, addToCart } = useCart();
+  const remainingStock = getRemainingStock(product);
   return (
     <div
       key={product.id}
@@ -45,7 +46,8 @@ export const ProductItem = ({ product, remainingStock, addToCart }: ProductItemP
           </p>
           {product.discounts.length > 0 && (
             <p className='text-xs text-gray-500'>
-              {product.discounts[0].quantity}개 이상 구매시 할인 {product.discounts[0].rate * 100}%
+              {product.discounts[0].quantity}개 이상 구매시 할인{' '}
+              {formatPercentage(product.discounts[0].rate)}
             </p>
           )}
         </div>

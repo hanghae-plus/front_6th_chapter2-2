@@ -1,19 +1,13 @@
+import { useAtom } from 'jotai';
+
 import { ProductItem } from './ProductItem';
-import { Product } from '../../../types';
+import { searchTermAtom } from '../../atoms';
+import { useProducts } from '../../hooks/useProducts';
 
-interface ProductListProps {
-  products: Product[];
-  searchTerm: string;
-  getRemainingStock: (product: Product) => number;
-  addToCart: (product: Product) => void;
-}
+export const ProductList = () => {
+  const [searchTerm] = useAtom(searchTermAtom);
+  const { products } = useProducts();
 
-export const ProductList = ({
-  products,
-  searchTerm,
-  getRemainingStock,
-  addToCart,
-}: ProductListProps) => {
   const filteredProducts = searchTerm
     ? products.filter(
         (product) =>
@@ -38,14 +32,7 @@ export const ProductList = ({
         ) : (
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
             {filteredProducts.map((product) => {
-              const remainingStock = getRemainingStock(product);
-              return (
-                <ProductItem
-                  product={product}
-                  remainingStock={remainingStock}
-                  addToCart={addToCart}
-                />
-              );
+              return <ProductItem product={product} />;
             })}
           </div>
         )}

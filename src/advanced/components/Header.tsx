@@ -1,25 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useAtom } from 'jotai';
 
+import { isAdminAtom, searchTermAtom, cartAtom, totalItemCountAtom } from '../atoms';
 import { SearchBar } from './header/SearchBar';
 import { CartIcon } from './icons';
-import { CartItem } from '../../types';
 
-interface HeaderProps {
-  isAdmin: boolean;
-  searchTerm: string;
-  setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
-  setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>;
-  cart: CartItem[];
-}
+export const Header = () => {
+  const [isAdmin, setIsAdmin] = useAtom(isAdminAtom);
+  const [searchTerm, setSearchTerm] = useAtom(searchTermAtom);
+  const [cart] = useAtom(cartAtom);
 
-export const Header = ({ isAdmin, searchTerm, setSearchTerm, setIsAdmin, cart }: HeaderProps) => {
-  const [totalItemCount, setTotalItemCount] = useState(0);
-
-  useEffect(() => {
-    const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-    setTotalItemCount(count);
-  }, [cart]);
-
+  const [totalItemCount] = useAtom(totalItemCountAtom);
   return (
     <header className='bg-white shadow-sm sticky top-0 z-40 border-b'>
       <div className='max-w-7xl mx-auto px-4'>

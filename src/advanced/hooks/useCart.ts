@@ -1,22 +1,15 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useCallback } from 'react';
 
-import { CartItem, Product } from '../../types';
+import { Product } from '../../types';
+import { addNotificationAtom, cartAtom, productsAtom } from '../atoms';
 import * as cartModel from '../models/cart';
 
-interface UseCartProps {
-  products: Product[];
-  addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
-}
+export function useCart() {
+  const addNotification = useSetAtom(addNotificationAtom);
+  const products = useAtomValue(productsAtom);
 
-export function useCart({ products, addNotification }: UseCartProps) {
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem('cart');
-    return saved ? JSON.parse(saved) : [];
-  });
-
-  useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cart));
-  }, [cart]);
+  const [cart, setCart] = useAtom(cartAtom);
 
   const getRemainingStock = useCallback(
     (product: Product): number => {
@@ -29,13 +22,13 @@ export function useCart({ products, addNotification }: UseCartProps) {
     (product: Product) => {
       const remainingStock = getRemainingStock(product);
       if (remainingStock <= 0) {
-        addNotification('재고가 부족합니다!', 'error');
+        addNotification({ message: '재고가 부족합니다!', type: 'error' });
         return;
       }
 
       const newCart = cartModel.addItemToCart(cart, product);
       setCart(newCart);
-      addNotification('장바구니에 담았습니다', 'success');
+      addNotification({ message: '장바구니에 담았습니다', type: 'success' });
     },
     [cart, addNotification, getRemainingStock],
   );
@@ -54,7 +47,7 @@ export function useCart({ products, addNotification }: UseCartProps) {
       if (!product) return;
 
       if (newQuantity > product.stock) {
-        addNotification(`재고는 ${product.stock}개까지만 있습니다.`, 'error');
+        addNotification({ message: `재고는 ${product.stock}개까지만 있습니다.`, type: 'error' });
         return;
       }
 

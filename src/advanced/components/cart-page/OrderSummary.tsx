@@ -1,38 +1,25 @@
+import { useAtomValue, useSetAtom } from 'jotai';
 import { useCallback } from 'react';
 
-import { CartItem, Coupon } from '../../../types';
+import { addNotificationAtom, totalsAtom } from '../../atoms';
+import { useCart } from '../../hooks/useCart';
+import { useCoupons } from '../../hooks/useCoupons';
 import { calculateItemTotal } from '../../utils/cart';
 import { BagIcon, CloseIcon } from '../icons';
 
-interface OrderSummaryProps {
-  cart: CartItem[];
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, newQuantity: number) => void;
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
-  applyCoupon: (coupon: Coupon) => void;
-  totals: {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
-  };
-  addNotification: (message: string, type?: 'error' | 'success' | 'warning') => void;
-  clearCart: () => void;
-}
+export const OrderSummary = () => {
+  const addNotification = useSetAtom(addNotificationAtom);
+  const { cart, removeFromCart, updateQuantity, clearCart } = useCart();
+  const { coupons, selectedCoupon, applyCoupon } = useCoupons();
 
-export const OrderSummary = ({
-  cart,
-  removeFromCart,
-  updateQuantity,
-  coupons,
-  selectedCoupon,
-  applyCoupon,
-  totals,
-  addNotification,
-  clearCart,
-}: OrderSummaryProps) => {
+  const totals = useAtomValue(totalsAtom);
+
   const completeOrder = useCallback(() => {
     const orderNumber = `ORD-${Date.now()}`;
-    addNotification(`주문이 완료되었습니다. 주문번호: ${orderNumber}`, 'success');
+    addNotification({
+      message: `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
+      type: 'success',
+    });
     clearCart();
   }, [addNotification]);
 
