@@ -10,11 +10,9 @@ import PageCart from "./pages/cart/PageCart.tsx";
 
 const App = () => {
   const { products, setProducts } = useProducts();
-  const { coupons, setCoupons, selectedCoupon, setSelectedCoupon } =
-    useCoupons();
+  const { coupons, setCoupons, selectedCoupon, setSelectedCoupon } = useCoupons();
   const { cart, setCart } = useCart();
-  const { notifications, setNotifications, handleNotificationAdd } =
-    useNotification();
+  const { notifications, setNotifications, handleNotificationAdd } = useNotification();
 
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -22,18 +20,9 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Notifications
-        notifications={notifications}
-        setNotifications={setNotifications}
-      />
+      <Notifications notifications={notifications} setNotifications={setNotifications} />
 
-      <Header
-        isAdmin={isAdmin}
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        setIsAdmin={setIsAdmin}
-        cart={cart}
-      />
+      <Header isAdmin={isAdmin} searchTerm={searchTerm} setSearchTerm={setSearchTerm} setIsAdmin={setIsAdmin} cart={cart} />
 
       <main className="max-w-7xl mx-auto px-4 py-8">
         {isAdmin ? (
