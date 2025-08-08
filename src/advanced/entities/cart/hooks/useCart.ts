@@ -1,14 +1,13 @@
-import { useLocalStorageObject } from "@shared";
+import { useAtom, useAtomValue } from "jotai";
 import { calculateItemTotal } from "@entities/cart/libs";
-import { Cart } from "@entities/cart/types";
+import { cartAtom, cartItemCountAtom } from "../model/atoms";
+import type { Cart } from "../types";
 
 export function useCart() {
-  const [cart, setCart] = useLocalStorageObject<Cart[]>("cart", []);
+  const [cart, setCart] = useAtom(cartAtom);
+  const cartItemCount = useAtomValue(cartItemCountAtom);
 
   const getItemTotal = (item: Cart) => calculateItemTotal(item, cart);
-
-  const getTotalItemCount = () =>
-    cart.reduce((sum, item) => sum + item.quantity, 0);
 
   const addItem = (item: Cart) => {
     const existingIndex = cart.findIndex((cartItem) => cartItem.id === item.id);
@@ -47,7 +46,7 @@ export function useCart() {
   return {
     cart,
     getItemTotal,
-    cartItemCount: getTotalItemCount(),
+    cartItemCount,
     addItem,
     removeItem,
     updateItemQuantity,

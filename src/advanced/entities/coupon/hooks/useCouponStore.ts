@@ -1,28 +1,10 @@
 import { useCallback } from "react";
-import type { Coupon } from "@entities/coupon/types";
-import { DiscountType } from "@entities/coupon/types";
-import { useLocalStorageObject } from "@shared";
-
-const initialCoupons: Coupon[] = [
-  {
-    name: "5000원 할인",
-    code: "AMOUNT5000",
-    discountType: DiscountType.AMOUNT,
-    discountValue: 5000,
-  },
-  {
-    name: "10% 할인",
-    code: "PERCENT10",
-    discountType: DiscountType.PERCENTAGE,
-    discountValue: 10,
-  },
-];
+import { useAtom } from "jotai";
+import { couponsAtom } from "../model/atoms";
+import type { Coupon } from "../types";
 
 export function useCouponStore() {
-  const [coupons, setCoupons] = useLocalStorageObject<Coupon[]>(
-    "coupons",
-    initialCoupons
-  );
+  const [coupons, setCoupons] = useAtom(couponsAtom);
 
   const addCoupon = useCallback(
     (newCoupon: Coupon) => {

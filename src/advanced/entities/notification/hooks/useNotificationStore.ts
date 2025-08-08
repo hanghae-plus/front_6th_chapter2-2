@@ -1,25 +1,24 @@
-import { useState, useCallback, useEffect } from "react";
-import { NotificationType } from "@entities/notification";
+import { useAtom, useSetAtom } from "jotai";
 import {
-  addGlobalNotification,
-  removeGlobalNotification,
-  subscribeToNotifications,
-} from "@shared/libs/notificationStore";
+  notificationsAtom,
+  addSuccessNotificationAtom,
+  addErrorNotificationAtom,
+  addWarningNotificationAtom,
+  removeNotificationAtom,
+} from "../model/atoms";
 
 export function useNotificationStore() {
-  const [notifications, setNotifications] = useState<NotificationType[]>([]);
-
-  useEffect(() => {
-    const unsubscribe = subscribeToNotifications(setNotifications);
-    return unsubscribe;
-  }, []);
-
-  const addNotification = useCallback(addGlobalNotification, []);
-  const removeNotification = useCallback(removeGlobalNotification, []);
+  const notifications = useAtom(notificationsAtom)[0];
+  const removeNotification = useSetAtom(removeNotificationAtom);
+  const addSuccessNotification = useSetAtom(addSuccessNotificationAtom);
+  const addErrorNotification = useSetAtom(addErrorNotificationAtom);
+  const addWarningNotification = useSetAtom(addWarningNotificationAtom);
 
   return {
     notifications,
-    addNotification,
     removeNotification,
+    addSuccessNotification,
+    addErrorNotification,
+    addWarningNotification,
   };
 }
