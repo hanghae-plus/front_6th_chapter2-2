@@ -11,7 +11,7 @@ import { Notification } from "./components/ui/notification/Notification";
 
 // pages
 import AdminPage from "./pages/Admin/AdminPage";
-import ShopPage from "./pages/Main/ShopPage/ShopPage";
+import ShopPage from "./pages/Main/ShopPage";
 
 // stores
 import { isAdminAtom } from "./stores/notificationStore";

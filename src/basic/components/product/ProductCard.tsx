@@ -1,4 +1,4 @@
-import { Product } from "../../../types";
+import { Product, Discount } from "../../../types";
 import { formatPrice } from "../../utils/formatters";
 
 interface ProductCardProps {
@@ -31,19 +31,19 @@ const ProductImage = ({ product }: { product: Product }) => (
         />
       </svg>
     </div>
-    <ProductBadges product={product} />
+    <ProductBadges isRecommended={product.isRecommended || false} discounts={product.discounts} />
   </div>
 );
 
 // 상품 배지 컴포넌트
-const ProductBadges = ({ product }: { product: Product }) => (
+const ProductBadges = ({ isRecommended, discounts }: { isRecommended: boolean; discounts: Discount[] }) => (
   <>
-    {product.isRecommended && (
+    {isRecommended && (
       <span className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">BEST</span>
     )}
-    {product.discounts.length > 0 && (
+    {discounts.length > 0 && (
       <span className="absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded">
-        ~{Math.max(...product.discounts.map((d) => d.rate)) * 100}%
+        ~{Math.max(...discounts.map((d) => d.rate)) * 100}%
       </span>
     )}
   </>
@@ -60,28 +60,28 @@ const ProductInfo = ({
   addToCart: (product: Product) => void;
 }) => (
   <div className="p-4">
-    <ProductHeader product={product} />
-    <ProductPrice product={product} />
+    <ProductHeader name={product.name} description={product.description || ""} />
+    <ProductPrice price={product.price} discounts={product.discounts} />
     <ProductStock remainingStock={remainingStock} />
     <ProductAction product={product} remainingStock={remainingStock} addToCart={addToCart} />
   </div>
 );
 
 // 상품 헤더 (이름, 설명)
-const ProductHeader = ({ product }: { product: Product }) => (
+const ProductHeader = ({ name, description }: { name: string; description: string }) => (
   <>
-    <h3 className="font-medium text-gray-900 mb-1">{product.name}</h3>
-    {product.description && <p className="text-sm text-gray-500 mb-2 line-clamp-2">{product.description}</p>}
+    <h3 className="font-medium text-gray-900 mb-1">{name}</h3>
+    {description && <p className="text-sm text-gray-500 mb-2 line-clamp-2">{description}</p>}
   </>
 );
 
 // 상품 가격 정보
-const ProductPrice = ({ product }: { product: Product }) => (
+const ProductPrice = ({ price, discounts }: { price: number; discounts: Discount[] }) => (
   <div className="mb-3">
-    <p className="text-lg font-bold text-gray-900">{formatPrice(product.price)}</p>
-    {product.discounts.length > 0 && (
+    <p className="text-lg font-bold text-gray-900">{formatPrice(price)}</p>
+    {discounts.length > 0 && (
       <p className="text-xs text-gray-500">
-        {product.discounts[0].quantity}개 이상 구매시 할인 {product.discounts[0].rate * 100}%
+        {discounts[0].quantity}개 이상 구매시 할인 {discounts[0].rate * 100}%
       </p>
     )}
   </div>

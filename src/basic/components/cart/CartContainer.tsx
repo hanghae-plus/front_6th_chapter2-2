@@ -33,7 +33,6 @@ export const CartContainer = ({
   onRemoveCoupon,
   onCompleteOrder,
 }: CartContainerProps) => {
-  // 새로운 models의 함수들 사용
   const cartTotals = calculateCartTotal(cart, selectedCoupon);
 
   const cartItemsWithDiscount = cart.map((item) => {

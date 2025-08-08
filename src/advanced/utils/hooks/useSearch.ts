@@ -3,7 +3,7 @@ import { useDebounce } from "./useDebounce";
 import { useAtomValue } from "jotai";
 
 // models
-import { searchProducts } from "../../models/product";
+import { filterSearchTermByProduct } from "../../models/product";
 
 // stores
 import { productsAtom } from "../../stores/productStore";

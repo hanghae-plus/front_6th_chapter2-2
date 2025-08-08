@@ -3,7 +3,6 @@ import { productsAtom, updateProductAtom } from "../../../stores/productStore";
 import { addNotificationAtom } from "../../../stores/notificationStore";
 import { withTryNotifySuccess } from "../../../utils/withNotify";
 import type { NotificationType } from "../../../types/admin";
-import { Product } from "../../../../types";
 
 export default function InventoryManagementFeature() {
   const products = useAtomValue(productsAtom);

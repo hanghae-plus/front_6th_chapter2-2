@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo } from "react";
 import { Product } from "../../../types";
 import { useDebounce } from "./useDebounce";
-import { searchProducts } from "../../models/product";
+import { filterSearchTermByProduct } from "../../models/product";
 
 interface UseSearchOptions {
   debounceMs?: number;
@@ -20,7 +20,7 @@ export const useSearch = (products: Product[], options: UseSearchOptions = {}) =
 
   // 새로운 models의 searchProducts 함수 사용
   const filteredProducts = useMemo(() => {
-    return searchProducts(products, debouncedSearchTerm);
+    return filterSearchTermByProduct(products, debouncedSearchTerm);
   }, [products, debouncedSearchTerm]);
 
   // 검색 상태 정보

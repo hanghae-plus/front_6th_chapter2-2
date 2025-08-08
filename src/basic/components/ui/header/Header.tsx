@@ -1,7 +1,3 @@
-import { useSearch } from "../../../utils/hooks/useSearch";
-import { useProducts } from "../../../hooks/useProducts";
-
-// Admin 헤더용 인터페이스
 interface AdminHeaderProps {
   onToggleAdmin: () => void;
 }

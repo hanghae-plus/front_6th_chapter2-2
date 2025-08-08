@@ -1,21 +1,15 @@
-import { CartContainer } from "../../../components/cart/CartContainer";
-import { ProductList } from "../../../components/product/ProductList";
+import { CartContainer } from "../../components/cart/CartContainer";
+import { ProductList } from "../../components/product/ProductList";
 import { useAtomValue, useSetAtom } from "jotai";
-import {
-  cartAtom,
-  addToCartAtom,
-  removeFromCartAtom,
-  updateQuantityAtom,
-  clearCartAtom,
-} from "../../../stores/cartStore";
-import { couponsAtom, selectedCouponAtom, applyCouponAtom, setSelectedCouponAtom } from "../../../stores/couponStore";
-import { productsAtom } from "../../../stores/productStore";
-import { addNotificationAtom } from "../../../stores/notificationStore";
-import { searchProducts } from "../../../models/product";
-import { getRemainingStock } from "../../../models/cart";
+import { cartAtom, addToCartAtom, removeFromCartAtom, updateQuantityAtom, clearCartAtom } from "../../stores/cartStore";
+import { couponsAtom, selectedCouponAtom, applyCouponAtom, setSelectedCouponAtom } from "../../stores/couponStore";
+import { productsAtom } from "../../stores/productStore";
+import { addNotificationAtom } from "../../stores/notificationStore";
+import { filterSearchTermByProduct } from "../../models/product";
+import { getRemainingStock } from "../../models/cart";
 import { useMemo } from "react";
-import { withTryNotifySuccess } from "../../../utils/withNotify";
-import type { Product, Coupon } from "../../../../types";
+import { withTryNotifySuccess } from "../../utils/withNotify";
+import type { Product, Coupon } from "../../../types";
 
 interface ShopPageProps {
   searchTerm: string;
@@ -29,7 +23,7 @@ export default function ShopPage({ searchTerm }: ShopPageProps) {
 
   // 검색된 상품들
   const filteredProducts = useMemo(() => {
-    return searchProducts(products, searchTerm);
+    return filterSearchTermByProduct(products, searchTerm);
   }, [products, searchTerm]);
 
   // 검색 상태 정보

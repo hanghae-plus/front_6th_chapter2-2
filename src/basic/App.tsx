@@ -8,7 +8,7 @@ import { Notification } from "./components/ui/notification/Notification";
 
 // pages
 import AdminPage from "./pages/Admin/AdminPage";
-import ShopPage from "./pages/Main/ShopPage/ShopPage";
+import ShopPage from "./pages/Main/ShopPage";
 
 const App = () => {
   // 알림 시스템

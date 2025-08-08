@@ -1,12 +1,11 @@
-import { CartContainer } from "../../../components/cart/CartContainer";
-import { ProductList } from "../../../components/product/ProductList";
-import { getRemainingStock } from "../../../utils/formatters";
-import { useProducts } from "../../../hooks/useProducts";
-import { useCoupons } from "../../../hooks/useCoupons";
-import { useCart } from "../../../hooks/useCart";
-import { useOrder } from "../../../hooks/useOrder";
-import { useSearch } from "../../../utils/hooks/useSearch";
-import type { Product } from "../../../../types";
+import { CartContainer } from "../../components/cart/CartContainer";
+import { ProductList } from "../../components/product/ProductList";
+import { getRemainingStock } from "../../utils/formatters";
+import { useProducts } from "../../hooks/useProducts";
+import { useCoupons } from "../../hooks/useCoupons";
+import { useCart } from "../../hooks/useCart";
+import { useOrder } from "../../hooks/useOrder";
+import { useSearch } from "../../utils/hooks/useSearch";
 import React from "react";
 
 interface ShopPageProps {
@@ -18,13 +17,10 @@ export default function ShopPage({ addNotification, onTotalItemCountChange }: Sh
   const { products } = useProducts();
   const { searchTerm, setSearchTerm, filteredProducts, searchInfo } = useSearch(products);
 
-  // 쿠폰 관련 로직을 ShopPage에서 직접 관리
   const { coupons, selectedCoupon, applyCoupon, setSelectedCoupon } = useCoupons(addNotification);
 
-  // 장바구니 관련 로직을 ShopPage에서 직접 관리
   const { cart, addToCart, removeFromCart, updateQuantity, clearCart, totalItemCount } = useCart(addNotification);
 
-  // 주문 관련 로직을 ShopPage에서 직접 관리
   const { completeOrder } = useOrder({ clearCart, addNotification });
 
   // totalItemCount가 변경될 때마다 부모에게 알림

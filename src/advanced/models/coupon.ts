@@ -1,6 +1,6 @@
 import { Coupon } from "../../types";
 
-// 쿠폰 할인 계산 (순수 함수)
+// 쿠폰 할인 계산
 export const calculateCouponDiscount = (amount: number, coupon: Coupon): number => {
   if (coupon.discountType === "amount") {
     return Math.max(0, amount - coupon.discountValue);

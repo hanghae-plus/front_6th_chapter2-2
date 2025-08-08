@@ -21,13 +21,16 @@ export const ProductForm = ({
   onCancel,
   addNotification,
 }: ProductFormProps) => {
+  // 가격 입력 핸들러
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (value === "" || /^\d+$/.test(value)) {
+      // parseInt 사용: 통화 단위가 없으므로 정수만 허용
       updateField("price", value === "" ? 0 : parseInt(value));
     }
   };
 
+  // 가격 블러 핸들러 포커스가 빠져나갈 때 최종 유효성 점검
   const handlePriceBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (value === "") {
@@ -38,6 +41,7 @@ export const ProductForm = ({
     }
   };
 
+  // 재고 입력 핸들러
   const handleStockChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (value === "" || /^\d+$/.test(value)) {
@@ -45,6 +49,7 @@ export const ProductForm = ({
     }
   };
 
+  // 재고 블러 핸들러
   const handleStockBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (value === "") {
@@ -58,23 +63,27 @@ export const ProductForm = ({
     }
   };
 
+  // 할인 행의 수량 변경
   const handleDiscountQuantityChange = (index: number, quantity: number) => {
     const newDiscounts = [...productForm.discounts];
     newDiscounts[index].quantity = quantity;
     updateField("discounts", newDiscounts);
   };
 
+  // 할인 행의 비율 변경(0.1 = 10%)
   const handleDiscountRateChange = (index: number, rate: number) => {
     const newDiscounts = [...productForm.discounts];
     newDiscounts[index].rate = rate;
     updateField("discounts", newDiscounts);
   };
 
+  // 특정 할인 행 삭제(선택한 인덱스를 제외한 나머지만 유지)
   const handleDiscountRemove = (index: number) => {
     const newDiscounts = productForm.discounts.filter((_, i) => i !== index);
     updateField("discounts", newDiscounts);
   };
 
+  // 할인 행 추가(기본값: 수량 10, 할인율 10%)
   const handleAddDiscount = () => {
     updateField("discounts", [...productForm.discounts, { quantity: 10, rate: 0.1 }]);
   };
