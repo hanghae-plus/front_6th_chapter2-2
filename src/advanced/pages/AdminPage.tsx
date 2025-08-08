@@ -1,26 +1,15 @@
 import { useState } from "react";
 import { Coupon } from "../../types";
-import { ProductWithUI } from "../models/product";
 import ProductManage from "../components/ProductManage";
 import CouponManage from "../components/CouponManage";
 
 interface Props {
-  products: ProductWithUI[];
   coupons: Coupon[];
-
-  // NOTE: 임시props
-  setProducts: React.Dispatch<React.SetStateAction<ProductWithUI[]>>;
   setCoupons: React.Dispatch<React.SetStateAction<Coupon[]>>;
   setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>;
 }
 
-const AdminPage = ({
-  products,
-  coupons,
-  setProducts,
-  setCoupons,
-  setSelectedCoupon,
-}: Props) => {
+const AdminPage = ({ coupons, setCoupons, setSelectedCoupon }: Props) => {
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
     "products"
   );
@@ -57,7 +46,7 @@ const AdminPage = ({
       </div>
 
       {activeTab === "products" ? (
-        <ProductManage products={products} setProducts={setProducts} />
+        <ProductManage />
       ) : (
         <CouponManage
           coupons={coupons}

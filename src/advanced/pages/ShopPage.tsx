@@ -1,5 +1,5 @@
 import { ChangeEvent, useCallback } from "react";
-import { CartItem, Coupon, Product } from "../../types";
+import { CartItem, Coupon } from "../../types";
 import { generateOrderNumber } from "../models/coupon";
 import { canApplyCoupon } from "../models/discount";
 import { filterProducts, ProductWithUI } from "../models/product";
@@ -11,6 +11,7 @@ import {
   calculateCartTotal,
 } from "../models/cart";
 import { useNotification } from "../contexts/NotificationContext";
+import { useProduct } from "../contexts/ProductContext";
 import ShopProduct from "../components/ShopProduct";
 import PaymentInfo from "../components/PaymentInfo";
 import CouponDiscount from "../components/CouponDiscount";
@@ -18,7 +19,6 @@ import Cart from "../components/Cart";
 
 interface Props {
   searchTerm: string;
-  products: Product[];
   cart: CartItem[];
   coupons: Coupon[];
   selectedCoupon: Coupon | null;
@@ -31,13 +31,13 @@ interface Props {
 const ShopPage = ({
   searchTerm,
   cart,
-  products,
   coupons,
   selectedCoupon,
   setCart,
   setSelectedCoupon,
 }: Props) => {
   const { addNotification } = useNotification();
+  const { products } = useProduct();
   const filteredProducts = filterProducts(products, searchTerm);
 
   const handleAddToCart = useCallback(

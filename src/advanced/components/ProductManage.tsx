@@ -1,24 +1,13 @@
 import { useState, useCallback } from "react";
-import {
-  formatPrice,
-  addProduct as _addProduct,
-  updateProduct as _updateProduct,
-  deleteProduct as _deleteProduct,
-  ProductWithUI,
-} from "../models/product";
+import { formatPrice, ProductWithUI } from "../models/product";
 import ProductForm from "./ProductForm";
 import { type ProductForm as _ProductForm } from "../../types";
 import { useNotification } from "../contexts/NotificationContext";
+import { useProduct } from "../contexts/ProductContext";
 
-interface Props {
-  products: ProductWithUI[];
-
-  // TODO: 전역에서 관리
-  setProducts: React.Dispatch<React.SetStateAction<ProductWithUI[]>>;
-}
-
-const ProductManage = ({ products, setProducts }: Props) => {
+const ProductManage = () => {
   const { addNotification } = useNotification();
+  const { products, addProduct, updateProduct, deleteProduct } = useProduct();
 
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [showProductForm, setShowProductForm] = useState(false);
@@ -31,37 +20,37 @@ const ProductManage = ({ products, setProducts }: Props) => {
     discounts: [],
   });
 
-  const addProduct = useCallback(
+  const handleAddProduct = useCallback(
     (newProduct: Omit<ProductWithUI, "id">) => {
-      setProducts((prev) => _addProduct(prev, newProduct));
+      addProduct(newProduct);
       addNotification("상품이 추가되었습니다.", "success");
     },
-    [addNotification]
+    [addProduct, addNotification]
   );
 
-  const deleteProduct = useCallback(
+  const handleDeleteProduct = useCallback(
     (productId: string) => {
-      setProducts((prev) => _deleteProduct(prev, productId));
+      deleteProduct(productId);
       addNotification("상품이 삭제되었습니다.", "success");
     },
-    [addNotification]
+    [deleteProduct, addNotification]
   );
 
-  const updateProduct = useCallback(
+  const handleUpdateProduct = useCallback(
     (productId: string, updates: Partial<ProductWithUI>) => {
-      setProducts((prev) => _updateProduct(prev, productId, updates));
+      updateProduct(productId, updates);
       addNotification("상품이 수정되었습니다.", "success");
     },
-    [addNotification]
+    [updateProduct, addNotification]
   );
 
   const handleProductSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (editingProduct && editingProduct !== "new") {
-      updateProduct(editingProduct, productForm);
+      handleUpdateProduct(editingProduct, productForm);
       setEditingProduct(null);
     } else {
-      addProduct({
+      handleAddProduct({
         ...productForm,
         discounts: productForm.discounts,
       });
@@ -167,7 +156,7 @@ const ProductManage = ({ products, setProducts }: Props) => {
                     수정
                   </button>
                   <button
-                    onClick={() => deleteProduct(product.id)}
+                    onClick={() => handleDeleteProduct(product.id)}
                     className="text-red-600 hover:text-red-900"
                   >
                     삭제
