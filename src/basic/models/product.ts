@@ -8,11 +8,15 @@ export interface ProductWithUI extends Product {
 /**
  * 상품 가격을 포맷팅하는 함수
  */
-export const formatPrice = (
-  price: number,
-  hasUnit: boolean,
-  isSoldOut?: boolean
-): string => {
+export const formatPrice = ({
+  price,
+  hasUnit,
+  isSoldOut,
+}: {
+  price: number;
+  hasUnit?: boolean;
+  isSoldOut?: boolean;
+}): string => {
   if (isSoldOut) {
     return "SOLD OUT";
   }
