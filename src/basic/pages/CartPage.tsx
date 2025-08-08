@@ -9,6 +9,7 @@ import { CartItemList, CouponSelector, CheckoutSection } from "@features";
 import { useManageCart } from "@features/manage-cart";
 import { useManageCoupon } from "@features/manage-coupon";
 import { useProcessOrder } from "@features/process-order";
+import { useCallback, useMemo } from "react";
 
 interface CartPageProps {
   products: ProductWithUI[];
@@ -28,15 +29,20 @@ export function CartPage({
     onClearCoupon: couponManager.removeCoupon,
   });
 
-  const displayPrice = (product: Product) => {
-    const cartQuantity =
-      cartManager.cart.find((item) => item.product.id === product.id)
-        ?.quantity || 0;
-    return getDisplayPrice(product, cartQuantity);
-  };
+  const displayPrice = useCallback(
+    (product: Product) => {
+      const cartQuantity =
+        cartManager.cart.find((item) => item.product.id === product.id)
+          ?.quantity || 0;
+      return getDisplayPrice(product, cartQuantity);
+    },
+    [cartManager.cart]
+  );
 
-  const { totalAfterDiscount, totalBeforeDiscount } =
-    couponManager.getCartSummaryWithCoupon();
+  const cartSummary = useMemo(
+    () => couponManager.getCartSummaryWithCoupon(),
+    [couponManager, cartManager.cart, couponManager.selectedCoupon]
+  );
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -79,8 +85,8 @@ export function CartPage({
               />
 
               <CheckoutSection
-                totalBeforeDiscount={totalBeforeDiscount}
-                totalAfterDiscount={totalAfterDiscount}
+                totalBeforeDiscount={cartSummary.totalBeforeDiscount}
+                totalAfterDiscount={cartSummary.totalAfterDiscount}
                 onCompleteOrder={orderProcessor.completeOrder}
               />
             </>

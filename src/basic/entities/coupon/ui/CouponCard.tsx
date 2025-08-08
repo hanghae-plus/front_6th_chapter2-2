@@ -1,13 +1,17 @@
 import { Coupon, DiscountType } from "@/types";
 import TrashIcon from "@assets/icons/TrashIcon.svg?react";
 import { IconButton } from "@shared";
+import { memo } from "react";
 
 interface CouponCardProps {
   coupon: Coupon;
   onDelete: (couponCode: string) => void;
 }
 
-export function CouponCard({ coupon, onDelete }: CouponCardProps) {
+export const CouponCard = memo(function CouponCard({
+  coupon,
+  onDelete,
+}: CouponCardProps) {
   return (
     <div className="relative bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200">
       <div className="flex justify-between items-start">
@@ -32,4 +36,4 @@ export function CouponCard({ coupon, onDelete }: CouponCardProps) {
       </div>
     </div>
   );
-}
+});
