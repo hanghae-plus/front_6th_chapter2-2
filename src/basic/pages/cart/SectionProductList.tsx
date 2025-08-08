@@ -1,16 +1,17 @@
 import type { CartItem } from "../../../types";
 import type { ProductWithUI } from "../../entities/ProductWithUI";
 import { ProductView } from "./ProductView";
+import { useDebounce } from "../../utils/hooks/useDebounce.ts";
 
 export function SectionProductList({
   products,
-  debouncedSearchTerm,
+  searchTerm,
   cart,
   setCart,
   handleNotificationAdd,
 }: {
   products: ProductWithUI[];
-  debouncedSearchTerm: string;
+  searchTerm: string;
   cart: CartItem[];
   setCart: (cart: CartItem[]) => void;
   handleNotificationAdd: (
@@ -18,6 +19,7 @@ export function SectionProductList({
     type: "error" | "success" | "warning"
   ) => void;
 }) {
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
   const filteredProducts = debouncedSearchTerm
     ? products.filter(
         (product) =>

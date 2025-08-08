@@ -5,7 +5,7 @@ import { SectionProductList } from "./SectionProductList.tsx";
 
 interface PageCartProps {
   products: ProductWithUI[];
-  debouncedSearchTerm: string;
+  searchTerm: string;
   cart: CartItem[];
   setCart: (cart: CartItem[]) => void;
   coupons: Coupon[];
@@ -19,7 +19,7 @@ interface PageCartProps {
 
 function PageCart({
   products,
-  debouncedSearchTerm,
+  searchTerm,
   cart,
   setCart,
   coupons,
@@ -32,7 +32,7 @@ function PageCart({
       <div className="lg:col-span-3">
         <SectionProductList
           products={products}
-          debouncedSearchTerm={debouncedSearchTerm}
+          searchTerm={searchTerm}
           cart={cart}
           setCart={setCart}
           handleNotificationAdd={handleNotificationAdd}

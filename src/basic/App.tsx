@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Header from "./components/Header.tsx";
 import Notifications from "./components/Notifications.tsx";
 import { useCart } from "./hooks/useCart.ts";
@@ -7,7 +7,6 @@ import { useNotification } from "./hooks/useNotification.ts";
 import { useProducts } from "./hooks/useProducts.ts";
 import PageAdmin from "./pages/admin/PageAdmin.tsx";
 import PageCart from "./pages/cart/PageCart.tsx";
-import { useDebounce } from "./utils/hooks/useDebounce.ts";
 
 const App = () => {
   const { products, setProducts } = useProducts();
@@ -20,7 +19,6 @@ const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState("");
-  const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -51,7 +49,7 @@ const App = () => {
         ) : (
           <PageCart
             products={products}
-            debouncedSearchTerm={debouncedSearchTerm}
+            searchTerm={searchTerm}
             cart={cart}
             coupons={coupons}
             selectedCoupon={selectedCoupon}
