@@ -13,7 +13,7 @@ export function NotificationList({ notifications, onRemove }: NotificationListPr
   return (
     <div className="fixed right-4 top-20 z-50 max-w-sm space-y-2">
       {notifications.map((notif) => (
-        <Notification {...notif} onRemove={onRemove} />
+        <Notification key={notif.id} {...notif} onRemove={onRemove} />
       ))}
     </div>
   );

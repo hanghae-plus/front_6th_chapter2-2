@@ -1,4 +1,6 @@
 import type { CartItem, Coupon, Product } from "../../../types";
+import { calculateCartTotal } from "../../domains/cart";
+import { filterProducts } from "../../domains/product";
 import { Button, CloseIcon, ImagePlaceholderIcon, ShoppingBagIcon } from "../../shared";
 
 interface ProductWithUI extends Product {
@@ -8,7 +10,6 @@ interface ProductWithUI extends Product {
 
 type CartPageProps = {
   products: ProductWithUI[];
-  filteredProducts: ProductWithUI[];
   debouncedSearchTerm: string;
   getRemainingStock: (product: Product) => number;
   formatPrice: (price: number, productId?: string) => string;
@@ -20,10 +21,6 @@ type CartPageProps = {
   selectedCoupon: Coupon | null;
   applyCoupon: (coupon: Coupon) => void;
   setSelectedCoupon: (coupon: Coupon | null) => void;
-  totals: {
-    totalBeforeDiscount: number;
-    totalAfterDiscount: number;
-  };
   completeOrder: () => void;
   removeFromCart: (productId: string) => void;
 };
@@ -36,16 +33,17 @@ export function CartPage({
   completeOrder,
   coupons,
   debouncedSearchTerm,
-  filteredProducts,
   formatPrice,
   getRemainingStock,
   products,
   selectedCoupon,
   setSelectedCoupon,
-  totals,
   updateQuantity,
   removeFromCart
 }: CartPageProps) {
+  const filteredProducts = filterProducts(products, debouncedSearchTerm);
+  const totals = calculateCartTotal(cart, selectedCoupon);
+
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
       <div className="lg:col-span-3">

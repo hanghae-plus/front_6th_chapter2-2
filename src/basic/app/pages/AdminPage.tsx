@@ -1,75 +1,99 @@
-import { FormEvent } from "react";
+import { type Dispatch, FormEvent, type SetStateAction, useState } from "react";
 
-import type { Coupon, Product } from "../../../types";
+import type { CartItem, Coupon } from "../../../types";
+import { useCouponActions } from "../../domains/coupon";
+import {
+  formatPrice,
+  type ProductForm,
+  type ProductWithUI,
+  useProductActions
+} from "../../domains/product";
 import { Button, CloseIcon, PlusIcon, SearchInput, TrashIcon } from "../../shared";
 
-interface ProductWithUI extends Product {
-  description?: string;
-  isRecommended?: boolean;
-}
-
-type ProductForm = {
-  name: string;
-  price: number;
-  stock: number;
-  description: string;
-  discounts: Array<{ quantity: number; rate: number }>;
-};
-
-type CouponForm = {
-  name: string;
-  code: string;
-  discountType: "amount" | "percentage";
-  discountValue: number;
-};
-
 type AdminPageProps = {
-  setActiveTab: (tab: "products" | "coupons") => void;
-  activeTab: "products" | "coupons";
-  setEditingProduct: (id: string | null) => void;
-  setProductForm: (form: ProductForm) => void;
-  setShowProductForm: (show: boolean) => void;
   products: ProductWithUI[];
-  formatPrice: (price: number, productId?: string) => string;
-  startEditProduct: (product: ProductWithUI) => void;
-  deleteProduct: (productId: string) => void;
-  showProductForm: boolean;
-  handleProductSubmit: (e: FormEvent) => void;
-  editingProduct: string | null;
-  productForm: ProductForm;
-  addNotification: (message: string, type?: "error" | "success" | "warning") => void;
+  setProducts: Dispatch<SetStateAction<ProductWithUI[]>>;
   coupons: Coupon[];
-  deleteCoupon: (couponCode: string) => void;
-  setShowCouponForm: (show: boolean) => void;
-  showCouponForm: boolean;
-  handleCouponSubmit: (e: FormEvent) => void;
-  couponForm: CouponForm;
-  setCouponForm: (form: CouponForm) => void;
+  setCoupons: Dispatch<SetStateAction<Coupon[]>>;
+  cart: CartItem[];
+  isAdminMode: boolean;
+  addNotification: (message: string, type?: "error" | "success" | "warning") => void;
 };
 
 export function AdminPage({
-  setProductForm,
-  setShowProductForm,
   products,
-  formatPrice,
-  startEditProduct,
-  deleteProduct,
-  showProductForm,
-  handleProductSubmit,
-  editingProduct,
-  productForm,
-  addNotification,
+  setProducts,
   coupons,
-  deleteCoupon,
-  setShowCouponForm,
-  showCouponForm,
-  handleCouponSubmit,
-  couponForm,
-  setCouponForm,
-  activeTab,
-  setActiveTab,
-  setEditingProduct
+  setCoupons,
+  cart,
+  isAdminMode,
+  addNotification
 }: AdminPageProps) {
+  const [activeTab, setActiveTab] = useState<"products" | "coupons">("products");
+  const [showProductForm, setShowProductForm] = useState(false);
+  const [showCouponForm, setShowCouponForm] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<string | null>(null);
+  const [productForm, setProductForm] = useState<ProductForm>({
+    name: "",
+    price: 0,
+    stock: 0,
+    description: "",
+    discounts: []
+  });
+  const [couponForm, setCouponForm] = useState({
+    name: "",
+    code: "",
+    discountType: "amount" as "amount" | "percentage",
+    discountValue: 0
+  });
+
+  const { deleteProduct, handleProductSubmit, startEditProduct } = useProductActions({
+    setProducts,
+    addNotification
+  });
+
+  const { deleteCoupon, handleCouponSubmit } = useCouponActions({
+    coupons,
+    selectedCoupon: null,
+    setCoupons,
+    setSelectedCoupon: () => {},
+    addNotification
+  });
+
+  const formatPriceWithContext = (price: number, productId?: string) => {
+    return formatPrice(price, productId, products, cart, isAdminMode);
+  };
+
+  const handleProductSubmitWrapper = (e: FormEvent) => {
+    e.preventDefault();
+    handleProductSubmit(
+      productForm,
+      editingProduct,
+      () => setProductForm({ name: "", price: 0, stock: 0, description: "", discounts: [] }),
+      setEditingProduct,
+      setShowProductForm
+    );
+  };
+
+  const handleCouponSubmitWrapper = (e: FormEvent) => {
+    e.preventDefault();
+    handleCouponSubmit(
+      couponForm,
+      () =>
+        setCouponForm({
+          name: "",
+          code: "",
+          discountType: "amount",
+          discountValue: 0
+        }),
+      setShowCouponForm
+    );
+  };
+
+  const startEditProductWrapper = (product: ProductWithUI) => {
+    startEditProduct(product, setEditingProduct, setProductForm, setShowProductForm);
+  };
+
   return (
     <div className="mx-auto max-w-6xl">
       <div className="mb-8">
@@ -154,7 +178,7 @@ export function AdminPage({
                       {product.name}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                      {formatPrice(product.price, product.id)}
+                      {formatPriceWithContext(product.price, product.id)}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                       <span
@@ -174,7 +198,7 @@ export function AdminPage({
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                       <Button
-                        onClick={() => startEditProduct(product)}
+                        onClick={() => startEditProductWrapper(product)}
                         color="secondary"
                         size="sm"
                         className="mr-3 bg-transparent text-indigo-600 hover:bg-indigo-50 hover:text-indigo-900"
@@ -197,7 +221,7 @@ export function AdminPage({
           </div>
           {showProductForm && (
             <div className="border-t border-gray-200 bg-gray-50 p-6">
-              <form onSubmit={handleProductSubmit} className="space-y-4">
+              <form onSubmit={handleProductSubmitWrapper} className="space-y-4">
                 <h3 className="text-lg font-medium text-gray-900">
                   {editingProduct === "new" ? "새 상품 추가" : "상품 수정"}
                 </h3>
@@ -417,7 +441,7 @@ export function AdminPage({
 
             {showCouponForm && (
               <div className="mt-6 rounded-lg bg-gray-50 p-4">
-                <form onSubmit={handleCouponSubmit} className="space-y-4">
+                <form onSubmit={handleCouponSubmitWrapper} className="space-y-4">
                   <h3 className="text-md font-medium text-gray-900">새 쿠폰 생성</h3>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <div>

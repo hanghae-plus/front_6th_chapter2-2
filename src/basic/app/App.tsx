@@ -1,4 +1,4 @@
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import {
   calculateCartTotal,
@@ -9,13 +9,10 @@ import {
 } from "../domains/cart";
 import { type Coupon, INITIAL_COUPONS, useCouponActions } from "../domains/coupon";
 import {
-  filterProducts,
   formatPrice,
   INITIAL_PRODUCTS,
   type Product,
-  type ProductForm,
-  type ProductWithUI,
-  useProductActions
+  type ProductWithUI
 } from "../domains/product";
 import { useDebounceState, useLocalStorageState, useNotifications, useToggle } from "../shared";
 import { Header, NotificationList } from "./components";
@@ -47,26 +44,6 @@ export function App() {
   const [isAdminMode, toggleAdminMode] = useToggle(false);
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
-  const [showCouponForm, setShowCouponForm] = useState(false);
-  const [activeTab, setActiveTab] = useState<"products" | "coupons">("products");
-  const [showProductForm, setShowProductForm] = useState(false);
-
-  // Admin
-  const [editingProduct, setEditingProduct] = useState<string | null>(null);
-  const [productForm, setProductForm] = useState<ProductForm>({
-    name: "",
-    price: 0,
-    stock: 0,
-    description: "",
-    discounts: []
-  });
-
-  const [couponForm, setCouponForm] = useState<Coupon>({
-    name: "",
-    code: "",
-    discountType: "amount",
-    discountValue: 0
-  });
 
   const formatPriceWithContext = useCallback(
     (price: number, productId?: string) => {
@@ -77,7 +54,6 @@ export function App() {
 
   const [totalItemCount, setTotalItemCount] = useState(0);
 
-  // Cart actions using domain hook
   const { addToCart, removeFromCart, updateQuantity, completeOrder } = useCartActions({
     cart,
     products,
@@ -86,12 +62,7 @@ export function App() {
     addNotification
   });
 
-  // Coupon actions using domain hook
-  const {
-    deleteCoupon,
-    applyCoupon: applyCouponBase,
-    handleCouponSubmit
-  } = useCouponActions({
+  const { applyCoupon: applyCouponBase } = useCouponActions({
     coupons,
     selectedCoupon,
     setCoupons,
@@ -99,7 +70,6 @@ export function App() {
     addNotification
   });
 
-  // Wrapper for applyCoupon with cart total calculation
   const applyCoupon = useCallback(
     (coupon: Coupon) => {
       const currentTotal = calculateCartTotal(cart, selectedCoupon).totalAfterDiscount;
@@ -108,50 +78,10 @@ export function App() {
     [applyCouponBase, cart, selectedCoupon]
   );
 
-  // Product actions using domain hook
-  const { deleteProduct, handleProductSubmit, startEditProduct } = useProductActions({
-    setProducts,
-    addNotification
-  });
-
   useEffect(() => {
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);
     setTotalItemCount(count);
   }, [cart]);
-
-  const handleProductSubmitWrapper = (e: FormEvent) => {
-    e.preventDefault();
-    handleProductSubmit(
-      productForm,
-      editingProduct,
-      () => setProductForm({ name: "", price: 0, stock: 0, description: "", discounts: [] }),
-      setEditingProduct,
-      setShowProductForm
-    );
-  };
-
-  const handleCouponSubmitWrapper = (e: FormEvent) => {
-    e.preventDefault();
-    handleCouponSubmit(
-      couponForm,
-      () =>
-        setCouponForm({
-          name: "",
-          code: "",
-          discountType: "amount",
-          discountValue: 0
-        }),
-      setShowCouponForm
-    );
-  };
-
-  const startEditProductWrapper = (product: ProductWithUI) => {
-    startEditProduct(product, setEditingProduct, setProductForm, setShowProductForm);
-  };
-
-  const totals = calculateCartTotal(cart, selectedCoupon);
-
-  const filteredProducts = filterProducts(products, debouncedSearchTerm);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -167,27 +97,13 @@ export function App() {
       <main className="mx-auto max-w-7xl px-4 py-8">
         {isAdminMode ? (
           <AdminPage
-            activeTab={activeTab}
-            addNotification={addNotification}
-            couponForm={couponForm}
-            coupons={coupons}
-            deleteCoupon={deleteCoupon}
-            deleteProduct={deleteProduct}
-            editingProduct={editingProduct}
-            formatPrice={formatPriceWithContext}
-            handleCouponSubmit={handleCouponSubmitWrapper}
-            handleProductSubmit={handleProductSubmitWrapper}
-            productForm={productForm}
             products={products}
-            setActiveTab={setActiveTab}
-            setCouponForm={setCouponForm}
-            setEditingProduct={setEditingProduct}
-            setProductForm={setProductForm}
-            setShowCouponForm={setShowCouponForm}
-            setShowProductForm={setShowProductForm}
-            showCouponForm={showCouponForm}
-            showProductForm={showProductForm}
-            startEditProduct={startEditProductWrapper}
+            setProducts={setProducts}
+            coupons={coupons}
+            setCoupons={setCoupons}
+            cart={cart}
+            isAdminMode={isAdminMode}
+            addNotification={addNotification}
           />
         ) : (
           <CartPage
@@ -198,14 +114,12 @@ export function App() {
             completeOrder={completeOrder}
             coupons={coupons}
             debouncedSearchTerm={debouncedSearchTerm}
-            filteredProducts={filteredProducts}
             formatPrice={formatPriceWithContext}
             getRemainingStock={(product: Product) => getRemainingStock(product, cart)}
             products={products}
             removeFromCart={removeFromCart}
             selectedCoupon={selectedCoupon}
             setSelectedCoupon={setSelectedCoupon}
-            totals={totals}
             updateQuantity={updateQuantity}
           />
         )}
