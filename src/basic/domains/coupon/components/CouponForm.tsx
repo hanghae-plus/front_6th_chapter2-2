@@ -116,9 +116,6 @@ export function CouponForm({
             </select>
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              {couponForm.discountType === "amount" ? "할인 금액" : "할인율(%)"}
-            </label>
             <SearchInput
               type="text"
               label={couponForm.discountType === "amount" ? "할인 금액" : "할인율(%)"}
