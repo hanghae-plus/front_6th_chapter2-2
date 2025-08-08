@@ -1,7 +1,6 @@
-import { ProductWithUI } from "../../entities/ProductWithUI.ts";
-import { getRemainingStock } from "../../entities/Product.ts";
-import { useCallback } from "react";
 import { addItemToCart, canAddToCart } from "../../entities/CartItem.ts";
+import { getRemainingStock } from "../../entities/Product.ts";
+import { ProductWithUI } from "../../entities/ProductWithUI.ts";
 import { formatPrice } from "../../utils/formatPrice.ts";
 
 import { CartItem } from "../../../types.ts";
@@ -27,6 +26,7 @@ export function ProductView({
   function handleProductAddToCart(product: ProductWithUI) {
     if (!canAddToCart(cart, product)) {
       const remainingStock = getRemainingStock(product, cart);
+
       if (remainingStock <= 0) {
         handleNotificationAdd("재고가 부족합니다!", "error");
       } else {
@@ -38,8 +38,7 @@ export function ProductView({
       return;
     }
 
-    const newCart = addItemToCart(cart, product);
-    setCart(newCart);
+    setCart(addItemToCart(cart, product));
     handleNotificationAdd("장바구니에 담았습니다", "success");
   }
 

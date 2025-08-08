@@ -24,8 +24,10 @@ export function CartItemView({
   handleNotificationAdd,
 }: CartItemViewProps) {
   const itemTotal = calculateItemTotalWithBulkPurchase(item, cart);
+
   const originalPrice = item.product.price * item.quantity;
   const hasDiscount = itemTotal < originalPrice;
+
   const discountRate = hasDiscount
     ? Math.round((1 - itemTotal / originalPrice) * 100)
     : 0;

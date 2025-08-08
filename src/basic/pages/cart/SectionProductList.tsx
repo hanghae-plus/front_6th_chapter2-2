@@ -18,6 +18,7 @@ export function SectionProductList({
   handleNotificationAdd: HandleNotificationAdd;
 }) {
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
   const filteredProducts = debouncedSearchTerm
     ? products.filter(
         (product) =>

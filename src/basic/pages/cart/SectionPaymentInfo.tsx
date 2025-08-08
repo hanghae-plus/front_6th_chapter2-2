@@ -23,6 +23,7 @@ export function SectionPaymentInfo({
       `주문이 완료되었습니다. 주문번호: ${orderNumber}`,
       "success"
     );
+
     setCart([]);
     setSelectedCoupon(null);
   }
