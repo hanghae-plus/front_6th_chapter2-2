@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { render, screen, fireEvent, within, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
+
 import App from '../App';
 import '../../setupTests';
 
