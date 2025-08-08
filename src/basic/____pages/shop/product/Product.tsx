@@ -6,12 +6,14 @@ const ProductStatus = {
   LowStock: "LOW STOCK",
 } as const;
 
+type ProductStatus = (typeof ProductStatus)[keyof typeof ProductStatus];
+
 interface Props {
   product: ProductWithUI;
-  onClickAddToCart: (product: ProductWithUI) => void;
+  onClickCartButton: (productId: string, quantity: number) => void;
 }
 
-function ProductCard({ product, onClickAddToCart }: Props) {
+function Product({ product, onClickCartButton }: Props) {
   const status = ((stock) => {
     if (stock <= 0) {
       return ProductStatus.SoldOut;
@@ -96,21 +98,35 @@ function ProductCard({ product, onClickAddToCart }: Props) {
           )}
         </div>
 
-        {/* 장바구니 버튼 */}
-        <button
-          onClick={() => onClickAddToCart(product)}
-          disabled={status === ProductStatus.SoldOut}
-          className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
-            status === ProductStatus.SoldOut
-              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-              : "bg-gray-900 text-white hover:bg-gray-800"
-          }`}
-        >
-          {status === ProductStatus.SoldOut ? "품절" : "장바구니 담기"}
-        </button>
+        <AddToCartButton
+          outOfStock={status === ProductStatus.SoldOut}
+          onClick={() => onClickCartButton(product.id, 1)}
+        />
       </div>
     </div>
   );
 }
 
-export default ProductCard;
+interface AddToCartButtonProps {
+  outOfStock: boolean;
+  onClick: () => void;
+}
+
+function AddToCartButton({ outOfStock, onClick }: AddToCartButtonProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={outOfStock}
+      className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
+        outOfStock
+          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+          : "bg-gray-900 text-white hover:bg-gray-800"
+      }`}
+    >
+      {outOfStock ? "품절" : "장바구니 담기"}
+    </button>
+  );
+}
+
+export default Product;

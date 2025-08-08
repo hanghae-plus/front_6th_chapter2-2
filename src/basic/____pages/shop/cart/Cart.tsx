@@ -80,10 +80,10 @@ function Item({
       <div className="flex items-center justify-between">
         <Counter
           quantity={item.quantity}
-          onDecrement={(quantity) =>
+          onIncrement={(quantity) =>
             onUpdateQuantity(item.product.id, quantity)
           }
-          onIncrement={(quantity) =>
+          onDecrement={(quantity) =>
             onUpdateQuantity(item.product.id, quantity)
           }
         />
