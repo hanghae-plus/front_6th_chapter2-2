@@ -18,6 +18,7 @@
     "deploy:basic": "cp index.basic.html index.html && vite build --base=\"/front_6th_chapter2-2/\" && cp dist/index.html dist/404.html && gh-pages -d dist && rm -f index.html"
   },
   "dependencies": {
+    "jotai": "^2.13.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
