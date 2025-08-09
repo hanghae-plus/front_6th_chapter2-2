@@ -1,2 +1,1 @@
-export * from './admin-dashboard';
-export * from './user-dashboard';
+export * from './app-content';
