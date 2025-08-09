@@ -4,6 +4,16 @@ export interface Product {
   price: number;
   stock: number;
   discounts: Discount[];
+  description?: string;
+  isRecommended?: boolean;
+}
+
+export interface ProductFormData {
+  name: string;
+  price: number;
+  stock: number;
+  description: string;
+  discounts: Discount[];
 }
 
 export interface Discount {
@@ -19,6 +29,6 @@ export interface CartItem {
 export interface Coupon {
   name: string;
   code: string;
-  discountType: 'amount' | 'percentage';
+  discountType: "amount" | "percentage";
   discountValue: number;
 }
