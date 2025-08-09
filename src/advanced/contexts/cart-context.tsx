@@ -3,9 +3,9 @@ import { CartItem, Product } from '@/types';
 import { useLocalStorage } from '../hooks/use-local-storage';
 import { ProductWithUI } from '../constants/mocks';
 import { CartModel } from '../models/cart';
-import { useNotifications } from './NotificationContext';
-import { useProducts } from './ProductContext';
-import { useCoupons } from './CouponContext';
+import { useNotifications } from './notification-context';
+import { useProducts } from './product-context';
+import { useCoupons } from './coupon-context';
 
 interface CartContextType {
   cart: CartItem[];
@@ -39,7 +39,7 @@ export function CartProvider({ children }: CartProviderProps) {
   const addToCart = useCallback(
     (product: ProductWithUI) => {
       const remainingStock = getStock(product);
-      
+
       if (remainingStock <= 0) {
         addNotification('재고가 부족합니다!', 'error');
         return;

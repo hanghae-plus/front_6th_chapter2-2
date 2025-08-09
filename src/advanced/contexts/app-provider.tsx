@@ -1,8 +1,8 @@
 import { ReactNode } from 'react';
-import { NotificationProvider } from './NotificationContext';
-import { ProductProvider } from './ProductContext';
-import { CouponProvider } from './CouponContext';
-import { CartProvider } from './CartContext';
+import { NotificationProvider } from './notification-context';
+import { ProductProvider } from './product-context';
+import { CouponProvider } from './coupon-context';
+import { CartProvider } from './cart-context';
 
 interface AppProviderProps {
   children: ReactNode;
@@ -13,9 +13,7 @@ export function AppProvider({ children }: AppProviderProps) {
     <NotificationProvider>
       <ProductProvider>
         <CouponProvider>
-          <CartProvider>
-            {children}
-          </CartProvider>
+          <CartProvider>{children}</CartProvider>
         </CouponProvider>
       </ProductProvider>
     </NotificationProvider>

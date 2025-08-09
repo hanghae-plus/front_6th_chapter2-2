@@ -4,7 +4,7 @@ import { useLocalStorage } from '../hooks/use-local-storage';
 import { Coupon } from '@/types';
 import { CouponModel } from '../models';
 import { INITIAL_COUPON_FORM } from '../constants/forms';
-import { useNotifications } from './NotificationContext';
+import { useNotifications } from './notification-context';
 
 interface CouponContextType {
   coupons: Coupon[];
