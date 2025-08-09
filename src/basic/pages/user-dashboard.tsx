@@ -1,5 +1,5 @@
 import { CartItem, Coupon, Product } from '@/types';
-import { ProductWithUI } from '../constants/mocks';
+import { ProductWithUI } from '@/shared/constants';
 import { Cart, Coupons, Payments, ProductList } from '../ui/index';
 
 interface UserDashboardProps {

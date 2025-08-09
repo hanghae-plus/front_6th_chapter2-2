@@ -1,6 +1,6 @@
-import { CartItem } from '../../types';
+import { CartItem } from '@/types';
 import { CloseIcon, EmptyBagIcon, ShoppingBagIcon } from './icons';
-import { CartModel } from '../models/cart';
+import { CartModel } from '@/shared/models';
 
 interface CartProps {
   cart: CartItem[];

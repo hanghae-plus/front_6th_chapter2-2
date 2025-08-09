@@ -2,8 +2,8 @@ import { useState, useMemo } from 'react';
 import { Header, NotificationItem } from './ui';
 import { useCoupons } from './entities/coupons';
 import { useProducts } from './entities/products';
-import { CartModel, ProductModel } from './models';
-import { useCart, useDebounceValue, useNotifications, useTotalItemCount } from './hooks';
+import { CartModel, ProductModel } from '@/shared/models';
+import { useCart, useDebounceValue, useNotifications, useTotalItemCount } from '@/shared/hooks';
 import { AdminDashboard, UserDashboard } from './pages';
 
 const App = () => {

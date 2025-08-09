@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { ProductWithUI } from '../constants/mocks';
+import { ProductWithUI } from '@/shared/constants';
 import { Coupon } from '@/types';
 import { CloseIcon, DeleteIcon, PlusIcon } from '../ui/icons';
-import { formatPrice } from '../utils';
+import { formatPrice } from '@/shared/utils';
 
 interface AdminDashboardProps {
   products: ProductWithUI[];

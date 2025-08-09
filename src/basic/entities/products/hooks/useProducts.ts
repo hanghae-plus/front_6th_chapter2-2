@@ -1,7 +1,7 @@
-import { initialProducts, ProductWithUI } from '@/basic/constants/mocks';
-import { useLocalStorage } from '@/basic/hooks';
+import { initialProducts, ProductWithUI } from '@/shared/constants';
+import { useLocalStorage } from '@/shared/hooks';
 import { useCallback, useState } from 'react';
-import { INITIAL_PRODUCT_FORM, EDITING_STATES } from '@/basic/constants/forms';
+import { INITIAL_PRODUCT_FORM, EDITING_STATES } from '@/shared/constants';
 
 interface UseProductsProps {
   addNotification: (message: string, type: 'error' | 'success' | 'warning') => void;

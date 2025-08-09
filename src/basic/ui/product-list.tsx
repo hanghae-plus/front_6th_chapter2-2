@@ -1,6 +1,6 @@
-import { ProductWithUI } from '../constants/mocks';
+import { ProductWithUI } from '@/shared/constants';
 import { PictureIcon } from './icons';
-import { formatPrice } from '../utils';
+import { formatPrice } from '@/shared/utils';
 
 interface ProductListProps {
   products: ProductWithUI[];
