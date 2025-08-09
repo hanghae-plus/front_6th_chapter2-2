@@ -6,16 +6,11 @@ import { useTotalItemCount } from '../hooks';
 interface HeaderProps {
   isAdmin: boolean;
   searchTerm: string;
-  setSearchTerm: (term: string) => void;
-  setIsAdmin: (isAdmin: boolean) => void;
+  onSearchChange: (term: string) => void;
+  onToggleAdmin: () => void;
 }
 
-export function Header({
-  isAdmin,
-  searchTerm,
-  setSearchTerm,
-  setIsAdmin,
-}: HeaderProps) {
+export function Header({ isAdmin, searchTerm, onSearchChange, onToggleAdmin }: HeaderProps) {
   const { cart } = useCart();
   const totalItemCount = useTotalItemCount(cart);
   return (
@@ -24,12 +19,11 @@ export function Header({
         <div className='flex justify-between items-center h-16'>
           <div className='flex items-center flex-1'>
             <h1 className='text-xl font-semibold text-gray-800'>SHOP</h1>
-            {/* 검색창 - 안티패턴: 검색 로직이 컴포넌트에 직접 포함 */}
-            {!isAdmin && <SearchInput searchTerm={searchTerm} onChange={setSearchTerm} />}
+            {!isAdmin && <SearchInput searchTerm={searchTerm} onChange={onSearchChange} />}
           </div>
           <nav className='flex items-center space-x-4'>
             <button
-              onClick={() => setIsAdmin(!isAdmin)}
+              onClick={onToggleAdmin}
               className={`px-3 py-1.5 text-sm rounded transition-colors ${
                 isAdmin ? 'bg-gray-800 text-white' : 'text-gray-600 hover:text-gray-900'
               }`}
