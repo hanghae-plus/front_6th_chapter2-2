@@ -1,8 +1,8 @@
 import { createContext, useContext, useCallback, ReactNode } from 'react';
 import { CartItem, Product } from '@/types';
-import { useLocalStorage } from '../hooks/use-local-storage';
-import { ProductWithUI } from '../constants/mocks';
-import { CartModel } from '../models/cart';
+import { useLocalStorage } from '@/shared/hooks';
+import { ProductWithUI } from '@/shared/constants';
+import { CartModel } from '@/shared/models';
 import { useNotifications } from './notification-context';
 import { useProducts } from './product-context';
 import { useCoupons } from './coupon-context';

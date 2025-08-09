@@ -1,21 +1,14 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { Header, Notifications } from './ui';
-import { ProductModel } from './models';
-import { useDebounceValue } from './hooks';
 import { AdminDashboard, UserDashboard } from './pages';
 import { useProducts, AppProvider } from './contexts';
+import { useFilteredProducts } from '@/shared/hooks/use-filtered-products';
 
 function AppContent() {
   const [isAdmin, setIsAdmin] = useState(false);
   const { products } = useProducts();
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const debouncedSearchTerm = useDebounceValue(searchTerm, 500);
-
-  const filteredProducts = useMemo(() => {
-    const productModel = new ProductModel(products);
-    return productModel.filter(debouncedSearchTerm);
-  }, [products, debouncedSearchTerm]);
+  const { searchTerm, setSearchTerm, debouncedSearchTerm, filteredProducts } =
+    useFilteredProducts(products);
 
   return (
     <div className='min-h-screen bg-gray-50'>

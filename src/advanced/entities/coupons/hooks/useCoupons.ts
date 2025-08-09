@@ -1,9 +1,9 @@
-import { initialCoupons } from '@/basic/constants/mocks';
-import { useLocalStorage } from '@/basic/hooks';
+import { initialCoupons } from '@/shared/constants';
+import { useLocalStorage } from '@/shared/hooks';
 import { Coupon, CartItem } from '@/types';
 import { useCallback, useState } from 'react';
-import { CouponModel, CartModel } from '@/basic/models';
-import { INITIAL_COUPON_FORM } from '@/basic/constants/forms';
+import { CouponModel, CartModel } from '@/shared/models';
+import { INITIAL_COUPON_FORM } from '@/shared/constants';
 
 interface UseCouponsProps {
   addNotification: (message: string, type: 'error' | 'success' | 'warning') => void;

@@ -1,5 +1,5 @@
 import { CloseIcon, EmptyBagIcon, ShoppingBagIcon } from './icons';
-import { CartModel } from '../models/cart';
+import { CartModel } from '@/shared/models';
 import { useCart } from '../contexts';
 
 export function Cart() {

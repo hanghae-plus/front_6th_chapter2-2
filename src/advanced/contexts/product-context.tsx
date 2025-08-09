@@ -1,7 +1,7 @@
 import { createContext, useContext, ReactNode, useCallback, useState } from 'react';
-import { initialProducts, ProductWithUI } from '../constants/mocks';
-import { useLocalStorage } from '../hooks/use-local-storage';
-import { INITIAL_PRODUCT_FORM, EDITING_STATES } from '../constants/forms';
+import { initialProducts, ProductWithUI } from '@/shared/constants';
+import { useLocalStorage } from '@/shared/hooks';
+import { INITIAL_PRODUCT_FORM, EDITING_STATES } from '@/shared/constants';
 import { useNotifications } from './notification-context';
 
 interface ProductContextType {

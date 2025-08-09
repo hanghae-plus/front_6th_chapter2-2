@@ -1,9 +1,9 @@
 import { createContext, useContext, ReactNode, useCallback, useState } from 'react';
-import { initialCoupons } from '../constants/mocks';
-import { useLocalStorage } from '../hooks/use-local-storage';
+import { initialCoupons } from '@/shared/constants';
+import { useLocalStorage } from '@/shared/hooks';
 import { Coupon } from '@/types';
-import { CouponModel } from '../models';
-import { INITIAL_COUPON_FORM } from '../constants/forms';
+import { CouponModel } from '@/shared/models';
+import { INITIAL_COUPON_FORM } from '@/shared/constants';
 import { useNotifications } from './notification-context';
 
 interface CouponContextType {

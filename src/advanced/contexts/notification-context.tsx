@@ -1,5 +1,5 @@
 import { createContext, useContext, ReactNode } from 'react';
-import { useNotifications as useNotificationsHook } from '../hooks/use-notifications';
+import { useNotifications as useNotificationsHook } from '@/shared/hooks';
 
 interface NotificationContextType {
   notifications: Array<{ id: string; message: string; type: 'error' | 'success' | 'warning' }>;

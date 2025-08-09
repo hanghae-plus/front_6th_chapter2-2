@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useCart, useCoupons } from '../contexts';
-import { CartModel } from '../models';
+import { CartModel } from '@/shared/models';
 
 export function Payments() {
   const { cart, completeOrder } = useCart();

@@ -1,7 +1,7 @@
 import { CartIcon } from './icons';
 import { SearchInput } from './search-input';
 import { useCart } from '../contexts';
-import { useTotalItemCount } from '../hooks';
+import { useTotalItemCount } from '@/shared/hooks';
 
 interface HeaderProps {
   isAdmin: boolean;
