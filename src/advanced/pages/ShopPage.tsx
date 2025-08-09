@@ -1,5 +1,5 @@
 import { ChangeEvent, useCallback } from "react";
-import { CartItem, Coupon } from "../../types";
+import { CartItem } from "../../types";
 import { generateOrderNumber } from "../models/coupon";
 import { canApplyCoupon } from "../models/discount";
 import { filterProducts, ProductWithUI } from "../models/product";
@@ -12,6 +12,7 @@ import {
 } from "../models/cart";
 import { useNotification } from "../contexts/NotificationContext";
 import { useProduct } from "../contexts/ProductContext";
+import { useCoupon } from "../contexts/CouponContext";
 import ShopProduct from "../components/ShopProduct";
 import PaymentInfo from "../components/PaymentInfo";
 import CouponDiscount from "../components/CouponDiscount";
@@ -20,24 +21,15 @@ import Cart from "../components/Cart";
 interface Props {
   searchTerm: string;
   cart: CartItem[];
-  coupons: Coupon[];
-  selectedCoupon: Coupon | null;
 
   // TODO: 전역에서 관리
   setCart: React.Dispatch<React.SetStateAction<CartItem[]>>;
-  setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>;
 }
 
-const ShopPage = ({
-  searchTerm,
-  cart,
-  coupons,
-  selectedCoupon,
-  setCart,
-  setSelectedCoupon,
-}: Props) => {
+const ShopPage = ({ searchTerm, cart, setCart }: Props) => {
   const { addNotification } = useNotification();
   const { products } = useProduct();
+  const { coupons, selectedCoupon, setSelectedCoupon } = useCoupon();
   const filteredProducts = filterProducts(products, searchTerm);
 
   const handleAddToCart = useCallback(

@@ -1,23 +1,13 @@
 import { useState, useCallback } from "react";
 import { Coupon } from "../../types";
 import { validateCoupon } from "../models/discount";
-import {
-  addCoupon as _addCoupon,
-  deleteCoupon as _deleteCoupon,
-  checkAndClearSelectedCoupon,
-} from "../models/coupon";
+import { checkAndClearSelectedCoupon } from "../models/coupon";
 import { useNotification } from "../contexts/NotificationContext";
+import { useCoupon } from "../contexts/CouponContext";
 
-interface Props {
-  coupons: Coupon[];
-
-  // NOTE: 임시props
-  setCoupons: React.Dispatch<React.SetStateAction<Coupon[]>>;
-  setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>;
-}
-
-const CouponManage = ({ coupons, setCoupons, setSelectedCoupon }: Props) => {
+const CouponManage = () => {
   const { addNotification } = useNotification();
+  const { coupons, addCoupon, deleteCoupon, setSelectedCoupon } = useCoupon();
   const [showCouponForm, setShowCouponForm] = useState(false);
 
   const [couponForm, setCouponForm] = useState({
@@ -27,33 +17,35 @@ const CouponManage = ({ coupons, setCoupons, setSelectedCoupon }: Props) => {
     discountValue: 0,
   });
 
-  const addCoupon = useCallback(
+  const handleAddCoupon = useCallback(
     (newCoupon: Coupon) => {
       const validation = validateCoupon(newCoupon, coupons);
       if (!validation.isValid) {
         addNotification(validation.reason!, "error");
         return;
       }
-      setCoupons((prev) => _addCoupon(prev, newCoupon));
+      addCoupon(newCoupon);
       addNotification("쿠폰이 추가되었습니다.", "success");
     },
-    [coupons, addNotification]
+    [coupons, addCoupon, addNotification]
   );
 
-  const deleteCoupon = useCallback(
+  const handleDeleteCoupon = useCallback(
     (couponCode: string) => {
-      setCoupons((prev) => _deleteCoupon(prev, couponCode));
-      setSelectedCoupon((prev) =>
-        checkAndClearSelectedCoupon(prev, couponCode)
+      deleteCoupon(couponCode);
+      const clearedCoupon = checkAndClearSelectedCoupon(
+        coupons.find((c) => c.code === couponCode) || null,
+        couponCode
       );
+      setSelectedCoupon(clearedCoupon);
       addNotification("쿠폰이 삭제되었습니다.", "success");
     },
-    [addNotification]
+    [deleteCoupon, setSelectedCoupon, addNotification, coupons]
   );
 
   const handleCouponSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    addCoupon(couponForm);
+    handleAddCoupon(couponForm);
     setCouponForm({
       name: "",
       code: "",
@@ -90,7 +82,7 @@ const CouponManage = ({ coupons, setCoupons, setSelectedCoupon }: Props) => {
                   </div>
                 </div>
                 <button
-                  onClick={() => deleteCoupon(coupon.code)}
+                  onClick={() => handleDeleteCoupon(coupon.code)}
                   className="text-gray-400 hover:text-red-600 transition-colors"
                 >
                   <svg

@@ -1,15 +1,8 @@
 import { useState } from "react";
-import { Coupon } from "../../types";
 import ProductManage from "../components/ProductManage";
 import CouponManage from "../components/CouponManage";
 
-interface Props {
-  coupons: Coupon[];
-  setCoupons: React.Dispatch<React.SetStateAction<Coupon[]>>;
-  setSelectedCoupon: React.Dispatch<React.SetStateAction<Coupon | null>>;
-}
-
-const AdminPage = ({ coupons, setCoupons, setSelectedCoupon }: Props) => {
+const AdminPage = () => {
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
     "products"
   );
@@ -45,15 +38,7 @@ const AdminPage = ({ coupons, setCoupons, setSelectedCoupon }: Props) => {
         </nav>
       </div>
 
-      {activeTab === "products" ? (
-        <ProductManage />
-      ) : (
-        <CouponManage
-          coupons={coupons}
-          setCoupons={setCoupons}
-          setSelectedCoupon={setSelectedCoupon}
-        />
-      )}
+      {activeTab === "products" ? <ProductManage /> : <CouponManage />}
     </div>
   );
 };
