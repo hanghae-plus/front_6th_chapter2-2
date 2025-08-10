@@ -19,6 +19,12 @@ export interface CartItem {
 export interface Coupon {
   name: string;
   code: string;
-  discountType: 'amount' | 'percentage';
+  discountType: "amount" | "percentage";
   discountValue: number;
+}
+
+export interface ValidationResult {
+  isValid: boolean;
+  value: number;
+  message: string;
 }
